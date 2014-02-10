@@ -6,9 +6,7 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +15,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.TextView;
 
+import com.sintef_energy.ubisolar.Global;
 import com.sintef_energy.ubisolar.LoginActivity;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
@@ -42,8 +41,7 @@ public class DrawerActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         //TODO: Check if user is logged in
         //Switch to login screen or continue.
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(!preferences.getBoolean("loggedIn", false)) {
+        if(!Global.loggedIn) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
             loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(loginIntent);
