@@ -25,8 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Log {
-   public final static String LOGTAG = "Alarmz";
-
    /** This must be false for production.  If true, turns on logging,
     test code, etc. */
    static final boolean LOGV = true;
