@@ -1,26 +1,25 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.activities;
 
 import android.app.Activity;
 
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.TestFragment;
+import com.sintef_energy.ubisolar.fragments.UsageFragment;
 
-public class UsageActivity extends Activity
+public class DrawerActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     /**
@@ -63,6 +62,9 @@ public class UsageActivity extends Activity
                 break;
             case 3:
                 fragmentManager.beginTransaction().replace(R.id.container, TestFragment.newInstance(3)).commit();
+                break;
+            case 4:
+                fragmentManager.beginTransaction().replace(R.id.container, UsageFragment.newInstance(4)).commit();
                 break;
         }
     }
@@ -142,7 +144,7 @@ public class UsageActivity extends Activity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
@@ -151,7 +153,7 @@ public class UsageActivity extends Activity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((UsageActivity) activity).onSectionAttached(
+            ((DrawerActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }

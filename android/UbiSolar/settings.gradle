@@ -1,1 +1,2 @@
+include ':holographlibrary:HoloGraphLibrary'
 include ':UbiSolar'

@@ -1,28 +1,25 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.ListFragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
+import com.echo.holographlibrary.Line;
+import com.echo.holographlibrary.LineGraph;
+import com.echo.holographlibrary.LinePoint;
 import com.echo.holographlibrary.PieGraph;
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.concurrency.AndroidSchedulers;
-import rx.concurrency.Schedulers;
-
 
 /**
  * Created by perok on 2/11/14.
  */
-public class TestFragment extends ListFragment implements Observer<Integer> {
+public class UsageFragment extends Fragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -33,19 +30,15 @@ public class TestFragment extends ListFragment implements Observer<Integer> {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static TestFragment newInstance(int sectionNumber) {
-        TestFragment fragment = new TestFragment();
+    public static UsageFragment newInstance(int sectionNumber) {
+        UsageFragment fragment = new UsageFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
 
-    String[] text = new String[]{};
-
-    Subscription sub;
-
-    public TestFragment() {
+    public UsageFragment() {
     }
 
     /**
@@ -62,11 +55,11 @@ public class TestFragment extends ListFragment implements Observer<Integer> {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return super.onCreateView(inflater, container, savedInstanceState);
-        //View rootView = inflater.inflate(R.layout.fragment_test, container, false);
+        //return super.onCreateView(inflater, container, savedInstanceState);
+        View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-        //return rootView;
+        return rootView;
     }
 
 
@@ -74,35 +67,29 @@ public class TestFragment extends ListFragment implements Observer<Integer> {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Populate list with our static array of titles.
-        setListAdapter(new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_activated_1, text));
-
         if (savedInstanceState != null) {
             // Restore last state for checked position.
         }
 
-        sub = Observable.from(1, 2, 3, 4, 5)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this);
+        Line l = new Line();
+        LinePoint p = new LinePoint();
+        p.setX(0);
+        p.setY(5);
+        l.addPoint(p);
+        p = new LinePoint();
+        p.setX(8);
+        p.setY(8);
+        l.addPoint(p);
+        p = new LinePoint();
+        p.setX(10);
+        p.setY(4);
+        l.addPoint(p);
+        l.setColor(Color.parseColor("#FFBB33"));
 
-        PieGraph lol = null;
-    }
-
-
-    @Override
-    public void onNext(Integer value) {
-        Toast.makeText(getActivity(), "Number: " + value, Toast.LENGTH_SHORT).show();
-    }
-
-    public void onCompleted() {}
-
-    public void onError(Throwable error) {
-        Toast.makeText(getActivity(),
-                "Number fetch failed: " + error.getMessage(),
-                Toast.LENGTH_SHORT)
-                .show();
+        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
+        li.addLine(l);
+        li.setRangeY(0, 10);
+        li.setLineToFill(0);
     }
 
 
@@ -115,7 +102,6 @@ public class TestFragment extends ListFragment implements Observer<Integer> {
 
     @Override
     public void onDestroy(){
-        sub.unsubscribe();
         super.onDestroy();
     }
 }
