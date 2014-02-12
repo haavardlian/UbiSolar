@@ -18,15 +18,29 @@ import java.util.concurrent.atomic.AtomicLong;
 public class GeneralResource {
     private final String defaultName;
     private final AtomicLong counter;
-
-    public GeneralResource(String defaultName) {
-        this.defaultName = defaultName;
+    private final ServerDAO dao;
+    public GeneralResource(ServerDAO dao) {
+        this.defaultName = "Test";
         this.counter = new AtomicLong();
+        this.dao = dao;
     }
 
     @GET
     @Timed
     public GeneralSaying sayHello(@QueryParam("name") Optional<String> name) {
-        return new GeneralSaying(counter.incrementAndGet(), name.or(defaultName));
+        int i = (int)counter.incrementAndGet();
+        if(name.get().equals("create")) {
+            dao.createTable();
+            return new GeneralSaying(i, "Created table");
+        }
+        else if(name.get().equals("insert")) {
+            dao.insert(i, "Hello");
+            return new GeneralSaying(i, "Insert");
+        }
+        else if(name.get().equals("get"))
+            return new GeneralSaying(i, "Got: " + dao.findNameById(i-1));
+        else
+            return new GeneralSaying(i, name.get());
+
     }
 }

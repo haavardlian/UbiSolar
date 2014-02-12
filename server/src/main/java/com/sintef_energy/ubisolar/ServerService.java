@@ -6,6 +6,9 @@ package com.sintef_energy.ubisolar;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.jdbi.DBIFactory;
+import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
+import org.skife.jdbi.v2.DBI;
 
 public class ServerService extends Service<ServerConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -18,8 +21,10 @@ public class ServerService extends Service<ServerConfiguration> {
     }
 
     @Override
-    public void run(ServerConfiguration configuration,Environment environment) {
-        final String defaultName = configuration.getDefaultName();
-        environment.addResource(new GeneralResource(defaultName));
+    public void run(ServerConfiguration configuration,Environment environment) throws ClassNotFoundException {
+        final DBIFactory factory = new DBIFactory();
+        DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "mysql");
+        final ServerDAO dao = jdbi.onDemand(ServerDAO.class);
+        environment.addResource(new GeneralResource(dao));
     }
 }
