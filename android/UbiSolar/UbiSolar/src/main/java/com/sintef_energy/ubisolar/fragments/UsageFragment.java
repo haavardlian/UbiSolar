@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.ListFragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import com.echo.holographlibrary.Line;
 import com.echo.holographlibrary.LineGraph;
 import com.echo.holographlibrary.LinePoint;
-import com.echo.holographlibrary.PieGraph;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
