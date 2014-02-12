@@ -52,7 +52,6 @@ public class UsageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         //return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
@@ -89,7 +88,6 @@ public class UsageFragment extends Fragment {
         li.setRangeY(0, 10);
         li.setLineToFill(0);
     }
-
 
     /*End lifecycle*/
     @Override
