@@ -1,0 +1,3 @@
+[submodule "android/UbiSolar/holographlibrary"]
+	path = android/UbiSolar/holographlibrary
+	url = https://bitbucket.org/danielnadeau/holographlibrary.git
