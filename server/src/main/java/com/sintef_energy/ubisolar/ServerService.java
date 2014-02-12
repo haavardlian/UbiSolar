@@ -17,7 +17,7 @@ public class ServerService extends Service<ServerConfiguration> {
 
     @Override
     public void initialize(Bootstrap<ServerConfiguration> bootstrap) {
-        bootstrap.setName("hello-world");
+        bootstrap.setName("sintef_energy_server");
     }
 
     @Override
