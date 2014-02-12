@@ -56,12 +56,20 @@
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.sintef_energy.ubisolar.HelloService</mainClass>
+                            <mainClass>com.sintef_energy.ubisolar.ServerService</mainClass>
                         </transformer>
                     </transformers>
                 </configuration>
             </execution>
         </executions>
+    </plugin>
+    <plugin>
+	<artifactId>maven-compiler-plugin</artifactId>
+	<version>2.3.2</version>
+	<configuration>
+		<source>1.6</source>
+		<target>1.6</target>
+	</configuration>
     </plugin>
     </plugins>
   </build>
