@@ -1,25 +1,28 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.activities;
 
 import android.app.Activity;
 
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class UsageActivity extends Activity
+import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
+import com.sintef_energy.ubisolar.fragments.TestFragment;
+import com.sintef_energy.ubisolar.fragments.UsageFragment;
+import com.sintef_energy.ubisolar.utils.Log;
+
+public class DrawerActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+    private static final String LOG = DrawerActivity.class.getName();
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -50,9 +53,27 @@ public class UsageActivity extends Activity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+        Fragment fragment = null;
+        switch (position){
+            case 0:
+            case 1:
+            case 2:
+                fragment = PlaceholderFragment.newInstance(position + 1);
+                break;
+            case 3:
+                fragment = TestFragment.newInstance(3);
+                break;
+            case 4:
+                fragment = UsageFragment.newInstance(4);
+                break;
+        }
+
+        if(fragment != null){
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+        }
+        else {
+            Log.e(LOG, "Error creating fragment from navigation drawer.");
+        }
     }
 
     public void onSectionAttached(int number) {
@@ -130,7 +151,7 @@ public class UsageActivity extends Activity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
@@ -139,7 +160,7 @@ public class UsageActivity extends Activity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((UsageActivity) activity).onSectionAttached(
+            ((DrawerActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
