@@ -18,9 +18,11 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.TestFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
+import com.sintef_energy.ubisolar.utils.Log;
 
 public class DrawerActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+    private static final String LOG = DrawerActivity.class.getName();
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -51,21 +53,26 @@ public class DrawerActivity extends Activity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
-
+        Fragment fragment = null;
         switch (position){
             case 0:
             case 1:
             case 2:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                        .commit();
+                fragment = PlaceholderFragment.newInstance(position + 1);
                 break;
             case 3:
-                fragmentManager.beginTransaction().replace(R.id.container, TestFragment.newInstance(3)).commit();
+                fragment = TestFragment.newInstance(3);
                 break;
             case 4:
-                fragmentManager.beginTransaction().replace(R.id.container, UsageFragment.newInstance(4)).commit();
+                fragment = UsageFragment.newInstance(4);
                 break;
+        }
+
+        if(fragment != null){
+            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+        }
+        else {
+            Log.e(LOG, "Error creating fragment from navigation drawer.");
         }
     }
 
