@@ -17,6 +17,7 @@
     <string name="last12months">Last 12 months</string>
     <string name="lastMonth">Last month</string>
     <string name="devices">Devices</string>
+    <string name="totalUsage">Total usage</string>
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
