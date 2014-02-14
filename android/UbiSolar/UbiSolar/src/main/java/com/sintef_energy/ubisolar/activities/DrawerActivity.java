@@ -15,8 +15,7 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.Global;
-import com.sintef_energy.ubisolar.LoginActivity;
+import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.TestFragment;

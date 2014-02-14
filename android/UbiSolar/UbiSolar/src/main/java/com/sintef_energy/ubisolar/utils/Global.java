@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.utils;
 
 /**
  * Created by Håvard on 10.02.14.

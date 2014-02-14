@@ -1,22 +1,17 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.sintef_energy.ubisolar.utils.Global;
+import com.sintef_energy.ubisolar.R;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -41,6 +36,7 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(Global.loggedIn) attemptLogin();
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
@@ -89,7 +85,7 @@ public class LoginActivity extends Activity {
      */
     public void attemptLogin() {
         Global.loggedIn = true;
-        Intent usageIntent = new Intent(this, UsageActivity.class);
+        Intent usageIntent = new Intent(this,DrawerActivity.class);
         usageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(usageIntent);
     }
