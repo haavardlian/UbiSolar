@@ -22,12 +22,10 @@ import com.sintef_energy.ubisolar.fragments.SocialFragment;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
-import com.sintef_energy.ubisolar.fragments.TestFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.utils.Log;
 
-public class DrawerActivity extends Activity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class DrawerActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String LOG = DrawerActivity.class.getName();
 
     /**
@@ -98,8 +96,10 @@ public class DrawerActivity extends Activity
         if(fragment != null)
             fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
         else if(logout){
-            Log.v(LOG, "Logging out");
-            //TODO handle logout
+            Global.loggedIn = false;
+            Intent loginIntent = new Intent(this, LoginActivity.class);
+            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(loginIntent);
         }
         else
             Log.e(LOG, "Error creating fragment from navigation drawer.");
