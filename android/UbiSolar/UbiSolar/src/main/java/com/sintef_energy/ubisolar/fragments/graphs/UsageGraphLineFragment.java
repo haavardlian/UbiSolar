@@ -1,8 +1,7 @@
-package com.sintef_energy.ubisolar.fragments;
+package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,12 +13,11 @@ import com.echo.holographlibrary.LineGraph;
 import com.echo.holographlibrary.LinePoint;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageFragment extends Fragment {
+public class UsageGraphLineFragment extends Fragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -30,15 +28,15 @@ public class UsageFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static UsageFragment newInstance(int sectionNumber) {
-        UsageFragment fragment = new UsageFragment();
+    public static UsageGraphLineFragment newInstance() {
+        UsageGraphLineFragment fragment = new UsageGraphLineFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        //args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public UsageFragment() {
+    public UsageGraphLineFragment() {
     }
 
     /**
@@ -54,8 +52,9 @@ public class UsageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         //return super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         return rootView;
@@ -70,10 +69,25 @@ public class UsageFragment extends Fragment {
             // Restore last state for checked position.
         }
 
-        UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-        ft.commit();
+        Line l = new Line();
+        LinePoint p = new LinePoint();
+        p.setX(0);
+        p.setY(5);
+        l.addPoint(p);
+        p = new LinePoint();
+        p.setX(8);
+        p.setY(8);
+        l.addPoint(p);
+        p = new LinePoint();
+        p.setX(10);
+        p.setY(4);
+        l.addPoint(p);
+        l.setColor(Color.parseColor("#FFBB33"));
+
+        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
+        li.addLine(l);
+        li.setRangeY(0, 10);
+        li.setLineToFill(0);
     }
 
     /*End lifecycle*/
