@@ -2,6 +2,17 @@
 <resources>
 
     <string name="app_name">UbiSolar</string>
+
+    <!-- Title fragment menu -->
+    <string-array name="title_fragments">
+        <item>Devices</item>
+        <item>Usage</item>
+        <item>Power saving</item>
+        <item>Profile</item>
+        <item>Social</item>
+        <item>Logout</item>
+    </string-array>
+
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>

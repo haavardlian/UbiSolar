@@ -94,6 +94,8 @@ public class NavigationDrawerFragment extends Fragment {
         //mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView = (ListView) rootView.findViewById(R.id.navigation_drawer_list);
 
+        String[] title_fragments = getResources().getStringArray(R.array.title_fragments);
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -104,13 +106,15 @@ public class NavigationDrawerFragment extends Fragment {
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                        "RXJava test",
-                        "Usage"
-                }));
+                /*new String[]{
+                        getString(R.string.title_devices),
+                        getString(R.string.title_usage),
+                        getString(R.string.title_power_save),
+                        getString(R.string.title_profile),
+                        getString(R.string.title_social),
+                        getString(R.string.title_logout)
+                }*/title_fragments
+                ));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return rootView;
     }

@@ -15,6 +15,10 @@ import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.TextView;
 
+import com.sintef_energy.ubisolar.fragments.DevicesFragment;
+import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
+import com.sintef_energy.ubisolar.fragments.ProfileFragment;
+import com.sintef_energy.ubisolar.fragments.SocialFragment;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
@@ -35,6 +39,7 @@ public class DrawerActivity extends Activity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    private String[] titleNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,8 @@ public class DrawerActivity extends Activity
             loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(loginIntent);
         }
+
+        titleNames = getResources().getStringArray(R.array.title_fragments);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usage);
@@ -64,40 +71,45 @@ public class DrawerActivity extends Activity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = null;
+
+        boolean logout = false;
+
         switch (position){
             case 0:
+                fragment = DevicesFragment.newInstance(position);
+                break;
             case 1:
+                fragment = UsageFragment.newInstance(position);
+                break;
             case 2:
-                fragment = PlaceholderFragment.newInstance(position + 1);
+                fragment = PowerSavingFragment.newInstance(position);
                 break;
             case 3:
-                fragment = TestFragment.newInstance(3);
+                fragment = ProfileFragment.newInstance(position);
                 break;
             case 4:
-                fragment = UsageFragment.newInstance(4);
+                fragment = SocialFragment.newInstance(position);
+                break;
+            case 5:
+                logout = true;
                 break;
         }
 
-        if(fragment != null){
+        if(fragment != null)
             fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+        else if(logout){
+            Log.v(LOG, "Logging out");
+            //TODO handle logout
         }
-        else {
+        else
             Log.e(LOG, "Error creating fragment from navigation drawer.");
-        }
     }
 
     public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_section1);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_section2);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_section3);
-                break;
-        }
+        if(number < titleNames.length)
+            mTitle = titleNames[number];
+        else
+            Log.e(LOG, "Attaching to section number that does not exist: " + number);
     }
 
     public void restoreActionBar() {
