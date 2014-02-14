@@ -11,10 +11,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class ServerConfiguration extends Configuration {
-
-    @NotEmpty
-    @JsonProperty
-    private String defaultName = "Stranger";
     @Valid
     @NotNull
     @JsonProperty
@@ -31,7 +27,4 @@ public class ServerConfiguration extends Configuration {
         return database;
     }
 
-    public String getDefaultName() {
-        return defaultName;
-    }
 }
