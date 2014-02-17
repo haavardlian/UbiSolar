@@ -12,13 +12,13 @@ import android.net.Uri;
  *
  */
 public class EnergyDataSource {
-    public static EnergyModel getEnergyModel(ContentResolver resolver, long id){
+    public static DeviceModel getEnergyModel(ContentResolver resolver, long id){
 
-        Uri.Builder builder = EnergyContract.EnergyRules.CONTENT_URI.buildUpon();
+        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
         ContentUris.appendId(builder, id);
         Cursor cursor = resolver.query(
                 builder.build(),
-                EnergyContract.EnergyRules.PROJECTION_ALL,
+                EnergyContract.Devices.PROJECTION_ALL,
                 null,
                 null,
                 null
@@ -36,7 +36,7 @@ public class EnergyDataSource {
         }
 
         cursor.moveToFirst();
-        EnergyModel crm = new EnergyModel(cursor);
+        DeviceModel crm = new DeviceModel(cursor);
         cursor.close();
 
         return crm;

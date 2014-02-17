@@ -11,7 +11,7 @@ import com.sintef_energy.ubisolar.utils.Log;
  */
 public class EnergyOpenHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "energy.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	public EnergyOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
 		super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -23,7 +23,9 @@ public class EnergyOpenHelper extends SQLiteOpenHelper{
 
 	@Override
 	public void onCreate(SQLiteDatabase database) {
-		database.execSQL(EnergyModel.SQL_CREATE_ENTRIES);
+        database.execSQL("PRAGMA foreign_keys=ON;"); //Activate foreign keys in sqlite
+		database.execSQL(DeviceModel.SQL_CREATE_ENTRIES);
+        database.execSQL(EnergyUsageModel.SQL_CREATE_ENTRIES);
 	}
 
 	@Override
@@ -31,7 +33,8 @@ public class EnergyOpenHelper extends SQLiteOpenHelper{
         Log.w(EnergyOpenHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
-        db.execSQL(EnergyModel.SQL_DELETE_ENTRIES);
+        db.execSQL(DeviceModel.SQL_DELETE_ENTRIES);
+        db.execSQL(EnergyUsageModel.SQL_DELETE_ENTRIES);
         onCreate(db);
 	}
 }

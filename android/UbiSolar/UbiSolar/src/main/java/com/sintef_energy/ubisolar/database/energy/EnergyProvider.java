@@ -29,15 +29,19 @@ public class EnergyProvider extends ContentProvider{
     private final ThreadLocal<Boolean> mIsInBatchMode = new ThreadLocal<Boolean>();
 
     // helper constants for use with the UriMatcher
-    private static final int ENERGY_LIST = 1;
-    private static final int ENERGY_ID = 2;
+    private static final int DEVICES_LIST = 1;
+    private static final int DEVICES_ID = 2;
+    private static final int ENERGY_LIST = 3;
+    private static final int ENERGY_ID = 4;
 
     private static final UriMatcher URI_MATCHER;
     // prepare the UriMatcher
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
-        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energies", ENERGY_LIST);
-        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energies/#", ENERGY_ID);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "device", DEVICES_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "device/#", DEVICES_ID);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy", ENERGY_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/#", ENERGY_ID);
    }
 
     @Override
@@ -49,10 +53,14 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public String getType(Uri uri) {
         switch(URI_MATCHER.match(uri)){
+            case DEVICES_LIST:
+                return EnergyContract.Devices.CONTENT_TYPE;
+            case DEVICES_ID:
+                return EnergyContract.Devices.CONTENT_ITEM_TYPE;
             case ENERGY_LIST:
-                return EnergyContract.EnergyRules.CONTENT_TYPE;
+                return EnergyContract.Energy.CONTENT_TYPE;
             case ENERGY_ID:
-                return EnergyContract.EnergyRules.CONTENT_ITEM_TYPE;
+                return EnergyContract.Energy.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -63,24 +71,37 @@ public class EnergyProvider extends ContentProvider{
         SQLiteDatabase db = mHelper.getReadableDatabase();
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
-        boolean useAuthorityUri = false;
+        boolean useAuthorityUri = false; //TODO: Automatic notification of changes to LoadManager?
         Cursor cursor = null;
         switch (URI_MATCHER.match(uri)) {
-            case ENERGY_LIST:
-                builder.setTables(EnergyModel.EnergyEntry.TABLE_NAME);
+            case DEVICES_LIST:
+                builder.setTables(DeviceModel.DeviceEntry.TABLE_NAME);
                 if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = EnergyContract.EnergyRules.SORT_ORDER_DEFAULT;
+                    sortOrder = EnergyContract.Devices.SORT_ORDER_DEFAULT;
+                }
+                break;
+            case DEVICES_ID:
+                builder.setTables(DeviceModel.DeviceEntry.TABLE_NAME);
+                // limit query to one row at most:
+                builder.appendWhere(EnergyContract.Devices._ID + " = " +
+                    uri.getLastPathSegment());
+                break;
+            case ENERGY_LIST:
+                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
                 }
                 break;
             case ENERGY_ID:
-                builder.setTables(EnergyModel.EnergyEntry.TABLE_NAME);
+                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
                 // limit query to one row at most:
-                builder.appendWhere(EnergyContract.EnergyRules._ID + " = " +
+                builder.appendWhere(EnergyContract.Energy._ID + " = " +
                     uri.getLastPathSegment());
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
+
         cursor =
               builder.query(
                     db,
@@ -108,16 +129,23 @@ public class EnergyProvider extends ContentProvider{
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        if (URI_MATCHER.match(uri) != ENERGY_LIST)
+        if (URI_MATCHER.match(uri) != DEVICES_LIST ||
+                URI_MATCHER.match(uri) != ENERGY_LIST)
                 throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
 
         long id = -1;
 
-        if (URI_MATCHER.match(uri) == ENERGY_LIST) {
+        if (URI_MATCHER.match(uri) == DEVICES_LIST) {
             id = db.insert(
-                    EnergyModel.EnergyEntry.TABLE_NAME,
+                    DeviceModel.DeviceEntry.TABLE_NAME,
+                    null,
+                    values);
+        }
+        else if (URI_MATCHER.match(uri) == ENERGY_LIST) {
+            id = db.insert(
+                    EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
                     null,
                     values);
         }
@@ -132,20 +160,37 @@ public class EnergyProvider extends ContentProvider{
         String idStr = null;
         String where = null;
         switch (URI_MATCHER.match(uri)) {
+            case DEVICES_LIST:
+                delCount = db.delete(
+                        DeviceModel.DeviceEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
+            case DEVICES_ID:
+                idStr = uri.getLastPathSegment();
+                where = EnergyContract.Devices._ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                delCount = db.delete(
+                        DeviceModel.DeviceEntry.TABLE_NAME,
+                        where,
+                        selectionArgs);
+                break;
             case ENERGY_LIST:
                 delCount = db.delete(
-                        EnergyModel.EnergyEntry.TABLE_NAME,
+                        EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
                         selection,
                         selectionArgs);
                 break;
             case ENERGY_ID:
                 idStr = uri.getLastPathSegment();
-                where = EnergyContract.EnergyRules._ID + " = " + idStr;
+                where = EnergyContract.Energy._ID + " = " + idStr;
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
                 delCount = db.delete(
-                        EnergyModel.EnergyEntry.TABLE_NAME,
+                        EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
                         where,
                         selectionArgs);
                 break;
@@ -169,21 +214,40 @@ public class EnergyProvider extends ContentProvider{
         String where = null;
 
         switch (URI_MATCHER.match(uri)) {
+            case DEVICES_LIST:
+                updateCount = db.update(
+                        DeviceModel.DeviceEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            case DEVICES_ID:
+                idStr = uri.getLastPathSegment();
+                where = EnergyContract.Devices._ID + " = " + idStr;
+                if (!TextUtils.isEmpty(selection)) {
+                    where += " AND " + selection;
+                }
+                updateCount = db.update(
+                        DeviceModel.DeviceEntry.TABLE_NAME,
+                        values,
+                        where,
+                        selectionArgs);
+                break;
             case ENERGY_LIST:
                 updateCount = db.update(
-                        EnergyModel.EnergyEntry.TABLE_NAME,
+                        EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
                 break;
             case ENERGY_ID:
                 idStr = uri.getLastPathSegment();
-                where = EnergyContract.EnergyRules._ID + " = " + idStr;
+                where = EnergyContract.Energy._ID + " = " + idStr;
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
                 updateCount = db.update(
-                        EnergyModel.EnergyEntry.TABLE_NAME,
+                        EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
                         values,
                         where,
                         selectionArgs);
