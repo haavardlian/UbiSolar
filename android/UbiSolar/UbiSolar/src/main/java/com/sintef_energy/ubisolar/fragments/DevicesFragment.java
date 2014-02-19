@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +13,6 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import static com.sintef_energy.ubisolar.R.layout.*;
 
 /**
  * Created by perok on 2/11/14.

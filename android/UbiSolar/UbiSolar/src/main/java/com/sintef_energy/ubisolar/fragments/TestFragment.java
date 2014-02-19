@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.echo.holographlibrary.PieGraph;
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
 import rx.Observable;
@@ -76,7 +77,7 @@ public class TestFragment extends ListFragment implements Observer<Integer> {
 
         // Populate list with our static array of titles.
         setListAdapter(new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_list_item_activated_1, text));
+               android.R.layout.simple_list_item_activated_1, text));
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
