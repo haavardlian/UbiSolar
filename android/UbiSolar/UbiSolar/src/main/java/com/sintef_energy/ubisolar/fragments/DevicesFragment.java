@@ -2,11 +2,22 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.sintef_energy.ubisolar.R.layout.*;
 
 /**
  * Created by perok on 2/11/14.
@@ -47,7 +58,10 @@ public class DevicesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        return super.onCreateView(inflater, container, savedInstanceState);
+        View listView = inflater.inflate(R.layout.fragment_device, container, false);
+
+
+        return listView;
         //View rootView = inflater.inflate(R.layout.fragment_test, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
@@ -59,8 +73,23 @@ public class DevicesFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        final ListView listView = (ListView) getActivity().findViewById(R.id.device_list);
+
+        //devices must contain the names of the devices
+        String[] devices = new String[]{ "Device 1","Device 2", "Device 3" };
+        final ArrayList <String> list = new ArrayList<>();
+
+        for (int i = 0; i < devices.length; i++) {
+            list.add(devices[i]);
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, list);
+        listView.setAdapter(adapter);
+
         if (savedInstanceState != null) {
             // Restore last state for checked position.
+
+
         }
     }
 
