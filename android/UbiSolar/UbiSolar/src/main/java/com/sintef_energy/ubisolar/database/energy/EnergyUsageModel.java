@@ -33,6 +33,7 @@ public class EnergyUsageModel implements Parcelable{
     /* SQL Statements*/
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
+    private static final String REAL_TYPE = " REAL";
     private static final String COMMA_SEP = ",";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + EnergyUsageEntry.TABLE_NAME + " (" +
@@ -40,7 +41,7 @@ public class EnergyUsageModel implements Parcelable{
                     EnergyUsageEntry.COLUMN_DEVICE_ID + INTEGER_TYPE + COMMA_SEP +
                     EnergyUsageEntry.COLUMN_DATESTART + INTEGER_TYPE + COMMA_SEP +
                     EnergyUsageEntry.COLUMN_DATEEND + INTEGER_TYPE + COMMA_SEP +
-                    EnergyUsageEntry.COLUMN_POWER + INTEGER_TYPE + COMMA_SEP +
+                    EnergyUsageEntry.COLUMN_POWER + REAL_TYPE + COMMA_SEP +
                     "FOREIGN KEY(" + EnergyUsageEntry.COLUMN_DEVICE_ID +
                         ") REFERENCES " + DeviceModel.DeviceEntry.TABLE_NAME +
                         "(" + DeviceModel.DeviceEntry._ID + ")" + COMMA_SEP +
@@ -58,7 +59,7 @@ public class EnergyUsageModel implements Parcelable{
     private int _dateStart = 2;
     private long dateEnd;
     private int _dateEnd = 3;
-    private long power;
+    private double power;
     private int _power = 4;
 
 
@@ -101,7 +102,7 @@ public class EnergyUsageModel implements Parcelable{
         out.writeLong(deviceId);
         out.writeLong(dateStart);
         out.writeLong(dateEnd);
-        out.writeLong(power);
+        out.writeDouble(power);
     }
 
     private void readFromParcel(Parcel in) {
@@ -136,7 +137,7 @@ public class EnergyUsageModel implements Parcelable{
         setDeviceId(cursor.getLong(_deviceId));
         setDateStart(cursor.getLong(_dateStart));
         setDateEnd(cursor.getLong(_dateEnd));
-        setPower(cursor.getLong(_power));
+        setPower(cursor.getDouble(_power));
     }
 
     /* Getters and setters */
@@ -173,11 +174,11 @@ public class EnergyUsageModel implements Parcelable{
         this.dateEnd = dateEnd;
     }
 
-    public long getPower() {
+    public double getPower() {
         return power;
     }
 
-    public void setPower(long power) {
+    public void setPower(double power) {
         this.power = power;
     }
 }

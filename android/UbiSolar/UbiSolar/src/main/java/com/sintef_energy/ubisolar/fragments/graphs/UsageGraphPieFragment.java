@@ -13,19 +13,23 @@ import com.echo.holographlibrary.LineGraph;
 import com.echo.holographlibrary.LinePoint;
 import com.echo.holographlibrary.PieGraph;
 import com.echo.holographlibrary.PieSlice;
+import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageGraphPieFragment extends Fragment {
+public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
+    TotalEnergyPresenter presenter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -97,5 +101,22 @@ public class UsageGraphPieFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
+
+        if(presenter != null)
+            presenter.unregisterListener(this);
+    }
+
+    public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void dataRefresh() {
+
+    }
+
+    @Override
+    public void newData(EnergyUsageModel euModel) {
+
     }
 }

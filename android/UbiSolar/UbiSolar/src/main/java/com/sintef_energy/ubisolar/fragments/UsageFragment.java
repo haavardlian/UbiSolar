@@ -14,12 +14,18 @@ import android.widget.Button;
 import com.echo.holographlibrary.Line;
 import com.echo.holographlibrary.LineGraph;
 import com.echo.holographlibrary.LinePoint;
+import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Log;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by perok on 2/11/14.
@@ -38,6 +44,11 @@ public class UsageFragment extends Fragment {
      * Boolean telling if the graph showing total usage is shown, or the pie graph for devices.
      */
     private boolean showingTotalUsage = true;
+
+    /**
+     * Presenter
+     */
+    private TotalEnergyPresenter totalEnergyPresenter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -83,8 +94,11 @@ public class UsageFragment extends Fragment {
             // Restore last state for checked position.
         }
 
+        totalEnergyPresenter = new TotalEnergyPresenter();
+
         /* Show fragment */
         UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
+        fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
         ft.commit();
@@ -105,6 +119,7 @@ public class UsageFragment extends Fragment {
                 if(showingTotalUsage){
                     showingTotalUsage = false;
                     UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
+                    fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
                     ft.commit();
@@ -114,6 +129,7 @@ public class UsageFragment extends Fragment {
                 else{
                     showingTotalUsage = true;
                     UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
+                    fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
                     ft.commit();
@@ -122,8 +138,8 @@ public class UsageFragment extends Fragment {
             }
         });
 
-        Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
 
+        Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
 
         startActivityForResult(intent, 0);
     }
@@ -139,6 +155,17 @@ public class UsageFragment extends Fragment {
                     // TODO Extract the data returned from the child Activity.
                     double value = data.getDoubleExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
                     Log.v(LOG, String.valueOf(value));
+
+                    Calendar calendar = Calendar.getInstance();
+
+                    EnergyUsageModel euModel = new EnergyUsageModel();
+                    euModel.setDateStart(calendar.getTimeInMillis());
+
+                    calendar.add(Calendar.MONTH, 4);
+                    euModel.setDateEnd(calendar.getTimeInMillis());
+                    euModel.setPower(value);
+
+                    totalEnergyPresenter.addEnergyData(euModel);
                 }
                 break;
             }

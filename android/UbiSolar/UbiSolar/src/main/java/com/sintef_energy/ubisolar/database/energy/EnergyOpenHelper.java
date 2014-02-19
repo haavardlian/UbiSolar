@@ -11,7 +11,7 @@ import com.sintef_energy.ubisolar.utils.Log;
  */
 public class EnergyOpenHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "energy.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 
 	public EnergyOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
 		super(context, DATABASE_NAME, factory, DATABASE_VERSION);

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +12,28 @@ import android.view.ViewGroup;
 import com.echo.holographlibrary.Line;
 import com.echo.holographlibrary.LineGraph;
 import com.echo.holographlibrary.LinePoint;
+import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageGraphLineFragment extends Fragment {
+public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView{
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+    TotalEnergyPresenter presenter;
+
+    ArrayList<EnergyUsageModel> euModels;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -69,25 +80,7 @@ public class UsageGraphLineFragment extends Fragment {
             // Restore last state for checked position.
         }
 
-        Line l = new Line();
-        LinePoint p = new LinePoint();
-        p.setX(0);
-        p.setY(5);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(8);
-        p.setY(8);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(10);
-        p.setY(4);
-        l.addPoint(p);
-        l.setColor(Color.parseColor("#FFBB33"));
-
-        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
-        li.addLine(l);
-        li.setRangeY(0, 10);
-        li.setLineToFill(0);
+        createLineGraph();
     }
 
     /*End lifecycle*/
@@ -100,5 +93,91 @@ public class UsageGraphLineFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
+
+        if(presenter != null)
+            presenter.unregisterListener(this);
     }
+
+    public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
+        this.presenter = presenter;
+        presenter.registerListner(this);
+        euModels = presenter.getEnergyData();
+    }
+
+    @Override
+    public void dataRefresh() {
+
+    }
+
+    @Override
+    public void newData(EnergyUsageModel euModel) {
+        euModels.add(euModel);
+        createLineGraph();
+    }
+
+
+    private void createLineGraph(){
+
+        if (euModels.size() < 1)
+            return;
+
+        Line l = new Line();
+
+        int minx = Integer.MAX_VALUE;
+        int maxx = Integer.MIN_VALUE;
+
+        for(EnergyUsageModel euModel : euModels){
+            LinePoint p = new LinePoint();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(euModel.getDateStart());
+            int days = calendar.get(Calendar.DAY_OF_YEAR);
+
+            if(days < minx)
+                minx = days;
+
+            if(days > maxx)
+                maxx = days;
+
+            p.setX(days);
+            p.setY(0);
+
+            l.addPoint(p);
+
+            p = new LinePoint();
+
+            calendar.setTimeInMillis(euModel.getDateEnd());
+            days = calendar.get(Calendar.DAY_OF_YEAR);
+            p.setX(days);
+            p.setY(euModel.getPower());
+
+            l.addPoint(p);
+            if(days < minx)
+                minx = days;
+
+            if(days > maxx)
+                maxx = days;
+        }
+        /*
+        LinePoint p = new LinePoint();
+        p.setX(0);
+        p.setY(5);
+        l.addPoint(p);
+        p = new LinePoint();
+        p.setX(8);
+        p.setY(8);
+        l.addPoint(p);
+        p = new LinePoint();
+        p.setX(10);
+        p.setY(4);
+        l.addPoint(p);*/
+
+        l.setColor(Color.parseColor("#FFBB33"));
+
+        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
+        li.addLine(l);
+        li.setRangeX(minx, maxx);
+        li.setRangeY(0, 50);
+        li.setLineToFill(0);
+    }
+
 }
