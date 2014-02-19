@@ -1,22 +1,25 @@
 package com.sintef_energy.ubisolar;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yammer.dropwizard.json.JsonSnakeCase;
+
 import java.util.Date;
 
 /**
  * Created by haavard on 2/19/14.
  */
+@JsonSnakeCase
 public class TotalUsage {
     @JsonProperty
     private Date datetime;
     @JsonProperty
-    private double power_usage;
+    private double powerUsage;
     @JsonProperty
-    private int user_id;
+    private int userId;
 
-    public TotalUsage(int user_id, Date datetime, double power_usage) {
-        this.power_usage = power_usage;
-        this.user_id = user_id;
+    public TotalUsage(int userId, Date datetime, double powerUsage) {
+        this.powerUsage = powerUsage;
+        this.userId = userId;
         this.datetime = datetime;
     }
 
@@ -24,12 +27,24 @@ public class TotalUsage {
         return datetime;
     }
 
-    public double getPower_usage() {
-        return power_usage;
+    public void setDatetime(Date datetime) {
+        this.datetime = datetime;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public double getPowerUsage() {
+        return powerUsage;
+    }
+
+    public void setPowerUsage(double powerUsage) {
+        this.powerUsage = powerUsage;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
 

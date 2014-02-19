@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.configuration;
 
 /**
  * Created by thb on 12.02.14.

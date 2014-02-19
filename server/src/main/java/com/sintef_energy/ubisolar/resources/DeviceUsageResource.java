@@ -1,5 +1,7 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.resources;
 
+import com.sintef_energy.ubisolar.DeviceUsage;
+import com.sintef_energy.ubisolar.ServerDAO;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.metrics.annotation.Timed;
 
@@ -31,11 +33,14 @@ public class DeviceUsageResource {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    @POST
+    @PUT
     @Timed
     public Response addUsageForDevice(@PathParam("user") IntParam user, @PathParam("device") IntParam device,
                                       @Valid DeviceUsage usage) {
-        int r = db.addUsageForDevice(usage.getId(), usage.getDatetime(), usage.getPower_usage());
+        int r;
+        if(device.get() == usage.getDeviceId())
+             r = db.addUsageForDevice(usage);
+        else r = 0;
 
         throw new WebApplicationException(r == 1 ? Response.Status.CREATED : Response.Status.NOT_MODIFIED);
     }

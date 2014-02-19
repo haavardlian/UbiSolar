@@ -1,14 +1,12 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.resources;
 
+import com.sintef_energy.ubisolar.Device;
+import com.sintef_energy.ubisolar.ServerDAO;
 import com.yammer.dropwizard.jersey.params.IntParam;
-import com.yammer.metrics.annotation.Timed;
 
-import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by haavard on 2/19/14.

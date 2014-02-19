@@ -1,8 +1,10 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.resources;
 
 /**
  * Created by thb on 12.02.14.
  */
+import com.sintef_energy.ubisolar.ServerDAO;
+import com.sintef_energy.ubisolar.TotalUsage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.metrics.annotation.Timed;
 
@@ -35,7 +37,7 @@ public class TotalUsageResource {
     @PUT
     @Timed
     public Response addPowerUsage(@PathParam("user") IntParam user, @Valid TotalUsage usage) {
-        int r = db.addTotalUsageForUser(user.get(), usage.getDatetime(), usage.getPower_usage());
+        int r = db.addTotalUsageForUser(usage);
 
         if(r == 1) throw new WebApplicationException(Response.Status.CREATED);
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);

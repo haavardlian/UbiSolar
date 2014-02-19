@@ -1,9 +1,10 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.resources;
 
+import com.sintef_energy.ubisolar.Device;
+import com.sintef_energy.ubisolar.ServerDAO;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.metrics.annotation.Timed;
 
-import javax.print.attribute.standard.Media;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -26,7 +27,7 @@ public class DevicesResource {
     @PUT
     @Timed
     public Response createDeviceForUser(@PathParam("user") IntParam user, @Valid Device device) {
-        int r = db.createDevice(device.getUser_id(), device.getName(), device.getDescription(), device.getDevice_id());
+        int r = db.createDevice(device);
 
         throw new WebApplicationException(r == 1 ? Response.Status.CREATED : Response.Status.NOT_MODIFIED);
     }
