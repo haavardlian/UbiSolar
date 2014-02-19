@@ -7,8 +7,13 @@
     <ListView android:id="@+id/device_list"
         android:layout_width="match_parent"
         android:layout_height="273dp"
-        android:drawSelectorOnTop="false"
+
     />
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_device_button"/>
 
 
     <!--<EditText

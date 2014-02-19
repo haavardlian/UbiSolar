@@ -102,4 +102,8 @@ public class EnergyDataSource {
 
         return crm;
     }
+
+    public static void  insertDevice(ContentResolver resolver, DeviceModel model){
+        resolver.insert(EnergyContract.Devices.CONTENT_URI, model.getContentValues());
+    }
 }
