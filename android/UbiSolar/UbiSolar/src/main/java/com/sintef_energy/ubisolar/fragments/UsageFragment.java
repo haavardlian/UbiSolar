@@ -2,17 +2,21 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.echo.holographlibrary.Line;
 import com.echo.holographlibrary.LineGraph;
 import com.echo.holographlibrary.LinePoint;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
+import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 
 /**
  * Created by perok on 2/11/14.
@@ -23,6 +27,11 @@ public class UsageFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+    /**
+     * Boolean telling if the graph showing total usage is shown, or the pie graph for devices.
+     */
+    private boolean showingTotalUsage = true;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -68,25 +77,44 @@ public class UsageFragment extends Fragment {
             // Restore last state for checked position.
         }
 
-        Line l = new Line();
-        LinePoint p = new LinePoint();
-        p.setX(0);
-        p.setY(5);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(8);
-        p.setY(8);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(10);
-        p.setY(4);
-        l.addPoint(p);
-        l.setColor(Color.parseColor("#FFBB33"));
+        /* Show fragment */
+        UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+        ft.commit();
 
-        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
-        li.addLine(l);
-        li.setRangeY(0, 10);
-        li.setLineToFill(0);
+        /* Button listeners*/
+        Button periodButton = (Button)getActivity().findViewById(R.id.fragment_usage_btn_change_date);
+        periodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        final Button deviceButton = (Button)getActivity().findViewById(R.id.fragment_usage_btn_devices);
+        deviceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(showingTotalUsage){
+                    showingTotalUsage = false;
+                    UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+                    ft.commit();
+
+                    deviceButton.setText(getResources().getString(R.string.totalUsage));
+                }
+                else{
+                    showingTotalUsage = true;
+                    UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+                    ft.commit();
+                    deviceButton.setText(getResources().getString(R.string.devices));
+                }
+            }
+        });
     }
 
     /*End lifecycle*/

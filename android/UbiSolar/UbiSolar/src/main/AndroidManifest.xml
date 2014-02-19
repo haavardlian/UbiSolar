@@ -21,7 +21,7 @@
         </activity>
     <provider
             android:name=".database.energy.EnergyProvider"
-            android:authorities="com.sintef_energy.ubisolar.db.EnergyContract"
+            android:authorities="com.sintef_energy.ubisolar.provider.energy"
             android:exported="true"
             android:grantUriPermissions="true"
             android:label="AlarmsProvider"
