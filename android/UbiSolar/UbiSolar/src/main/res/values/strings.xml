@@ -27,5 +27,9 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
     <string name = "add_button">Add Usage</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_age">Age</string>
+    <string name="profile_postcode">Postal code</string>
+    <string name="profile_anon">Anonymous</string>
 
 </resources>
