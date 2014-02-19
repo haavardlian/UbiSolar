@@ -2,22 +2,30 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 
 import java.util.ArrayList;
 
 /**
  * Created by perok on 2/11/14.
  */
-public class DevicesFragment extends Fragment {
+public class DevicesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -63,6 +71,7 @@ public class DevicesFragment extends Fragment {
         //return rootView;
     }
 
+    SimpleCursorAdapter adapter;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -70,22 +79,33 @@ public class DevicesFragment extends Fragment {
 
         final ListView listView = (ListView) getActivity().findViewById(R.id.device_list);
 
-        //devices must contain the names of the devices
-        String[] devices = new String[]{ "Device 1","Device 2", "Device 3" };
-        final ArrayList <String> list = new ArrayList<>();
+        adapter = new SimpleCursorAdapter(getActivity().getApplicationContext(),
+                android.R.layout.simple_list_item_2,
+                null,
+                new String[]{DeviceModel.DeviceEntry.COLUMN_NAME},
+                new int[]{android.R.id.text1}, 0);
 
-        for (int i = 0; i < devices.length; i++) {
-            list.add(devices[i]);
-        }
+        //create testDevice
+        DeviceModel deviceModel = new DeviceModel();
+        deviceModel.setId(System.currentTimeMillis());
+        deviceModel.setDescription("description");
+        deviceModel.setName("Device 1");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_list_item_1, list);
+
         listView.setAdapter(adapter);
+
+        EnergyDataSource.insertDevice(getActivity().getContentResolver(), deviceModel);
+
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
 
 
         }
+
+
+        getLoaderManager().initLoader(0, null, this);
+
     }
 
     /*End lifecycle*/
@@ -98,5 +118,22 @@ public class DevicesFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(getActivity(), EnergyContract.Devices.CONTENT_URI,
+                EnergyContract.Devices.PROJECTION_ALL, null, null,
+                BaseColumns._ID + " ASC");
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        ((SimpleCursorAdapter) this.adapter).swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        ((SimpleCursorAdapter)this.adapter).swapCursor(null);
     }
 }

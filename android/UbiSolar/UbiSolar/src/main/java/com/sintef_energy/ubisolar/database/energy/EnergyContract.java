@@ -27,7 +27,7 @@ public class EnergyContract {
     /**
      * Constants for the Items table of the Devices provider.
      */
-    public static final class Devices implements DeviceModel.DeviceEntry {
+        public static final class Devices implements DeviceModel.DeviceEntry {
         /**
          * The content URI for this table.
          */
@@ -47,7 +47,7 @@ public class EnergyContract {
         /**
          * The default sort order for queries containing NAME fields.
          */
-        public static final String SORT_ORDER_DEFAULT = _ID + " ASC";
+        public static final String SORT_ORDER_DEFAULT = BaseColumns._ID + " ASC";
     }
 
     /**
@@ -73,6 +73,6 @@ public class EnergyContract {
         /**
          * The default sort order for queries containing NAME fields.
          */
-        public static final String SORT_ORDER_DEFAULT = _ID + " ASC";
+        public static final String SORT_ORDER_DEFAULT = BaseColumns._ID + " ASC";
     }
 }
