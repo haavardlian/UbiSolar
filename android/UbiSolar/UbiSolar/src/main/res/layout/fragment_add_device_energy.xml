@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/fragment_add_device_energy_edittext_kwh"
         android:hint="kWh"/>
 
     <Button

@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,14 +15,19 @@ import com.echo.holographlibrary.Line;
 import com.echo.holographlibrary.LineGraph;
 import com.echo.holographlibrary.LinePoint;
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
+import com.sintef_energy.ubisolar.utils.Log;
 
 /**
  * Created by perok on 2/11/14.
  */
 public class UsageFragment extends Fragment {
+
+    private static final String LOG = UsageFragment.class.getName();
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -115,8 +121,31 @@ public class UsageFragment extends Fragment {
                 }
             }
         });
+
+        Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
+
+
+        startActivityForResult(intent, 0);
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch(requestCode) {
+            case (0) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    // TODO Extract the data returned from the child Activity.
+                    double value = data.getDoubleExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
+                    Log.v(LOG, String.valueOf(value));
+                }
+                break;
+            }
+            default:
+
+        }
+    }
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {

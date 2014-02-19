@@ -2,16 +2,24 @@ package com.sintef_energy.ubisolar.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.utils.Log;
 
 public class AddDeviceEnergyActivity extends Activity {
+
+    private static final String LOG = AddDeviceEnergyActivity.class.getName();
+
+    public static final String INTENT_KWH = "com.sintef_energy_ubisolar.intent.kwh";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +73,29 @@ public class AddDeviceEnergyActivity extends Activity {
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
 
+            Button button = (Button)getActivity().findViewById(R.id.fragment_add_device_energy_button_submit);
+
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent resultInt = new Intent();
+
+                    EditText edittext = (EditText) getActivity().findViewById(R.id.fragment_add_device_energy_edittext_kwh);
+
+                    String text = edittext.getText().toString();
+                    Log.v(LOG, "Textfield value: " + text);
+
+                    if(text.length() > 0){
+                        double value = Double.valueOf(text);
+                        resultInt.putExtra(INTENT_KWH, value);
+                    }
+
+                    getActivity().setResult(Activity.RESULT_OK, resultInt);
+                    getActivity().finish();
+                }
+            });
         }
     }
 
