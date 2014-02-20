@@ -3,15 +3,14 @@ package com.sintef_energy.ubisolar.database.energy;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import com.sintef_energy.ubisolar.utils.Log;
+import android.util.Log;
 
 /**
  * Created by perok on 2/11/14.
  */
 public class EnergyOpenHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "energy.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 
 	public EnergyOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
 		super(context, DATABASE_NAME, factory, DATABASE_VERSION);

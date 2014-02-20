@@ -3,7 +3,10 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +14,34 @@ import android.view.ViewGroup;
 import com.echo.holographlibrary.Line;
 import com.echo.holographlibrary.LineGraph;
 import com.echo.holographlibrary.LinePoint;
+import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageGraphLineFragment extends Fragment {
+public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView{
+    public static final String TAG = UsageGraphLineFragment.class.getName();
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+    TotalEnergyPresenter presenter;
+
+    ArrayList<EnergyUsageModel> euModels;
+    private static final String STATE_euModels = "STATE_euModels";
+
+    private final static long MILLISECS_PER_DAY = 24 * 60 * 60 * 1000;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -66,33 +85,28 @@ public class UsageGraphLineFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
+            ArrayList<Parcelable> state = savedInstanceState.getParcelableArrayList(STATE_euModels);
+            if(state != null){
+                euModels = new ArrayList<>();
+                for(Parcelable p : state){}
+                    //euModels.add(EnergyUsageModel.CREATOR.createFromParcel(p.));
+            }
+
             // Restore last state for checked position.
         }
 
-        Line l = new Line();
-        LinePoint p = new LinePoint();
-        p.setX(0);
-        p.setY(5);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(8);
-        p.setY(8);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(10);
-        p.setY(4);
-        l.addPoint(p);
-        l.setColor(Color.parseColor("#FFBB33"));
-
-        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
-        li.addLine(l);
-        li.setRangeY(0, 10);
-        li.setLineToFill(0);
+        createLineGraph();
     }
 
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
+
+        ArrayList<Parcelable> usageModelState = new ArrayList<>();
+        for(EnergyUsageModel euModel : euModels)
+            usageModelState.add(euModel);
+
+        outState.putParcelableArrayList(STATE_euModels, usageModelState);
         super.onSaveInstanceState(outState);
         //outState.putInt("curChoice", mCurCheckPosition);
     }
@@ -100,5 +114,87 @@ public class UsageGraphLineFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
+
+        if(presenter != null)
+            presenter.unregisterListener(this);
+    }
+
+    public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
+        this.presenter = presenter;
+        presenter.registerListner(this);
+        euModels = presenter.getEnergyData();
+
+        Log.v(TAG, "registerTotalEnergypresenter: " + euModels.size());
+    }
+
+    @Override
+    public void dataRefresh() {
+
+    }
+
+    @Override
+    public void newData(EnergyUsageModel euModel) {
+        //euModels.add(euModel);
+        createLineGraph();
+    }
+
+
+    private void createLineGraph(){
+
+        Log.v(TAG, "createLineGraph: " + euModels.size());
+        if (euModels.size() < 1)
+            return;
+
+        Line l = new Line();
+
+        float maxy = Float.MIN_VALUE;
+        LinePoint p;
+
+        int days = 0;
+        float power;
+
+        long currentMillies = 0;
+
+        SimpleDateFormat sFormatter = new SimpleDateFormat("yyyy MM dd");
+
+        for(EnergyUsageModel euModel : euModels){
+
+            Log.v(TAG, "Start: " + sFormatter.format(euModel.getDateStart()) + "  End: " + sFormatter.format(euModel.getDateEnd()));
+            power = euModel.getPower();
+            if(power > maxy)
+                maxy = euModel.getPower();
+
+            //Correct for first run.
+            if(currentMillies == 0)
+                currentMillies = euModel.getDateStart();
+
+            long nowMillies = euModel.getDateStart();
+            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
+            currentMillies = nowMillies;
+
+            //Add start
+            p = new LinePoint(days, power);
+            Log.v(TAG, "A : " + days);
+            l.addPoint(p);
+
+            /* END */
+
+            nowMillies = euModel.getDateEnd();
+            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
+            currentMillies = nowMillies;
+            //Add end
+            p = new LinePoint(days, power);
+            Log.v(TAG, "B : " + days);
+            l.addPoint(p);
+        }
+
+        l.setColor(Color.parseColor("#FFBB33"));
+
+        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
+        li.removeAllLines();
+        li.addLine(l);
+        li.setRangeX(0, days + 1);
+        li.setRangeY(0, maxy + (maxy / 10));
+        li.setLineToFill(0);
     }
 }

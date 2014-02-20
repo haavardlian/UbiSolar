@@ -6,11 +6,26 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 
+import java.util.Comparator;
+
 /**
  * Created by perok on 2/11/14.
  */
-public class EnergyUsageModel implements Parcelable{
+public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel>{
     private static final String TAG = EnergyUsageModel.class.getName();
+
+    @Override
+    public int compareTo(EnergyUsageModel energyUsageModel) {
+        long one = getDateStart();
+        long two = energyUsageModel.getDateStart();
+
+        if(one == two)
+            return 0;
+        else if(one > two)
+            return 1;
+        else
+            return -1;
+    }
 
     /* Column definitions*/
     public static interface EnergyUsageEntry extends BaseColumns {
@@ -33,6 +48,7 @@ public class EnergyUsageModel implements Parcelable{
     /* SQL Statements*/
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
+    private static final String REAL_TYPE = " REAL";
     private static final String COMMA_SEP = ",";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + EnergyUsageEntry.TABLE_NAME + " (" +
@@ -40,10 +56,10 @@ public class EnergyUsageModel implements Parcelable{
                     EnergyUsageEntry.COLUMN_DEVICE_ID + INTEGER_TYPE + COMMA_SEP +
                     EnergyUsageEntry.COLUMN_DATESTART + INTEGER_TYPE + COMMA_SEP +
                     EnergyUsageEntry.COLUMN_DATEEND + INTEGER_TYPE + COMMA_SEP +
-                    EnergyUsageEntry.COLUMN_POWER + INTEGER_TYPE + COMMA_SEP +
+                    EnergyUsageEntry.COLUMN_POWER + REAL_TYPE + COMMA_SEP +
                     "FOREIGN KEY(" + EnergyUsageEntry.COLUMN_DEVICE_ID +
                         ") REFERENCES " + DeviceModel.DeviceEntry.TABLE_NAME +
-                        "(" + DeviceModel.DeviceEntry._ID + ")" + COMMA_SEP +
+                            "(" + DeviceModel.DeviceEntry._ID + ")" +
                     " )";
     //FOREIGN KEY(foreign_key_name) REFERENCES one_table_name(primary_key_name)
 
@@ -58,7 +74,7 @@ public class EnergyUsageModel implements Parcelable{
     private int _dateStart = 2;
     private long dateEnd;
     private int _dateEnd = 3;
-    private long power;
+    private float power;
     private int _power = 4;
 
 
@@ -101,7 +117,7 @@ public class EnergyUsageModel implements Parcelable{
         out.writeLong(deviceId);
         out.writeLong(dateStart);
         out.writeLong(dateEnd);
-        out.writeLong(power);
+        out.writeFloat(power);
     }
 
     private void readFromParcel(Parcel in) {
@@ -109,7 +125,7 @@ public class EnergyUsageModel implements Parcelable{
         setDeviceId(in.readLong());
         setDateStart(in.readLong());
         setDateEnd(in.readLong());
-        setPower(in.readLong());
+        setPower(in.readFloat());
     }
 
     /**
@@ -126,7 +142,6 @@ public class EnergyUsageModel implements Parcelable{
         return values;
     }
 
-
     /**
      * Create CalendarEventModel from cursor
      * @param cursor
@@ -136,7 +151,7 @@ public class EnergyUsageModel implements Parcelable{
         setDeviceId(cursor.getLong(_deviceId));
         setDateStart(cursor.getLong(_dateStart));
         setDateEnd(cursor.getLong(_dateEnd));
-        setPower(cursor.getLong(_power));
+        setPower(cursor.getFloat(_power));
     }
 
     /* Getters and setters */
@@ -173,11 +188,11 @@ public class EnergyUsageModel implements Parcelable{
         this.dateEnd = dateEnd;
     }
 
-    public long getPower() {
+    public float getPower() {
         return power;
     }
 
-    public void setPower(long power) {
+    public void setPower(float power) {
         this.power = power;
     }
 }
