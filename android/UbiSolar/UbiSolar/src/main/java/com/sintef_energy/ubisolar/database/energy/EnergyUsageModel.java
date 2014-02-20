@@ -44,7 +44,7 @@ public class EnergyUsageModel implements Parcelable{
                     EnergyUsageEntry.COLUMN_POWER + REAL_TYPE + COMMA_SEP +
                     "FOREIGN KEY(" + EnergyUsageEntry.COLUMN_DEVICE_ID +
                         ") REFERENCES " + DeviceModel.DeviceEntry.TABLE_NAME +
-                        "(" + DeviceModel.DeviceEntry._ID + ")" + COMMA_SEP +
+                        "(" + DeviceModel.DeviceEntry._ID + ")" +
                     " )";
     //FOREIGN KEY(foreign_key_name) REFERENCES one_table_name(primary_key_name)
 

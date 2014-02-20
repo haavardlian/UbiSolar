@@ -129,7 +129,7 @@ public class EnergyProvider extends ContentProvider{
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        if (URI_MATCHER.match(uri) != DEVICES_LIST ||
+        if (URI_MATCHER.match(uri) != DEVICES_LIST &&
                 URI_MATCHER.match(uri) != ENERGY_LIST)
                 throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
 

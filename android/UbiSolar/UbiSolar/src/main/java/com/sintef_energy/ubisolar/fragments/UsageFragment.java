@@ -159,7 +159,7 @@ public class UsageFragment extends Fragment {
                     euModel.setDateEnd(calendar.getTimeInMillis());
                     euModel.setPower(value);
 
-                    totalEnergyPresenter.addEnergyData(euModel);
+                    totalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
                 }
                 break;
             }

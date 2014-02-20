@@ -33,7 +33,7 @@ public class DeviceModel implements Parcelable{
             "CREATE TABLE " + DeviceEntry.TABLE_NAME + " (" +
                     DeviceEntry._ID + " INTEGER PRIMARY KEY," +
                     DeviceEntry.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
-                    DeviceEntry.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
+                    DeviceEntry.COLUMN_DESCRIPTION + TEXT_TYPE +
                     " )";
 
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DeviceEntry.TABLE_NAME;

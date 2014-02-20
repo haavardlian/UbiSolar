@@ -15,6 +15,20 @@ import java.util.ArrayList;
  */
 public class EnergyDataSource {
 
+    /**
+     * Add EnergyUsageModel to database.
+     *
+     * @param resolver Resolver for the Context.
+     * @param euModel The EnergyUsageModel to add.
+     * @return new Uri to resource.
+     */
+    public static Uri addEnergyModel(ContentResolver resolver, EnergyUsageModel euModel){
+        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+
+        Uri uri = resolver.insert(builder.build(), euModel.getContentValues());
+
+        return uri;
+    }
 
      public static ArrayList<EnergyUsageModel> getEnergyModels(ContentResolver resolver, long from, long to){
         ArrayList<EnergyUsageModel> euModels = new ArrayList<>();
