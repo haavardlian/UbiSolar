@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UbiSolar</string>
+
+    <!-- Title fragment menu -->
+    <string-array name="title_fragments">
+        <item>Devices</item>
+        <item>Usage</item>
+        <item>Power saving</item>
+        <item>Profile</item>
+        <item>Social</item>
+        <item>Logout</item>
+    </string-array>
+
+    <!-- Fragment usage -->
+    <string name="last12months">Last 12 months</string>
+    <string name="lastMonth">Last month</string>
+    <string name="devices">Devices</string>
+    <string name="totalUsage">Total usage</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_age">Age</string>
+    <string name="profile_postcode">Postal code</string>
+    <string name="profile_anon">Anonymous</string>
+    <string name="add_button">Add Usage</string>
+    <string name="title_activity_add_device_energy">Total usage</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

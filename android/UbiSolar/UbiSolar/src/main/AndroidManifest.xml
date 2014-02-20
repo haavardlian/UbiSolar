@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.sintef_energy.ubisolar" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.sintef_energy.ubisolar.activities.LoginActivity"
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.sintef_energy.ubisolar.activities.DrawerActivity"
+            android:label="@string/app_name" >
+        </activity>
+
+        <provider
+            android:name="com.sintef_energy.ubisolar.database.energy.EnergyProvider"
+            android:authorities="com.sintef_energy.ubisolar.provider.energy"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:label="AlarmsProvider"
+            android:readPermission=".alarm.db.AlarmModel.READ"
+            android:writePermission=".alarm.db.AlarmModel.WRITE" />
+
+        <activity
+            android:name="com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity"
+            android:label="@string/title_activity_add_device_energy" >
+        </activity>
+    </application>
+
+</manifest>

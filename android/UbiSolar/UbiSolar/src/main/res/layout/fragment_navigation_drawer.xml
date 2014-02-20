@@ -1,0 +1,25 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#cccc">
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:id="@+id/navigation_drawer_search"
+        android:hint="Search"/>
+
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/navigation_drawer_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:choiceMode="singleChoice"
+        android:divider="@android:drawable/divider_horizontal_dark"
+        android:dividerHeight="1dp"
+        android:background="#cccc"
+        tools:context="com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment" />
+</LinearLayout>
