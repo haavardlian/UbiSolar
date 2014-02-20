@@ -71,8 +71,8 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        Log.v(TAG, "SORT ORDER BETCH BEFORE BETCH: " + sortOrder);
-        Log.v(TAG, "SORT ORDER: "  + BaseColumns._ID);
+        //Log.v(TAG, "SORT ORDER BETCH BEFORE BETCH: " + sortOrder);
+        //Log.v(TAG, "SORT ORDER: "  + BaseColumns._ID);
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         boolean useAuthorityUri = false; //TODO: Automatic notification of changes to LoadManager?
@@ -105,7 +105,7 @@ public class EnergyProvider extends ContentProvider{
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
-        Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
+        //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
         cursor =
               builder.query(
                     db,

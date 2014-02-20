@@ -11,6 +11,8 @@ import android.provider.BaseColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -31,6 +33,11 @@ public class DevicesFragment extends Fragment implements LoaderManager.LoaderCal
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+    Button addButton;
+    EditText nameField, descriptionField, usageField;
+    SimpleCursorAdapter adapter;
+    ArrayList<DeviceModel> devices;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -71,30 +78,59 @@ public class DevicesFragment extends Fragment implements LoaderManager.LoaderCal
         //return rootView;
     }
 
-    SimpleCursorAdapter adapter;
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         final ListView listView = (ListView) getActivity().findViewById(R.id.device_list);
+        devices = new ArrayList<DeviceModel>();
 
         adapter = new SimpleCursorAdapter(getActivity().getApplicationContext(),
                 android.R.layout.simple_list_item_2,
                 null,
                 new String[]{DeviceModel.DeviceEntry.COLUMN_NAME},
-                new int[]{android.R.id.text1}, 0);
-
-        //create testDevice
-        DeviceModel deviceModel = new DeviceModel();
-        deviceModel.setId(System.currentTimeMillis());
-        deviceModel.setDescription("description");
-        deviceModel.setName("Device 1");
-
-
+                new int[]{android.R.id.text2}, 0);
         listView.setAdapter(adapter);
 
-        EnergyDataSource.insertDevice(getActivity().getContentResolver(), deviceModel);
+        nameField = (EditText) getActivity().findViewById(R.id.edit_name);
+        descriptionField = (EditText) getActivity().findViewById(R.id.edit_description);
+        usageField = (EditText) getActivity().findViewById(R.id.edit_usage);
+        addButton = (Button) getActivity().findViewById(R.id.add_button);
+
+        EnergyDataSource.deleteAll(getActivity().getContentResolver());
+
+        addButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                adapter = null;
+
+
+                DeviceModel deviceModel = new DeviceModel();
+                deviceModel.setId(System.currentTimeMillis());
+                deviceModel.setDescription(descriptionField.getText().toString());
+                deviceModel.setName(nameField.getText().toString());
+                devices.add(deviceModel);
+                //devices.add(deviceModel);
+
+                EnergyDataSource.insertDevice(getActivity().getContentResolver(), deviceModel);
+
+
+                adapter = new SimpleCursorAdapter(getActivity().getApplicationContext(),
+                        android.R.layout.simple_list_item_2,
+                        null,
+                        new String[]{DeviceModel.DeviceEntry.COLUMN_NAME},
+                        new int[]{android.R.id.text2}, 0);
+                listView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+
+
+
 
 
         if (savedInstanceState != null) {
