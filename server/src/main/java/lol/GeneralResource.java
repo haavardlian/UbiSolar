@@ -1,9 +1,10 @@
-package com.sintef_energy.ubisolar;
+package lol;
 
 /**
  * Created by thb on 12.02.14.
  */
 import com.google.common.base.Optional;
+import com.sintef_energy.ubisolar.ServerDAO;
 import com.yammer.metrics.annotation.Timed;
 
 import javax.ws.rs.GET;

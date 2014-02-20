@@ -3,11 +3,15 @@ package com.sintef_energy.ubisolar;
 /**
  * Created by thb on 12.02.14.
  */
+import com.sintef_energy.ubisolar.configuration.ServerConfiguration;
+import com.sintef_energy.ubisolar.resources.DeviceResource;
+import com.sintef_energy.ubisolar.resources.DeviceUsageResource;
+import com.sintef_energy.ubisolar.resources.DevicesResource;
+import com.sintef_energy.ubisolar.resources.TotalUsageResource;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jdbi.DBIFactory;
-import com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle;
 import org.skife.jdbi.v2.DBI;
 
 public class ServerService extends Service<ServerConfiguration> {
@@ -25,6 +29,9 @@ public class ServerService extends Service<ServerConfiguration> {
         final DBIFactory factory = new DBIFactory();
         DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "mysql");
         final ServerDAO dao = jdbi.onDemand(ServerDAO.class);
-        environment.addResource(new GeneralResource(dao));
+        environment.addResource(new DeviceResource(dao));
+        environment.addResource(new DevicesResource(dao));
+        environment.addResource(new TotalUsageResource(dao));
+        environment.addResource(new DeviceUsageResource(dao));
     }
 }
