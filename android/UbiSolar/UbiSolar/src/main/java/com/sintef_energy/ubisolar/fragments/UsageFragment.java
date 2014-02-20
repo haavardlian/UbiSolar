@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -71,11 +74,20 @@ public class UsageFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle bundle){
+        //We can alter the option menu
+        setHasOptionsMenu(true);
+
+        super.onCreate(bundle);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+
         return rootView;
     }
 
@@ -88,7 +100,13 @@ public class UsageFragment extends Fragment {
             // Restore last state for checked position.
         }
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 8);
+
         totalEnergyPresenter = new TotalEnergyPresenter();
+        totalEnergyPresenter.loadEnergyData(getActivity().getContentResolver(),
+                0,
+                calendar.getTimeInMillis());
 
         /* Show fragment */
         UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
@@ -131,11 +149,6 @@ public class UsageFragment extends Fragment {
                 }
             }
         });
-
-
-        Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
-
-        startActivityForResult(intent, 0);
     }
 
 
@@ -167,6 +180,28 @@ public class UsageFragment extends Fragment {
 
         }
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+        inflater.inflate(R.menu.fragment_usage_menu, menu);
+        // TODO Add your menu entries here
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.fragment_usage_menu_add:
+                Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
+                startActivityForResult(intent, 0);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {

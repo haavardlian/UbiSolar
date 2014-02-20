@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ import java.util.Calendar;
  * Created by perok on 2/11/14.
  */
 public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView{
+    public static final String TAG = UsageGraphLineFragment.class.getName();
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -34,6 +37,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     TotalEnergyPresenter presenter;
 
     ArrayList<EnergyUsageModel> euModels;
+    private static final String STATE_euModels = "STATE_euModels";
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -77,6 +81,13 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
+            ArrayList<Parcelable> state = savedInstanceState.getParcelableArrayList(STATE_euModels);
+            if(state != null){
+                euModels = new ArrayList<>();
+                for(Parcelable p : state){}
+                    //euModels.add(EnergyUsageModel.CREATOR.createFromParcel(p.));
+            }
+
             // Restore last state for checked position.
         }
 
@@ -86,6 +97,12 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
+
+        ArrayList<Parcelable> usageModelState = new ArrayList<>();
+        for(EnergyUsageModel euModel : euModels)
+            usageModelState.add(euModel);
+
+        outState.putParcelableArrayList(STATE_euModels, usageModelState);
         super.onSaveInstanceState(outState);
         //outState.putInt("curChoice", mCurCheckPosition);
     }
@@ -102,6 +119,8 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         this.presenter = presenter;
         presenter.registerListner(this);
         euModels = presenter.getEnergyData();
+
+        Log.v(TAG, "registerTotalEnergypresenter: " + euModels.size());
     }
 
     @Override

@@ -41,7 +41,12 @@ public class TotalEnergyPresenter {
      * Loads the data with ContentProvider.
      */
     public void loadEnergyData(ContentResolver resolver, long from , long to){
-        euModels = EnergyDataSource.getEnergyModels(resolver, from, to);
+        ArrayList<EnergyUsageModel> tempEuModels = EnergyDataSource.getEnergyModels(resolver, from, to);
+
+        if(tempEuModels != null)
+            euModels = tempEuModels;
+        else
+            euModels = new ArrayList<>();
     }
 
     public ArrayList<EnergyUsageModel> getEnergyData(){
