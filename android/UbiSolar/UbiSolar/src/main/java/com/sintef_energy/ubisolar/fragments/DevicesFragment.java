@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,6 +12,9 @@ import android.provider.BaseColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.util.Log;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -32,12 +36,14 @@ public class DevicesFragment extends Fragment implements LoaderManager.LoaderCal
      * The fragment argument representing the section number for this
      * fragment.
      */
+    public static final String TAG = DevicesFragment.class.getName();
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     Button addButton;
     EditText nameField, descriptionField, usageField;
     SimpleCursorAdapter adapter;
     ArrayList<DeviceModel> devices;
+    View view;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -68,45 +74,50 @@ public class DevicesFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View listView = inflater.inflate(R.layout.fragment_device, container, false);
+        view = inflater.inflate(R.layout.fragment_device, container, false);
 
-
-        return listView;
+        return view;
         //View rootView = inflater.inflate(R.layout.fragment_test, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         //return rootView;
     }
 
-
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         final ListView listView = (ListView) getActivity().findViewById(R.id.device_list);
+
         devices = new ArrayList<DeviceModel>();
 
         adapter = new SimpleCursorAdapter(getActivity().getApplicationContext(),
-                android.R.layout.simple_list_item_2,
+                R.layout.fragment_device_row,
                 null,
-                new String[]{DeviceModel.DeviceEntry.COLUMN_NAME},
-                new int[]{android.R.id.text2}, 0);
+                new String[]{DeviceModel.DeviceEntry.COLUMN_NAME, DeviceModel.DeviceEntry.COLUMN_DESCRIPTION},
+                new int[]{R.id.row_header, R.id.row_description}, 0);
+
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.v(TAG, "Du klikka på listeItem nummer: " + i);
+            }
+        });
 
         nameField = (EditText) getActivity().findViewById(R.id.edit_name);
         descriptionField = (EditText) getActivity().findViewById(R.id.edit_description);
         usageField = (EditText) getActivity().findViewById(R.id.edit_usage);
         addButton = (Button) getActivity().findViewById(R.id.add_button);
 
-        EnergyDataSource.deleteAll(getActivity().getContentResolver());
+        //EnergyDataSource.deleteAll(getActivity().getContentResolver());
 
-        addButton.setOnClickListener(new View.OnClickListener(){
+        addButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 adapter = null;
-
 
                 DeviceModel deviceModel = new DeviceModel();
                 deviceModel.setId(System.currentTimeMillis());
@@ -119,18 +130,15 @@ public class DevicesFragment extends Fragment implements LoaderManager.LoaderCal
 
 
                 adapter = new SimpleCursorAdapter(getActivity().getApplicationContext(),
-                        android.R.layout.simple_list_item_2,
+                        R.layout.fragment_device_row,
                         null,
-                        new String[]{DeviceModel.DeviceEntry.COLUMN_NAME},
-                        new int[]{android.R.id.text2}, 0);
+                        new String[]{DeviceModel.DeviceEntry.COLUMN_NAME, DeviceModel.DeviceEntry.COLUMN_DESCRIPTION},
+                        new int[]{R.id.row_header, R.id.row_description}, 0);
+
                 listView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
             }
         });
-
-
-
-
 
 
         if (savedInstanceState != null) {
@@ -138,7 +146,6 @@ public class DevicesFragment extends Fragment implements LoaderManager.LoaderCal
 
 
         }
-
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -172,4 +179,5 @@ public class DevicesFragment extends Fragment implements LoaderManager.LoaderCal
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         ((SimpleCursorAdapter)this.adapter).swapCursor(null);
     }
+
 }
