@@ -17,6 +17,7 @@ import android.widget.Button;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
@@ -29,7 +30,7 @@ import java.util.Calendar;
  */
 public class UsageFragment extends Fragment {
 
-    private static final String LOG = UsageFragment.class.getName();
+    private static final String TAG = UsageFragment.class.getName();
 
     /**
      * The fragment argument representing the section number for this
@@ -100,6 +101,9 @@ public class UsageFragment extends Fragment {
             // Restore last state for checked position.
         }
 
+        //TODO: Remove. Only for removal of stupid data.
+        int i = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
+        Log.v(TAG, "EMPTY DATABASE: " + i);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
 
@@ -151,7 +155,6 @@ public class UsageFragment extends Fragment {
         });
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -159,17 +162,13 @@ public class UsageFragment extends Fragment {
         switch(requestCode) {
             case (0) : {
                 if (resultCode == Activity.RESULT_OK) {
-                    // TODO Extract the data returned from the child Activity.
-                    double value = data.getDoubleExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
-                    Log.v(LOG, String.valueOf(value));
-
-                    Calendar calendar = Calendar.getInstance();
+                    float value = data.getFloatExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
+                    Log.v(TAG, String.valueOf(value));
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
-                    euModel.setDateStart(calendar.getTimeInMillis());
+                    euModel.setDateStart(data.getLongExtra(AddDeviceEnergyActivity.INTENT_START, -1));
 
-                    calendar.add(Calendar.MONTH, 4);
-                    euModel.setDateEnd(calendar.getTimeInMillis());
+                    euModel.setDateEnd(data.getLongExtra(AddDeviceEnergyActivity.INTENT_END, -1));
                     euModel.setPower(value);
 
                     totalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);

@@ -8,7 +8,9 @@ import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by perok on 2/19/14.
@@ -43,8 +45,10 @@ public class TotalEnergyPresenter {
     public void loadEnergyData(ContentResolver resolver, long from , long to){
         ArrayList<EnergyUsageModel> tempEuModels = EnergyDataSource.getEnergyModels(resolver, from, to);
 
-        if(tempEuModels != null)
+        if(tempEuModels != null){
             euModels = tempEuModels;
+            Collections.sort(euModels);
+        }
         else
             euModels = new ArrayList<>();
     }
@@ -67,6 +71,8 @@ public class TotalEnergyPresenter {
         Log.v(TAG, "addEnergyData: " + uri);
 
         euModels.add(euModel);
+
+        Collections.sort(euModels);
 
         for(ITotalEnergyView view : listeners)
             view.newData(euModel);

@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -38,6 +40,8 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     ArrayList<EnergyUsageModel> euModels;
     private static final String STATE_euModels = "STATE_euModels";
+
+    private final static long MILLISECS_PER_DAY = 24 * 60 * 60 * 1000;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -130,73 +134,67 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     @Override
     public void newData(EnergyUsageModel euModel) {
-        euModels.add(euModel);
+        //euModels.add(euModel);
         createLineGraph();
     }
 
 
     private void createLineGraph(){
 
+        Log.v(TAG, "createLineGraph: " + euModels.size());
         if (euModels.size() < 1)
             return;
 
         Line l = new Line();
 
-        int minx = Integer.MAX_VALUE;
-        int maxx = Integer.MIN_VALUE;
+        float maxy = Float.MIN_VALUE;
+        LinePoint p;
+
+        int days = 0;
+        float power;
+
+        long currentMillies = 0;
+
+        SimpleDateFormat sFormatter = new SimpleDateFormat("yyyy MM dd");
 
         for(EnergyUsageModel euModel : euModels){
-            LinePoint p = new LinePoint();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(euModel.getDateStart());
-            int days = calendar.get(Calendar.DAY_OF_YEAR);
 
-            if(days < minx)
-                minx = days;
+            Log.v(TAG, "Start: " + sFormatter.format(euModel.getDateStart()) + "  End: " + sFormatter.format(euModel.getDateEnd()));
+            power = euModel.getPower();
+            if(power > maxy)
+                maxy = euModel.getPower();
 
-            if(days > maxx)
-                maxx = days;
+            //Correct for first run.
+            if(currentMillies == 0)
+                currentMillies = euModel.getDateStart();
 
-            p.setX(days);
-            p.setY(0);
+            long nowMillies = euModel.getDateStart();
+            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
+            currentMillies = nowMillies;
 
+            //Add start
+            p = new LinePoint(days, power);
+            Log.v(TAG, "A : " + days);
             l.addPoint(p);
 
-            p = new LinePoint();
+            /* END */
 
-            calendar.setTimeInMillis(euModel.getDateEnd());
-            days = calendar.get(Calendar.DAY_OF_YEAR);
-            p.setX(days);
-            p.setY(euModel.getPower());
-
+            nowMillies = euModel.getDateEnd();
+            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
+            currentMillies = nowMillies;
+            //Add end
+            p = new LinePoint(days, power);
+            Log.v(TAG, "B : " + days);
             l.addPoint(p);
-            if(days < minx)
-                minx = days;
-
-            if(days > maxx)
-                maxx = days;
         }
-        /*
-        LinePoint p = new LinePoint();
-        p.setX(0);
-        p.setY(5);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(8);
-        p.setY(8);
-        l.addPoint(p);
-        p = new LinePoint();
-        p.setX(10);
-        p.setY(4);
-        l.addPoint(p);*/
 
         l.setColor(Color.parseColor("#FFBB33"));
 
         LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
+        li.removeAllLines();
         li.addLine(l);
-        li.setRangeX(minx, maxx);
-        li.setRangeY(0, 50);
+        li.setRangeX(0, days + 1);
+        li.setRangeY(0, maxy + (maxy / 10));
         li.setLineToFill(0);
     }
-
 }
