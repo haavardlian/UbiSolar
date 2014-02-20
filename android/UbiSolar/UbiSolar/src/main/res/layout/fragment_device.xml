@@ -5,6 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ListView android:id="@+id/device_list"
+        android:layout_width="match_parent"
+        android:layout_height="273dp"
+        />
+
     <EditText
         android:id="@+id/edit_name"
         android:layout_width="fill_parent"
@@ -29,13 +34,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/add_device_button"/>
-    <!--What do @+id mean? Vs. @string/ -->
-
-    <ListView android:id="@+id/device_list"
-        android:layout_width="match_parent"
-        android:layout_height="273dp"
-
-        />
     <!--<EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
