@@ -186,7 +186,6 @@ public class UsageFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
         inflater.inflate(R.menu.fragment_usage_menu, menu);
-        // TODO Add your menu entries here
         super.onCreateOptionsMenu(menu, inflater);
     }
 

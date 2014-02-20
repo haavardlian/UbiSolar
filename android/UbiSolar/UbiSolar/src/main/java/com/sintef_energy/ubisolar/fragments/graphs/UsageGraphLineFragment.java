@@ -89,8 +89,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        //Callback to activity
-        ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override
