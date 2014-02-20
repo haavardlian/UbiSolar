@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar;
+package lol;
 
 import java.util.ArrayList;
 
