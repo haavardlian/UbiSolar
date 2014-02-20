@@ -3,8 +3,7 @@ package com.sintef_energy.ubisolar.database.energy;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import com.sintef_energy.ubisolar.utils.Log;
+import android.util.Log;
 
 /**
  * Created by perok on 2/11/14.

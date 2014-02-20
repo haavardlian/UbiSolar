@@ -8,12 +8,12 @@ import android.content.ContentValues;
 import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
-
-import com.sintef_energy.ubisolar.utils.Log;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -303,10 +303,7 @@ public class EnergyProvider extends ContentProvider{
             return itemUri;
          }
 
-        Log.e(TAG, "getUriForId: Something went wring with URI: ");
         // s.th. went wrong:
-        //throw new SQLException("Problem while inserting into uri: " + uri);
-
-        return null;
+        throw new SQLException("Problem while inserting into uri: " + uri);
    }
 }

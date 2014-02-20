@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.utils.Log;
 
 public class AddDeviceEnergyActivity extends Activity {
 

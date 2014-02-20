@@ -4,17 +4,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.echo.holographlibrary.Line;
-import com.echo.holographlibrary.LineGraph;
-import com.echo.holographlibrary.LinePoint;
-import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
@@ -22,10 +18,8 @@ import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.utils.Log;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by perok on 2/11/14.

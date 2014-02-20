@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,7 +24,6 @@ import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
-import com.sintef_energy.ubisolar.utils.Log;
 
 public class DrawerActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String LOG = DrawerActivity.class.getName();
