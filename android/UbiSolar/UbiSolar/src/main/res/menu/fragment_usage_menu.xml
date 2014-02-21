@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.sintef_energy.ubisolar.activities.DrawerActivity" >
+    <item android:id="@+id/fragment_usage_menu_add"
+        android:title="Add usage"
+        android:showAsAction="withText|ifRoom" />
+</menu>
