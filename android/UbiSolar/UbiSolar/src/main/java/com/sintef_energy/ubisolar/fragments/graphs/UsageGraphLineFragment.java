@@ -149,11 +149,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     }
 
     @Override
-    public void dataRefresh() {
-
-    }
-
-    @Override
     public void newData(EnergyUsageModel euModel) {
         //euModels.add(euModel);
 //        createLineGraph();
@@ -376,7 +371,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         }
         return compactList;
     }
-
 
     private void setColors(int backgroundColor, int labelColor)
     {

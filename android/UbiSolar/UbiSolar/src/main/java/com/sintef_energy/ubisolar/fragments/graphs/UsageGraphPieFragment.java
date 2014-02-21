@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.structs.Device;
@@ -110,11 +109,6 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
     public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
         this.presenter = presenter;
-    }
-
-    @Override
-    public void dataRefresh() {
-
     }
 
     @Override

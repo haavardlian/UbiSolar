@@ -51,6 +51,9 @@ public class TotalEnergyPresenter {
         }
         else
             euModels = new ArrayList<>();
+
+        for(ITotalEnergyView view : listeners)
+            view.newData(null); //todo: handle correctly...
     }
 
     public ArrayList<EnergyUsageModel> getEnergyData(){

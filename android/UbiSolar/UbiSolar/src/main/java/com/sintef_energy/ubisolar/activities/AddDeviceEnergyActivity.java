@@ -99,7 +99,7 @@ public class AddDeviceEnergyActivity extends Activity {
 
             now = Calendar.getInstance();
 
-            formatter = new SimpleDateFormat("yyyy MM dd");
+            formatter = new SimpleDateFormat("yyyy MM");
 
             Button buttonLeft = (Button)getActivity().findViewById(R.id.fragment_add_device_energy_button_left);
             Button buttonRight = (Button)getActivity().findViewById(R.id.fragment_add_device_energy_button_right);
