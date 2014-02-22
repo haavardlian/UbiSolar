@@ -12,6 +12,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+
+import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -69,6 +71,8 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mHelper.getReadableDatabase();
+        //Log.v(TAG, "SORT ORDER BETCH BEFORE BETCH: " + sortOrder);
+        //Log.v(TAG, "SORT ORDER: "  + BaseColumns._ID);
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         boolean useAuthorityUri = false; //TODO: Automatic notification of changes to LoadManager?
@@ -101,7 +105,7 @@ public class EnergyProvider extends ContentProvider{
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
-
+        //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
         cursor =
               builder.query(
                     db,
@@ -129,9 +133,11 @@ public class EnergyProvider extends ContentProvider{
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        if (URI_MATCHER.match(uri) != DEVICES_LIST &&
-                URI_MATCHER.match(uri) != ENERGY_LIST)
-                throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);
+
+        /*if (!(URI_MATCHER.match(uri) == DEVICES_LIST ||
+                URI_MATCHER.match(uri) == ENERGY_LIST))
+                throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);*/
+
 
         SQLiteDatabase db = mHelper.getWritableDatabase();
 
