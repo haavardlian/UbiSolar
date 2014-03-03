@@ -4,7 +4,7 @@ package com.sintef_energy.ubisolar.resources;
  * Created by thb on 12.02.14.
  */
 import com.sintef_energy.ubisolar.ServerDAO;
-import com.sintef_energy.ubisolar.TotalUsage;
+import com.sintef_energy.ubisolar.structs.TotalUsage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.metrics.annotation.Timed;
 

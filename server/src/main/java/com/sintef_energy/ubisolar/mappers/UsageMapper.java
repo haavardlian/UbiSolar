@@ -1,6 +1,6 @@
 package com.sintef_energy.ubisolar.mappers;
 
-import com.sintef_energy.ubisolar.DeviceUsage;
+import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 

@@ -2,6 +2,9 @@ package com.sintef_energy.ubisolar;
 
 import com.sintef_energy.ubisolar.mappers.TotalUsageMapper;
 import com.sintef_energy.ubisolar.mappers.UsageMapper;
+import com.sintef_energy.ubisolar.structs.Device;
+import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sintef_energy.ubisolar.structs.TotalUsage;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -9,7 +12,6 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
-import java.util.Date;
 import java.util.List;
 
 /**
