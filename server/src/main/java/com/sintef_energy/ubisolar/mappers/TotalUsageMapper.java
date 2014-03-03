@@ -13,6 +13,6 @@ import java.sql.SQLException;
 public class TotalUsageMapper implements ResultSetMapper<TotalUsage>
 {
     public TotalUsage map(int index, ResultSet r, StatementContext statementContext) throws SQLException {
-        return new TotalUsage(r.getInt("user_id"), r.getDate("datetime"), r.getDouble("power_used"));
+        return new TotalUsage(r.getInt("user_id"), r.getTimestamp("timestamp"), r.getDouble("power_usage"));
     }
 }

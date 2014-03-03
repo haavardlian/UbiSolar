@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.mappers;
 
 import com.sintef_energy.ubisolar.structs.Device;
 import org.skife.jdbi.v2.StatementContext;

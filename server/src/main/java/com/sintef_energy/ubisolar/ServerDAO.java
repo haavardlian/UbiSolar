@@ -1,7 +1,8 @@
 package com.sintef_energy.ubisolar;
 
+import com.sintef_energy.ubisolar.mappers.DeviceMapper;
+import com.sintef_energy.ubisolar.mappers.DeviceUsageMapper;
 import com.sintef_energy.ubisolar.mappers.TotalUsageMapper;
-import com.sintef_energy.ubisolar.mappers.UsageMapper;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.sintef_energy.ubisolar.structs.TotalUsage;
@@ -31,7 +32,7 @@ public interface ServerDAO {
     List<Device> getDevicesForUser(@Bind("user_id") int user_id);
 
     @SqlQuery("SELECT * FROM power_usage WHERE device_id = :device_id")
-    @Mapper(UsageMapper.class)
+    @Mapper(DeviceUsageMapper.class)
     List<DeviceUsage> getUsageForDevice(@Bind("device_id") int device_id);
 
     @SqlUpdate("INSERT INTO power_usage (device_id, datetime, power_usage) VALUES (:usage.deviceId, :usage.datetime, :usage.powerUsage)")
