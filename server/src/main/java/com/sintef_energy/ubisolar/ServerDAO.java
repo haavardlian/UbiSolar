@@ -42,6 +42,6 @@ public interface ServerDAO {
     @Mapper(TotalUsageMapper.class)
     List<TotalUsage> getTotalUsageForUser(@Bind("user_id") int user_id);
 
-    @SqlUpdate("INSERT INTO total_power_usage (user_id, datetime, power_used) VALUES(:usage.userId, :usage.datetime, :usage.powerUsed)")
+    @SqlUpdate("INSERT INTO total_power_usage (user_id, timestamp, power_usage) VALUES(:usage.userId, :usage.datetime, :usage.powerUsage)")
     int addTotalUsageForUser(@BindBean("usage") TotalUsage usage);
 }
