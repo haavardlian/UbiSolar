@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v4.widget.DrawerLayout;
 
 import com.sintef_energy.ubisolar.fragments.DevicesFragment;
 import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
@@ -55,9 +54,9 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
         mTitle = getTitle();
 
         // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+//        mNavigationDrawerFragment.setUp(
+//                R.id.navigation_drawer,
+//                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     @Override
