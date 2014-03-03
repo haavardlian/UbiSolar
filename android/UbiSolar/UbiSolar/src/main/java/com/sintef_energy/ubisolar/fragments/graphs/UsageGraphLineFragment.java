@@ -11,9 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.echo.holographlibrary.Line;
-import com.echo.holographlibrary.LineGraph;
-import com.echo.holographlibrary.LinePoint;
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
@@ -145,10 +142,10 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         if (euModels.size() < 1)
             return;
 
-        Line l = new Line();
-
-        float maxy = Float.MIN_VALUE;
-        LinePoint p;
+//        Line l = new Line();
+//
+//        float maxy = Float.MIN_VALUE;
+//        LinePoint p;
 
         int days = 0;
         float power;
@@ -159,42 +156,42 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
         for(EnergyUsageModel euModel : euModels){
 
-            Log.v(TAG, "Start: " + sFormatter.format(euModel.getDateStart()) + "  End: " + sFormatter.format(euModel.getDateEnd()));
-            power = euModel.getPower();
-            if(power > maxy)
-                maxy = euModel.getPower();
-
-            //Correct for first run.
-            if(currentMillies == 0)
-                currentMillies = euModel.getDateStart();
-
-            long nowMillies = euModel.getDateStart();
-            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
-            currentMillies = nowMillies;
-
-            //Add start
-            p = new LinePoint(days, power);
-            Log.v(TAG, "A : " + days);
-            l.addPoint(p);
+//            Log.v(TAG, "Start: " + sFormatter.format(euModel.getDateStart()) + "  End: " + sFormatter.format(euModel.getDateEnd()));
+//            power = euModel.getPower();
+//            if(power > maxy)
+//                maxy = euModel.getPower();
+//
+//            //Correct for first run.
+//            if(currentMillies == 0)
+//                currentMillies = euModel.getDateStart();
+//
+//            long nowMillies = euModel.getDateStart();
+//            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
+//            currentMillies = nowMillies;
+//
+//            //Add start
+//            p = new LinePoint(days, power);
+//            Log.v(TAG, "A : " + days);
+//            l.addPoint(p);
 
             /* END */
 
-            nowMillies = euModel.getDateEnd();
-            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
-            currentMillies = nowMillies;
-            //Add end
-            p = new LinePoint(days, power);
-            Log.v(TAG, "B : " + days);
-            l.addPoint(p);
+//            nowMillies = euModel.getDateEnd();
+//            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
+//            currentMillies = nowMillies;
+//            //Add end
+//            p = new LinePoint(days, power);
+//            Log.v(TAG, "B : " + days);
+//            l.addPoint(p);
         }
 
-        l.setColor(Color.parseColor("#FFBB33"));
-
-        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
-        li.removeAllLines();
-        li.addLine(l);
-        li.setRangeX(0, days + 1);
-        li.setRangeY(0, maxy + (maxy / 10));
-        li.setLineToFill(0);
+//        l.setColor(Color.parseColor("#FFBB33"));
+//
+//        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
+//        li.removeAllLines();
+//        li.addLine(l);
+//        li.setRangeX(0, days + 1);
+//        li.setRangeY(0, maxy + (maxy / 10));
+//        li.setLineToFill(0);
     }
 }

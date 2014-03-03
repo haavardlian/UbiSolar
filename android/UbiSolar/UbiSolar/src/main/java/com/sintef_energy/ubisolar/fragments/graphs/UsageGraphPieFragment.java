@@ -8,11 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.echo.holographlibrary.Line;
-import com.echo.holographlibrary.LineGraph;
-import com.echo.holographlibrary.LinePoint;
-import com.echo.holographlibrary.PieGraph;
-import com.echo.holographlibrary.PieSlice;
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
@@ -76,19 +71,19 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
             // Restore last state for checked position.
         }
 
-        PieGraph pg = (PieGraph)getActivity().findViewById(R.id.graph);
-        PieSlice slice = new PieSlice();
-        slice.setColor(Color.parseColor("#99CC00"));
-        slice.setValue(2);
-        pg.addSlice(slice);
-        slice = new PieSlice();
-        slice.setColor(Color.parseColor("#FFBB33"));
-        slice.setValue(3);
-        pg.addSlice(slice);
-        slice = new PieSlice();
-        slice.setColor(Color.parseColor("#AA66CC"));
-        slice.setValue(8);
-        pg.addSlice(slice);
+//        PieGraph pg = (PieGraph)getActivity().findViewById(R.id.graph);
+//        PieSlice slice = new PieSlice();
+//        slice.setColor(Color.parseColor("#99CC00"));
+//        slice.setValue(2);
+//        pg.addSlice(slice);
+//        slice = new PieSlice();
+//        slice.setColor(Color.parseColor("#FFBB33"));
+//        slice.setValue(3);
+//        pg.addSlice(slice);
+//        slice = new PieSlice();
+//        slice.setColor(Color.parseColor("#AA66CC"));
+//        slice.setValue(8);
+//        pg.addSlice(slice);
     }
 
     /*End lifecycle*/
