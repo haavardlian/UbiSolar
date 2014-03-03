@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.structs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.json.JsonSnakeCase;

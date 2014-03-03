@@ -1,7 +1,11 @@
 package com.sintef_energy.ubisolar;
 
+import com.sintef_energy.ubisolar.mappers.DeviceMapper;
+import com.sintef_energy.ubisolar.mappers.DeviceUsageMapper;
 import com.sintef_energy.ubisolar.mappers.TotalUsageMapper;
-import com.sintef_energy.ubisolar.mappers.UsageMapper;
+import com.sintef_energy.ubisolar.structs.Device;
+import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sintef_energy.ubisolar.structs.TotalUsage;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -9,7 +13,6 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,7 +32,7 @@ public interface ServerDAO {
     List<Device> getDevicesForUser(@Bind("user_id") int user_id);
 
     @SqlQuery("SELECT * FROM power_usage WHERE device_id = :device_id")
-    @Mapper(UsageMapper.class)
+    @Mapper(DeviceUsageMapper.class)
     List<DeviceUsage> getUsageForDevice(@Bind("device_id") int device_id);
 
     @SqlUpdate("INSERT INTO power_usage (device_id, datetime, power_usage) VALUES (:usage.deviceId, :usage.datetime, :usage.powerUsage)")
@@ -39,6 +42,6 @@ public interface ServerDAO {
     @Mapper(TotalUsageMapper.class)
     List<TotalUsage> getTotalUsageForUser(@Bind("user_id") int user_id);
 
-    @SqlUpdate("INSERT INTO total_power_usage (user_id, datetime, power_used) VALUES(:usage.userId, :usage.datetime, :usage.powerUsed)")
+    @SqlUpdate("INSERT INTO total_power_usage (user_id, timestamp, power_usage) VALUES(:usage.userId, :usage.datetime, :usage.powerUsage)")
     int addTotalUsageForUser(@BindBean("usage") TotalUsage usage);
 }

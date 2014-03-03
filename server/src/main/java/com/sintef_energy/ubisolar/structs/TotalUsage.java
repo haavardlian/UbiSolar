@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.structs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.json.JsonSnakeCase;
@@ -9,19 +9,17 @@ import java.util.Date;
  * Created by haavard on 2/19/14.
  */
 @JsonSnakeCase
-public class DeviceUsage {
+public class TotalUsage {
     @JsonProperty
     private Date datetime;
     @JsonProperty
     private double powerUsage;
     @JsonProperty
-    private int deviceId;
+    private int userId;
 
-    public DeviceUsage() {}
-
-    public DeviceUsage(int deviceId, Date datetime, double powerUsage) {
+    public TotalUsage(int userId, Date datetime, double powerUsage) {
         this.powerUsage = powerUsage;
-        this.deviceId = deviceId;
+        this.userId = userId;
         this.datetime = datetime;
     }
 
@@ -41,12 +39,12 @@ public class DeviceUsage {
         this.powerUsage = powerUsage;
     }
 
-    public int getDeviceId() {
-        return deviceId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setDeviceId(int deviceId) {
-        this.deviceId = deviceId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }
 
