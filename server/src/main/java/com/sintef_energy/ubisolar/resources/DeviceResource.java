@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by haavard on 2/19/14.
  */
-@Path("{user}/devices/{id}")
+@Path("user/{user}/devices/{id}")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DeviceResource {
