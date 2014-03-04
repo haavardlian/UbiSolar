@@ -23,6 +23,13 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO device (device_id, user_id, name, description) VALUES (:device.deviceId, :device.userId, :device.name, :device.description)")
     int createDevice(@BindBean("device") Device device);
 
+    @SqlQuery("SELECT device.user_id, timestamp, AVG(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
+            "AS year, MONTH(timestamp) AS month, DAY(timestamp) AS day, HOUR(timestamp) " +
+            "AS hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.device_id AND " +
+            "device.user_id = :userId GROUP BY year, month")
+    @Mapper(TotalUsageMapper.class)
+    List<TotalUsage> getAverageDevicesUsageMonthly(@Bind("userId") int userId);
+
     @SqlQuery("SELECT * FROM device WHERE user_id = :user_id AND device_id = :device_id LIMIT 1")
     @Mapper(DeviceMapper.class)
     Device getDeviceForUserById(@Bind("user_id") int user_id, @Bind("device_id") int device_id);
