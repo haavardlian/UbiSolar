@@ -3,42 +3,65 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.view.ViewGroup.LayoutParams;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.structs.TotalUsage;
+
+import org.achartengine.ChartFactory;
+import org.achartengine.GraphicalView;
+import org.achartengine.chart.PointStyle;
+import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.model.XYSeries;
+import org.achartengine.renderer.XYMultipleSeriesRenderer;
+import org.achartengine.renderer.XYSeriesRenderer;
+import org.achartengine.tools.PanListener;
+import org.achartengine.tools.ZoomEvent;
+import org.achartengine.tools.ZoomListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by perok on 2/11/14.
  */
 public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView{
+
     public static final String TAG = UsageGraphLineFragment.class.getName();
-
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
     private static final String ARG_SECTION_NUMBER = "section_number";
-
-    TotalEnergyPresenter presenter;
-
-    ArrayList<EnergyUsageModel> euModels;
     private static final String STATE_euModels = "STATE_euModels";
 
-    private final static long MILLISECS_PER_DAY = 24 * 60 * 60 * 1000;
+    private static final int POINT_DISTANCE = 15;
+    private static final int GRAPH_MARGIN = 10;
+    private static final int NUMBER_OF_POINTS = 9;
+
+    private View rootView;
+
+    private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
+    private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
+    private XYSeries mCurrentSeries;
+    private XYSeriesRenderer mCurrentRenderer;
+    private GraphicalView mChartView;
+    private ArrayList<TotalUsage> mTotalUsageList;
+    private String mTitleLabel;
+    private String mTitleFormat;
+    private int mZoomMode = 0;
+
+    TotalEnergyPresenter presenter;
+    ArrayList<EnergyUsageModel> euModels;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -70,29 +93,27 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         //return super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
+        rootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         return rootView;
     }
 
-
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onActivityCreated(Bundle savedState) {
+        super.onActivityCreated(savedState);
 
-        if (savedInstanceState != null) {
-            ArrayList<Parcelable> state = savedInstanceState.getParcelableArrayList(STATE_euModels);
-            if(state != null){
-                euModels = new ArrayList<>();
-                for(Parcelable p : state){}
-                    //euModels.add(EnergyUsageModel.CREATOR.createFromParcel(p.));
-            }
-
-            // Restore last state for checked position.
+        if (savedState != null) {
+            mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("mDataset");
+            mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("mRenderer");
+            mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
+            mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
         }
-
+        setupLineGraph();
         createLineGraph();
+        addSeries("Total");
+        createData();
+        populateGraph(mTotalUsageList, "HH:mm", "EEEE dd/MM");
     }
 
     /*End lifecycle*/
@@ -105,6 +126,10 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
         outState.putParcelableArrayList(STATE_euModels, usageModelState);
         super.onSaveInstanceState(outState);
+        outState.putSerializable("mDataset", mDataset);
+        outState.putSerializable("mRenderer", mRenderer);
+        outState.putSerializable("current_series", mCurrentSeries);
+        outState.putSerializable("current_renderer", mCurrentRenderer);
         //outState.putInt("curChoice", mCurCheckPosition);
     }
 
@@ -136,62 +161,201 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     }
 
 
-    private void createLineGraph(){
+    private void setupLineGraph(){
+        mRenderer.setChartTitle("Power usage");
+        mRenderer.setYTitle("KWh");
+        mRenderer.setXTitle("Date");
 
-        Log.v(TAG, "createLineGraph: " + euModels.size());
-        if (euModels.size() < 1)
-            return;
+        mRenderer.setAxisTitleTextSize(16);
+        mRenderer.setChartTitleTextSize(20);
+        mRenderer.setLabelsTextSize(15);
+        mRenderer.setLegendTextSize(15);
+        mRenderer.setPointSize(10);
+        mRenderer.setXLabels(0);
+        mRenderer.setXLabelsPadding(10);
+        mRenderer.setYLabelsPadding(10);
 
-//        Line l = new Line();
-//
-//        float maxy = Float.MIN_VALUE;
-//        LinePoint p;
+        setColors(Color.WHITE, Color.BLACK);
+    }
 
-        int days = 0;
-        float power;
+    private void createLineGraph()
+    {
+        if (mChartView == null) {
+            LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.lineChartView);
+            mChartView = ChartFactory.getLineChartView(rootView.getContext(), mDataset, mRenderer);
+            mChartView.addZoomListener(new ZoomListener() {
+                @Override
+                public void zoomApplied(ZoomEvent zoomEvent) {
+                    double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
+                    if(zoom > 50 && zoom < 70 && mZoomMode != 0)
+                    {
+                        mZoomMode = 0;
+                        changeDataset();
+                    }
+                    if(zoom > 300 && zoom < 350 && mZoomMode != 1)
+                    {
+                        mZoomMode = 1;
+                        System.out.println(zoom);
+                        changeDataset();
+                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
+                    }
+                }
 
-        long currentMillies = 0;
+                @Override
+                public void zoomReset() {
+                }
+            }, true, true);
+            mChartView.addPanListener(new PanListener() {
+                @Override
+                public void panApplied() {
+                    int activePoint = (int) (mRenderer.getXAxisMin() + mRenderer.getXAxisMax()) / 2;
+                    int activeDeviceIndex = (int) activePoint / POINT_DISTANCE;
+                    if(activeDeviceIndex < 0)
+                        return;
+                    if (!mTitleLabel.equals(formatDate(mTotalUsageList.get(activeDeviceIndex).getDatetime(), mTitleFormat))) {
+                        mTitleLabel = formatDate(mTotalUsageList.get(activeDeviceIndex).getDatetime(), mTitleFormat);
+                        setLabels(formatDate(mTotalUsageList.get(activeDeviceIndex).getDatetime(), mTitleFormat));
+                    }
+                }
+            });
+            layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT,
+                    LayoutParams.MATCH_PARENT));
+        } else {
+            mChartView.repaint();
+        }
+    }
 
-        SimpleDateFormat sFormatter = new SimpleDateFormat("yyyy MM dd");
+    private void addSeries(String seriesName)
+    {
+        XYSeries series = new XYSeries(seriesName);
+        mDataset.addSeries(series);
+        mCurrentSeries = series;
 
-        for(EnergyUsageModel euModel : euModels){
+        XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
+        mRenderer.addSeriesRenderer(seriesRenderer);
+        seriesRenderer.setPointStyle(PointStyle.CIRCLE);
+        seriesRenderer.setFillPoints(true);
+        //Enable to display chart values on the graph
+//        seriesRenderer.setDisplayChartValues(true);
+//        seriesRenderer.setChartValuesTextSize(25);
+//        seriesRenderer.setChartValuesSpacing(25);
+//        mRenderer.setDisplayChartValuesDistance(10);
+        seriesRenderer.setLineWidth(3);
+        mCurrentRenderer = seriesRenderer;
+    }
 
-//            Log.v(TAG, "Start: " + sFormatter.format(euModel.getDateStart()) + "  End: " + sFormatter.format(euModel.getDateEnd()));
-//            power = euModel.getPower();
-//            if(power > maxy)
-//                maxy = euModel.getPower();
-//
-//            //Correct for first run.
-//            if(currentMillies == 0)
-//                currentMillies = euModel.getDateStart();
-//
-//            long nowMillies = euModel.getDateStart();
-//            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
-//            currentMillies = nowMillies;
-//
-//            //Add start
-//            p = new LinePoint(days, power);
-//            Log.v(TAG, "A : " + days);
-//            l.addPoint(p);
-
-            /* END */
-
-//            nowMillies = euModel.getDateEnd();
-//            days += Math.abs((nowMillies - currentMillies) / MILLISECS_PER_DAY);
-//            currentMillies = nowMillies;
-//            //Add end
-//            p = new LinePoint(days, power);
-//            Log.v(TAG, "B : " + days);
-//            l.addPoint(p);
+    private void populateGraph( ArrayList<TotalUsage> totalUsage, String labelFormat, String titleFormat)
+    {
+        mTitleFormat = titleFormat;
+        double max = 0;
+        double min = 0;
+        int y = 0;
+        mCurrentSeries.clear();
+        mRenderer.clearXTextLabels();
+        for(TotalUsage usage : totalUsage)
+        {
+            mRenderer.addXTextLabel(y, formatDate(usage.getDatetime(), labelFormat));
+            mCurrentSeries.add(y, usage.getPower_usage());
+            y += POINT_DISTANCE;
+            max = Math.max(max, usage.getPower_usage());
+            min = Math.min(min, usage.getPower_usage());
         }
 
-//        l.setColor(Color.parseColor("#FFBB33"));
-//
-//        LineGraph li = (LineGraph)getActivity().findViewById(R.id.graph);
-//        li.removeAllLines();
-//        li.addLine(l);
-//        li.setRangeX(0, days + 1);
-//        li.setRangeY(0, maxy + (maxy / 10));
-//        li.setLineToFill(0);
+        setRange(min, max, totalUsage.size());
+        setLabels(formatDate(totalUsage.get(totalUsage.size() - 1).getDatetime(), titleFormat));
+
+//        mChartView.zoomOut();
+        if( mChartView != null)
+            mChartView.repaint();
+    }
+
+    private void setRange(double min, double max, int count)
+    {
+        int pointsToShow;
+        if(NUMBER_OF_POINTS > count)
+            pointsToShow = count;
+        else
+            pointsToShow = NUMBER_OF_POINTS;
+        int end = count * POINT_DISTANCE;
+        mRenderer.setRange(new double[]{end - (pointsToShow * POINT_DISTANCE) - GRAPH_MARGIN,
+                end + GRAPH_MARGIN, min - GRAPH_MARGIN, max + GRAPH_MARGIN});
+    }
+
+    private void changeDataset()
+    {
+        switch (mZoomMode)
+        {
+            case 0:
+                populateGraph(mTotalUsageList, "HH:mm", "EEEE dd/MM");
+                break;
+            case 1:
+                populateGraph(createDays(mTotalUsageList), "dd", "MMMM");
+                break;
+        }
+    }
+
+    private ArrayList<TotalUsage> createDays(ArrayList<TotalUsage> list)
+    {
+        ArrayList<TotalUsage> compactList = new ArrayList<>();
+        String date = formatDate(list.get(0).getDatetime(), "dd/MM");
+        double powerUsage = 0;
+        Date oldDate = new Date();
+        for(TotalUsage usage : list)
+        {
+            if(!date.equals(formatDate(usage.getDatetime(), "dd/MM")))
+            {
+                date = formatDate(usage.getDatetime(), "dd/MM");
+                compactList.add(new TotalUsage(1, oldDate, powerUsage));
+                powerUsage = 0;
+            }
+
+            oldDate = usage.getDatetime();
+            powerUsage += usage.getPower_usage();
+        }
+        return compactList;
+    }
+
+
+    private void setColors(int backgroundColor, int labelColor)
+    {
+        mRenderer.setApplyBackgroundColor(true);
+        mRenderer.setBackgroundColor(backgroundColor);
+        mRenderer.setMarginsColor(backgroundColor);
+        mRenderer.setLabelsColor(labelColor);
+        mRenderer.setXLabelsColor(labelColor);
+        mRenderer.setYLabelsColor(0, labelColor);
+    }
+
+    private String formatDate(Date date, String format)
+    {
+        SimpleDateFormat formater = new SimpleDateFormat (format);
+        return formater.format(date);
+    }
+
+    private void setLabels(String label)
+    {
+        mRenderer.setXTitle(label);
+        mTitleLabel = label;
+    }
+
+    // Temp code for generating data
+
+    private ArrayList<TotalUsage> createData()
+    {
+        TotalUsage usage;
+        mTotalUsageList = new ArrayList<>();
+        Date date;
+        Random random = new Random();
+
+        for(int i = 0; i < 100; i++)
+        {
+            date = new Date(System.currentTimeMillis() + (i * 60 * 60 * 1000));
+            usage = new TotalUsage(1, date, random.nextInt((200 - 50) + 1) + 50);
+            mTotalUsageList.add(usage);
+        }
+
+        return mTotalUsageList;
+//        populateGraph(mTotalUsageList, "HH:mm", "EEEE dd/MM");
     }
 }
+

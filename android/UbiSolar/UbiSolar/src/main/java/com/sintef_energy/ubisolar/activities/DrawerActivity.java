@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
 
 public class DrawerActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
     private static final String LOG = DrawerActivity.class.getName();
 
     /**
@@ -38,25 +40,25 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
     protected void onCreate(Bundle savedInstanceState) {
         //TODO: Check if user is logged in
         //Switch to login screen or continue.
-        if(!Global.loggedIn) {
-            Intent loginIntent = new Intent(this, LoginActivity.class);
-            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(loginIntent);
-        }
-
-        titleNames = getResources().getStringArray(R.array.title_fragments);
+//        if(!Global.loggedIn) {
+//            Intent loginIntent = new Intent(this, LoginActivity.class);
+//            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//            startActivity(loginIntent);
+//        }
 
         super.onCreate(savedInstanceState);
+
+        titleNames = getResources().getStringArray(R.array.title_fragments);
         setContentView(R.layout.activity_usage);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
-//        mNavigationDrawerFragment.setUp(
-//                R.id.navigation_drawer,
-//                (DrawerLayout) findViewById(R.id.drawer_layout));
+//        Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     @Override
