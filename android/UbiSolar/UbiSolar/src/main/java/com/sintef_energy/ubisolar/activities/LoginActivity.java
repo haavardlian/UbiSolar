@@ -85,7 +85,7 @@ public class LoginActivity extends Activity {
      */
     public void attemptLogin() {
         Global.loggedIn = true;
-        Intent usageIntent = new Intent(this,DrawerActivity.class);
+        Intent usageIntent = new Intent(this, DrawerActivity.class);
         usageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(usageIntent);
     }
