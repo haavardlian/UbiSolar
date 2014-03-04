@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by haavard on 2/19/14.
  */
-@Path("{user}/usage/{device}")
+@Path("user/{user}/usage/{device}")
 @Produces(MediaType.APPLICATION_JSON)
 public class DeviceUsageResource {
     private final ServerDAO db;

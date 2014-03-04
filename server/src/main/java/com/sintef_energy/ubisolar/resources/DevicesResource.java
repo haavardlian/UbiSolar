@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by haavard on 2/19/14.
  */
-@Path("{user}/devices/")
+@Path("user/{user}/devices/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DevicesResource {
