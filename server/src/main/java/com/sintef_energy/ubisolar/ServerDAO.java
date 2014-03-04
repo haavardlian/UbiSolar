@@ -34,6 +34,9 @@ public interface ServerDAO {
     @Mapper(DeviceMapper.class)
     Device getDeviceForUserById(@Bind("user_id") int user_id, @Bind("device_id") int device_id);
 
+    @SqlQuery("DELETE FROM device WHERE user_id = :user_id AND device_id = :device_id LIMIT 1")
+    int deleteDeviceForUserById(@Bind("user_id") int user_id, @Bind("device_id") int device_id);
+
     @SqlQuery("SELECT * FROM device WHERE user_id = :user_id")
     @Mapper(DeviceMapper.class)
     List<Device> getDevicesForUser(@Bind("user_id") int user_id);

@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.resources;
 
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.ServerDAO;
+import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 
 import javax.ws.rs.*;
@@ -21,10 +22,16 @@ public class DeviceResource {
         this.db = db;
     }
 
+    @DELETE
+    public Response deleteDeviceById(@PathParam("user") IntParam user, @PathParam("id") IntParam id) {
+        int result = db.deleteDeviceForUserById(user.get(), id.get());
+
+        if(result == 1) return Response.ok(new SimpleJSONMessage("Device deleted")).build();
+        else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
+    }
     @GET
     public Device getDeviceById(@PathParam("user") IntParam user, @PathParam("id") IntParam id) {
         Device d = db.getDeviceForUserById(user.get(), id.get());
-
         if(d != null) return d;
         else throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
