@@ -25,6 +25,17 @@ public class TotalUsageResource {
     }
 
     @GET
+    @Path("devices/")
+    public List<TotalUsage> getTotalDeviceUsage(@PathParam("user") IntParam user) {
+        List<TotalUsage> totalUsage = db.getAverageDevicesUsageMonthly(user.get());
+
+        if(totalUsage != null && !totalUsage.isEmpty())
+            return totalUsage;
+        else
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    @GET
     @Timed
     public List<TotalUsage> getPowerUsage(@PathParam("user") IntParam user) {
         List<TotalUsage> usage = db.getTotalUsageForUser(user.get());
