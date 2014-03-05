@@ -4,6 +4,7 @@ package com.sintef_energy.ubisolar.resources;
  * Created by thb on 12.02.14.
  */
 import com.sintef_energy.ubisolar.ServerDAO;
+import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.sintef_energy.ubisolar.structs.TotalUsage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.metrics.annotation.Timed;
@@ -48,9 +49,9 @@ public class TotalUsageResource {
     @PUT
     @Timed
     public Response addPowerUsage(@PathParam("user") IntParam user, @Valid TotalUsage usage) {
-        int r = db.addTotalUsageForUser(usage);
+        int result = db.addTotalUsageForUser(usage);
 
-        if(r == 1) throw new WebApplicationException(Response.Status.CREATED);
+        if(result == 1) return  Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Usage added")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 }
