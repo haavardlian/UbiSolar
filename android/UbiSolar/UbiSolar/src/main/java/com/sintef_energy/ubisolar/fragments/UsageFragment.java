@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
@@ -120,39 +121,40 @@ public class UsageFragment extends Fragment {
         ft.commit();
 
         /* Button listeners*/
-        Button periodButton = (Button)getActivity().findViewById(R.id.fragment_usage_btn_change_date);
+        ImageButton periodButton = (ImageButton)getActivity().findViewById(R.id.usage_button_swap_graph);
         periodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                toggleGraph(view);
             }
         });
 
-        final Button deviceButton = (Button)getActivity().findViewById(R.id.fragment_usage_btn_devices);
-        deviceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(showingTotalUsage){
-                    showingTotalUsage = false;
-                    UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
-                    fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-                    ft.commit();
-
-                    deviceButton.setText(getResources().getString(R.string.totalUsage));
-                }
-                else{
-                    showingTotalUsage = true;
-                    UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-                    fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-                    ft.commit();
-                    deviceButton.setText(getResources().getString(R.string.devices));
-                }
-            }
-        });
+//        final Button deviceButton = (Button)getActivity().findViewById(R.id.fragment_usage_btn_devices);
+//        deviceButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(showingTotalUsage){
+//                    showingTotalUsage = false;
+//                    UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
+//                    fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                    ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+//                    ft.commit();
+//
+//                    deviceButton.setText(getResources().getString(R.string.totalUsage));
+//                }
+//                else{
+//                    showingTotalUsage = true;
+//                    UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
+//                    fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                    ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+//                    ft.commit();
+//                    deviceButton.setText(getResources().getString(R.string.devices));
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -211,5 +213,36 @@ public class UsageFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
+    }
+
+    public void toggleGraph(View view)
+    {
+        ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
+
+        if( button.getTag(R.string.graph_tag) == null)
+            button.setTag(R.string.graph_tag, "pie");
+
+        //TODO swap graphs
+        if(button.getTag(R.string.graph_tag).equals("pie"))
+        {
+            button.setImageResource(R.drawable.line);
+            button.setTag(R.string.graph_tag, "line");
+            UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
+            fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+
+            ft.commit();
+        }
+        else
+        {
+            button.setImageResource(R.drawable.pie);
+            button.setTag(R.string.graph_tag, "pie");
+            UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
+            fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+            ft.commit();
+        }
     }
 }

@@ -11,17 +11,4 @@
         android:layout_height="fill_parent"
         android:layout_weight="1">
     </LinearLayout>
-
-    <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content" >-->
-
-        <!--<ImageButton-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:id="@+id/toggleGraphButton"-->
-            <!--android:src="@drawable/pie"-->
-            <!--android:onClick="toggleGraph"/>-->
-    <!--</LinearLayout>-->
 </LinearLayout>
