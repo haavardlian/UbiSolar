@@ -24,7 +24,6 @@ public class TipsResource {
     }
 
     @GET
-    @Path("/all")
     public List<Tip> getAllTips() {
         List<Tip> tips = db.getAllTips();
 
@@ -33,16 +32,16 @@ public class TipsResource {
     }
 
     @GET
-    @Path("/id/{id}")
+    @Path("/{id}")
     public Tip getTipById(@PathParam("id")IntParam id) {
-        Tip tip = db.getTipBtId(id.get());
+        Tip tip = db.getTipById(id.get());
 
         if(tip != null) return tip;
         else throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @GET
-    @Path("/id/{id}/rating/")
+    @Path("/{id}/rating/")
     public List<TipRating> getRatingsForTip(@PathParam("id") IntParam id) {
         List<TipRating> ratings = db.getRatingsForTip(id.get());
 
@@ -52,7 +51,7 @@ public class TipsResource {
     }
 
     @PUT
-    @Path("/rating")
+    @Path("/{id}/rating")
     public Response createRating(@Valid TipRating rating) {
         int result = db.createRating(rating);
 
