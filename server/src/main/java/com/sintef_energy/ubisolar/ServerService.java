@@ -4,10 +4,7 @@ package com.sintef_energy.ubisolar;
  * Created by thb on 12.02.14.
  */
 import com.sintef_energy.ubisolar.configuration.ServerConfiguration;
-import com.sintef_energy.ubisolar.resources.DeviceResource;
-import com.sintef_energy.ubisolar.resources.DeviceUsageResource;
-import com.sintef_energy.ubisolar.resources.DevicesResource;
-import com.sintef_energy.ubisolar.resources.TotalUsageResource;
+import com.sintef_energy.ubisolar.resources.*;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
@@ -33,5 +30,6 @@ public class ServerService extends Service<ServerConfiguration> {
         environment.addResource(new DevicesResource(dao));
         environment.addResource(new TotalUsageResource(dao));
         environment.addResource(new DeviceUsageResource(dao));
+        environment.addResource(new TipsResource(dao));
     }
 }
