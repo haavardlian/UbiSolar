@@ -14,6 +14,7 @@
     </string-array>
 
     <!-- Fragment usage -->
+    <string name="graph_tag"></string>
     <string name="last12months">Last 12 months</string>
     <string name="lastMonth">Last month</string>
     <string name="devices">Devices</string>
