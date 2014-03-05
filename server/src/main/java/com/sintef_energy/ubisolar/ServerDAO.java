@@ -1,11 +1,7 @@
 package com.sintef_energy.ubisolar;
 
-import com.sintef_energy.ubisolar.mappers.DeviceMapper;
-import com.sintef_energy.ubisolar.mappers.DeviceUsageMapper;
-import com.sintef_energy.ubisolar.mappers.TotalUsageMapper;
-import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
-import com.sintef_energy.ubisolar.structs.TotalUsage;
+import com.sintef_energy.ubisolar.mappers.*;
+import com.sintef_energy.ubisolar.structs.*;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
@@ -23,12 +19,26 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO device (device_id, user_id, name, description) VALUES (:device.deviceId, :device.userId, :device.name, :device.description)")
     int createDevice(@BindBean("device") Device device);
 
-    @SqlQuery("SELECT device.user_id, timestamp, AVG(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
-            "AS year, MONTH(timestamp) AS month, DAY(timestamp) AS day, HOUR(timestamp) " +
-            "AS hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.device_id AND " +
+    @SqlQuery("SELECT device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
+              "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
+              "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.device_id AND " +
+              "device.user_id = :userId GROUP BY year")
+    @Mapper(TotalUsageMapper.class)
+    List<TotalUsage> getTotalDevicesUsageYearly(@Bind("userId") int userId);
+
+    @SqlQuery("SELECT device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
+            "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
+            "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.device_id AND " +
             "device.user_id = :userId GROUP BY year, month")
     @Mapper(TotalUsageMapper.class)
-    List<TotalUsage> getAverageDevicesUsageMonthly(@Bind("userId") int userId);
+    List<TotalUsage> getTotalDevicesUsageMonthly(@Bind("userId") int userId);
+
+    @SqlQuery("SELECT device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
+            "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
+            "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.device_id AND " +
+            "device.user_id = :userId GROUP BY year, month, week, day")
+    @Mapper(TotalUsageMapper.class)
+    List<TotalUsage> getTotalDevicesUsageDaily(@Bind("userId") int userId);
 
     @SqlQuery("SELECT * FROM device WHERE user_id = :user_id AND device_id = :device_id LIMIT 1")
     @Mapper(DeviceMapper.class)
@@ -54,4 +64,23 @@ public interface ServerDAO {
 
     @SqlUpdate("INSERT INTO total_power_usage (user_id, timestamp, power_usage) VALUES(:usage.userId, :usage.datetime, :usage.powerUsage)")
     int addTotalUsageForUser(@BindBean("usage") TotalUsage usage);
-}
+
+    @SqlQuery("SELECT * FROM tips")
+    @Mapper(TipMapper.class)
+    List<Tip> getAllTips();
+
+    @SqlQuery("SELECT * FROM tips WHERE id = :id")
+    @Mapper(TipMapper.class)
+    Tip getTipBtId(@Bind("id") int id);
+
+    @SqlUpdate("INSERT INTO tips (name, description) VALUES (:tip.name, :tip.description)")
+    int createTip(@BindBean("tip") Tip tip);
+
+    @SqlQuery("SELECT * FROM tip_ratings WHERE tips_id = :id ORDER BY rating DESC")
+    @Mapper(TipRatingMapper.class)
+    List<TipRating> getRatingsForTip(@Bind("id") int id);
+
+    @SqlUpdate("INSERT INTO tip_ratings (tips_id, rating, user_id) VALUES (:rating.tipId, :rating.rating, :rating.userId)")
+    int createRating(@BindBean("rating") TipRating rating);
+
+ }

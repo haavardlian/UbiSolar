@@ -25,25 +25,15 @@ public class TotalUsageResource {
         this.db = db;
     }
 
-    @GET
-    @Path("devices/")
-    public List<TotalUsage> getTotalDeviceUsage(@PathParam("user") IntParam user) {
-        List<TotalUsage> totalUsage = db.getAverageDevicesUsageMonthly(user.get());
 
-        if(totalUsage != null && !totalUsage.isEmpty())
-            return totalUsage;
-        else
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
 
     @GET
+    @Path("{interval}/")
     @Timed
-    public List<TotalUsage> getPowerUsage(@PathParam("user") IntParam user) {
+    public List<TotalUsage> getPowerUsage(@PathParam("user") IntParam user, @PathParam("interval") String interval) {
         List<TotalUsage> usage = db.getTotalUsageForUser(user.get());
-        if(usage != null && !usage.isEmpty())
-            return usage;
-        else
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        if(usage != null && !usage.isEmpty()) return usage;
+        else throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     @PUT

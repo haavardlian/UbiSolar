@@ -29,10 +29,11 @@ public class DeviceResource {
         if(result == 1) return Response.ok(new SimpleJSONMessage("Device deleted")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
+
     @GET
     public Device getDeviceById(@PathParam("user") IntParam user, @PathParam("id") IntParam id) {
-        Device d = db.getDeviceForUserById(user.get(), id.get());
-        if(d != null) return d;
+        Device device = db.getDeviceForUserById(user.get(), id.get());
+        if(device != null) return device;
         else throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 }
