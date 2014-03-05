@@ -155,17 +155,21 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
                     if (seriesSelection != null) {
                         for (int i = 0; i < mSeries.getItemCount(); i++) {
-                            mRenderer.getSeriesRendererAt(i).setHighlighted(i == seriesSelection.getPointIndex());
+                            if(mRenderer.getSeriesRendererAt(i).isHighlighted() && i == seriesSelection.getPointIndex())
+                            {
+                                mRenderer.getSeriesRendererAt(i).setHighlighted(false);
+                                clearDetails();
+                            }
+                            else if(i == seriesSelection.getPointIndex())
+                            {
+                                mRenderer.getSeriesRendererAt(i).setHighlighted(true);
+                                updateDetails(devices.get(seriesSelection.getPointIndex()), String.valueOf(seriesSelection.getValue()));
+                            }
+                            else
+                            {
+                                mRenderer.getSeriesRendererAt(i).setHighlighted(false);
+                            }
                         }
-
-                        TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
-                        TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
-                        TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
-
-                        nameView.setText(devices.get(seriesSelection.getPointIndex()).getName());
-                        descriptionView.setText(devices.get(seriesSelection.getPointIndex()).getDescription());
-                        powerUsageView.setText(String.valueOf(seriesSelection.getValue() + " kWh"));
-
                         mChartView.repaint();
                     }
                 }
@@ -253,4 +257,26 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
         return collection;
     }
 
+    private void updateDetails(Device device, String powerUsage)
+    {
+        TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
+        TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
+        TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
+
+
+        nameView.setText(device.getName());
+        descriptionView.setText(device.getDescription());
+        powerUsageView.setText(powerUsage + " kWh");
+    }
+
+    private void clearDetails()
+    {
+        TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
+        TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
+        TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
+
+        nameView.setText("");
+        descriptionView.setText("");
+        powerUsageView.setText("");
+    }
 }
