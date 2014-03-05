@@ -71,7 +71,7 @@ public interface ServerDAO {
 
     @SqlQuery("SELECT * FROM tips WHERE id = :id")
     @Mapper(TipMapper.class)
-    Tip getTipBtId(@Bind("id") int id);
+    Tip getTipById(@Bind("id") int id);
 
     @SqlUpdate("INSERT INTO tips (name, description) VALUES (:tip.name, :tip.description)")
     int createTip(@BindBean("tip") Tip tip);
