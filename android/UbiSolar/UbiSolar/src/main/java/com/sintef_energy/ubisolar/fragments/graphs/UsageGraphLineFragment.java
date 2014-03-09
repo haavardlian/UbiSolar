@@ -278,6 +278,8 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         {
             mRenderer.setRange(new double[]{end - (pointsToShow * POINT_DISTANCE) - GRAPH_MARGIN,
                 end + GRAPH_MARGIN, min - GRAPH_MARGIN, max + GRAPH_MARGIN});
+            mRenderer.setPanLimits(new double[]{0,
+                    end + GRAPH_MARGIN, min - GRAPH_MARGIN, max + GRAPH_MARGIN});
         }
         else
         {
@@ -288,6 +290,8 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 int start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
                 mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
                     start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
+                mRenderer.setPanLimits(new double[]{0,
+                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
             }
             else if(mZoomLevel == 1 && mZoomIn == false)
             {
@@ -295,6 +299,8 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
                 int start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
                 mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
+                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
+                mRenderer.setPanLimits(new double[]{0,
                         start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
             }
             else if(mZoomLevel == 1 && mZoomIn == true)
