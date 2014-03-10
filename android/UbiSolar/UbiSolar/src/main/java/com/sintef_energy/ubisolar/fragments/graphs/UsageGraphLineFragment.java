@@ -46,7 +46,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private static final String STATE_euModels = "STATE_euModels";
 
     private static final int POINT_DISTANCE = 15;
-    private static final int GRAPH_MARGIN = 10;
+    private static final int GRAPH_MARGIN = 20;
     private static final int NUMBER_OF_POINTS = 9;
 
     private View rootView;
@@ -60,6 +60,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private ArrayList<TotalUsage> mCurrentUsageList;
     private String mTitleLabel;
     private String mTitleFormat;
+    private String mDataResolution;
     private int mZoomLevel = 0;
     private boolean mZoomIn;
     private int mActiveDateIndex = 0;
@@ -112,7 +113,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         createLineGraph();
         addSeries("Total");
         createData();
-        populateGraph(mTotalUsageList, "HH", "EEEE dd/MM");
+        populateGraph(mTotalUsageList, "HH", "EEEE dd/MM", mTotalUsageList.size());
     }
 
     /*End lifecycle*/
@@ -158,7 +159,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private void setupLineGraph(){
         mRenderer.setChartTitle("Power usage");
         mRenderer.setYTitle("KWh");
-        mRenderer.setXTitle("Date");
 
         mRenderer.setAxisTitleTextSize(16);
         mRenderer.setChartTitleTextSize(20);
@@ -181,17 +181,13 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 @Override
                 public void zoomApplied(ZoomEvent zoomEvent) {
                     double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
-                    if(zoom > 50 && zoom < 70 && mZoomLevel > 0)
+                    if(zoom > 40 && zoom < 90)
                     {
-                        mZoomLevel--;
-                        mZoomIn = true;
-                        changeDataset();
+                        zoomIn();
                     }
-                    if(zoom > 250 && zoom < 270 && mZoomLevel <= 3)
+                    if(zoom > 250 && zoom < 270)
                     {
-                        mZoomLevel++;
-                        mZoomIn = false;
-                        changeDataset();
+                        zoomOut();
                     }
                 }
 
@@ -239,122 +235,87 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         mCurrentRenderer = seriesRenderer;
     }
 
-    private void populateGraph( ArrayList<TotalUsage> totalUsage, String labelFormat, String titleFormat)
+    private void populateGraph( ArrayList<TotalUsage> usage, String labelFormat,
+                                String titleFormat, int centerIndex)
     {
         mTitleFormat = titleFormat;
-        mCurrentUsageList = totalUsage;
-        double max = 0;
-        double min = 0;
-        int y = 0;
+        mDataResolution = labelFormat;
+        mCurrentUsageList = usage;
+
         mCurrentSeries.clear();
         mRenderer.clearXTextLabels();
-        for(TotalUsage usage : totalUsage)
+
+        double max = 0;
+        double min = Integer.MAX_VALUE;
+        int y = 0;
+
+        for(TotalUsage u : usage)
         {
-            mRenderer.addXTextLabel(y, formatDate(usage.getDatetime(), labelFormat));
-            mCurrentSeries.add(y, usage.getPower_usage());
+            mRenderer.addXTextLabel(y, formatDate(u.getDatetime(), labelFormat));
+            mCurrentSeries.add(y, u.getPower_usage());
             y += POINT_DISTANCE;
-            max = Math.max(max, usage.getPower_usage());
-            min = Math.min(min, usage.getPower_usage());
+            max = Math.max(max, u.getPower_usage());
+            min = Math.min(min, u.getPower_usage());
         }
 
-        setRange(min, max, totalUsage.size());
-        setLabels(formatDate(totalUsage.get(mActiveDateIndex).getDatetime(), titleFormat));
+        setRange(min, max, centerIndex);
+        if(mActiveDateIndex < usage.size())
+            setLabels(formatDate(usage.get(mActiveDateIndex).getDatetime(), titleFormat));
 
 //        mChartView.zoomOut();
         if( mChartView != null)
             mChartView.repaint();
     }
 
-    private void setRange(double min, double max, int count)
+    private void setRange(double minY, double maxY, int newIndex)
     {
+        mActiveDateIndex = newIndex;
+        int end = mCurrentUsageList.size() * POINT_DISTANCE;
+        int start;
         int pointsToShow;
-        if(NUMBER_OF_POINTS > count)
-            pointsToShow = count;
+
+        if(NUMBER_OF_POINTS > mCurrentUsageList.size())
+            pointsToShow = mCurrentUsageList.size();
         else
             pointsToShow = NUMBER_OF_POINTS;
-        int end = count * POINT_DISTANCE;
-        // Set the graph range to the end if there is no zoom information
-        if(mActiveDateIndex < 1)
-        {
-            mRenderer.setRange(new double[]{end - (pointsToShow * POINT_DISTANCE) - GRAPH_MARGIN,
-                end + GRAPH_MARGIN, min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-            mRenderer.setPanLimits(new double[]{0,
-                    end + GRAPH_MARGIN, min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-        }
-        else
-        {
-            if(mZoomLevel == 0 && mZoomIn == true)
-            {
-                mActiveDateIndex = mActiveDateIndex * 24;
-                int centerPoint = mActiveDateIndex * POINT_DISTANCE;
-                int start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
-                mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                    start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-                mRenderer.setPanLimits(new double[]{0,
-                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-            }
-            else if(mZoomLevel == 1 && mZoomIn == false)
-            {
-                mActiveDateIndex = mActiveDateIndex / 24;
-                int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
-                int start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
-                mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-                mRenderer.setPanLimits(new double[]{0,
-                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-            }
-            else if(mZoomLevel == 1 && mZoomIn == true)
-            {
-                mActiveDateIndex = mActiveDateIndex * 7;
-                int centerPoint = mActiveDateIndex * POINT_DISTANCE;
-                int start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
-                mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-            }
-            else if(mZoomLevel == 2 && mZoomIn == false)
-            {
-                mActiveDateIndex = mActiveDateIndex / 7;
-                int centerPoint = mActiveDateIndex * POINT_DISTANCE;
-                int start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
-                mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-            }
-            else if(mZoomLevel == 2 && mZoomIn == true)
-            {
-                mActiveDateIndex = mActiveDateIndex * 4;
-                int centerPoint = mActiveDateIndex * POINT_DISTANCE;
-                int start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
-                mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-            }
-            else if(mZoomLevel == 3 && mZoomIn == false)
-            {
-                mActiveDateIndex = mActiveDateIndex / 4;
-                int centerPoint = mActiveDateIndex * POINT_DISTANCE;
-                int start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
-                mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                        start + (pointsToShow * POINT_DISTANCE), min - GRAPH_MARGIN, max + GRAPH_MARGIN});
-            }
-        }
+
+        //IF the active index is close to or the last element, find a new center index.
+        if(mCurrentUsageList.size() - mActiveDateIndex < pointsToShow )
+            mActiveDateIndex = mCurrentUsageList.size() - pointsToShow / 2;
+
+        int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
+        start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
+
+        mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
+                start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN});
+        mRenderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
+                end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN});
     }
 
-    private void changeDataset()
+    private void zoomIn()
     {
-        switch (mZoomLevel)
-        {
-            case 0:
-                populateGraph(mTotalUsageList, "HH", "EEEE dd/MM");
-                break;
-            case 1:
-                populateGraph(changeResolution(mTotalUsageList, "dd"), "dd", "MMMM");
-                break;
-            case 2:
-                populateGraph(changeResolution(mTotalUsageList, "w"), "w", "y");
-                break;
-            case 3:
-                populateGraph(changeResolution(mTotalUsageList, "MMMM"), "MMMM", "y");
-                break;
-        }
+        if(mDataResolution.equals("dd"))
+            populateGraph(mTotalUsageList, "HH", "EEEE dd/MM",
+                    mActiveDateIndex * 24);
+        else if(mDataResolution.equals("w"))
+            populateGraph(changeResolution(mTotalUsageList, "dd"), "dd", "MMMM",
+                    mActiveDateIndex * 7);
+        else if(mDataResolution.equals("MMMM"))
+            populateGraph(changeResolution(mTotalUsageList, "w"), "w", "y",
+                    mActiveDateIndex * 4);
+    }
+
+    private void zoomOut()
+    {
+        if(mDataResolution.equals("HH"))
+            populateGraph(changeResolution(mCurrentUsageList, "dd"), "dd", "MMMM",
+                    mActiveDateIndex / 24);
+        else if(mDataResolution.equals("dd"))
+            populateGraph(changeResolution(mCurrentUsageList, "w"), "w", "y",
+                    mActiveDateIndex / 7);
+        else if(mDataResolution.equals("w"))
+            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
+                    mActiveDateIndex / 4);
     }
 
     private ArrayList<TotalUsage> changeResolution(ArrayList<TotalUsage> list, String format)
@@ -410,7 +371,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         Random random = new Random();
         Calendar cal = Calendar.getInstance();
 
-        for(int i = 0; i < 1000; i++)
+        for(int i = 0; i < 2000; i++)
         {
             date = new Date();
             cal.setTime(date);
