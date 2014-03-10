@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -156,16 +157,17 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     private void setupLineGraph(){
         mRenderer.setChartTitle("Power usage");
-        mRenderer.setYTitle("KWh");
+//        mRenderer.setYTitle("KWh");
 
-        mRenderer.setAxisTitleTextSize(16);
+        mRenderer.setAxisTitleTextSize(25);
         mRenderer.setChartTitleTextSize(20);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
         mRenderer.setPointSize(10);
         mRenderer.setXLabels(0);
         mRenderer.setXLabelsPadding(10);
-        mRenderer.setYLabelsPadding(10);
+        mRenderer.setYLabelsPadding(20);
+        mRenderer.setMargins(new int[]{ 20, 40, 20, 20 });
 
         setColors(Color.WHITE, Color.BLACK);
     }
@@ -300,9 +302,9 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         else if(mDataResolution.equals("w"))
             populateGraph(changeResolution(mTotalUsageList, "dd"), "dd", "MMMM",
                     mActiveDateIndex * 7);
-        else if(mDataResolution.equals("MMMM"))
-            populateGraph(changeResolution(mTotalUsageList, "w"), "w", "y",
-                    mActiveDateIndex * 4);
+//        else if(mDataResolution.equals("MMMM"))
+//            populateGraph(changeResolution(mTotalUsageList, "w"), "w", "MMMMM y",
+//                    mActiveDateIndex * 4);
     }
 
     private void zoomOut()
@@ -311,11 +313,11 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             populateGraph(changeResolution(mCurrentUsageList, "dd"), "dd", "MMMM",
                     mActiveDateIndex / 24);
         else if(mDataResolution.equals("dd"))
-            populateGraph(changeResolution(mCurrentUsageList, "w"), "w", "y",
+            populateGraph(changeResolution(mCurrentUsageList, "w"), "w", "MMMMM y",
                     mActiveDateIndex / 7);
-        else if(mDataResolution.equals("w"))
-            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
-                    mActiveDateIndex / 4);
+//        else if(mDataResolution.equals("w"))
+//            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
+//                    mActiveDateIndex / 4);
     }
 
     private ArrayList<TotalUsage> changeResolution(ArrayList<TotalUsage> list, String format)
@@ -357,6 +359,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     private void setLabels(String label)
     {
+//        mRenderer.setXTitle("<  " + label + "  >");
         mRenderer.setXTitle(label);
         mTitleLabel = label;
     }
