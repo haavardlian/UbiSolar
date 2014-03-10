@@ -61,8 +61,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private String mTitleLabel;
     private String mTitleFormat;
     private String mDataResolution;
-    private int mZoomLevel = 0;
-    private boolean mZoomIn;
     private int mActiveDateIndex = 0;
 
     TotalEnergyPresenter presenter;
@@ -262,7 +260,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         if(mActiveDateIndex < usage.size())
             setLabels(formatDate(usage.get(mActiveDateIndex).getDatetime(), titleFormat));
 
-//        mChartView.zoomOut();
         if( mChartView != null)
             mChartView.repaint();
     }
@@ -286,10 +283,13 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
         start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
 
+        if( start < 0)
+            start  = 0;
+
         mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN});
+                start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
         mRenderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
-                end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN});
+                end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
     }
 
     private void zoomIn()
