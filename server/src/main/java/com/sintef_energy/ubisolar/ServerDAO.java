@@ -40,7 +40,7 @@ public interface ServerDAO {
     @Mapper(TotalUsageMapper.class)
     List<TotalUsage> getTotalDevicesUsageDaily(@Bind("userId") int userId);
 
-    @SqlQuery("SELECT * FROM device WHERE user_id = :user_id AND device_id = :device_id LIMIT 1")
+    @SqlQuery("SELECT * FROM device WHERE user_id = :user_id AND id = :device_id LIMIT 1")
     @Mapper(DeviceMapper.class)
     Device getDeviceForUserById(@Bind("user_id") int user_id, @Bind("device_id") int device_id);
 
