@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,7 +18,9 @@ import android.widget.ImageButton;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
@@ -25,6 +28,7 @@ import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by perok on 2/11/14.
@@ -102,9 +106,27 @@ public class UsageFragment extends Fragment {
             // Restore last state for checked position.
         }
 
-        //TODO: Remove. Only for removal of stupid data.
-        //int i = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
-        //Log.v(TAG, "EMPTY DATABASE: " + i);
+        //TODO: Remove. Only for removal of stupid data.//
+
+        //int it = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
+        //Log.v(TAG, "EMPTY DATABASE: " + it);
+        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0){
+            ContentResolver cr = getActivity().getContentResolver();
+
+            EnergyUsageModel eum;
+            Calendar cal = Calendar.getInstance();
+            Random random = new Random();
+
+            DeviceModel dv = new DeviceModel(System.currentTimeMillis(), "Super kool device", "THis is best.", System.currentTimeMillis());
+
+            for(int i = 0; i < 2000; i++)
+            {
+                cal.add(Calendar.HOUR_OF_DAY, i);
+
+                eum = new EnergyUsageModel(System.currentTimeMillis(),dv.getDevice_id() , cal.getTime(), random.nextInt((200 - 50) + 1) + 50);
+                EnergyDataSource.addEnergyModel(cr, eum);
+            }
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
 

@@ -15,7 +15,7 @@ public abstract class Device
 
     }
 
-    public Device(int device_id, String name, String description, int user_id) {
+    public Device(long device_id, String name, String description, long user_id) {
         this.device_id = device_id;
         this.name = name;
         this.description = description;

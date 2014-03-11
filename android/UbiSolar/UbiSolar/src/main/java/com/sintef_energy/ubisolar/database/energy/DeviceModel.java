@@ -122,7 +122,7 @@ public class DeviceModel extends Device implements Parcelable{
         setDescription(cursor.getString(_description));
     }
 
-    public DeviceModel(int device_id, String name, String description, int user_id) {
+    public DeviceModel(long device_id, String name, String description, long user_id) {
         super(device_id, name, description, user_id);
     }
 }

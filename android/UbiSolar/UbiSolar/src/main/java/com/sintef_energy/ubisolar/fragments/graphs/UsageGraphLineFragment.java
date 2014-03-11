@@ -442,16 +442,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 tempTotalUsageList.add(new TotalUsage(eum.getDevice_id(), eum.getDatetime(), eum.getPower_usage()));
             }
             while(data.moveToNext());
-//
-//        for(int i = 0; i < 2000; i++)
-//        {
-//            date = new Date();
-//            cal.setTime(date);
-//            cal.add(Calendar.HOUR_OF_DAY, i);
-//            date = cal.getTime();
-//            usage = new TotalUsage(1, date, random.nextInt((200 - 50) + 1) + 50);
-//            tempTotalUsageList.add(usage);
-//        }
+
 
         return tempTotalUsageList;
     }

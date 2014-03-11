@@ -30,7 +30,32 @@ public class EnergyDataSource {
         return uri;
     }
 
-     public static ArrayList<EnergyUsageModel> getEnergyModels(ContentResolver resolver, long from, long to){
+    public static int getEnergyModelSize(ContentResolver resolver){
+        ArrayList<EnergyUsageModel> euModels = new ArrayList<>();
+
+        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+        //ContentUris.appendId(builder, id);
+        Cursor cursor = resolver.query(
+                builder.build(),
+                EnergyContract.Energy.PROJECTION_ALL,
+                null,
+                null,
+                null
+        );
+
+        if(cursor == null){
+            return 0;
+        }
+
+        int size = cursor.getCount();
+
+        cursor.close();
+
+        return size;
+    }
+
+    public static ArrayList<EnergyUsageModel> getEnergyModels(ContentResolver resolver, long from, long to){
+
         ArrayList<EnergyUsageModel> euModels = new ArrayList<>();
 
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
