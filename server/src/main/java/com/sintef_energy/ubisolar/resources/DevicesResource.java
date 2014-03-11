@@ -1,6 +1,6 @@
 package com.sintef_energy.ubisolar.resources;
 
-import com.sintef_energy.ubisolar.Device;
+import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.metrics.annotation.Timed;

@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.echo.holographlibrary.PieGraph;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
@@ -87,8 +86,8 @@ public class TestFragment extends ListFragment implements Observer<Integer> {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this);
-
-        PieGraph lol = null;
+//
+//        PieGraph lol = null;
     }
 
 
