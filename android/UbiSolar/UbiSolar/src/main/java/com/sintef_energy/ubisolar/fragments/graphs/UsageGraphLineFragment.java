@@ -181,7 +181,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 @Override
                 public void zoomApplied(ZoomEvent zoomEvent) {
                     double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
-                    if(zoom > 40 && zoom < 90)
+                    if(zoom > 70 && zoom < 90)
                     {
                         zoomIn();
                     }
