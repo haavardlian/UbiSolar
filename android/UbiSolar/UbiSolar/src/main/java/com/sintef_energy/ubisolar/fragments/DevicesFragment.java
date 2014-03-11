@@ -120,7 +120,8 @@ public class DevicesFragment extends Fragment implements LoaderManager.LoaderCal
                 adapter = null;
 
                 DeviceModel deviceModel = new DeviceModel();
-                deviceModel.setId(System.currentTimeMillis());
+                deviceModel.setUser_id(System.currentTimeMillis());
+                deviceModel.setDevice_id(System.currentTimeMillis());
                 deviceModel.setDescription(descriptionField.getText().toString());
                 deviceModel.setName(nameField.getText().toString());
                 devices.add(deviceModel);

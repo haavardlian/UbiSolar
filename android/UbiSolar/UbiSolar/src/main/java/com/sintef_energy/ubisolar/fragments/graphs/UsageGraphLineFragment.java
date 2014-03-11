@@ -2,6 +2,11 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -16,6 +21,7 @@ import android.view.ViewGroup.LayoutParams;
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.structs.TotalUsage;
@@ -40,7 +46,7 @@ import java.util.Random;
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView{
+public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -50,7 +56,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private static final int GRAPH_MARGIN = 20;
     private static final int NUMBER_OF_POINTS = 9;
 
-    private View rootView;
 
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
@@ -94,7 +99,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
         return rootView;
     }
 
@@ -108,11 +113,22 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
             mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
         }
+
+        //Define mRenderer.
         setupLineGraph();
+
+        //Define the render view.
         createLineGraph();
-        addSeries("Total");
-        createData();
-        populateGraph(mTotalUsageList, "HH", "EEEE dd/MM", mTotalUsageList.size());
+
+        mCurrentRenderer = addSeries("Total");
+
+        mTotalUsageList = new ArrayList<>();
+        //mTotalUsageList.clear();
+        //mTotalUsageList.addAll(createData());
+
+        //populateGraph(mTotalUsageList, "HH", "EEEE dd/MM", mTotalUsageList.size());
+
+        getLoaderManager().initLoader(0, null, this);
     }
 
     /*End lifecycle*/
@@ -155,6 +171,9 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     }
 
 
+    /**
+     * Sets up XYMultipleSeriesRenderer mRenderer.
+     */
     private void setupLineGraph(){
         mRenderer.setChartTitle("Power usage");
 //        mRenderer.setYTitle("KWh");
@@ -172,11 +191,14 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         setColors(Color.WHITE, Color.BLACK);
     }
 
+    /**
+     * Set up the ChartView and add listeners.
+     */
     private void createLineGraph()
     {
         if (mChartView == null) {
-            LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.lineChartView);
-            mChartView = ChartFactory.getLineChartView(rootView.getContext(), mDataset, mRenderer);
+            LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.lineChartView);
+            mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
             mChartView.addZoomListener(new ZoomListener() {
                 @Override
                 public void zoomApplied(ZoomEvent zoomEvent) {
@@ -216,7 +238,11 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         }
     }
 
-    private void addSeries(String seriesName)
+    /**
+     * Define the series renderer
+     * @param seriesName The name of the series
+     */
+    private XYSeriesRenderer addSeries(String seriesName)
     {
         XYSeries series = new XYSeries(seriesName);
         mDataset.addSeries(series);
@@ -232,9 +258,17 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 //        seriesRenderer.setChartValuesSpacing(25);
 //        mRenderer.setDisplayChartValuesDistance(10);
         seriesRenderer.setLineWidth(3);
-        mCurrentRenderer = seriesRenderer;
+        return seriesRenderer;
     }
 
+    /**
+     * Clears previous data and populates the list with the usage.
+     *
+     * @param usage
+     * @param labelFormat
+     * @param titleFormat
+     * @param centerIndex
+     */
     private void populateGraph( ArrayList<TotalUsage> usage, String labelFormat,
                                 String titleFormat, int centerIndex)
     {
@@ -369,7 +403,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private ArrayList<TotalUsage> createData()
     {
         TotalUsage usage;
-        mTotalUsageList = new ArrayList<>();
+        ArrayList<TotalUsage> tempmTotalUsageList = new ArrayList<>();
         Date date;
         Random random = new Random();
         Calendar cal = Calendar.getInstance();
@@ -381,10 +415,76 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             cal.add(Calendar.HOUR_OF_DAY, i);
             date = cal.getTime();
             usage = new TotalUsage(1, date, random.nextInt((200 - 50) + 1) + 50);
-            mTotalUsageList.add(usage);
+            tempmTotalUsageList.add(usage);
         }
 
-        return mTotalUsageList;
+        return tempmTotalUsageList;
+    }
+
+
+    /**
+     * Make data that can be rendered from the cursor.
+     * @param data
+     * @return
+     */
+    private ArrayList<TotalUsage> createDataFromCursor(Cursor data)
+    {
+        TotalUsage usage;
+        ArrayList<TotalUsage> tempTotalUsageList = new ArrayList<>();
+        Date date;
+        Random random = new Random();
+        Calendar cal = Calendar.getInstance();
+
+        data.moveToFirst();
+        if(data.getCount() != 0)
+            do{
+                EnergyUsageModel eum = new EnergyUsageModel(data);
+                tempTotalUsageList.add(new TotalUsage(eum.getDevice_id(), eum.getDatetime(), eum.getPower_usage()));
+            }
+            while(data.moveToNext());
+//
+//        for(int i = 0; i < 2000; i++)
+//        {
+//            date = new Date();
+//            cal.setTime(date);
+//            cal.add(Calendar.HOUR_OF_DAY, i);
+//            date = cal.getTime();
+//            usage = new TotalUsage(1, date, random.nextInt((200 - 50) + 1) + 50);
+//            tempTotalUsageList.add(usage);
+//        }
+
+        return tempTotalUsageList;
+    }
+
+    /**
+     * Creates the loader. Maybe have i for different months?
+     * @param i
+     * @param bundle
+     * @return
+     */
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(
+                getActivity(),
+                EnergyContract.Energy.CONTENT_URI,
+                EnergyContract.Energy.PROJECTION_ALL,
+                null,
+                null,
+                null
+                );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
+        //TODO: Async oppdatering av view
+        mTotalUsageList.clear();
+        mTotalUsageList.addAll(createDataFromCursor(data));
+        populateGraph(mTotalUsageList, "HH", "EEEE dd/MM", mTotalUsageList.size());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
     }
 }
 

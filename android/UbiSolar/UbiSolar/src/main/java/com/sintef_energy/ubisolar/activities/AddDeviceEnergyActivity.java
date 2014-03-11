@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,8 +24,7 @@ public class AddDeviceEnergyActivity extends Activity {
     private static final String LOG = AddDeviceEnergyActivity.class.getName();
 
     public static final String INTENT_KWH = "com.sintef_energy_ubisolar.intent.kwh";
-    public static final String INTENT_START = "com.sintef_energy_ubisolar.intent.start";
-    public static final String INTENT_END = "com.sintef_energy_ubisolar.intent.end";
+    public static final String INTENT_DATETIME = "com.sintef_energy_ubisolar.intent.start";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,12 +137,10 @@ public class AddDeviceEnergyActivity extends Activity {
                     Log.v(LOG, "Textfield value: " + text);
 
                     if(text.length() > 0){
-                        float value = Float.valueOf(text);
+                        Double value = Double.valueOf(text);
                         resultInt.putExtra(INTENT_KWH, value);
-                        resultInt.putExtra(INTENT_START, currentMonth.getTimeInMillis());
-                        currentMonth.add(Calendar.MONTH, 1);
-                        resultInt.putExtra(INTENT_END, currentMonth.getTimeInMillis());
-                        currentMonth.add(Calendar.MONTH, -1);
+                        //TODO: Added only on month accuracy
+                        resultInt.putExtra(INTENT_DATETIME, currentMonth.getTimeInMillis());
                     }
                     getActivity().setResult(Activity.RESULT_OK, resultInt);
                     getActivity().finish();

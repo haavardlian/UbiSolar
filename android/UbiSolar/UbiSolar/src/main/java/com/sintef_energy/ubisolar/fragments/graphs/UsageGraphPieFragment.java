@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.structs.Device;
@@ -221,11 +222,11 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     private ArrayList<Device> createDevices()
     {
         ArrayList<Device> devices = new ArrayList<>();
-        devices.add(new Device(1, "TV", "-", 1));
-        devices.add(new Device(2, "Radio", "-", 1));
-        devices.add(new Device(3, "PC", "-", 1));
-        devices.add(new Device(4, "Oven", "-", 1));
-        devices.add(new Device(5, "Heater", "-", 1));
+        devices.add(new DeviceModel(1, "TV", "-", 1));
+        devices.add(new DeviceModel(2, "Radio", "-", 1));
+        devices.add(new DeviceModel(3, "PC", "-", 1));
+        devices.add(new DeviceModel(4, "Oven", "-", 1));
+        devices.add(new DeviceModel(5, "Heater", "-", 1));
         return devices;
     }
 
@@ -242,7 +243,7 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
             for(int i = 0; i < 100; i++)
             {
                 date = new Date(System.currentTimeMillis() + (i * 60 * 60 * 1000));
-                usage.add(new DeviceUsage(device.getDevice_id(), date, random.nextInt((50 - 0) + 1) + 50));
+                usage.add(new EnergyUsageModel(System.currentTimeMillis(), device.getDevice_id(), date, random.nextInt((50 - 0) + 1) + 50));
             }
             collection.add(usage);
         }

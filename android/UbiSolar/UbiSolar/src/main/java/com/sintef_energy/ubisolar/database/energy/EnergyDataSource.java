@@ -38,8 +38,8 @@ public class EnergyDataSource {
         Cursor cursor = resolver.query(
                 builder.build(),
                 EnergyContract.Energy.PROJECTION_ALL,
-                EnergyUsageModel.EnergyUsageEntry.COLUMN_DATESTART + " >= " + from +
-                    " AND " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATEEND + " <= " + to,
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " >= " + from +
+                    " AND " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " <= " + to,
                 null,
                 null
         );

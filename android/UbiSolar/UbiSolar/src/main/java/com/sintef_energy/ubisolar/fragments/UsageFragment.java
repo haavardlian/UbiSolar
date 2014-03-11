@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.sintef_energy.ubisolar.R;
@@ -25,6 +24,7 @@ import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by perok on 2/11/14.
@@ -103,8 +103,8 @@ public class UsageFragment extends Fragment {
         }
 
         //TODO: Remove. Only for removal of stupid data.
-        int i = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
-        Log.v(TAG, "EMPTY DATABASE: " + i);
+        //int i = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
+        //Log.v(TAG, "EMPTY DATABASE: " + i);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
 
@@ -164,14 +164,13 @@ public class UsageFragment extends Fragment {
         switch(requestCode) {
             case (0) : {
                 if (resultCode == Activity.RESULT_OK) {
-                    float value = data.getFloatExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
+                    double value = data.getDoubleExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
                     Log.v(TAG, String.valueOf(value));
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
-                    euModel.setDateStart(data.getLongExtra(AddDeviceEnergyActivity.INTENT_START, -1));
+                    euModel.setDatetime(new Date(data.getLongExtra(AddDeviceEnergyActivity.INTENT_DATETIME, -1)));
 
-                    euModel.setDateEnd(data.getLongExtra(AddDeviceEnergyActivity.INTENT_END, -1));
-                    euModel.setPower(value);
+                    euModel.setPower_usage(value);
 
                     totalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
                 }
