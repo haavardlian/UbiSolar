@@ -13,6 +13,6 @@ import java.sql.SQLException;
  */
 public class TipRatingMapper implements ResultSetMapper<TipRating> {
     public TipRating map(int index, ResultSet r, StatementContext statementContext) throws SQLException {
-        return new TipRating(r.getInt("id"), r.getInt("tips_id"), r.getShort("rating"), r.getInt("user_id"));
+        return new TipRating(r.getInt("id"), r.getInt("tip_id"), r.getShort("rating"), r.getInt("user_id"));
     }
 }
