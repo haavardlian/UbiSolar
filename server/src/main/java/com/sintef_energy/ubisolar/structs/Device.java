@@ -2,11 +2,6 @@ package com.sintef_energy.ubisolar.structs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.json.JsonSnakeCase;
-import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ResultSetMapper;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Created by haavard on 2/19/14.
@@ -14,23 +9,31 @@ import java.sql.SQLException;
 @JsonSnakeCase
 public class Device {
     @JsonProperty
-    private int deviceId;
+    private long id;
     @JsonProperty
     private String name;
     @JsonProperty
     private String description;
     @JsonProperty
-    private int userId;
+    private long userId;
 
     public Device() {
 
     }
 
-    public Device(int userId, String name, String description, int deviceId) {
+    public Device(long id, long userId, String name, String description) {
+        this.id = id;
         this.userId = userId;
         this.name = name;
         this.description = description;
-        this.deviceId = deviceId;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -41,16 +44,8 @@ public class Device {
         return description;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
-    }
-
-    public int getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(int deviceId) {
-        this.deviceId = deviceId;
     }
 
     public void setName(String name) {
@@ -61,7 +56,7 @@ public class Device {
         this.description = description;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 }

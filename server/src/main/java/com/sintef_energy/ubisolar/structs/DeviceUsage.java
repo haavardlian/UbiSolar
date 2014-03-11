@@ -11,18 +11,29 @@ import java.util.Date;
 @JsonSnakeCase
 public class DeviceUsage {
     @JsonProperty
+    private long id;
+    @JsonProperty
     private Date datetime;
     @JsonProperty
     private double powerUsage;
     @JsonProperty
-    private int deviceId;
+    private long deviceId;
 
     public DeviceUsage() {}
 
-    public DeviceUsage(int deviceId, Date datetime, double powerUsage) {
+    public DeviceUsage(long id, long deviceId, Date datetime, double powerUsage) {
+        this.id = id;
         this.powerUsage = powerUsage;
         this.deviceId = deviceId;
         this.datetime = datetime;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Date getDatetime() {
@@ -41,11 +52,11 @@ public class DeviceUsage {
         this.powerUsage = powerUsage;
     }
 
-    public int getDeviceId() {
+    public long getDeviceId() {
         return deviceId;
     }
 
-    public void setDeviceId(int deviceId) {
+    public void setDeviceId(long deviceId) {
         this.deviceId = deviceId;
     }
 }
