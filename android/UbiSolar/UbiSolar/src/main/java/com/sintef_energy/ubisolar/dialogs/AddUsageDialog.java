@@ -198,7 +198,6 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
             }
     }
 
-
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mDeviceAdapter.swapCursor(null);
