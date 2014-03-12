@@ -11,9 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.sintef_energy.ubisolar.IView.ITotalEnergyPresenterCallback;
-import com.sintef_energy.ubisolar.fragments.DevicesFragment;
+import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.SocialFragment;
@@ -90,7 +88,7 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 
         switch (position){
             case 0:
-                fragment = DevicesFragment.newInstance(position);
+                fragment = DeviceFragment.newInstance(position);
                 break;
             case 1:
                 fragment = UsageFragment.newInstance(position);
