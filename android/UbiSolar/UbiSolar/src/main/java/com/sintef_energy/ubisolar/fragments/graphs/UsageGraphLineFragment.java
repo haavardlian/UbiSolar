@@ -461,7 +461,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 EnergyContract.Energy.PROJECTION_ALL,
                 null,
                 null,
-                null
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
                 );
     }
 
