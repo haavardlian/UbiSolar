@@ -9,12 +9,6 @@
     android:orientation="vertical"
     tools:context="com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity$PlaceholderFragment">
 
-    <TextView
-        android:text="Insert data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30dp"/>
-
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,12 +27,11 @@
             android:id="@+id/textDate"
             android:layout_gravity="center_horizontal" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="less"
-            android:id="@+id/fragment_add_device_energy_button_left" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
 
         <View
             android:layout_width="0dp"
@@ -46,25 +39,13 @@
             android:layout_weight="1"
             />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <EditText
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/fragment_add_device_energy_textview" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:text="more"
-            android:id="@+id/fragment_add_device_energy_button_right" />
+            android:inputType="numberDecimal"
+            android:ems="10"
+            android:id="@+id/dialog_add_usage_edit_date"
+            android:hint="Date of usage"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -107,8 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/fragment_add_device_energy_spinner" />
-
+            android:id="@+id/dialog_add_usage_spinner" />
     </LinearLayout>
 
     <Space
@@ -144,15 +124,8 @@
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:ems="10"
-            android:id="@+id/fragment_add_device_energy_edittext_kwh"
+            android:id="@+id/dialog_add_usage_edittext_kwh"
             android:hint="kWh"/>
     </LinearLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:id="@+id/fragment_add_device_energy_button_submit"
-        android:layout_gravity="right" />
 
 </LinearLayout>

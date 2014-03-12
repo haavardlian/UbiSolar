@@ -31,6 +31,7 @@ import com.sintef_energy.ubisolar.dialogs.DatePickerFragment;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+@Deprecated
 public class AddDeviceEnergyActivity extends Activity {
 
     private static final String LOG = AddDeviceEnergyActivity.class.getName();
@@ -80,6 +81,7 @@ public class AddDeviceEnergyActivity extends Activity {
     /**
      * A placeholder fragment containing a simple view.
      * TODO: Remove old buttons that are currently set as gone.
+     * TODO: Rewrite to dialog.
      */
     public static class PlaceholderFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, IDateCallback {
 
