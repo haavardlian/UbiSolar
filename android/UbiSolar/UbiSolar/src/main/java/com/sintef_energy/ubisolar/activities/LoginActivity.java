@@ -3,6 +3,10 @@ package com.sintef_energy.ubisolar.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -12,6 +16,9 @@ import android.widget.TextView;
 
 //import com.facebook.android.Facebook;
 //import com.facebook.widget.LoginButton;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.android.Facebook;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
@@ -20,76 +27,128 @@ import com.sintef_energy.ubisolar.R;
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */
-public class LoginActivity extends Activity {
-    /**
-     * The default email to populate the email field with.
-     */
-    public static final String EXTRA_EMAIL = "";
+public class LoginActivity extends FragmentActivity {
+    private static final int SPLASH = 0;
+    private static final int SELECTION = 1;
+    private static final int FRAGMENT_COUNT = SELECTION +1;
 
-    // Values for email and password at the time of the login attempt.
-    private String mEmail;
-    private String mPassword;
+    private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
 
-    // UI references.
-    private EditText mEmailView;
-    private EditText mPasswordView;
-    private View mLoginFormView;
-    private View mLoginStatusView;
-    private TextView mLoginStatusMessageView;
+    private boolean isResumed = false;
+
+    private UiLifecycleHelper uiHelper;
+    private Session.StatusCallback callback =
+            new Session.StatusCallback() {
+                @Override
+                public void call(Session session,
+                                 SessionState state, Exception exception) {
+                    onSessionStateChange(session, state, exception);
+                }
+            };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        if(Global.loggedIn) attemptLogin();
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.fragment_profile);
+        uiHelper = new UiLifecycleHelper(this, callback);
+        uiHelper.onCreate(savedInstanceState);
 
-        // Set up the login form.
-        mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
-        mEmailView = (EditText) findViewById(R.id.email);
-        mEmailView.setText(mEmail);
+        FragmentManager fm = getSupportFragmentManager();
+        fragments[SPLASH] = fm.findFragmentById(R.id.splashFragment);
+        fragments[SELECTION] = fm.findFragmentById(R.id.selectionFragment);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mLoginStatusView = findViewById(R.id.login_status);
-        mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
-
-        findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        FragmentTransaction transaction = fm.beginTransaction();
+        for(int i = 0; i < fragments.length; i++) {
+            transaction.hide(fragments[i]);
+        }
+        transaction.commit();
     }
 
+    private void showFragment(int fragmentIndex, boolean addToBackStack) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        for (int i = 0; i < fragments.length; i++) {
+            if (i == fragmentIndex) {
+                transaction.show(fragments[i]);
+            } else {
+                transaction.hide(fragments[i]);
+            }
+        }
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
+    }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.login, menu);
-        return true;
+    public void onResume() {
+        super.onResume();
+        uiHelper.onResume();
+        isResumed = true;
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    public void attemptLogin() {
-        Global.loggedIn = true;
-        Intent usageIntent = new Intent(this, DrawerActivity.class);
-        usageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(usageIntent);
+    @Override
+    public void onPause() {
+        super.onPause();
+        uiHelper.onPause();
+        isResumed = false;
     }
+
+    private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+        // Only make changes if the activity is visible
+        if (isResumed) {
+            FragmentManager manager = getSupportFragmentManager();
+            // Get the number of entries in the back stack
+            int backStackSize = manager.getBackStackEntryCount();
+            // Clear the back stack
+            for (int i = 0; i < backStackSize; i++) {
+                manager.popBackStack();
+            }
+            if (state.isOpened()) {
+                // If the session state is open:
+                // Show the authenticated fragment
+                showFragment(SELECTION, false);
+            } else if (state.isClosed()) {
+                // If the session state is closed:
+                // Show the login fragment
+                showFragment(SPLASH, false);
+            }
+        }
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        Session session = Session.getActiveSession();
+
+        if (session != null && session.isOpened()) {
+            // if the session is already open,
+            // try to show the selection fragment
+            showFragment(SELECTION, false);
+        } else {
+            // otherwise present the splash screen
+            // and ask the person to login.
+            showFragment(SPLASH, false);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        uiHelper.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        uiHelper.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
+    }
+
 }
