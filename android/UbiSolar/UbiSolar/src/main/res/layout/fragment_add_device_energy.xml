@@ -10,19 +10,33 @@
     tools:context="com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity$PlaceholderFragment">
 
     <TextView
-        android:text="To estimate your usage, we need some info:"
+        android:text="Insert data"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="30dp"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="40dp"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Date"
+            android:id="@+id/textDate"
+            android:layout_gravity="center_horizontal" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="less"
             android:id="@+id/fragment_add_device_energy_button_left" />
 
@@ -48,8 +62,16 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="more"
             android:id="@+id/fragment_add_device_energy_button_right" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/fragment_add_device_energy_button_set_date"
+            android:clickable="true"
+            android:background="@android:drawable/ic_menu_today" />
 
     </LinearLayout>
 
@@ -58,21 +80,51 @@
         android:layout_height="wrap_content"
         android:minHeight="40dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="What is your average usage?"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Device"
+            android:id="@+id/textDevice"
+            android:layout_gravity="center_horizontal" />
 
-    <EditText
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/fragment_add_device_energy_spinner" />
+
+    </LinearLayout>
+
+    <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:id="@+id/fragment_add_device_energy_edittext_kwh"
-        android:hint="kWh"/>
+        android:minHeight="40dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Usage"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:ems="10"
+            android:id="@+id/fragment_add_device_energy_edittext_kwh"
+            android:hint="kWh"/>
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"

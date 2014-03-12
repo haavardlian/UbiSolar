@@ -111,13 +111,15 @@ public class UsageFragment extends Fragment {
         //int it = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
         //Log.v(TAG, "EMPTY DATABASE: " + it);
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0){
+            DeviceModel dv = new DeviceModel(System.currentTimeMillis(), "Best device ever", "This device... Just sayin.", System.currentTimeMillis());
+            getActivity().getContentResolver().insert(EnergyContract.Devices.CONTENT_URI, dv.getContentValues());
+
             ContentResolver cr = getActivity().getContentResolver();
 
             EnergyUsageModel eum;
             Calendar cal = Calendar.getInstance();
             Random random = new Random();
 
-            DeviceModel dv = new DeviceModel(System.currentTimeMillis(), "Super kool device", "THis is best.", System.currentTimeMillis());
 
             for(int i = 0; i < 2000; i++)
             {
@@ -147,7 +149,6 @@ public class UsageFragment extends Fragment {
         periodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 toggleGraph(view);
             }
         });
@@ -191,7 +192,7 @@ public class UsageFragment extends Fragment {
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
                     euModel.setDatetime(new Date(data.getLongExtra(AddDeviceEnergyActivity.INTENT_DATETIME, -1)));
-
+                    euModel.setDevice_id(data.getIntExtra(AddDeviceEnergyActivity.INTENT_DEVICE_ID, -1));
                     euModel.setPower_usage(value);
 
                     totalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
@@ -205,7 +206,6 @@ public class UsageFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         inflater.inflate(R.menu.fragment_usage_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
