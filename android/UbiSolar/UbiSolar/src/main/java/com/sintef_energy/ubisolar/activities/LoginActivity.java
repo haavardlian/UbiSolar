@@ -10,6 +10,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+//import com.facebook.android.Facebook;
+//import com.facebook.widget.LoginButton;
+import com.facebook.android.Facebook;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 
