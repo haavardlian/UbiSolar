@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
