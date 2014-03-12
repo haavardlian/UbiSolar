@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
@@ -72,31 +73,27 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+                        String text = mKwhField.getText().toString();
 
-                    //TODO:Only enable when we have device data.
+                        Log.v(TAG, "Textfield value: " + text);
 
-                    String text = mKwhField.getText().toString();
+                        if(text.length() > 0){
+                            Double value = Double.valueOf(text);
 
-                    Log.v(TAG, "Textfield value: " + text);
+                            int pos = spinnerDevice.getSelectedItemPosition();
+                            Cursor item = mDeviceAdapter.getCursor();
+                            item.moveToPosition(pos);
+                            pos = item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME);
 
-                    if(text.length() > 0){
-                        Double value = Double.valueOf(text);
+                            ITotalEnergyPresenterCallback target = (ITotalEnergyPresenterCallback)getTargetFragment();
 
-                        int pos = spinnerDevice.getSelectedItemPosition();
-                        Cursor item = mDeviceAdapter.getCursor();
-                        item.moveToPosition(pos);
-                        pos = item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME);
+                            EnergyUsageModel euModel = new EnergyUsageModel();
+                            euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
+                            euModel.setDevice_id(item.getInt(pos));
+                            euModel.setPower_usage(value);
 
-                        ITotalEnergyPresenterCallback target = (ITotalEnergyPresenterCallback)getTargetFragment();
-
-                        EnergyUsageModel euModel = new EnergyUsageModel();
-                        euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
-                        euModel.setDevice_id(item.getInt(pos));
-                        euModel.setPower_usage(value);
-
-                        mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
-                    }
-
+                            mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
+                        }
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -155,7 +152,10 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
 
         updateDateText();
 
-        return builder.create();
+        //Disable positive button until data is ready.
+        AlertDialog alertDialog = builder.create(); //TODO: Nullpointer
+        //alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        return alertDialog;
     }
 
 
@@ -165,7 +165,6 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
 
     @Override
     public void setDate(int year, int month, int day) {
-
         currentMonth.set(Calendar.YEAR, year);
         currentMonth.set(Calendar.MONTH, month);
         currentMonth.set(Calendar.DAY_OF_MONTH, day);
@@ -189,11 +188,11 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
         mDeviceAdapter.swapCursor(cursor);
             if(cursor.getCount() > 0) {
                 spinnerDevice.setEnabled(true);
-                //button.setEnabled(true);
+                ((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
             }
             else {
                 spinnerDevice.setEnabled(false);
-                //button.setEnabled(false);
+                ((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
             }
     }
 
