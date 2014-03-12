@@ -34,5 +34,7 @@
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
     <string name = "add_device_button">Add Device</string>
+    <string name ="login_offline_mode">Continue in offline mode</string>
+    <string name = "get_started">Log in to share your profile</string>
 
 </resources>
