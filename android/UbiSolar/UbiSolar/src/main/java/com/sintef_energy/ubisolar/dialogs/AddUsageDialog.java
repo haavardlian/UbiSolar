@@ -103,13 +103,13 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
                     public void onClick(DialogInterface dialog, int id) {
                         AddUsageDialog.this.getDialog().cancel();
                     }
-                });
+                })
+                .setTitle(R.string.addUsageDialog_title);
 
         //Create the dialog view
 
         //Set the calendar
         currentMonth = Calendar.getInstance();
-        //currentMonth.set(Calendar.DAY_OF_MONTH, 1);
         currentMonth.set(Calendar.MINUTE, 0);
         currentMonth.set(Calendar.HOUR_OF_DAY, 0);
         currentMonth.set(Calendar.MILLISECOND, 0);
@@ -121,11 +121,10 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
         mDateField = (EditText)view.findViewById(R.id.dialog_add_usage_edit_date);
         mKwhField = (EditText)view.findViewById(R.id.dialog_add_usage_edittext_kwh);
 
-        /* Set up listeners */
-
         final DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.setTargetFragment(this, 0);
 
+        /* Set up listeners */
         mDateField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

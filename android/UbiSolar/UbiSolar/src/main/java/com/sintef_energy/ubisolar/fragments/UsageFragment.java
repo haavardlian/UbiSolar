@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +16,6 @@ import android.widget.ImageButton;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyPresenterCallback;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
@@ -29,7 +27,6 @@ import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Random;
 
 /**
