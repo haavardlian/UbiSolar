@@ -13,6 +13,9 @@
         <item>Logout</item>
     </string-array>
 
+    <!-- AddUsageDialog -->
+    <string name="addUsageDialog_title">Add device usage</string>
+
     <!-- Fragment usage -->
     <string name="graph_tag"></string>
     <string name="last12months">Last 12 months</string>

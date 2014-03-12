@@ -12,16 +12,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.sintef_energy.ubisolar.IView.ITotalEnergyPresenterCallback;
 import com.sintef_energy.ubisolar.fragments.DevicesFragment;
 import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.SocialFragment;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
 
-public class DrawerActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+import java.util.Calendar;
+
+public class DrawerActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        ITotalEnergyPresenterCallback{
 
     private static final String LOG = DrawerActivity.class.getName();
 
@@ -36,6 +41,11 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
     private CharSequence mTitle;
     private String[] titleNames;
 
+    /**
+     * Presenter
+     */
+    private TotalEnergyPresenter mTotalEnergyPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //TODO: Check if user is logged in
@@ -47,6 +57,15 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 //        }
 
         super.onCreate(savedInstanceState);
+
+        /* Set up the presenter */
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 8);
+        mTotalEnergyPresenter = new TotalEnergyPresenter();
+        mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
+                0,
+                calendar.getTimeInMillis());
+
 
         titleNames = getResources().getStringArray(R.array.title_fragments);
         setContentView(R.layout.activity_usage);
@@ -140,5 +159,10 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public TotalEnergyPresenter getmTotalEnergyPresenter() {
+        return mTotalEnergyPresenter;
     }
 }

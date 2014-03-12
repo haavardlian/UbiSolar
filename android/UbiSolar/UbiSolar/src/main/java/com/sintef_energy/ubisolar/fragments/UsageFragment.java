@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,19 +14,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.sintef_energy.ubisolar.IView.ITotalEnergyPresenterCallback;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Random;
 
 /**
@@ -51,7 +50,7 @@ public class UsageFragment extends Fragment {
     /**
      * Presenter
      */
-    private TotalEnergyPresenter totalEnergyPresenter;
+    private TotalEnergyPresenter mTotalEnergyPresenter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -77,6 +76,13 @@ public class UsageFragment extends Fragment {
         super.onAttach(activity);
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+
+        try {
+            mTotalEnergyPresenter = ((ITotalEnergyPresenterCallback) activity).getmTotalEnergyPresenter();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement " + UsageFragment.class.getName());
+        }
+
     }
 
     @Override
@@ -111,13 +117,15 @@ public class UsageFragment extends Fragment {
         //int it = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
         //Log.v(TAG, "EMPTY DATABASE: " + it);
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0){
+            DeviceModel dv = new DeviceModel(System.currentTimeMillis(), "Best device ever", "This device... Just sayin.", System.currentTimeMillis());
+            getActivity().getContentResolver().insert(EnergyContract.Devices.CONTENT_URI, dv.getContentValues());
+
             ContentResolver cr = getActivity().getContentResolver();
 
             EnergyUsageModel eum;
             Calendar cal = Calendar.getInstance();
             Random random = new Random();
 
-            DeviceModel dv = new DeviceModel(System.currentTimeMillis(), "Super kool device", "THis is best.", System.currentTimeMillis());
 
             for(int i = 0; i < 2000; i++)
             {
@@ -130,14 +138,9 @@ public class UsageFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
 
-        totalEnergyPresenter = new TotalEnergyPresenter();
-        totalEnergyPresenter.loadEnergyData(getActivity().getContentResolver(),
-                0,
-                calendar.getTimeInMillis());
-
         /* Show fragment */
         UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-        fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+        fragment.registerTotalEnergyPresenter(mTotalEnergyPresenter);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
         ft.commit();
@@ -147,7 +150,6 @@ public class UsageFragment extends Fragment {
         periodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 toggleGraph(view);
             }
         });
@@ -159,7 +161,7 @@ public class UsageFragment extends Fragment {
 //                if(showingTotalUsage){
 //                    showingTotalUsage = false;
 //                    UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
-//                    fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+//                    fragment.registerTotalEnergyPresenter(mTotalEnergyPresenter);
 //                    FragmentTransaction ft = getFragmentManager().beginTransaction();
 //                    ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
 //                    ft.commit();
@@ -169,7 +171,7 @@ public class UsageFragment extends Fragment {
 //                else{
 //                    showingTotalUsage = true;
 //                    UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-//                    fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+//                    fragment.registerTotalEnergyPresenter(mTotalEnergyPresenter);
 //                    FragmentTransaction ft = getFragmentManager().beginTransaction();
 //                    ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
 //                    ft.commit();
@@ -182,20 +184,10 @@ public class UsageFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        //Not in use anymore
         switch(requestCode) {
             case (0) : {
-                if (resultCode == Activity.RESULT_OK) {
-                    double value = data.getDoubleExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
-                    Log.v(TAG, String.valueOf(value));
-
-                    EnergyUsageModel euModel = new EnergyUsageModel();
-                    euModel.setDatetime(new Date(data.getLongExtra(AddDeviceEnergyActivity.INTENT_DATETIME, -1)));
-
-                    euModel.setPower_usage(value);
-
-                    totalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
-                }
+                if (resultCode == Activity.RESULT_OK) {}
                 break;
             }
             default:
@@ -205,7 +197,6 @@ public class UsageFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         inflater.inflate(R.menu.fragment_usage_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -215,8 +206,8 @@ public class UsageFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.fragment_usage_menu_add:
-                Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
-                startActivityForResult(intent, 0);
+                AddUsageDialog addUsageDialog = new AddUsageDialog();
+                addUsageDialog.show(getFragmentManager(), "addUsage");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -248,7 +239,7 @@ public class UsageFragment extends Fragment {
             button.setImageResource(R.drawable.line);
             button.setTag(R.string.graph_tag, "line");
             UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
-            fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+            fragment.registerTotalEnergyPresenter(mTotalEnergyPresenter);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
 
@@ -259,10 +250,11 @@ public class UsageFragment extends Fragment {
             button.setImageResource(R.drawable.pie);
             button.setTag(R.string.graph_tag, "pie");
             UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-            fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+            fragment.registerTotalEnergyPresenter(mTotalEnergyPresenter);
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
             ft.commit();
         }
     }
+
 }
