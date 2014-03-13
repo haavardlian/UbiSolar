@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
@@ -111,7 +110,7 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
         currentMonth.set(Calendar.HOUR_OF_DAY, 0);
         currentMonth.set(Calendar.MILLISECOND, 0);
 
-        formatter = new SimpleDateFormat("yyyy MM dd");
+        formatter = new SimpleDateFormat("dd/MM-yyyy");
 
         /* Fetch view */
         spinnerDevice = (Spinner)view.findViewById(R.id.dialog_add_usage_spinner);
