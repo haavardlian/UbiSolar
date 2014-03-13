@@ -42,9 +42,13 @@ public class DevicePresenter {
     public void addDevice(DeviceModel device, ContentResolver contentResolver){
         EnergyDataSource.insertDevice(contentResolver, device);
         this.dmModels.add(device);
-        Log.v(TAG, "La til et nytt device");
     }
+
     public ArrayList<DeviceModel> getDeviceModels(){
         return this.dmModels;
+    }
+
+    public void deleteDevices(ContentResolver contentResolver){
+        EnergyDataSource.deleteAll(contentResolver);
     }
 }

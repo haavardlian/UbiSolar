@@ -115,6 +115,7 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
         //There was some reason I could not create the list view outside of this method
         final ListView listView = (ListView) getActivity().findViewById(R.id.device_list);
         devices = new ArrayList<DeviceModel>();
+        //EnergyDataSource.deleteAll(getActivity().getContentResolver());
         //usage = new ArrayList<EnergyUsageModel>();
 
         adapter = new SimpleCursorAdapter(

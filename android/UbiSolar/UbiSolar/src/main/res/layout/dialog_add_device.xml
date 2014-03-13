@@ -16,10 +16,11 @@
         android:layout_height="wrap_content"
         android:inputType="text"
         android:hint="Description of this device"/>
-    <EditText
+    <!--<EditText
         android:id="@+id/edit_usage"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:hint="The montly average usage for this device"/>
+        -->
 
 </LinearLayout>
