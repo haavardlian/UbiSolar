@@ -10,39 +10,4 @@
         android:layout_height="273dp"
         />
 
-    <EditText
-        android:id="@+id/edit_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:hint="The name of the device"/>
-    <EditText
-        android:id="@+id/edit_description"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:hint="Description of this device"/>
-    <EditText
-        android:id="@+id/edit_usage"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:hint="The montly average usage for this device"/>
-
-    <Button
-        android:id="@+id/add_button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/add_device_button"/>
-    <!--<EditText
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:inputType="text"/>
-
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/add_button"/>-->
-
-
-
 </LinearLayout>

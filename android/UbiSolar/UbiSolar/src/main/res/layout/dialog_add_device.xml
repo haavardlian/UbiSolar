@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <EditText
         android:id="@+id/edit_name"
         android:layout_width="fill_parent"
@@ -21,9 +22,4 @@
         android:layout_height="wrap_content"
         android:hint="The montly average usage for this device"/>
 
-    <Button
-        android:id="@+id/add_button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/add_device_button"/>
 </LinearLayout>

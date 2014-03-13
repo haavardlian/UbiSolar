@@ -15,7 +15,9 @@
 
     <!-- AddUsageDialog -->
     <string name="addUsageDialog_title">Add device usage</string>
-
+    <!-- AddDeviceDialog -->
+    <string name = "addDeviceDialog_title"> Add device</string>
+    <string name="addDeviceDialog_buttonText">Add</string>
     <!-- Fragment usage -->
     <string name="graph_tag"></string>
     <string name="last12months">Last 12 months</string>
@@ -37,5 +39,6 @@
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
     <string name = "add_device_button">Add Device</string>
+
 
 </resources>

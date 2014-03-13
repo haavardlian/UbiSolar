@@ -20,18 +20,20 @@ import android.view.ViewGroup;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.IView.IDeviceView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
+import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 
 import java.util.ArrayList;
 
@@ -46,12 +48,10 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
     public static final String TAG = DeviceFragment.class.getName();
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    private Button addButton;
-    private EditText nameField, descriptionField;
-    private EnergyUsageModel usageField;
+    //private EnergyUsageModel usageField;
     private SimpleCursorAdapter adapter;
     private ArrayList<DeviceModel> devices;
-    private ArrayList<EnergyUsageModel> usage;
+    //private ArrayList<EnergyUsageModel> usage;
     private View view;
 
     /**
@@ -75,11 +75,32 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
      * The first call to a created fragment
      * @param activity
      */
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+    }
+
+    @Override
+    public void onCreate(Bundle bundle){
+        //Adding options menu
+        setHasOptionsMenu(true);
+        super.onCreate(bundle);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_add_device:
+                AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
+                addDeviceDialog.show(getFragmentManager(), "addDevice");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -94,13 +115,15 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
         //There was some reason I could not create the list view outside of this method
         final ListView listView = (ListView) getActivity().findViewById(R.id.device_list);
         devices = new ArrayList<DeviceModel>();
-        usage = new ArrayList<EnergyUsageModel>();
+        //usage = new ArrayList<EnergyUsageModel>();
 
-        adapter = new SimpleCursorAdapter(getActivity().getApplicationContext(),
+        adapter = new SimpleCursorAdapter(
+                getActivity().getApplicationContext(),
                 R.layout.fragment_device_row,
                 null,
                 new String[]{DeviceModel.DeviceEntry.COLUMN_NAME, DeviceModel.DeviceEntry.COLUMN_DESCRIPTION},
-                new int[]{R.id.row_header, R.id.row_description}, 0);
+                new int[]{R.id.row_header, R.id.row_description},
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         listView.setAdapter(adapter);
 
@@ -108,41 +131,6 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.v(TAG, "Du klikka på listeItem nummer: " + i);
-            }
-        });
-
-        nameField = (EditText) getActivity().findViewById(R.id.edit_name);
-        descriptionField = (EditText) getActivity().findViewById(R.id.edit_description);
-        //usageField = (EnergyUsageModel) getActivity().findViewById(R.id.edit_usage);
-        addButton = (Button) getActivity().findViewById(R.id.add_button);
-
-        //EnergyDataSource.deleteAll(getActivity().getContentResolver());
-
-        addButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                adapter = null;
-
-                DeviceModel deviceModel = new DeviceModel();
-                deviceModel.setUser_id(System.currentTimeMillis());
-                deviceModel.setDevice_id(System.currentTimeMillis());
-                deviceModel.setDescription(descriptionField.getText().toString());
-                deviceModel.setName(nameField.getText().toString());
-                devices.add(deviceModel);
-                //devices.add(deviceModel);
-
-                EnergyDataSource.insertDevice(getActivity().getContentResolver(), deviceModel);
-
-
-                adapter = new SimpleCursorAdapter(getActivity().getApplicationContext(),
-                        R.layout.fragment_device_row,
-                        null,
-                        new String[]{DeviceModel.DeviceEntry.COLUMN_NAME, DeviceModel.DeviceEntry.COLUMN_DESCRIPTION},
-                        new int[]{R.id.row_header, R.id.row_description}, 0);
-
-                listView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
             }
         });
 
@@ -178,15 +166,16 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        ((SimpleCursorAdapter) this.adapter).swapCursor(cursor);
+        this.adapter.swapCursor(cursor);
+
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        ((SimpleCursorAdapter)this.adapter).swapCursor(null);
+        this.adapter.swapCursor(null);
     }
 
-    //SPØRSMÅL : Bør disse være i presenteren? Eller her OG i presenteren?
+
     @Override
     public void addDevice(DeviceModel model) {
 
@@ -208,7 +197,7 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public boolean onOptionsItemSelected(MenuItem item) {
+    /*public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection OBS: copy paste
         /*switch (item.getItemId()) {
             case R.id.fragment_usage_menu_add:
@@ -217,8 +206,8 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }*/
+        }
 
         //TODO: Show the addusage acivity when clicked
-    }
+    }*/
 }

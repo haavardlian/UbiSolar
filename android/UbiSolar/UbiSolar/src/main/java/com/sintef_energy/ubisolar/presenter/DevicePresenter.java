@@ -1,10 +1,14 @@
 package com.sintef_energy.ubisolar.presenter;
 
+import android.content.ContentResolver;
+import android.util.Log;
+
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.IView.IDeviceView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -28,12 +32,19 @@ public class DevicePresenter {
 
     /* Listeners */
     public void registerListener(IDeviceView view){
-        dmListeners.add(view);
+        this.dmListeners.add(view);
     }
 
     public void unregisterListener(IDeviceView view){
-        dmListeners.remove(view);
+        this.dmListeners.remove(view);
     }
 
-
+    public void addDevice(DeviceModel device, ContentResolver contentResolver){
+        EnergyDataSource.insertDevice(contentResolver, device);
+        this.dmModels.add(device);
+        Log.v(TAG, "La til et nytt device");
+    }
+    public ArrayList<DeviceModel> getDeviceModels(){
+        return this.dmModels;
+    }
 }
