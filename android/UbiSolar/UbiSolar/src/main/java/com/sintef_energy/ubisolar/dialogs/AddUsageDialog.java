@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
-import com.sintef_energy.ubisolar.IView.ITotalEnergyPresenterCallback;
+import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.IView.IDateCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
@@ -51,7 +51,7 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mTotalEnergyPresenter = ((ITotalEnergyPresenterCallback) activity).getmTotalEnergyPresenter();
+            mTotalEnergyPresenter = ((IPresenterCallback) activity).getmTotalEnergyPresenter();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement " + TotalEnergyPresenter.class.getName());
         }
@@ -84,7 +84,7 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
                             item.moveToPosition(pos);
                             pos = item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME);
 
-                            ITotalEnergyPresenterCallback target = (ITotalEnergyPresenterCallback)getTargetFragment();
+                            IPresenterCallback target = (IPresenterCallback)getTargetFragment();
 
                             EnergyUsageModel euModel = new EnergyUsageModel();
                             euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));

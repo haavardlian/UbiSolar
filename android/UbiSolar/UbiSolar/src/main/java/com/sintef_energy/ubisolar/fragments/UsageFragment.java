@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.sintef_energy.ubisolar.IView.ITotalEnergyPresenterCallback;
+import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
@@ -78,7 +78,7 @@ public class UsageFragment extends Fragment {
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
 
         try {
-            mTotalEnergyPresenter = ((ITotalEnergyPresenterCallback) activity).getmTotalEnergyPresenter();
+            mTotalEnergyPresenter = ((IPresenterCallback) activity).getmTotalEnergyPresenter();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement " + UsageFragment.class.getName());
         }
