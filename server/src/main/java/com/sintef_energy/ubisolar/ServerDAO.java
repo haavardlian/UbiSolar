@@ -19,23 +19,23 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO device (device_id, user_id, name, description) VALUES (:device.deviceId, :device.userId, :device.name, :device.description)")
     int createDevice(@BindBean("device") Device device);
 
-    @SqlQuery("SELECT device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
+    @SqlQuery("SELECT device_power_usage.id, device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
               "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
-              "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.device_id AND " +
+              "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.id AND " +
               "device.user_id = :userId GROUP BY year")
     @Mapper(TotalUsageMapper.class)
     List<TotalUsage> getTotalDevicesUsageYearly(@Bind("userId") int userId);
 
-    @SqlQuery("SELECT device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
+    @SqlQuery("SELECT device_power_usage.id, device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
             "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
-            "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.device_id AND " +
+            "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.id AND " +
             "device.user_id = :userId GROUP BY year, month")
     @Mapper(TotalUsageMapper.class)
     List<TotalUsage> getTotalDevicesUsageMonthly(@Bind("userId") int userId);
 
-    @SqlQuery("SELECT device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
+    @SqlQuery("SELECT device_power_usage.id, device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
             "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
-            "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.device_id AND " +
+            "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.id AND " +
             "device.user_id = :userId GROUP BY year, month, week, day")
     @Mapper(TotalUsageMapper.class)
     List<TotalUsage> getTotalDevicesUsageDaily(@Bind("userId") int userId);
@@ -51,11 +51,11 @@ public interface ServerDAO {
     @Mapper(DeviceMapper.class)
     List<Device> getDevicesForUser(@Bind("user_id") int user_id);
 
-    @SqlQuery("SELECT * FROM power_usage WHERE device_id = :device_id")
+    @SqlQuery("SELECT * FROM device_power_usage WHERE device_id = :device_id")
     @Mapper(DeviceUsageMapper.class)
     List<DeviceUsage> getUsageForDevice(@Bind("device_id") int device_id);
 
-    @SqlUpdate("INSERT INTO power_usage (device_id, datetime, power_usage) VALUES (:usage.deviceId, :usage.datetime, :usage.powerUsage)")
+    @SqlUpdate("INSERT INTO device_power_usage (device_id, datetime, power_usage) VALUES (:usage.deviceId, :usage.datetime, :usage.powerUsage)")
     int addUsageForDevice(@BindBean("usage") DeviceUsage usage);
 
     @SqlQuery("SELECT * FROM total_power_usage WHERE user_id = :user_id")
