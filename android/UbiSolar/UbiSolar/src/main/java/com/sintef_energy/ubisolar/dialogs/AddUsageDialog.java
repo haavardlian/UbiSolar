@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
@@ -41,6 +42,9 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
 
     private EditText mDateField;
     private EditText mKwhField;
+    private ImageButton mButtonCalendar;
+    private ImageButton mButtonKwhUp;
+    private ImageButton mButtonKwhDown;
 
     private Spinner spinnerDevice;
     private SimpleCursorAdapter mDeviceAdapter;
@@ -116,14 +120,18 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
         spinnerDevice = (Spinner)view.findViewById(R.id.dialog_add_usage_spinner);
         mDateField = (EditText)view.findViewById(R.id.dialog_add_usage_edit_date);
         mKwhField = (EditText)view.findViewById(R.id.dialog_add_usage_edittext_kwh);
+        mButtonCalendar = (ImageButton)view.findViewById(R.id.dialog_add_usage_button_calendar);
+        mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
+        mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
 
         final DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.setTargetFragment(this, 0);
 
         /* Set up listeners */
-        mDateField.setOnClickListener(new View.OnClickListener() {
+        mButtonCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mButtonCalendar.setEnabled(false);
                 Calendar calender = Calendar.getInstance();
                 Bundle args = new Bundle();
                 args.putInt("year", calender.get(Calendar.YEAR));
@@ -132,6 +140,36 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
                 datePicker.setArguments(args);
 
                 datePicker.show(getFragmentManager(), "datePicker");
+            }
+        });
+
+        mButtonKwhDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String temp = String.valueOf(mKwhField.getText());
+                Double value = 1.;
+
+                if(!temp.equals(""))
+                    value = Double.valueOf(temp);
+
+                if(value >= 1.)
+                    value--;
+                mKwhField.setText(String.valueOf(value));
+            }
+        });
+
+        mButtonKwhUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String temp = String.valueOf(mKwhField.getText());
+
+                Double value = 0.;
+
+                if(!temp.equals(""))
+                    value = Double.valueOf(temp);
+
+                value++;
+                mKwhField.setText(String.valueOf(value));
             }
         });
 
@@ -168,6 +206,7 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
         currentMonth.set(Calendar.MONTH, month);
         currentMonth.set(Calendar.DAY_OF_MONTH, day);
         updateDateText();
+        mButtonCalendar.setEnabled(true);
     }
 
     @Override

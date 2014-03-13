@@ -68,13 +68,13 @@ public class SocialFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        final ListView listview = (ListView)getActivity().findViewById(R.id.socialList);
+        //final ListView listview = (ListView)getActivity().findViewById(R.id.socialList);
         friends = new String[] {"Tor-Håkon", "Pia",
                 "Beate", "Per-Øyvind", "Håvard", "Lars Erik"};
 
         /**adapter = new SimpleCursorAdapter();*/
 
-        listview.setAdapter(adapter);
+        //listview.setAdapter(adapter);
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
