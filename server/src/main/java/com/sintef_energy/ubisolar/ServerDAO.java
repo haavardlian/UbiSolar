@@ -40,11 +40,11 @@ public interface ServerDAO {
     @Mapper(TotalUsageMapper.class)
     List<TotalUsage> getTotalDevicesUsageDaily(@Bind("userId") int userId);
 
-    @SqlQuery("SELECT * FROM device WHERE user_id = :user_id AND device_id = :device_id LIMIT 1")
+    @SqlQuery("SELECT * FROM device WHERE user_id = :user_id AND id = :device_id LIMIT 1")
     @Mapper(DeviceMapper.class)
     Device getDeviceForUserById(@Bind("user_id") int user_id, @Bind("device_id") int device_id);
 
-    @SqlQuery("DELETE FROM device WHERE user_id = :user_id AND device_id = :device_id LIMIT 1")
+    @SqlQuery("DELETE FROM device WHERE user_id = :user_id AND id = :device_id LIMIT 1")
     int deleteDeviceForUserById(@Bind("user_id") int user_id, @Bind("device_id") int device_id);
 
     @SqlQuery("SELECT * FROM device WHERE user_id = :user_id")
@@ -65,22 +65,22 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO total_power_usage (user_id, timestamp, power_usage) VALUES(:usage.userId, :usage.datetime, :usage.powerUsage)")
     int addTotalUsageForUser(@BindBean("usage") TotalUsage usage);
 
-    @SqlQuery("SELECT * FROM tips")
+    @SqlQuery("SELECT * FROM tip")
     @Mapper(TipMapper.class)
     List<Tip> getAllTips();
 
-    @SqlQuery("SELECT * FROM tips WHERE id = :id")
+    @SqlQuery("SELECT * FROM tip WHERE id = :id")
     @Mapper(TipMapper.class)
     Tip getTipById(@Bind("id") int id);
 
-    @SqlUpdate("INSERT INTO tips (name, description) VALUES (:tip.name, :tip.description)")
+    @SqlUpdate("INSERT INTO tip (name, description) VALUES (:tip.name, :tip.description)")
     int createTip(@BindBean("tip") Tip tip);
 
-    @SqlQuery("SELECT * FROM tip_ratings WHERE tips_id = :id ORDER BY rating DESC")
+    @SqlQuery("SELECT * FROM tip_rating WHERE tip_id = :id ORDER BY rating DESC")
     @Mapper(TipRatingMapper.class)
     List<TipRating> getRatingsForTip(@Bind("id") int id);
 
-    @SqlUpdate("INSERT INTO tip_ratings (tips_id, rating, user_id) VALUES (:rating.tipId, :rating.rating, :rating.userId)")
+    @SqlUpdate("INSERT INTO tip_rating (tip_id, rating, user_id) VALUES (:rating.tipId, :rating.rating, :rating.userId)")
     int createRating(@BindBean("rating") TipRating rating);
 
  }

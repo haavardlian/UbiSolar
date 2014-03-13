@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -32,6 +33,7 @@ import org.achartengine.tools.ZoomListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -45,7 +47,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private static final String STATE_euModels = "STATE_euModels";
 
     private static final int POINT_DISTANCE = 15;
-    private static final int GRAPH_MARGIN = 10;
+    private static final int GRAPH_MARGIN = 20;
     private static final int NUMBER_OF_POINTS = 9;
 
     private View rootView;
@@ -56,9 +58,11 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private XYSeriesRenderer mCurrentRenderer;
     private GraphicalView mChartView;
     private ArrayList<TotalUsage> mTotalUsageList;
+    private ArrayList<TotalUsage> mCurrentUsageList;
     private String mTitleLabel;
     private String mTitleFormat;
-    private int mZoomMode = 0;
+    private String mDataResolution;
+    private int mActiveDateIndex = 0;
 
     TotalEnergyPresenter presenter;
     ArrayList<EnergyUsageModel> euModels;
@@ -85,17 +89,12 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        //Callback to activity
-        ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        //return super.onCreateView(inflater, container, savedInstanceState);
         rootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         return rootView;
     }
 
@@ -113,7 +112,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         createLineGraph();
         addSeries("Total");
         createData();
-        populateGraph(mTotalUsageList, "HH:mm", "EEEE dd/MM");
+        populateGraph(mTotalUsageList, "HH", "EEEE dd/MM", mTotalUsageList.size());
     }
 
     /*End lifecycle*/
@@ -150,30 +149,25 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     }
 
     @Override
-    public void dataRefresh() {
-
-    }
-
-    @Override
     public void newData(EnergyUsageModel euModel) {
         //euModels.add(euModel);
-        createLineGraph();
+//        createLineGraph();
     }
 
 
     private void setupLineGraph(){
         mRenderer.setChartTitle("Power usage");
-        mRenderer.setYTitle("KWh");
-        mRenderer.setXTitle("Date");
+//        mRenderer.setYTitle("KWh");
 
-        mRenderer.setAxisTitleTextSize(16);
+        mRenderer.setAxisTitleTextSize(25);
         mRenderer.setChartTitleTextSize(20);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
         mRenderer.setPointSize(10);
         mRenderer.setXLabels(0);
         mRenderer.setXLabelsPadding(10);
-        mRenderer.setYLabelsPadding(10);
+        mRenderer.setYLabelsPadding(20);
+        mRenderer.setMargins(new int[]{ 20, 40, 20, 20 });
 
         setColors(Color.WHITE, Color.BLACK);
     }
@@ -187,17 +181,13 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 @Override
                 public void zoomApplied(ZoomEvent zoomEvent) {
                     double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
-                    if(zoom > 50 && zoom < 70 && mZoomMode != 0)
+                    if(zoom > 70 && zoom < 90)
                     {
-                        mZoomMode = 0;
-                        changeDataset();
+                        zoomIn();
                     }
-                    if(zoom > 300 && zoom < 350 && mZoomMode != 1)
+                    if(zoom > 250 && zoom < 270)
                     {
-                        mZoomMode = 1;
-                        System.out.println(zoom);
-                        changeDataset();
-                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
+                        zoomOut();
                     }
                 }
 
@@ -209,12 +199,13 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 @Override
                 public void panApplied() {
                     int activePoint = (int) (mRenderer.getXAxisMin() + mRenderer.getXAxisMax()) / 2;
-                    int activeDeviceIndex = (int) activePoint / POINT_DISTANCE;
-                    if(activeDeviceIndex < 0)
+                    mActiveDateIndex = (int) activePoint / POINT_DISTANCE;
+                    if(mActiveDateIndex < 0)
                         return;
-                    if (!mTitleLabel.equals(formatDate(mTotalUsageList.get(activeDeviceIndex).getDatetime(), mTitleFormat))) {
-                        mTitleLabel = formatDate(mTotalUsageList.get(activeDeviceIndex).getDatetime(), mTitleFormat);
-                        setLabels(formatDate(mTotalUsageList.get(activeDeviceIndex).getDatetime(), mTitleFormat));
+                    // If the center point does not match the label, swap it with the new label
+                    if (!mTitleLabel.equals(formatDate(mCurrentUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat))) {
+                        mTitleLabel = formatDate(mCurrentUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat);
+                        setLabels(formatDate(mCurrentUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat));
                     }
                 }
             });
@@ -244,67 +235,102 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         mCurrentRenderer = seriesRenderer;
     }
 
-    private void populateGraph( ArrayList<TotalUsage> totalUsage, String labelFormat, String titleFormat)
+    private void populateGraph( ArrayList<TotalUsage> usage, String labelFormat,
+                                String titleFormat, int centerIndex)
     {
         mTitleFormat = titleFormat;
-        double max = 0;
-        double min = 0;
-        int y = 0;
+        mDataResolution = labelFormat;
+        mCurrentUsageList = usage;
+
         mCurrentSeries.clear();
         mRenderer.clearXTextLabels();
-        for(TotalUsage usage : totalUsage)
+
+        double max = 0;
+        double min = Integer.MAX_VALUE;
+        int y = 0;
+
+        for(TotalUsage u : usage)
         {
-            mRenderer.addXTextLabel(y, formatDate(usage.getDatetime(), labelFormat));
-            mCurrentSeries.add(y, usage.getPower_usage());
+            mRenderer.addXTextLabel(y, formatDate(u.getDatetime(), labelFormat));
+            mCurrentSeries.add(y, u.getPower_usage());
             y += POINT_DISTANCE;
-            max = Math.max(max, usage.getPower_usage());
-            min = Math.min(min, usage.getPower_usage());
+            max = Math.max(max, u.getPower_usage());
+            min = Math.min(min, u.getPower_usage());
         }
 
-        setRange(min, max, totalUsage.size());
-        setLabels(formatDate(totalUsage.get(totalUsage.size() - 1).getDatetime(), titleFormat));
+        setRange(min, max, centerIndex);
+        if(mActiveDateIndex < usage.size())
+            setLabels(formatDate(usage.get(mActiveDateIndex).getDatetime(), titleFormat));
 
-//        mChartView.zoomOut();
         if( mChartView != null)
             mChartView.repaint();
     }
 
-    private void setRange(double min, double max, int count)
+    private void setRange(double minY, double maxY, int newIndex)
     {
+        mActiveDateIndex = newIndex;
+        int end = mCurrentUsageList.size() * POINT_DISTANCE;
+        int start;
         int pointsToShow;
-        if(NUMBER_OF_POINTS > count)
-            pointsToShow = count;
+
+        if(NUMBER_OF_POINTS > mCurrentUsageList.size())
+            pointsToShow = mCurrentUsageList.size();
         else
             pointsToShow = NUMBER_OF_POINTS;
-        int end = count * POINT_DISTANCE;
-        mRenderer.setRange(new double[]{end - (pointsToShow * POINT_DISTANCE) - GRAPH_MARGIN,
-                end + GRAPH_MARGIN, min - GRAPH_MARGIN, max + GRAPH_MARGIN});
+
+        //IF the active index is close to or the last element, find a new center index.
+        if(mCurrentUsageList.size() - mActiveDateIndex < pointsToShow )
+            mActiveDateIndex = mCurrentUsageList.size() - pointsToShow / 2;
+
+        int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
+        start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
+
+        if( start < 0)
+            start  = 0;
+
+        mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
+                start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
+        mRenderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
+                end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
     }
 
-    private void changeDataset()
+    private void zoomIn()
     {
-        switch (mZoomMode)
-        {
-            case 0:
-                populateGraph(mTotalUsageList, "HH:mm", "EEEE dd/MM");
-                break;
-            case 1:
-                populateGraph(createDays(mTotalUsageList), "dd", "MMMM");
-                break;
-        }
+        if(mDataResolution.equals("dd"))
+            populateGraph(mTotalUsageList, "HH", "EEEE dd/MM",
+                    mActiveDateIndex * 24);
+        else if(mDataResolution.equals("w"))
+            populateGraph(changeResolution(mTotalUsageList, "dd"), "dd", "MMMM",
+                    mActiveDateIndex * 7);
+//        else if(mDataResolution.equals("MMMM"))
+//            populateGraph(changeResolution(mTotalUsageList, "w"), "w", "MMMMM y",
+//                    mActiveDateIndex * 4);
     }
 
-    private ArrayList<TotalUsage> createDays(ArrayList<TotalUsage> list)
+    private void zoomOut()
+    {
+        if(mDataResolution.equals("HH"))
+            populateGraph(changeResolution(mCurrentUsageList, "dd"), "dd", "MMMM",
+                    mActiveDateIndex / 24);
+        else if(mDataResolution.equals("dd"))
+            populateGraph(changeResolution(mCurrentUsageList, "w"), "w", "MMMMM y",
+                    mActiveDateIndex / 7);
+//        else if(mDataResolution.equals("w"))
+//            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
+//                    mActiveDateIndex / 4);
+    }
+
+    private ArrayList<TotalUsage> changeResolution(ArrayList<TotalUsage> list, String format)
     {
         ArrayList<TotalUsage> compactList = new ArrayList<>();
-        String date = formatDate(list.get(0).getDatetime(), "dd/MM");
+        String date = formatDate(list.get(0).getDatetime(), format);
         double powerUsage = 0;
         Date oldDate = new Date();
         for(TotalUsage usage : list)
         {
-            if(!date.equals(formatDate(usage.getDatetime(), "dd/MM")))
+            if(!date.equals(formatDate(usage.getDatetime(), format)))
             {
-                date = formatDate(usage.getDatetime(), "dd/MM");
+                date = formatDate(usage.getDatetime(), format);
                 compactList.add(new TotalUsage(1, oldDate, powerUsage));
                 powerUsage = 0;
             }
@@ -314,7 +340,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         }
         return compactList;
     }
-
 
     private void setColors(int backgroundColor, int labelColor)
     {
@@ -334,6 +359,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     private void setLabels(String label)
     {
+//        mRenderer.setXTitle("<  " + label + "  >");
         mRenderer.setXTitle(label);
         mTitleLabel = label;
     }
@@ -346,16 +372,19 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         mTotalUsageList = new ArrayList<>();
         Date date;
         Random random = new Random();
+        Calendar cal = Calendar.getInstance();
 
-        for(int i = 0; i < 100; i++)
+        for(int i = 0; i < 2000; i++)
         {
-            date = new Date(System.currentTimeMillis() + (i * 60 * 60 * 1000));
+            date = new Date();
+            cal.setTime(date);
+            cal.add(Calendar.HOUR_OF_DAY, i);
+            date = cal.getTime();
             usage = new TotalUsage(1, date, random.nextInt((200 - 50) + 1) + 50);
             mTotalUsageList.add(usage);
         }
 
         return mTotalUsageList;
-//        populateGraph(mTotalUsageList, "HH:mm", "EEEE dd/MM");
     }
 }
 

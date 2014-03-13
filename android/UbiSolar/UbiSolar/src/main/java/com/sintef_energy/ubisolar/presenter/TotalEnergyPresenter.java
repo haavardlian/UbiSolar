@@ -8,7 +8,6 @@ import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -51,6 +50,9 @@ public class TotalEnergyPresenter {
         }
         else
             euModels = new ArrayList<>();
+
+        for(ITotalEnergyView view : listeners)
+            view.newData(null); //todo: handle correctly...
     }
 
     public ArrayList<EnergyUsageModel> getEnergyData(){

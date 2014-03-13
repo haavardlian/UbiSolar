@@ -18,50 +18,23 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_alignParentBottom="true">
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dip"
-                android:layout_marginLeft="4dip"
-                android:layout_marginRight="4dip"
-                android:background="?android:attr/dividerVertical"
-                android:layout_alignParentTop="true"/>
-            <View
-                android:id="@+id/ViewColorPickerHelper"
-                android:layout_width="1dip"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="4dip"
-                android:layout_marginTop="4dip"
-                android:background="?android:attr/dividerVertical"
-                android:layout_centerHorizontal="true"/>
-            <Button
-                android:id="@+id/fragment_usage_btn_change_date"
+            <ImageButton
+                android:id="@+id/usage_button_swap_graph"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_toLeftOf="@id/ViewColorPickerHelper"
-                android:background="?android:attr/selectableItemBackground"
-                android:text="@string/last12months"
-                android:layout_alignParentBottom="true"/>
-            <Button
-                android:id="@+id/fragment_usage_btn_devices"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:text="@string/devices"
-                android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@id/ViewColorPickerHelper"/>
+                android:src="@drawable/pie"
+                android:background="@null"/>
+            <!--<Button-->
+                <!--android:id="@+id/usage_button_devices"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:background="?android:attr/selectableItemBackground"-->
+                <!--android:text="@string/devices"-->
+                <!--android:layout_alignParentBottom="true" />-->
         </RelativeLayout>
-        <!--
-        <Button
-            android:id="@+id/button"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:text="NOMNOM"/>-->
     </LinearLayout>
 
     <FrameLayout android:id="@+id/fragment_usage_tab_graph_placeholder"

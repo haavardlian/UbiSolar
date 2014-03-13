@@ -11,16 +11,27 @@ import java.util.Date;
 @JsonSnakeCase
 public class TotalUsage {
     @JsonProperty
+    private long id;
+    @JsonProperty
     private Date datetime;
     @JsonProperty
     private double powerUsage;
     @JsonProperty
-    private int userId;
+    private long userId;
 
-    public TotalUsage(int userId, Date datetime, double powerUsage) {
+    public TotalUsage(long id, long userId, Date datetime, double powerUsage) {
+        this.id = id;
         this.powerUsage = powerUsage;
         this.userId = userId;
         this.datetime = datetime;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Date getDatetime() {
@@ -39,11 +50,11 @@ public class TotalUsage {
         this.powerUsage = powerUsage;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 }

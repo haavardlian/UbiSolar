@@ -14,7 +14,7 @@ public class DeviceModel implements Parcelable{
 
     /* Column definitions*/
     public static interface DeviceEntry extends BaseColumns {
-        public static final String TABLE_NAME = "devices";
+        public static final String TABLE_NAME = "device";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_DESCRIPTION = "description";
     }

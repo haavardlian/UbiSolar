@@ -14,6 +14,7 @@
     </string-array>
 
     <!-- Fragment usage -->
+    <string name="graph_tag"></string>
     <string name="last12months">Last 12 months</string>
     <string name="lastMonth">Last month</string>
     <string name="devices">Devices</string>
@@ -32,5 +33,6 @@
     <string name="add_button">Add Usage</string>
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
+    <string name = "add_device_button">Add Device</string>
 
 </resources>
