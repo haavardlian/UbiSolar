@@ -25,15 +25,13 @@
                 android:layout_alignParentLeft="true"
                 android:src="@drawable/pie"
                 android:background="@null"/>
-            <!--<Button-->
-                <!--android:id="@+id/usage_button_devices"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:layout_alignParentTop="true"-->
-                <!--android:background="?android:attr/selectableItemBackground"-->
-                <!--android:text="@string/devices"-->
-                <!--android:layout_alignParentBottom="true" />-->
+            <Button
+                android:id="@+id/usage_button_devices"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/devices"/>
         </RelativeLayout>
     </LinearLayout>
 

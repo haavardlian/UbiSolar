@@ -18,6 +18,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sintef_energy.ubisolar.structs.DeviceUsageList;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -216,6 +217,16 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
             renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
             mRenderer.addSeriesRenderer(renderer);
         }
+    }
+
+    @Override
+    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
+        
+    }
+
+    @Override
+    public void clearDevices() {
+
     }
 
     // Create data
