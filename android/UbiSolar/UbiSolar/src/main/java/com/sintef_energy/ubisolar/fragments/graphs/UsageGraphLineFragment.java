@@ -24,6 +24,9 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.structs.Device;
+import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sintef_energy.ubisolar.structs.DeviceUsageList;
 import com.sintef_energy.ubisolar.structs.TotalUsage;
 
 import org.achartengine.ChartFactory;
@@ -46,7 +49,7 @@ import java.util.Random;
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView, LoaderManager.LoaderCallbacks<Cursor> {
+public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView{
 
     public static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -59,15 +62,16 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-    private XYSeries mCurrentSeries;
     private XYSeriesRenderer mCurrentRenderer;
     private GraphicalView mChartView;
-    private ArrayList<TotalUsage> mTotalUsageList;
-    private ArrayList<TotalUsage> mCurrentUsageList;
+    private ArrayList<DeviceUsageList> mBaseUsageList;
+    private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
     private String mTitleFormat;
     private String mDataResolution;
     private int mActiveDateIndex = 0;
+    private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED, Color.YELLOW};
+    private int mColorIndex;
 
     TotalEnergyPresenter presenter;
     ArrayList<EnergyUsageModel> euModels;
@@ -110,25 +114,16 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         if (savedState != null) {
             mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("mDataset");
             mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("mRenderer");
-            mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
             mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
         }
 
-        //Define mRenderer.
         setupLineGraph();
-
-        //Define the render view.
         createLineGraph();
 
-        mCurrentRenderer = addSeries("Total");
-
-        mTotalUsageList = new ArrayList<>();
-        //mTotalUsageList.clear();
-        //mTotalUsageList.addAll(createData());
-
-        //populateGraph(mTotalUsageList, "HH", "EEEE dd/MM", mTotalUsageList.size());
-
-        getLoaderManager().initLoader(0, null, this);
+        mActiveUsageList = new ArrayList<>();
+        mBaseUsageList = new ArrayList<>();
+        mTitleFormat = "EEEE dd/MM";
+        mDataResolution = "HH";
     }
 
     /*End lifecycle*/
@@ -143,9 +138,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         super.onSaveInstanceState(outState);
         outState.putSerializable("mDataset", mDataset);
         outState.putSerializable("mRenderer", mRenderer);
-        outState.putSerializable("current_series", mCurrentSeries);
         outState.putSerializable("current_renderer", mCurrentRenderer);
-        //outState.putInt("curChoice", mCurCheckPosition);
     }
 
     @Override
@@ -182,7 +175,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         mRenderer.setChartTitleTextSize(20);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
-        mRenderer.setPointSize(10);
+        mRenderer.setPointSize(5);
         mRenderer.setXLabels(0);
         mRenderer.setXLabelsPadding(10);
         mRenderer.setYLabelsPadding(20);
@@ -203,13 +196,16 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 @Override
                 public void zoomApplied(ZoomEvent zoomEvent) {
                     double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
-                    if(zoom > 70 && zoom < 90)
+//                    System.out.println(zoom);
+                    if(zoom > 60 && zoom < 90)
                     {
                         zoomIn();
+                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
                     }
                     if(zoom > 250 && zoom < 270)
                     {
                         zoomOut();
+                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
                     }
                 }
 
@@ -225,9 +221,13 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                     if(mActiveDateIndex < 0)
                         return;
                     // If the center point does not match the label, swap it with the new label
-                    if (!mTitleLabel.equals(formatDate(mCurrentUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat))) {
-                        mTitleLabel = formatDate(mCurrentUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat);
-                        setLabels(formatDate(mCurrentUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat));
+
+                    if(mTitleLabel == null)
+                        return;
+
+                    if (!mTitleLabel.equals(formatDate(getActiveDate(), mTitleFormat))) {
+                        mTitleLabel = formatDate(getActiveDate(), mTitleFormat);
+                        setLabels(formatDate(getActiveDate(), mTitleFormat));
                     }
                 }
             });
@@ -238,83 +238,127 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         }
     }
 
+    private Date getActiveDate()
+    {
+        //Todo FIX
+        if(mActiveUsageList.size() <= 0)
+            return null;
+
+        if(mActiveUsageList.get(0).size() <= 0)
+            return null;
+
+        return mActiveUsageList.get(0).get(mActiveDateIndex).getDatetime();
+    }
+
     /**
      * Define the series renderer
      * @param seriesName The name of the series
      */
-    private XYSeriesRenderer addSeries(String seriesName)
+    private void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues)
     {
         XYSeries series = new XYSeries(seriesName);
         mDataset.addSeries(series);
-        mCurrentSeries = series;
 
         XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
-        mRenderer.addSeriesRenderer(seriesRenderer);
-        seriesRenderer.setPointStyle(PointStyle.CIRCLE);
-        seriesRenderer.setFillPoints(true);
-        //Enable to display chart values on the graph
-//        seriesRenderer.setDisplayChartValues(true);
-//        seriesRenderer.setChartValuesTextSize(25);
-//        seriesRenderer.setChartValuesSpacing(25);
-//        mRenderer.setDisplayChartValuesDistance(10);
         seriesRenderer.setLineWidth(3);
-        return seriesRenderer;
+        seriesRenderer.setColor(colors[mColorIndex++%colors.length]);
+        seriesRenderer.setShowLegendItem(true);
+        mCurrentRenderer = seriesRenderer;
+        mRenderer.addSeriesRenderer(seriesRenderer);
+        if(displayPoints) {
+            seriesRenderer.setPointStyle(PointStyle.CIRCLE);
+            seriesRenderer.setFillPoints(true);
+        }
+
+        if(displayPointValues) {
+            seriesRenderer.setDisplayChartValues(true);
+            seriesRenderer.setChartValuesTextSize(25);
+            seriesRenderer.setChartValuesSpacing(25);
+        }
     }
 
-    /**
-     * Clears previous data and populates the list with the usage.
-     *
-     * @param usage
-     * @param labelFormat
-     * @param titleFormat
-     * @param centerIndex
-     */
-    private void populateGraph( ArrayList<TotalUsage> usage, String labelFormat,
-                                String titleFormat, int centerIndex)
+    private void populateGraph(int centerIndex)
     {
-        mTitleFormat = titleFormat;
-        mDataResolution = labelFormat;
-        mCurrentUsageList = usage;
-
-        mCurrentSeries.clear();
-        mRenderer.clearXTextLabels();
-
         double max = 0;
         double min = Integer.MAX_VALUE;
-        int y = 0;
+        int y;
+        int index = 0;
 
-        for(TotalUsage u : usage)
-        {
-            mRenderer.addXTextLabel(y, formatDate(u.getDatetime(), labelFormat));
-            mCurrentSeries.add(y, u.getPower_usage());
-            y += POINT_DISTANCE;
-            max = Math.max(max, u.getPower_usage());
-            min = Math.min(min, u.getPower_usage());
+        mRenderer.clearXTextLabels();
+
+        if( mActiveUsageList.size() <= 0)
+            return;
+
+        for(DeviceUsageList usageList : mActiveUsageList) {
+            y = 0;
+            XYSeries series =  mDataset.getSeriesAt(index);
+            series.clear();
+            for (DeviceUsage usage : usageList.getUsage()) {
+                mRenderer.addXTextLabel(y, formatDate(usage.getDatetime(), mDataResolution));
+                series.add(y, usage.getPower_usage());
+                y += POINT_DISTANCE;
+                max = Math.max(max, usage.getPower_usage());
+                min = Math.min(min, usage.getPower_usage());
+            }
+            index++;
         }
 
         setRange(min, max, centerIndex);
-        if(mActiveDateIndex < usage.size())
-            setLabels(formatDate(usage.get(mActiveDateIndex).getDatetime(), titleFormat));
+        DeviceUsageList largestUsageList = getLargestUsageList();
+//        if(largestUsageList != null) {
+//            if (mActiveDateIndex < largestUsageList.size())
+        setLabels(formatDate(largestUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat));
+//        }
 
         if( mChartView != null)
             mChartView.repaint();
     }
 
+    private DeviceUsageList getLargestUsageList()
+    {
+        DeviceUsageList largestList = new DeviceUsageList();
+
+        for(DeviceUsageList usageList : mActiveUsageList)
+            if( largestList.size() < usageList.size())
+                largestList = usageList;
+
+        if(largestList.size() == 0)
+            return null;
+
+        return largestList;
+    }
+
+    private int getLargestListSize()
+    {
+        DeviceUsageList usageList = getLargestUsageList();
+        if(usageList == null)
+            return 0;
+
+        return usageList.size();
+    }
+
+    private void setFormat(String labelFormat, String titleFormat)
+    {
+        mTitleFormat = titleFormat;
+        mDataResolution = labelFormat;
+    }
+
     private void setRange(double minY, double maxY, int newIndex)
     {
         mActiveDateIndex = newIndex;
-        int end = mCurrentUsageList.size() * POINT_DISTANCE;
+        int largestSeriesSize= getLargestListSize();
+        int end = largestSeriesSize * POINT_DISTANCE;
         int start;
         int pointsToShow;
 
-        if(NUMBER_OF_POINTS > mCurrentUsageList.size())
-            pointsToShow = mCurrentUsageList.size();
+        if(NUMBER_OF_POINTS > largestSeriesSize)
+            pointsToShow = largestSeriesSize;
         else
             pointsToShow = NUMBER_OF_POINTS;
 
         //IF the active index is close to or the last element, find a new center index.
-        if(mCurrentUsageList.size() - mActiveDateIndex < pointsToShow )
-            mActiveDateIndex = mCurrentUsageList.size() - pointsToShow / 2;
+        if(largestSeriesSize - mActiveDateIndex < pointsToShow )
+            mActiveDateIndex = largestSeriesSize - pointsToShow / 2;
 
         int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
         start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
@@ -330,49 +374,72 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     private void zoomIn()
     {
-        if(mDataResolution.equals("dd"))
-            populateGraph(mTotalUsageList, "HH", "EEEE dd/MM",
-                    mActiveDateIndex * 24);
-        else if(mDataResolution.equals("w"))
-            populateGraph(changeResolution(mTotalUsageList, "dd"), "dd", "MMMM",
-                    mActiveDateIndex * 7);
-//        else if(mDataResolution.equals("MMMM"))
-//            populateGraph(changeResolution(mTotalUsageList, "w"), "w", "MMMMM y",
-//                    mActiveDateIndex * 4);
+        if(mDataResolution.equals("dd")) {
+            setFormat("HH", "EEEE dd/MM");
+            changeResolution();
+            populateGraph(mActiveDateIndex * 24);
+        }
+        else if(mDataResolution.equals("w")) {
+            setFormat("dd", "MMMM");
+            changeResolution();
+            populateGraph(mActiveDateIndex * 7);
+        }
+//        else if(mDataResolution.equals("MMMM")) {
+//            setFormat("w", "MMMMM y");
+//            changeResolution();
+//            populateGraph(mActiveDateIndex * 4);
+//        }
     }
 
     private void zoomOut()
     {
-        if(mDataResolution.equals("HH"))
-            populateGraph(changeResolution(mCurrentUsageList, "dd"), "dd", "MMMM",
-                    mActiveDateIndex / 24);
-        else if(mDataResolution.equals("dd"))
-            populateGraph(changeResolution(mCurrentUsageList, "w"), "w", "MMMMM y",
-                    mActiveDateIndex / 7);
+        if(mDataResolution.equals("HH")) {
+            setFormat("dd", "MMMM");
+            changeResolution();
+            populateGraph(mActiveDateIndex / 24);
+        }
+        else if(mDataResolution.equals("dd")) {
+            setFormat("w", "MMMMM y");
+            changeResolution();
+            populateGraph(mActiveDateIndex / 7);
+        }
 //        else if(mDataResolution.equals("w"))
 //            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
 //                    mActiveDateIndex / 4);
     }
 
-    private ArrayList<TotalUsage> changeResolution(ArrayList<TotalUsage> list, String format)
+    private void changeResolution()
     {
-        ArrayList<TotalUsage> compactList = new ArrayList<>();
-        String date = formatDate(list.get(0).getDatetime(), format);
-        double powerUsage = 0;
-        Date oldDate = new Date();
-        for(TotalUsage usage : list)
-        {
-            if(!date.equals(formatDate(usage.getDatetime(), format)))
-            {
-                date = formatDate(usage.getDatetime(), format);
-                compactList.add(new TotalUsage(1, oldDate, powerUsage));
-                powerUsage = 0;
-            }
+        mActiveUsageList.clear();
+        DeviceUsageList compactList;
 
-            oldDate = usage.getDatetime();
-            powerUsage += usage.getPower_usage();
+
+        for(DeviceUsageList usageList : mBaseUsageList) {
+
+            if(mDataResolution.equals("HH"))
+                mActiveUsageList.add(usageList);
+
+            else {
+
+                compactList = new DeviceUsageList();
+                String date = formatDate(usageList.get(0).getDatetime(), mDataResolution);
+                double powerUsage = 0;
+                Date oldDate = new Date();
+
+                for (DeviceUsage usage : usageList.getUsage()) {
+                    if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
+                        date = formatDate(usage.getDatetime(), mDataResolution);
+                        compactList.add(new DeviceUsage(usage.getId(),usageList.getId(), oldDate, powerUsage) {
+                        });
+                        powerUsage = 0;
+                    } else {
+                        oldDate = usage.getDatetime();
+                        powerUsage += usage.getPower_usage();
+                    }
+                }
+                mActiveUsageList.add(compactList);
+            }
         }
-        return compactList;
     }
 
     private void setColors(int backgroundColor, int labelColor)
@@ -398,84 +465,25 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         mTitleLabel = label;
     }
 
-    // Temp code for generating data
+    @Override
+    public void clearDevices() {
+        mActiveUsageList.clear();
+        mBaseUsageList.clear();
+        mDataset.clear();
+        mRenderer.removeAllRenderers();
+        mChartView.repaint();
+        mColorIndex = 0;
+    }
 
-    private ArrayList<TotalUsage> createData()
-    {
-        TotalUsage usage;
-        ArrayList<TotalUsage> tempmTotalUsageList = new ArrayList<>();
-        Date date;
-        Random random = new Random();
-        Calendar cal = Calendar.getInstance();
-
-        for(int i = 0; i < 2000; i++)
+    @Override
+    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
+        for(DeviceUsageList usage : usageList)
         {
-            date = new Date();
-            cal.setTime(date);
-            cal.add(Calendar.HOUR_OF_DAY, i);
-            date = cal.getTime();
-            usage = new TotalUsage(1, date, random.nextInt((200 - 50) + 1) + 50);
-            tempmTotalUsageList.add(usage);
+            mActiveUsageList.add(usage);
+            mBaseUsageList.add(usage);
+            addSeries(usage.getName(), true, false);
         }
-
-        return tempmTotalUsageList;
-    }
-
-
-    /**
-     * Make data that can be rendered from the cursor.
-     * @param data
-     * @return
-     */
-    private ArrayList<TotalUsage> createDataFromCursor(Cursor data)
-    {
-        TotalUsage usage;
-        ArrayList<TotalUsage> tempTotalUsageList = new ArrayList<>();
-        Date date;
-        Random random = new Random();
-        Calendar cal = Calendar.getInstance();
-
-        data.moveToFirst();
-        if(data.getCount() != 0)
-            do{
-                EnergyUsageModel eum = new EnergyUsageModel(data);
-                tempTotalUsageList.add(new TotalUsage(eum.getDevice_id(), eum.getDatetime(), eum.getPower_usage()));
-            }
-            while(data.moveToNext());
-
-
-        return tempTotalUsageList;
-    }
-
-    /**
-     * Creates the loader. Maybe have i for different months?
-     * @param i
-     * @param bundle
-     * @return
-     */
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(
-                getActivity(),
-                EnergyContract.Energy.CONTENT_URI,
-                EnergyContract.Energy.PROJECTION_ALL,
-                null,
-                null,
-                EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
-                );
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor data) {
-        //TODO: Async oppdatering av view
-        mTotalUsageList.clear();
-        mTotalUsageList.addAll(createDataFromCursor(data));
-        populateGraph(mTotalUsageList, "HH", "EEEE dd/MM", mTotalUsageList.size());
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        changeResolution();
+        populateGraph(getLargestListSize());
     }
 }
-
