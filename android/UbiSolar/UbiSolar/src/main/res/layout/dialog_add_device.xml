@@ -20,7 +20,7 @@
         android:id="@+id/edit_usage"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="The montly average usage for this device"/>
+        android:hint="The montly average mUsage for this device"/>
         -->
 
 </LinearLayout>

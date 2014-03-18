@@ -13,11 +13,8 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.sintef_energy.ubisolar.structs.DeviceUsageList;
 
 import org.achartengine.ChartFactory;
@@ -28,8 +25,6 @@ import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Random;
 
 /**
  * Created by perok on 2/11/14.
@@ -41,12 +36,12 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
     private View rootView;
 
-    private static int[] COLORS = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED, Color.YELLOW};
+    private static int[] COLORS = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN,
+            Color.RED, Color.YELLOW};
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
-    private ArrayList<Device> devices;
-
+    private ArrayList<DeviceUsageList> mDeviceUsageList;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -54,7 +49,6 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     public static UsageGraphPieFragment newInstance() {
         UsageGraphPieFragment fragment = new UsageGraphPieFragment();
         Bundle args = new Bundle();
-        //args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,21 +78,20 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
-            // Restore last state for checked position.
+            mDeviceUsageList = (ArrayList<DeviceUsageList>) savedInstanceState.getSerializable("mDeviceUsageList");
         }
 
         setupPieGraph();
         createPieGraph();
-        devices = createDevices();
-        ArrayList<ArrayList<DeviceUsage>> usageList = createDeviceUsage(devices);
-        populatePieChart(devices, usageList);
+//        ArrayList<ArrayList<DeviceUsage>> usageList = createDeviceUsage(mDevices);
+//        populatePieChart(mDevices, usageList);
     }
 
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //outState.putInt("curChoice", mCurCheckPosition);
+        outState.putSerializable("mDeviceUsageList", mDeviceUsageList);
     }
 
     @Override
@@ -120,17 +113,19 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
     private void setupPieGraph()
     {
-        mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setBackgroundColor(Color.WHITE);
+        mRenderer.setChartTitle(getString(R.string.pie_chart_title));
         mRenderer.setChartTitleTextSize(20);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
+
+        mRenderer.setApplyBackgroundColor(true);
+        mRenderer.setBackgroundColor(Color.WHITE);
+        mRenderer.setLabelsColor(Color.BLACK);
+
         mRenderer.setMargins(new int[] { 20, 30, 15, 0 });
         mRenderer.setStartAngle(90);
         mRenderer.setZoomEnabled(false);
         mRenderer.setPanEnabled(false);
-        mRenderer.setChartTitle("Power overview");
-        mRenderer.setLabelsColor(Color.BLACK);
         mRenderer.setShowLegend(false);
         mRenderer.setClickEnabled(true);
         mRenderer.setSelectableBuffer(10);
@@ -157,7 +152,7 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
                             else if(i == seriesSelection.getPointIndex())
                             {
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(true);
-                                updateDetails(devices.get(seriesSelection.getPointIndex()), String.valueOf(seriesSelection.getValue()));
+                                updateDetails(seriesSelection.getPointIndex());
                             }
                             else
                             {
@@ -189,88 +184,55 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
         }
     }
 
-    private void populatePieChart(ArrayList<Device> devices,
-                                  ArrayList<ArrayList<DeviceUsage>> usageList)
+    private void populatePieChart()
     {
         double totalPowerUsage = 0;
 
-        for(int i = 0; i < devices.size(); i++)
+        for(DeviceUsageList deviceUsageList : mDeviceUsageList)
+            totalPowerUsage += deviceUsageList.getTotalUsage();
+
+        for(DeviceUsageList deviceUsageList : mDeviceUsageList)
         {
-            ArrayList<DeviceUsage> usage = usageList.get(i);
-            for(DeviceUsage u : usage)
-                totalPowerUsage += u.getPower_usage();
-        }
+            int percentage = (int) ((deviceUsageList.getTotalUsage() / totalPowerUsage) * 100);
+            deviceUsageList.setPercentage(percentage);
 
-        for(int i = 0; i < devices.size(); i++)
-        {
-            ArrayList<DeviceUsage> usage = usageList.get(i);
-            double powerUsage = 0;
-
-            for(DeviceUsage u : usage)
-                powerUsage += u.getPower_usage();
-
-
-            double percentage = (powerUsage / totalPowerUsage) * 100;
-
-            mSeries.add(devices.get(i).getName() + " - " + (int) percentage + "%", powerUsage);
+            mSeries.add(deviceUsageList.getDevice().getName() + " - " + (int) percentage + "%",
+                    deviceUsageList.getTotalUsage());
             SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
             renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
             mRenderer.addSeriesRenderer(renderer);
         }
+
+        mChartView.repaint();
     }
 
     @Override
-    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
-        
+    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList)
+    {
+        mDeviceUsageList = usageList;
+        for(DeviceUsageList u : mDeviceUsageList)
+            u.calculateTotalUsage();
+        populatePieChart();
     }
 
     @Override
     public void clearDevices() {
+        mRenderer.removeAllRenderers();
+        mSeries.clear();
 
     }
 
-    // Create data
-    private ArrayList<Device> createDevices()
-    {
-        ArrayList<Device> devices = new ArrayList<>();
-        devices.add(new DeviceModel(1, "TV", "-", 1));
-        devices.add(new DeviceModel(2, "Radio", "-", 1));
-        devices.add(new DeviceModel(3, "PC", "-", 1));
-        devices.add(new DeviceModel(4, "Oven", "-", 1));
-        devices.add(new DeviceModel(5, "Heater", "-", 1));
-        return devices;
-    }
-
-    private ArrayList<ArrayList<DeviceUsage>> createDeviceUsage(ArrayList<Device> devices)
-    {
-        ArrayList<ArrayList<DeviceUsage>> collection = new ArrayList<>();
-        Date date;
-        Random random = new Random();
-
-
-        for(Device device : devices)
-        {
-            ArrayList<DeviceUsage> usage = new ArrayList<>();
-            for(int i = 0; i < 100; i++)
-            {
-                date = new Date(System.currentTimeMillis() + (i * 60 * 60 * 1000));
-                usage.add(new EnergyUsageModel(System.currentTimeMillis(), device.getDevice_id(), date, random.nextInt((50 - 0) + 1) + 50));
-            }
-            collection.add(usage);
-        }
-        return collection;
-    }
-
-    private void updateDetails(Device device, String powerUsage)
+    private void updateDetails(int index)
     {
         TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
         TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
         TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
 
+        DeviceUsageList usageList = mDeviceUsageList.get(index);
 
-        nameView.setText(device.getName());
-        descriptionView.setText(device.getDescription());
-        powerUsageView.setText(powerUsage + " kWh");
+        nameView.setText(usageList.getDevice().getName());
+        descriptionView.setText(usageList.getDevice().getDescription());
+        powerUsageView.setText(usageList.getTotalUsage() + " kWh (" + usageList.getPercentage() + "%)");
     }
 
     private void clearDetails()

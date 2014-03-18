@@ -38,7 +38,6 @@ import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.sintef_energy.ubisolar.structs.DeviceUsageList;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -129,7 +128,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         //prepoluate database if it is empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
 //            clearDatabase();
-            createDevies();
+            createDevices();
             createEnergyUsage();
         }
 
@@ -142,12 +141,8 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
                 calendar.getTimeInMillis());
 
         /* Show fragment */
-        UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-        graphView = fragment;
-        fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-        ft.commit();
+        ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
+        setLineChart(button);
 
         /* Button listeners*/
         ImageButton graphButton = (ImageButton)getActivity().findViewById(R.id.usage_button_swap_graph);
@@ -231,31 +226,17 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     {
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
 
-        if( button.getTag(R.string.graph_tag) == null)
-            button.setTag(R.string.graph_tag, "pie");
+//        if( button.getTag(R.string.graph_tag) == null)
+//            button.setTag(R.string.graph_tag, "pie");
 
         //TODO swap graphs
         if(button.getTag(R.string.graph_tag).equals("pie"))
         {
-            button.setImageResource(R.drawable.line);
-            button.setTag(R.string.graph_tag, "line");
-            UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
-            graphView = fragment;
-            fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-            ft.commit();
+            setPieChart(button);
         }
         else
         {
-            button.setImageResource(R.drawable.pie);
-            button.setTag(R.string.graph_tag, "pie");
-            UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-            graphView = fragment;
-            fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-            ft.commit();
+            setLineChart(button);
         }
     }
 
@@ -291,6 +272,39 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
                     }
                 });
         builder.show();
+    }
+
+    private void setPieChart(ImageButton button)
+    {
+        button.setImageResource(R.drawable.line);
+        button.setTag(R.string.graph_tag, "line");
+
+//        Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
+//        deviceButton.setVisibility(View.GONE);
+
+        UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
+        graphView = fragment;
+        fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+        ft.commit();
+    }
+
+    private void setLineChart(ImageButton button)
+    {
+        button.setImageResource(R.drawable.pie);
+        button.setTag(R.string.graph_tag, "pie");
+
+
+        Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
+        deviceButton.setVisibility(View.VISIBLE);
+
+        UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
+        graphView = fragment;
+        fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+        ft.commit();
     }
 
     private void getSelectedDeviceData()
@@ -352,7 +366,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         mDeviceUsageList.clear();
         for(Device device : mSelectedDevices)
         {
-            mDeviceUsageList.add(new DeviceUsageList(device.getDevice_id(), device.getName()));
+            mDeviceUsageList.add(new DeviceUsageList(device));
         }
 
         if(mDeviceUsageList.size() < 1)
@@ -366,7 +380,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
             do{
                 EnergyUsageModel eum = new EnergyUsageModel(data);
                 for(DeviceUsageList usageList : mDeviceUsageList) {
-                    if (usageList.getId() == eum.getDevice_id()) {
+                    if (usageList.getDevice().getDevice_id() == eum.getDevice_id()) {
                         usageList.add(new DeviceUsage(eum.getId(), eum.getDevice_id(),
                                 eum.getDatetime(), eum.getPower_usage()) {
                         });
@@ -386,9 +400,8 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
-    private void createDevies()
+    private void createDevices()
     {
-        DeviceModel device;
         addDevice("TV", "Livingroom");
         addDevice("Radio", "Kitchen");
         addDevice("Heater", "Second floor");

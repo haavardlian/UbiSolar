@@ -14,7 +14,7 @@
     </string-array>
 
     <!-- AddUsageDialog -->
-    <string name="addUsageDialog_title">Add device usage</string>
+    <string name="addUsageDialog_title">Add device mUsage</string>
     <!-- AddDeviceDialog -->
     <string name="addDeviceDialog_title">Add device</string>
     <string name="addDeviceDialog_buttonText">Add</string>
@@ -23,7 +23,7 @@
     <string name="last12months">Last 12 months</string>
     <string name="lastMonth">Last month</string>
     <string name="devices">Devices</string>
-    <string name="totalUsage">Total usage</string>
+    <string name="totalUsage">Total mUsage</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -36,10 +36,11 @@
     <string name="profile_postcode">Postal code</string>
     <string name="profile_anon">Anonymous</string>
     <string name="add_button">Add Usage</string>
-    <string name="title_activity_add_device_energy">Total usage</string>
+    <string name="title_activity_add_device_energy">Total mUsage</string>
     <string name="hello_world">Hello world!</string>
     <string name="add_device_button">Add Device</string>
     <string name="usage_device_dialog_title">Select Devices</string>
+    <string name="pie_chart_title">Power overview</string>
 
     <!-- Fragment social-->
     <string name="socialUsername">User\'s name</string>
