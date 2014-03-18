@@ -1,27 +1,26 @@
 package com.sintef_energy.ubisolar.activities;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.util.Base64;
+import android.util.Log;
 
-//import com.facebook.android.Facebook;
-//import com.facebook.widget.LoginButton;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.android.Facebook;
-import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
+
+//import com.facebook.android.Facebook;
+//import com.facebook.widget.LoginButton;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -49,6 +48,7 @@ public class LoginActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         setContentView(R.layout.fragment_profile);
         uiHelper = new UiLifecycleHelper(this, callback);
