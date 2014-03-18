@@ -39,7 +39,7 @@
             android:inputType="date"
             android:ems="10"
             android:id="@+id/dialog_add_usage_edit_date"
-            android:hint="Date of usage"/>
+            android:hint="Date of mUsage"/>
 
     </RelativeLayout>
    <View

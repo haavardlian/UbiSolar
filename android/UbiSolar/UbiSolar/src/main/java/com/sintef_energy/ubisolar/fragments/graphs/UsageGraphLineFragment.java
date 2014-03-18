@@ -429,7 +429,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 for (DeviceUsage usage : usageList.getUsage()) {
                     if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
                         date = formatDate(usage.getDatetime(), mDataResolution);
-                        compactList.add(new DeviceUsage(usage.getId(),usageList.getId(), oldDate, powerUsage) {
+                        compactList.add(new DeviceUsage(usage.getId(),usageList.getDevice().getDevice_id(), oldDate, powerUsage) {
                         });
                         powerUsage = 0;
                     } else {
@@ -481,7 +481,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         {
             mActiveUsageList.add(usage);
             mBaseUsageList.add(usage);
-            addSeries(usage.getName(), true, false);
+            addSeries(usage.getDevice().getName(), true, false);
         }
         changeResolution();
         populateGraph(getLargestListSize());

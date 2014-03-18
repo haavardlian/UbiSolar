@@ -7,35 +7,20 @@ import java.util.ArrayList;
  */
 public class DeviceUsageList
 {
-    private long id;
-    private String name;
+
+    private Device device;
     private ArrayList<DeviceUsage> usageList;
+    private int totalUsage;
+    private int percentage;
 
     public DeviceUsageList()
     {
         usageList = new ArrayList<>();
     }
 
-    public DeviceUsageList(long id, String name) {
-        this.id = id;
-        this.name = name;
+    public DeviceUsageList(Device device) {
+        this.device = device;
         usageList = new ArrayList<>();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public ArrayList<DeviceUsage> getUsage() {
@@ -62,5 +47,30 @@ public class DeviceUsageList
     public void add(DeviceUsage usage)
     {
         usageList.add(usage);
+    }
+
+    public int getTotalUsage()
+    {
+        return totalUsage;
+    }
+
+    public void calculateTotalUsage()
+    {
+        totalUsage = 0;
+        for(DeviceUsage usage : usageList)
+            totalUsage += usage.getPower_usage();
+    }
+
+    public int getPercentage() {
+        return percentage;
+    }
+
+    public void setPercentage(int percentage) {
+        this.percentage = percentage;
+    }
+
+    public Device getDevice()
+    {
+        return device;
     }
 }
