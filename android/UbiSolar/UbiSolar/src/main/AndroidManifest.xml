@@ -31,10 +31,6 @@
             android:readPermission=".alarm.db.AlarmModel.READ"
             android:writePermission=".alarm.db.AlarmModel.WRITE" />
 
-        <activity
-            android:name="com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity"
-            android:label="@string/title_activity_add_device_energy" >
-        </activity>
     </application>
 
 </manifest>
