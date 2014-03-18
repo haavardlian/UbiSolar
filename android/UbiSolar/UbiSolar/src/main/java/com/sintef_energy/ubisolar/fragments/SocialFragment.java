@@ -2,11 +2,18 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.CursorAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
 /**
@@ -17,7 +24,12 @@ public class SocialFragment extends Fragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
+    public static final String TAG = SocialFragment.class.getName();
     private static final String ARG_SECTION_NUMBER = "section_number";
+
+    private SimpleCursorAdapter adapter;
+    private String [] friends;
+    private View view;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -47,18 +59,22 @@ public class SocialFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        return super.onCreateView(inflater, container, savedInstanceState);
-        //View rootView = inflater.inflate(R.layout.fragment_test, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-        //return rootView;
+        view = inflater.inflate(R.layout.fragment_social_placeholder, container, false);
+        return view;
     }
 
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        //final ListView listview = (ListView)getActivity().findViewById(R.id.socialList);
+        friends = new String[] {"Tor-Håkon", "Pia",
+                "Beate", "Per-Øyvind", "Håvard", "Lars Erik"};
+
+        /**adapter = new SimpleCursorAdapter();*/
+
+        //listview.setAdapter(adapter);
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.

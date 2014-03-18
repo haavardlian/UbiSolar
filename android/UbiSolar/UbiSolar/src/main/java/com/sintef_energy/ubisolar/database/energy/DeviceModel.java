@@ -6,21 +6,25 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 
+import com.sintef_energy.ubisolar.structs.Device;
+
 /**
  * Created by perok on 2/11/14.
  */
-public class DeviceModel implements Parcelable{
+public class DeviceModel extends Device implements Parcelable{
     private static final String TAG = DeviceModel.class.getName();
 
     /* Column definitions*/
     public static interface DeviceEntry extends BaseColumns {
         public static final String TABLE_NAME = "device";
+        public static final String COLUMN_USER_ID = "user_id";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_DESCRIPTION = "description";
     }
 
     public static final String[] projection = new String[]{
             DeviceEntry._ID,
+            DeviceEntry.COLUMN_USER_ID,
             DeviceEntry.COLUMN_NAME,
             DeviceEntry.COLUMN_DESCRIPTION
     };
@@ -32,6 +36,7 @@ public class DeviceModel implements Parcelable{
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + DeviceEntry.TABLE_NAME + " (" +
                     DeviceEntry._ID + " INTEGER PRIMARY KEY," +
+                    DeviceEntry.COLUMN_USER_ID + INTEGER_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_DESCRIPTION + TEXT_TYPE +
                     " )";
@@ -39,19 +44,18 @@ public class DeviceModel implements Parcelable{
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DeviceEntry.TABLE_NAME;
 
     /* POJO */
-    private long id;
     private int _id = 0;
-    private String name;
-    private int _name = 1;
-    private String description;
-    private int _description = 2;
+    private int _user_id = 1;
+    private int _name = 2;
+    private int _description = 3;
 
 
     /**
      * Create CalendarEventModel with default values. All relation ID's are '-1'
      */
     public DeviceModel() {
-        setId(-1);
+        setDevice_id(-1);
+        setUser_id(-1);
         setName("");
         setDescription("");
     }
@@ -80,13 +84,15 @@ public class DeviceModel implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeLong(id);
-        out.writeString(name);
-        out.writeString(description);
+        out.writeLong(getDevice_id());
+        out.writeLong(getUser_id());
+        out.writeString(getName());
+        out.writeString(getDescription());
     }
 
     private void readFromParcel(Parcel in) {
-        setId(in.readLong());
+        setDevice_id(in.readLong());
+        setUser_id(in.readLong());
         setName(in.readString());
         setDescription(in.readString());
     }
@@ -97,46 +103,26 @@ public class DeviceModel implements Parcelable{
      */
     public ContentValues getContentValues(){
         ContentValues values = new ContentValues();
-        values.put(DeviceEntry._ID, id);
-        values.put(DeviceEntry.COLUMN_NAME, name);
-        values.put(DeviceEntry.COLUMN_DESCRIPTION, description);
+        values.put(DeviceEntry._ID, getDevice_id());
+        values.put(DeviceEntry.COLUMN_USER_ID, getUser_id());
+        values.put(DeviceEntry.COLUMN_NAME, getName());
+        values.put(DeviceEntry.COLUMN_DESCRIPTION, getDescription());
         return values;
     }
 
 
     /**
-     * Create CalendarEventModel from cursor
+     * Create DeviceModel from cursor
      * @param cursor
      */
     public DeviceModel(Cursor cursor) {
-        setId(cursor.getLong(_id));
+        setDevice_id(cursor.getLong(_id));
+        setUser_id(cursor.getLong(_user_id));
         setName(cursor.getString(_name));
         setDescription(cursor.getString(_description));
     }
 
-    /* Getters and setters */
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public DeviceModel(long device_id, String name, String description, long user_id) {
+        super(device_id, name, description, user_id);
     }
 }

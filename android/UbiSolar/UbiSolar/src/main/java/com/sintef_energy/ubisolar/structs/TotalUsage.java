@@ -10,14 +10,18 @@ public class TotalUsage
 {
     private double power_usage;
     private Date datetime;
-    private int user_id;
+    private long user_id;
 
     private TotalUsage()
     {
 
     }
 
-    public TotalUsage(int user_id, Date datetime, double power_usage) {
+    public TotalUsage(int user_id, long datetime, double power_usage) {
+        this(user_id, new Date(datetime), power_usage);
+    }
+
+    public TotalUsage(long user_id, Date datetime, double power_usage) {
         this.power_usage = power_usage;
         this.datetime = datetime;
         this.user_id = user_id;
@@ -32,7 +36,7 @@ public class TotalUsage
         return datetime;
     }
 
-    public int getUser_id() {
+    public long getUser_id() {
         return user_id;
     }
 

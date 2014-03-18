@@ -6,18 +6,20 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 
-import java.util.Comparator;
+import com.sintef_energy.ubisolar.structs.DeviceUsage;
+
+import java.util.Date;
 
 /**
  * Created by perok on 2/11/14.
  */
-public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel>{
+public class EnergyUsageModel extends DeviceUsage implements Parcelable, Comparable<EnergyUsageModel>{
     private static final String TAG = EnergyUsageModel.class.getName();
 
     @Override
     public int compareTo(EnergyUsageModel energyUsageModel) {
-        long one = getDateStart();
-        long two = energyUsageModel.getDateStart();
+        long one = getDatetime().getTime();
+        long two = energyUsageModel.getDatetime().getTime();
 
         if(one == two)
             return 0;
@@ -31,16 +33,14 @@ public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel
     public static interface EnergyUsageEntry extends BaseColumns {
         public static final String TABLE_NAME = "energy";
         public static final String COLUMN_DEVICE_ID = "fkdeviceid";
-        public static final String COLUMN_DATESTART = "datestart";
-        public static final String COLUMN_DATEEND = "dateend";
+        public static final String COLUMN_DATETIME = "datetime";
         public static final String COLUMN_POWER = "power";
     }
 
     public static final String[] projection = new String[]{
             EnergyUsageEntry._ID,
             EnergyUsageEntry.COLUMN_DEVICE_ID,
-            EnergyUsageEntry.COLUMN_DATESTART,
-            EnergyUsageEntry.COLUMN_DATEEND,
+            EnergyUsageEntry.COLUMN_DATETIME,
             EnergyUsageEntry.COLUMN_POWER
 
     };
@@ -54,8 +54,7 @@ public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel
             "CREATE TABLE " + EnergyUsageEntry.TABLE_NAME + " (" +
                     EnergyUsageEntry._ID + " INTEGER PRIMARY KEY," +
                     EnergyUsageEntry.COLUMN_DEVICE_ID + INTEGER_TYPE + COMMA_SEP +
-                    EnergyUsageEntry.COLUMN_DATESTART + INTEGER_TYPE + COMMA_SEP +
-                    EnergyUsageEntry.COLUMN_DATEEND + INTEGER_TYPE + COMMA_SEP +
+                    EnergyUsageEntry.COLUMN_DATETIME + INTEGER_TYPE + COMMA_SEP +
                     EnergyUsageEntry.COLUMN_POWER + REAL_TYPE + COMMA_SEP +
                     "FOREIGN KEY(" + EnergyUsageEntry.COLUMN_DEVICE_ID +
                         ") REFERENCES " + DeviceModel.DeviceEntry.TABLE_NAME +
@@ -67,16 +66,10 @@ public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + EnergyUsageEntry.TABLE_NAME;
 
     /* POJO */
-    private long id;
     private int _id = 0;
-    private long deviceId;
     private int _deviceId = 1;
-    private long dateStart;
-    private int _dateStart = 2;
-    private long dateEnd;
-    private int _dateEnd = 3;
-    private float power;
-    private int _power = 4;
+    private int _dateTime = 2;
+    private int _power = 3;
 
 
     /**
@@ -84,10 +77,9 @@ public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel
      */
     public EnergyUsageModel() {
         setId(-1);
-        setDeviceId(-1);
-        setDateStart(-1);
-        setDateEnd(-1);
-        setPower(-1);
+        setDevice_id(-1);
+        setDatetime(new Date(-1));
+        setPower_usage(-1);
     }
 
     /* Parcable */
@@ -114,19 +106,17 @@ public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeLong(id);
-        out.writeLong(deviceId);
-        out.writeLong(dateStart);
-        out.writeLong(dateEnd);
-        out.writeFloat(power);
+        out.writeLong(getId());
+        out.writeLong(getDevice_id());
+        out.writeFloat(getDatetime().getTime());
+        out.writeDouble(getPower_usage());
     }
 
     private void readFromParcel(Parcel in) {
         setId(in.readLong());
-        setDeviceId(in.readLong());
-        setDateStart(in.readLong());
-        setDateEnd(in.readLong());
-        setPower(in.readFloat());
+        setDevice_id(in.readLong());
+        setDatetime(new Date(in.readLong()));
+        setPower_usage(in.readFloat());
     }
 
     /**
@@ -135,11 +125,10 @@ public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel
      */
     public ContentValues getContentValues(){
         ContentValues values = new ContentValues();
-        values.put(EnergyUsageEntry._ID, id);
-        values.put(EnergyUsageEntry.COLUMN_DEVICE_ID, deviceId);
-        values.put(EnergyUsageEntry.COLUMN_DATESTART, dateStart);
-        values.put(EnergyUsageEntry.COLUMN_DATEEND, dateEnd);
-        values.put(EnergyUsageEntry.COLUMN_POWER, power);
+        values.put(EnergyUsageEntry._ID, getId());
+        values.put(EnergyUsageEntry.COLUMN_DEVICE_ID, getDevice_id());
+        values.put(EnergyUsageEntry.COLUMN_DATETIME, getDatetime().getTime());
+        values.put(EnergyUsageEntry.COLUMN_POWER, getPower_usage());
         return values;
     }
 
@@ -149,51 +138,12 @@ public class EnergyUsageModel implements Parcelable, Comparable<EnergyUsageModel
      */
     public EnergyUsageModel(Cursor cursor) {
         setId(cursor.getLong(_id));
-        setDeviceId(cursor.getLong(_deviceId));
-        setDateStart(cursor.getLong(_dateStart));
-        setDateEnd(cursor.getLong(_dateEnd));
-        setPower(cursor.getFloat(_power));
+        setDevice_id(cursor.getLong(_deviceId));
+        setDatetime(new Date(cursor.getLong(_dateTime)));
+        setPower_usage(cursor.getDouble(_power));
     }
 
-    /* Getters and setters */
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public long getDateStart() {
-        return dateStart;
-    }
-
-    public void setDateStart(long dateStart) {
-        this.dateStart = dateStart;
-    }
-
-    public long getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(long deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public long getDateEnd() {
-        return dateEnd;
-    }
-
-    public void setDateEnd(long dateEnd) {
-        this.dateEnd = dateEnd;
-    }
-
-    public float getPower() {
-        return power;
-    }
-
-    public void setPower(float power) {
-        this.power = power;
+    public EnergyUsageModel(long id, long device_id, Date datetime, double power_usage) {
+        super(id, device_id, datetime, power_usage);
     }
 }

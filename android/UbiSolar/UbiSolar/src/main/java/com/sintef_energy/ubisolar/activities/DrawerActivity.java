@@ -12,16 +12,23 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.sintef_energy.ubisolar.fragments.DevicesFragment;
+import com.sintef_energy.ubisolar.IView.IPresenterCallback;
+
+import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.SocialFragment;
+import com.sintef_energy.ubisolar.presenter.DevicePresenter;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
 
-public class DrawerActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+import java.util.Calendar;
+
+public class DrawerActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+        IPresenterCallback{
 
     private static final String LOG = DrawerActivity.class.getName();
 
@@ -36,6 +43,12 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
     private CharSequence mTitle;
     private String[] titleNames;
 
+    /**
+     * Presenter
+     */
+    private TotalEnergyPresenter mTotalEnergyPresenter;
+    private DevicePresenter devicePresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //TODO: Check if user is logged in
@@ -48,12 +61,26 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 
         super.onCreate(savedInstanceState);
 
+        /* Set up the presenters */
+
+        /*UsagePresenter*/
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, 8);
+        mTotalEnergyPresenter = new TotalEnergyPresenter();
+        mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
+                0,
+                calendar.getTimeInMillis());
+
+
         titleNames = getResources().getStringArray(R.array.title_fragments);
         setContentView(R.layout.activity_usage);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
+
+        /*DevicePresenter*/
+        devicePresenter = new DevicePresenter();
 
 //        Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -71,7 +98,7 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 
         switch (position){
             case 0:
-                fragment = DevicesFragment.newInstance(position);
+                fragment = DeviceFragment.newInstance(position);
                 break;
             case 1:
                 fragment = UsageFragment.newInstance(position);
@@ -141,4 +168,12 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public TotalEnergyPresenter getmTotalEnergyPresenter() {
+        return mTotalEnergyPresenter;
+    }
+
+    @Override
+    public DevicePresenter getDevicePresenter() { return devicePresenter; }
 }
