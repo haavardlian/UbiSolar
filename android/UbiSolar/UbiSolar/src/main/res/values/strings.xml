@@ -16,10 +16,10 @@
     <!-- AddUsageDialog -->
     <string name="addUsageDialog_title">Add device usage</string>
     <!-- AddDeviceDialog -->
-    <string name = "addDeviceDialog_title"> Add device</string>
+    <string name="addDeviceDialog_title">Add device</string>
     <string name="addDeviceDialog_buttonText">Add</string>
     <!-- Fragment usage -->
-    <string name="graph_tag"></string>
+    <string name="graph_tag">INSERT TEXT</string>
     <string name="last12months">Last 12 months</string>
     <string name="lastMonth">Last month</string>
     <string name="devices">Devices</string>
@@ -42,7 +42,7 @@
     <string name="usage_device_dialog_title">Select Devices</string>
 
     <!-- Fragment social-->
-    <string name="socialUsername">User's name</string>
+    <string name="socialUsername">User\'s name</string>
     <string name="socialPlaceHolder">Here there will be a list of all of your Facebook friends that also have the app.\n\nYou can compare yourself with friends, area or people with similar profiles in the search field in the ActionBar</string>
 
 </resources>
