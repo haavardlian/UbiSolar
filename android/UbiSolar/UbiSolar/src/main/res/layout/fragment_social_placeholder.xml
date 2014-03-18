@@ -11,9 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="30dp"
         android:textSize="22dp"
-        android:text="Here there will be a list of all of your Facebook friends that also have the app.
-
-You can compare yourself with friends, area or people with similar profiles in the search field in the ActionBar"
+        android:text="@string/socialPlaceHolder"
         android:textColor="#000"/>
 
 </LinearLayout>
