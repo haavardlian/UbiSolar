@@ -41,9 +41,12 @@
     <string name="add_device_button">Add Device</string>
     <string name="usage_device_dialog_title">Select Devices</string>
     <string name="pie_chart_title">Power overview</string>
+<<<<<<< HEAD
 
     <!-- Fragment social-->
     <string name="socialUsername">User\'s name</string>
     <string name="socialPlaceHolder">Here there will be a list of all of your Facebook friends that also have the app.\n\nYou can compare yourself with friends, area or people with similar profiles in the search field in the ActionBar</string>
+=======
+>>>>>>> f27f190bdb677d8ab126e070e2213cca19a71d3a
 
 </resources>
