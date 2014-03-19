@@ -136,7 +136,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
             //TODO fix
             mSelectedItems = new boolean[20];
 
-        //clearDatabase();
+//        clearDatabase();
 
         //prepoluate database if it is empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
