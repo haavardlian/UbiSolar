@@ -179,7 +179,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         mRenderer.setXLabels(0);
         mRenderer.setXLabelsPadding(10);
         mRenderer.setYLabelsPadding(20);
-        mRenderer.setMargins(new int[]{ 20, 40, 20, 20 });
+        mRenderer.setMargins(new int[]{ 20, 40, 35, 20 });
 
         setColors(Color.WHITE, Color.BLACK);
     }
