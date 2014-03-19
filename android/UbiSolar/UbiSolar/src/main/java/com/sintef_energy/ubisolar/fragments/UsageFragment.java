@@ -9,7 +9,6 @@ import android.content.ContentResolver;
 
 import android.content.CursorLoader;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -30,6 +29,7 @@ import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
@@ -40,6 +40,7 @@ import com.sintef_energy.ubisolar.structs.DeviceUsageList;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -54,16 +55,30 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+
     private TotalEnergyPresenter totalEnergyPresenter;
 
     private boolean[] mSelectedItems;
-    private ArrayList<Device> mDevices;
-    private ArrayList<Device> mSelectedDevices;
+
+    /** List of all devices */
+    private ArrayList<DeviceModel> mDevices;
+
+    /** List of the seleceted devices*/
+    private ArrayList<DeviceModel> mSelectedDevices;
+
+    /** List of usage from devices */
     private ArrayList<DeviceUsageList> mDeviceUsageList;
+
+    /** Callback for graphs */
     private ITotalEnergyView graphView;
 
+    /* Graphs fragments */
     private UsageGraphPieFragment usageGraphPieFragment;
     private UsageGraphLineFragment usageGraphLineFragment;
+
+    private static final int LOADER_DEVICES = 0;
+    private static final int LOADER_USAGE = 1;
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -161,36 +176,11 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
             }
         });
 
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch(requestCode) {
-            case (0) : {
-                if (resultCode == Activity.RESULT_OK) {
-//                    double value = data.getDoubleExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
-//                    Log.v(TAG, String.valueOf(value));
-//
-//                    EnergyUsageModel euModel = new EnergyUsageModel();
-//                    euModel.setDatetime(new Date(data.getLongExtra(AddDeviceEnergyActivity.INTENT_DATETIME, -1)));
-//
-//                    euModel.setPower_usage(value);
-//
-//                    totalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
-                }
-                break;
-            }
-            default:
-
-        }
+        getLoaderManager().initLoader(LOADER_DEVICES, null, this);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         inflater.inflate(R.menu.fragment_usage_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -200,8 +190,8 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.fragment_usage_menu_add:
-//                Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
-//                startActivityForResult(intent, 0);
+                AddUsageDialog addUsageDialog = new AddUsageDialog();
+                addUsageDialog.show(getFragmentManager(), "addUsage");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -220,31 +210,29 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onDestroy();
     }
 
-    public void toggleGraph(View view)
-    {
+    /**
+     * Helper method for switching graph type
+     */
+    public void toggleGraph(View view){
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
 
-//        if( button.getTag(R.string.graph_tag) == null)
-//            button.setTag(R.string.graph_tag, "pie");
-
-        //TODO swap graphs
-        if(button.getTag(R.string.graph_tag).equals("pie"))
-        {
+        if(button.getTag(R.string.TAG_GRAPH_TYPE).equals("pie")){
             setPieChart(button);
         }
-        else
-        {
+        else{
             setLineChart(button);
         }
     }
 
-    public void displayDeviceFilter(View view)
-    {
+    /**
+     * Created an AlertDialog for choosing what devices to filer on.
+     *
+     * @param view
+     */
+    public void displayDeviceFilter(View view){
         AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.usage_device_dialog_title);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-
-            @Override
             public void onClick(DialogInterface dialog, int which) {
                 mSelectedDevices.clear();
                 for (int i = 0; i < mDevices.size(); i++) {
@@ -263,7 +251,6 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
         builder.setMultiChoiceItems(deviceNames.toArray(new String[deviceNames.size()]), mSelectedItems,
                 new DialogInterface.OnMultiChoiceClickListener() {
-
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                         mSelectedItems[which]=isChecked;
@@ -272,13 +259,15 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         builder.show();
     }
 
+    /**
+     * Change the graph view to a pie chart.
+     *
+     * @param button
+     */
     private void setPieChart(ImageButton button)
     {
         button.setImageResource(R.drawable.line);
-        button.setTag(R.string.graph_tag, "line");
-
-//        Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
-//        deviceButton.setVisibility(View.GONE);
+        button.setTag(R.string.TAG_GRAPH_TYPE, "line");
 
         //If fragment have not been created.
         if(usageGraphPieFragment == null) {
@@ -300,21 +289,19 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         ft.commit();
     }
 
+    /**
+     * Set the graph view to line graph.
+     *
+     * @param button
+     */
     private void setLineChart(ImageButton button)
     {
         button.setImageResource(R.drawable.pie);
-        button.setTag(R.string.graph_tag, "pie");
+        button.setTag(R.string.TAG_GRAPH_TYPE, "pie");
 
 
         Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
         deviceButton.setVisibility(View.VISIBLE);
-/*
-        UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-        graphView = fragment;
-        fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-        ft.commit();*/
 
         //If fragment have not been created.
         if(usageGraphLineFragment == null) {
@@ -338,7 +325,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private void getSelectedDeviceData()
     {
-        getLoaderManager().initLoader(1, null, this);
+        getLoaderManager().initLoader(LOADER_USAGE, null, this);
     }
 
     @Override
@@ -346,7 +333,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
         switch (i)
         {
-            case 0:
+            case LOADER_DEVICES:
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Devices.CONTENT_URI,
@@ -355,7 +342,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
                         null,
                         DeviceModel.DeviceEntry._ID + " ASC"
                 );
-            case 1:
+            case LOADER_USAGE:
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Energy.CONTENT_URI,
@@ -372,55 +359,70 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
     {
         switch (cursorLoader.getId()) {
-            case 0:
+            /* Fetch all device data. Is used to show list of devices and choose which to see. */
+            case LOADER_DEVICES:
                 mDevices.clear();
                 cursor.moveToFirst();
                 if (cursor.getCount() != 0)
                     do {
-                        DeviceModel model = new DeviceModel(cursor);
-                        mDevices.add(new Device(model.getDevice_id(),
-                                model.getName(), model.getDescription(), model.getUser_id()) {
-                        });
+                        mDevices.add(new DeviceModel(cursor));
                     }
                     while (cursor.moveToNext());
                 break;
-            case 1:
+            /* Load usage */
+            case LOADER_USAGE:
                 populateDeviceUsageList(cursor);
                 break;
         }
     }
 
-    private void populateDeviceUsageList(Cursor data)
-    {
+    /**
+     * Populate the graphview view usage data.
+     *
+     * @param data
+     */
+    private void populateDeviceUsageList(Cursor data){
+
+        //Hashmap containt all DevicesUsage
+        HashMap<Long, DeviceUsageList> devices = new HashMap<>();
+
+        /* Clear and update the chosen devices to show. */
         mDeviceUsageList.clear();
-        for(Device device : mSelectedDevices)
-        {
+        for(DeviceModel device : mSelectedDevices){
+            //TODO: remove
             mDeviceUsageList.add(new DeviceUsageList(device));
+
+            //Add devices to use in HashMap
+            devices.put(device.getDevice_id(), new DeviceUsageList(device));
         }
 
-        if(mDeviceUsageList.size() < 1)
-        {
+        /* Onlye run if devices is selected */
+        if(mDeviceUsageList.size() < 1){
             Log.v(TAG, "No devices selected");
             return;
         }
 
+        /* Get data from cursor and add
+        * TODO O(n^2), fix! */
         data.moveToFirst();
-        if(data.getCount() != 0)
+        if(data.getCount() >= 1)
             do{
                 EnergyUsageModel eum = new EnergyUsageModel(data);
-                for(DeviceUsageList usageList : mDeviceUsageList) {
-                    if (usageList.getDevice().getDevice_id() == eum.getDevice_id()) {
-                        usageList.add(new DeviceUsage(eum.getId(), eum.getDevice_id(),
-                                eum.getDatetime(), eum.getPower_usage()) {
-                        });
-                    }
+
+                DeviceUsageList dList = devices.get(eum.getDevice_id());
+
+                /* Add Energy usage to device */
+                if(dList != null){
+                    dList.add(eum);
                 }
-
-
             }
             while(data.moveToNext());
 
         graphView.clearDevices();
+
+        mDeviceUsageList.clear();
+        mDeviceUsageList.addAll(devices.values());
+        Log.v(TAG, "TOTAL : " + mDeviceUsageList.size());
         graphView.addDeviceUsage(mDeviceUsageList);
     }
 
@@ -428,6 +430,9 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     }
+
+
+    /* HELPER DATA GENERATION!!! Avoid. */
 
     private void createDevices()
     {
@@ -441,11 +446,11 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     {
         DeviceModel device = new DeviceModel(System.currentTimeMillis(),
                 name, description, System.currentTimeMillis());
+
         getActivity().getContentResolver().insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
-        mDevices.add(new Device(device.getDevice_id(),
-                device.getName(), device.getDescription(), device.getUser_id()) {
-        });
+
+        mDevices.add(device);
         Log.v(TAG, "Created device: " + device.getName());
     }
 
