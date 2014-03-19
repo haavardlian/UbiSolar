@@ -1,6 +1,8 @@
 package com.sintef_energy.ubisolar.structs;
 
-import java.io.Serializable;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+
 import java.util.ArrayList;
 
 /**
@@ -9,8 +11,8 @@ import java.util.ArrayList;
 public class DeviceUsageList
 {
 
-    private Device device;
-    private ArrayList<DeviceUsage> usageList;
+    private DeviceModel device;
+    private ArrayList<EnergyUsageModel> usageList;
     private int totalUsage;
     private int percentage;
 
@@ -19,16 +21,16 @@ public class DeviceUsageList
         usageList = new ArrayList<>();
     }
 
-    public DeviceUsageList(Device device) {
+    public DeviceUsageList(DeviceModel device) {
         this.device = device;
         usageList = new ArrayList<>();
     }
 
-    public ArrayList<DeviceUsage> getUsage() {
+    public ArrayList<EnergyUsageModel> getUsage() {
         return usageList;
     }
 
-    public void setUsage(ArrayList<DeviceUsage> usageList) {
+    public void setUsage(ArrayList<EnergyUsageModel> usageList) {
         this.usageList = usageList;
     }
 
@@ -40,12 +42,12 @@ public class DeviceUsageList
         return usageList.size();
     }
 
-    public DeviceUsage get(int index)
+    public EnergyUsageModel get(int index)
     {
         return usageList.get(index);
     }
 
-    public void add(DeviceUsage usage)
+    public void add(EnergyUsageModel usage)
     {
         usageList.add(usage);
     }
@@ -70,7 +72,7 @@ public class DeviceUsageList
         this.percentage = percentage;
     }
 
-    public Device getDevice()
+    public DeviceModel getDevice()
     {
         return device;
     }

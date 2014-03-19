@@ -466,11 +466,10 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 double powerUsage = 0;
                 Date oldDate = new Date();
 
-                for (DeviceUsage usage : usageList.getUsage()) {
+                for (EnergyUsageModel usage : usageList.getUsage()) {
                     if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
                         date = formatDate(usage.getDatetime(), mDataResolution);
-                        compactList.add(new DeviceUsage(usage.getId(),usageList.getDevice().getDevice_id(), oldDate, powerUsage) {
-                        });
+                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getDevice_id(), oldDate, powerUsage));
                         powerUsage = 0;
                     } else {
                         oldDate = usage.getDatetime();
