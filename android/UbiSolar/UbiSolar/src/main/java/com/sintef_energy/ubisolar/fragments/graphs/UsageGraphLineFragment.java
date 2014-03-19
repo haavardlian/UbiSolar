@@ -121,6 +121,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             mActiveDateIndex = mSavedState.getInt("mActiveDateIndex");
             mActiveUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mActiveUsageList");
             mBaseUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mBaseUsageList");
+            System.out.println(mActiveDateIndex);
         }
         //Initialize new data
         else {
@@ -141,6 +142,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        System.out.println("Saved");
 
         /* If onDestroyView() is called first, we can use the previously mSavedState but we can't call saveState() anymore */
         /* If onSaveInstanceState() is called first, we don't have mSavedState, so we need to call saveState() */
@@ -346,10 +348,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
         setRange(min, max, centerIndex);
         DeviceUsageList largestUsageList = getLargestUsageList();
-//        if(largestUsageList != null) {
-//            if (mActiveDateIndex < largestUsageList.size())
         setLabels(formatDate(largestUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat));
-//        }
 
         if( mChartView != null)
             mChartView.repaint();
