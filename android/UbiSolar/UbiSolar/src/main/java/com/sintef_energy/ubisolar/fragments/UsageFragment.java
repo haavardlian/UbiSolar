@@ -30,11 +30,11 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
+import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.sintef_energy.ubisolar.structs.DeviceUsageList;
 
 import java.util.ArrayList;
@@ -58,10 +58,11 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private TotalEnergyPresenter totalEnergyPresenter;
 
-    private boolean[] mSelectedItems;
+    private String[] mSelectedItems;
+    private boolean[] mSelectDeviceDialogItems;
 
     /** List of all devices */
-    private ArrayList<DeviceModel> mDevices;
+    private HashMap<Long, DeviceModel> mDevices;
 
     /** List of the seleceted devices*/
     private ArrayList<DeviceModel> mSelectedDevices;
@@ -125,16 +126,17 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mDevices = new ArrayList<>();
+        mSelectDeviceDialogItems = new boolean[0];
+
+        mDevices = new HashMap<>();
         mSelectedDevices = new ArrayList<>();
         mDeviceUsageList = new ArrayList<>();
 
         if (savedInstanceState != null) {
-            mSelectedItems = (boolean[]) savedInstanceState.getSerializable("mSelectedIndexes");
+            mSelectedItems = (String[]) savedInstanceState.getSerializable("mSelectedIndexes");
         }
         else
-            //TODO fix
-            mSelectedItems = new boolean[20];
+            mSelectedItems = new String[0];
 
         //clearDatabase();
 
@@ -163,7 +165,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
             @Override
             public void onClick(View view) {
 
-                toggleGraph(view);
+                toggleGraph();
             }
         });
 
@@ -172,7 +174,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
             @Override
             public void onClick(View view) {
 
-                displayDeviceFilter(view);
+                displayDeviceFilter();
             }
         });
 
@@ -202,7 +204,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBooleanArray("mSelectedIndexes", mSelectedItems);
+        outState.putStringArray("mSelectedIndexes", mSelectedItems);
     }
 
     @Override
@@ -213,7 +215,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     /**
      * Helper method for switching graph type
      */
-    public void toggleGraph(View view){
+    public void toggleGraph(){
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
 
         if(button.getTag(R.string.TAG_GRAPH_TYPE).equals("pie")){
@@ -227,36 +229,20 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     /**
      * Created an AlertDialog for choosing what devices to filer on.
      *
-     * @param view
      */
-    public void displayDeviceFilter(View view){
-        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.usage_device_dialog_title);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                mSelectedDevices.clear();
-                for (int i = 0; i < mDevices.size(); i++) {
-                    if (mSelectedItems[i]) {
-                        mSelectedDevices.add(mDevices.get(i));
-                    }
-                }
-                getSelectedDeviceData();
-            }
-        });
+    public void displayDeviceFilter(){
+        SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(new ArrayList<>(mDevices.values()), mSelectDeviceDialogItems);
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getFragmentManager(), "selectDeviceDialog");
+    }
 
-        ArrayList<String> deviceNames = new ArrayList<>();
+    public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
+        Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
+        mSelectedItems = selectedItems;
 
-        for(Device device : mDevices)
-            deviceNames.add(device.getName());
+        mSelectDeviceDialogItems = itemsSelected;
 
-        builder.setMultiChoiceItems(deviceNames.toArray(new String[deviceNames.size()]), mSelectedItems,
-                new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        mSelectedItems[which]=isChecked;
-                    }
-                });
-        builder.show();
+        getLoaderManager().restartLoader(LOADER_USAGE, null, this);
     }
 
     /**
@@ -323,11 +309,6 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         ft.commit();
     }
 
-    private void getSelectedDeviceData()
-    {
-        getLoaderManager().initLoader(LOADER_USAGE, null, this);
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 
@@ -343,12 +324,23 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
                         DeviceModel.DeviceEntry._ID + " ASC"
                 );
             case LOADER_USAGE:
+                String where = "";
+
+                for(int n = 0; n < mSelectedItems.length; n++){
+                    where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
+                    if(n != mSelectedItems.length - 1)
+                        where += " OR ";
+                }
+
+                Log.v(TAG, "WHERE: " + where);
+                Log.v(TAG, "SELECTED: " + mSelectedItems);
+
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Energy.CONTENT_URI,
                         EnergyContract.Energy.PROJECTION_ALL,
-                        null,
-                        null,
+                        where,
+                        mSelectedItems,
                         EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
                 );
         }
@@ -365,7 +357,8 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
                 cursor.moveToFirst();
                 if (cursor.getCount() != 0)
                     do {
-                        mDevices.add(new DeviceModel(cursor));
+                        DeviceModel model = new DeviceModel(cursor);
+                        mDevices.put(model.getDevice_id(), model);
                     }
                     while (cursor.moveToNext());
                 break;
@@ -386,30 +379,24 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         //Hashmap containt all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
-        /* Clear and update the chosen devices to show. */
-        mDeviceUsageList.clear();
-        for(DeviceModel device : mSelectedDevices){
-            //TODO: remove
-            mDeviceUsageList.add(new DeviceUsageList(device));
-
-            //Add devices to use in HashMap
-            devices.put(device.getDevice_id(), new DeviceUsageList(device));
-        }
-
-        /* Onlye run if devices is selected */
-        if(mDeviceUsageList.size() < 1){
+        /* Only run if devices is selected */
+        if(data.getCount() < 1){
             Log.v(TAG, "No devices selected");
             return;
         }
 
-        /* Get data from cursor and add
-        * TODO O(n^2), fix! */
+        /* Get data from cursor and add */
         data.moveToFirst();
         if(data.getCount() >= 1)
             do{
                 EnergyUsageModel eum = new EnergyUsageModel(data);
 
                 DeviceUsageList dList = devices.get(eum.getDevice_id());
+
+                if(dList == null){
+                    dList = new DeviceUsageList(mDevices.get(eum.getDevice_id()));
+                    devices.put(Long.valueOf(dList.getDevice().getDevice_id()), dList);
+                }
 
                 /* Add Energy usage to device */
                 if(dList != null){
@@ -450,7 +437,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         getActivity().getContentResolver().insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
 
-        mDevices.add(device);
+        mDevices.put(device.getDevice_id(), device);
         Log.v(TAG, "Created device: " + device.getName());
     }
 
@@ -462,7 +449,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         Random random = new Random();
         Date date;
 
-        for(Device device : mDevices) {
+        for(Device device : mDevices.values()) {
             Log.v(TAG, "Creating data for: " + device.getName());
             for (int i = 0; i < 1000; i++) {
                 date = new Date();
@@ -484,6 +471,4 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         it = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
         Log.v(TAG, "EMPTY DATABASE: " + it);
     }
-
-
 }
