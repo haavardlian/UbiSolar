@@ -537,6 +537,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             addSeries(usage.getDevice().getName(), true, false);
         }
         changeResolution();
-        populateGraph(getLargestListSize());
+        populateGraph(mActiveDateIndex);
     }
 }
