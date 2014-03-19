@@ -1,5 +1,8 @@
 package com.sintef_energy.ubisolar.structs;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 
@@ -8,9 +11,8 @@ import java.util.ArrayList;
 /**
  * Created by thb on 13.03.14.
  */
-public class DeviceUsageList
+public class DeviceUsageList implements Parcelable
 {
-
     private DeviceModel device;
     private ArrayList<EnergyUsageModel> usageList;
     private int totalUsage;
@@ -24,6 +26,12 @@ public class DeviceUsageList
     public DeviceUsageList(DeviceModel device) {
         this.device = device;
         usageList = new ArrayList<>();
+    }
+
+    public DeviceUsageList(Parcel in)
+    {
+        usageList = new ArrayList<>();
+        readFromParcel(in);
     }
 
     public ArrayList<EnergyUsageModel> getUsage() {
@@ -77,5 +85,27 @@ public class DeviceUsageList
         return device;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeParcelable(device, i);
+        parcel.writeParcelableArray(usageList.toArray( new EnergyUsageModel[usageList.size()]), i);
+        parcel.writeInt(totalUsage);
+        parcel.writeInt(percentage);
+    }
+
+    private void readFromParcel(Parcel in) {
+        device = in.readParcelable(Device.class.getClassLoader());
+        EnergyUsageModel[] u = (EnergyUsageModel[]) in.readParcelableArray(EnergyUsageModel.class.getClassLoader());
+
+        for(EnergyUsageModel um : u)
+            usageList.add(um);
+
+        totalUsage = in.readInt();
+        percentage = in.readInt();
+    }
 }

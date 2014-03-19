@@ -112,7 +112,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
         //Restore data
         if(mSavedState != null) {
-
+            System.out.println("Loading");
             mDataset = (XYMultipleSeriesDataset) mSavedState.getSerializable("mDataset");
             mRenderer = (XYMultipleSeriesRenderer) mSavedState.getSerializable("mRenderer");
             mTitleFormat = mSavedState.getString("mTitleFormat");
