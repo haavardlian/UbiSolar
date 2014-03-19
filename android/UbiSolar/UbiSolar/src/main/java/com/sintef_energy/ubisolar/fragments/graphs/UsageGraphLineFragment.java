@@ -2,13 +2,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -20,14 +14,10 @@ import android.view.ViewGroup.LayoutParams;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.sintef_energy.ubisolar.structs.DeviceUsageList;
-import com.sintef_energy.ubisolar.structs.TotalUsage;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -42,9 +32,7 @@ import org.achartengine.tools.ZoomListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 /**
  * Created by perok on 2/11/14.
@@ -76,7 +64,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     TotalEnergyPresenter presenter;
     ArrayList<EnergyUsageModel> euModels;
 
-    private Bundle savedState;
+    private Bundle mSavedState;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -111,28 +99,28 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedState);
+        super.onActivityCreated(mSavedState);
 
         Log.v(TAG, "onActivityCreated()");
 
-        /* If the Fragment was destroyed inbetween (screen rotation), we need to recover the savedState first */
+        /* If the Fragment was destroyed inbetween (screen rotation), we need to recover the mSavedState first */
         /* However, if it was not, it stays in the instance from the last onDestroyView() and we don't want to overwrite it */
-        if(savedInstanceState != null && savedState == null)
-            savedState = savedInstanceState.getBundle("savedState");
+        if(savedInstanceState != null && mSavedState == null)
+            mSavedState = savedInstanceState.getBundle("mSavedState");
 
         mChartView = null;
 
         //Restore data
-        if(savedState != null) {
+        if(mSavedState != null) {
 
-            mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("mDataset");
-            mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("mRenderer");
-            mTitleFormat = savedState.getString("mTitleFormat");
-            mDataResolution = savedState.getString("mDataResolution");
-            mTitleLabel = savedState.getString("mTitleLabel");
-            mActiveDateIndex = savedState.getInt("mActiveDateIndex");
-            mActiveUsageList = (ArrayList<DeviceUsageList>) savedState.getSerializable("mActiveUsageList");
-            mBaseUsageList = (ArrayList<DeviceUsageList>) savedState.getSerializable("mBaseUsageList");
+            mDataset = (XYMultipleSeriesDataset) mSavedState.getSerializable("mDataset");
+            mRenderer = (XYMultipleSeriesRenderer) mSavedState.getSerializable("mRenderer");
+            mTitleFormat = mSavedState.getString("mTitleFormat");
+            mDataResolution = mSavedState.getString("mDataResolution");
+            mTitleLabel = mSavedState.getString("mTitleLabel");
+            mActiveDateIndex = mSavedState.getInt("mActiveDateIndex");
+            mActiveUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mActiveUsageList");
+            mBaseUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mBaseUsageList");
         }
         //Initialize new data
         else {
@@ -146,7 +134,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         createLineGraph();
         populateGraph(mActiveDateIndex);
 
-        savedState = null;
+        mSavedState = null;
     }
 
     /*End lifecycle*/
@@ -154,10 +142,10 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        /* If onDestroyView() is called first, we can use the previously savedState but we can't call saveState() anymore */
-        /* If onSaveInstanceState() is called first, we don't have savedState, so we need to call saveState() */
+        /* If onDestroyView() is called first, we can use the previously mSavedState but we can't call saveState() anymore */
+        /* If onSaveInstanceState() is called first, we don't have mSavedState, so we need to call saveState() */
         /* => (?:) operator inevitable! */
-        outState.putBundle("savedState", savedState != null ? savedState : saveState());
+        outState.putBundle("mSavedState", mSavedState != null ? mSavedState : saveState());
     }
 
     /**
@@ -167,7 +155,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     public void onDestroyView(){
         super.onDestroy();
 
-        savedState = saveState();
+        mSavedState = saveState();
         Log.v(TAG, " onDestroyView()");
     }
 
@@ -315,7 +303,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
         XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
         seriesRenderer.setLineWidth(3);
-        seriesRenderer.setColor(colors[mColorIndex++%colors.length]);
+        seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
         seriesRenderer.setShowLegendItem(true);
         mRenderer.addSeriesRenderer(seriesRenderer);
         if(displayPoints) {
@@ -537,6 +525,9 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             addSeries(usage.getDevice().getName(), true, false);
         }
         changeResolution();
-        populateGraph(mActiveDateIndex);
+        if(mActiveDateIndex > 0)
+            populateGraph(mActiveDateIndex);
+        else
+            populateGraph(getLargestListSize());
     }
 }
