@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+    public static final String TAG = UsageGraphLineFragment.class.getName();
     TotalEnergyPresenter presenter;
 
     private View rootView;
@@ -42,6 +44,8 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mDeviceUsageList;
+    private Bundle mSavedState;
+    private int mSelected = -1;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -77,12 +81,25 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            mDeviceUsageList = (ArrayList<DeviceUsageList>) savedInstanceState.getSerializable("mDeviceUsageList");
+        mChartView = null;
+
+        if(savedInstanceState != null && mSavedState == null)
+            mSavedState = savedInstanceState.getBundle("mSavedState");
+
+
+        if (mSavedState != null) {
+            mDeviceUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mDeviceUsageList");
+            mRenderer = (DefaultRenderer) mSavedState.getSerializable("mRenderer");
+            mSeries = (CategorySeries) mSavedState.getSerializable("mSeries");
+            mSelected = mSavedState.getInt("mSelected");
+        }
+        else
+        {
+            setupPieGraph();
         }
 
-        setupPieGraph();
         createPieGraph();
+        updateDetails();
 //        ArrayList<ArrayList<DeviceUsage>> usageList = createDeviceUsage(mDevices);
 //        populatePieChart(mDevices, usageList);
     }
@@ -91,7 +108,18 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("mDeviceUsageList", mDeviceUsageList);
+        outState.putBundle("mSavedState", mSavedState != null ? mSavedState : saveState());
+    }
+
+    private Bundle saveState(){
+        Bundle state = new Bundle();
+
+        state.putSerializable("mDeviceUsageList", mDeviceUsageList);
+        state.putSerializable("mRenderer", mRenderer);
+        state.putSerializable("mSeries", mSeries);
+        state.putInt("mSelected", mSelected);
+
+        return state;
     }
 
     @Override
@@ -100,6 +128,14 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
         if(presenter != null)
             presenter.unregisterListener(this);
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroy();
+
+        mSavedState = saveState();
+        Log.v(TAG, " onDestroyView()");
     }
 
     public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
@@ -147,12 +183,14 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
                             if(mRenderer.getSeriesRendererAt(i).isHighlighted() && i == seriesSelection.getPointIndex())
                             {
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(false);
+                                mSelected = -1;
                                 clearDetails();
                             }
                             else if(i == seriesSelection.getPointIndex())
                             {
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(true);
-                                updateDetails(seriesSelection.getPointIndex());
+                                mSelected = seriesSelection.getPointIndex();
+                                updateDetails();
                             }
                             else
                             {
@@ -222,17 +260,19 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
     }
 
-    private void updateDetails(int index)
+    private void updateDetails()
     {
-        TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
-        TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
-        TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
+        if(mSelected > -1) {
+            TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
+            TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
+            TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
 
-        DeviceUsageList usageList = mDeviceUsageList.get(index);
+            DeviceUsageList usageList = mDeviceUsageList.get(mSelected);
 
-        nameView.setText(usageList.getDevice().getName());
-        descriptionView.setText(usageList.getDevice().getDescription());
-        powerUsageView.setText(usageList.getTotalUsage() + " kWh (" + usageList.getPercentage() + "%)");
+            nameView.setText(usageList.getDevice().getName());
+            descriptionView.setText(usageList.getDevice().getDescription());
+            powerUsageView.setText(usageList.getTotalUsage() + " kWh (" + usageList.getPercentage() + "%)");
+        }
     }
 
     private void clearDetails()

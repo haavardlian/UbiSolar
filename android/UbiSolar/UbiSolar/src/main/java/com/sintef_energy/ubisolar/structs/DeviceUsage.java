@@ -1,5 +1,6 @@
 package com.sintef_energy.ubisolar.structs;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
