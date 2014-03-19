@@ -25,7 +25,6 @@ import android.widget.ImageButton;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
-//import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
@@ -63,6 +62,9 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     private ArrayList<DeviceUsageList> mDeviceUsageList;
     private ITotalEnergyView graphView;
 
+    private UsageGraphPieFragment usageGraphPieFragment;
+    private UsageGraphLineFragment usageGraphLineFragment;
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -99,11 +101,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-
         return rootView;
     }
 
@@ -123,7 +121,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
             //TODO fix
             mSelectedItems = new boolean[20];
 
-//        clearDatabase();
+        //clearDatabase();
 
         //prepoluate database if it is empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
@@ -282,11 +280,23 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 //        Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
 //        deviceButton.setVisibility(View.GONE);
 
-        UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
-        graphView = fragment;
-        fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+        //If fragment have not been created.
+        if(usageGraphPieFragment == null) {
+            usageGraphPieFragment = UsageGraphPieFragment.newInstance();
+            usageGraphPieFragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+        }
+
+        graphView = usageGraphPieFragment;
+
         FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+
+        if(usageGraphPieFragment.isAdded())
+            ft.show(usageGraphPieFragment);
+        else{
+            ft.addToBackStack("usageGraphPieFragment");
+            ft.replace(R.id.fragment_usage_tab_graph_placeholder, usageGraphPieFragment);
+        }
+
         ft.commit();
     }
 
@@ -298,12 +308,31 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
         Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
         deviceButton.setVisibility(View.VISIBLE);
-
+/*
         UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
         graphView = fragment;
         fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+        ft.commit();*/
+
+        //If fragment have not been created.
+        if(usageGraphLineFragment == null) {
+            usageGraphLineFragment = UsageGraphLineFragment.newInstance();
+            usageGraphLineFragment.registerTotalEnergyPresenter(totalEnergyPresenter);
+        }
+
+        graphView = usageGraphLineFragment;
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        if(usageGraphLineFragment.isAdded())
+            ft.show(usageGraphLineFragment);
+        else{
+            ft.addToBackStack("usageGraphLineFragment");
+            ft.replace(R.id.fragment_usage_tab_graph_placeholder, usageGraphLineFragment);
+        }
+
         ft.commit();
     }
 
