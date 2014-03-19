@@ -76,6 +76,8 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     TotalEnergyPresenter presenter;
     ArrayList<EnergyUsageModel> euModels;
 
+    private Bundle savedState;
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -108,42 +110,78 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     }
 
     @Override
-    public void onActivityCreated(Bundle savedState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedState);
 
-        if (savedState != null) {
+        Log.v(TAG, "onActivityCreated()");
+
+        /* If the Fragment was destroyed inbetween (screen rotation), we need to recover the savedState first */
+        /* However, if it was not, it stays in the instance from the last onDestroyView() and we don't want to overwrite it */
+        if(savedInstanceState != null && savedState == null)
+            savedState = savedInstanceState.getBundle("savedState");
+        //Restore data
+        if(savedState != null) {
             mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("mDataset");
             mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("mRenderer");
             mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
         }
+        //Initialize new data
+        else {
+            setupLineGraph();
+            createLineGraph();
 
-        setupLineGraph();
-        createLineGraph();
+            mActiveUsageList = new ArrayList<>();
+            mBaseUsageList = new ArrayList<>();
+            mTitleFormat = "EEEE dd/MM";
+            mDataResolution = "HH";
+        }
 
-        mActiveUsageList = new ArrayList<>();
-        mBaseUsageList = new ArrayList<>();
-        mTitleFormat = "EEEE dd/MM";
-        mDataResolution = "HH";
+        savedState = null;
     }
 
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        /* If onDestroyView() is called first, we can use the previously savedState but we can't call saveState() anymore */
+        /* If onSaveInstanceState() is called first, we don't have savedState, so we need to call saveState() */
+        /* => (?:) operator inevitable! */
+        outState.putBundle("savedState", savedState != null ? savedState : saveState());
+    }
+
+    /**
+     * onDestroyView is run when fragment is replaced. Save state here.
+     */
+    @Override
+    public void onDestroyView(){
+        super.onDestroy();
+
+        savedState = saveState();
+        Log.v(TAG, " onDestroyView()");
+    }
+
+
+    private Bundle saveState(){
+        Bundle state = new Bundle();
 
         ArrayList<Parcelable> usageModelState = new ArrayList<>();
         for(EnergyUsageModel euModel : euModels)
             usageModelState.add(euModel);
 
-        outState.putParcelableArrayList(STATE_euModels, usageModelState);
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("mDataset", mDataset);
-        outState.putSerializable("mRenderer", mRenderer);
-        outState.putSerializable("current_renderer", mCurrentRenderer);
+        state.putParcelableArrayList(STATE_euModels, usageModelState);
+        state.putSerializable("mDataset", mDataset);
+        state.putSerializable("mRenderer", mRenderer);
+        state.putSerializable("current_renderer", mCurrentRenderer);
+
+        return state;
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
+
+        Log.v(TAG, " onDestroy()");
 
         if(presenter != null)
             presenter.unregisterListener(this);
