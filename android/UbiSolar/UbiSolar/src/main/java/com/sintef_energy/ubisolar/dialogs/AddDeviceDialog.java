@@ -89,6 +89,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
 
         //EnergyDataSource.deleteAll(getActivity().getContentResolver());
 
+        //TODO: Remove Loadmanager?
         getLoaderManager().initLoader(0, null, this);
         AlertDialog alertDialog = builder.create();
 

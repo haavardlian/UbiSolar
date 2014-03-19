@@ -88,8 +88,6 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
                             item.moveToPosition(pos);
                             pos = item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME);
 
-                            IPresenterCallback target = (IPresenterCallback)getTargetFragment();
-
                             EnergyUsageModel euModel = new EnergyUsageModel();
                             euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
                             euModel.setDevice_id(item.getInt(pos));
@@ -212,13 +210,13 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(
-                    getActivity(),
-                    EnergyContract.Devices.CONTENT_URI,
-                    new String[]{DeviceModel.DeviceEntry._ID, DeviceModel.DeviceEntry.COLUMN_NAME},
-                    null,
-                    null,
-                    DeviceModel.DeviceEntry.COLUMN_NAME + " ASC"
-                    );
+            getActivity(),
+            EnergyContract.Devices.CONTENT_URI,
+            new String[]{DeviceModel.DeviceEntry._ID, DeviceModel.DeviceEntry.COLUMN_NAME},
+            null,
+            null,
+            DeviceModel.DeviceEntry.COLUMN_NAME + " ASC"
+        );
     }
 
     @Override
