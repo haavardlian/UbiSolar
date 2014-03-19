@@ -62,7 +62,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-    private XYSeriesRenderer mCurrentRenderer;
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mBaseUsageList;
     private ArrayList<DeviceUsageList> mActiveUsageList;
@@ -70,7 +69,8 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private String mTitleFormat;
     private String mDataResolution;
     private int mActiveDateIndex = 0;
-    private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED, Color.YELLOW};
+    private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED,
+            Color.YELLOW};
     private int mColorIndex;
 
     TotalEnergyPresenter presenter;
@@ -119,22 +119,32 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         /* However, if it was not, it stays in the instance from the last onDestroyView() and we don't want to overwrite it */
         if(savedInstanceState != null && savedState == null)
             savedState = savedInstanceState.getBundle("savedState");
+
+        mChartView = null;
+
         //Restore data
         if(savedState != null) {
+
             mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("mDataset");
             mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("mRenderer");
-            mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
+            mTitleFormat = savedState.getString("mTitleFormat");
+            mDataResolution = savedState.getString("mDataResolution");
+            mTitleLabel = savedState.getString("mTitleLabel");
+            mActiveDateIndex = savedState.getInt("mActiveDateIndex");
+            mActiveUsageList = (ArrayList<DeviceUsageList>) savedState.getSerializable("mActiveUsageList");
+            mBaseUsageList = (ArrayList<DeviceUsageList>) savedState.getSerializable("mBaseUsageList");
         }
         //Initialize new data
         else {
             setupLineGraph();
-            createLineGraph();
 
             mActiveUsageList = new ArrayList<>();
             mBaseUsageList = new ArrayList<>();
             mTitleFormat = "EEEE dd/MM";
             mDataResolution = "HH";
         }
+        createLineGraph();
+        populateGraph(mActiveDateIndex);
 
         savedState = null;
     }
@@ -172,7 +182,12 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         state.putParcelableArrayList(STATE_euModels, usageModelState);
         state.putSerializable("mDataset", mDataset);
         state.putSerializable("mRenderer", mRenderer);
-        state.putSerializable("current_renderer", mCurrentRenderer);
+        state.putString("mTitleFormat", mTitleFormat);
+        state.putString("mDataResolution", mDataResolution);
+        state.putString("mTitleLabel", mTitleLabel);
+        state.putInt("mActiveDateIndex", mActiveDateIndex);
+        state.putSerializable("mActiveUsageList", mActiveUsageList);
+        state.putSerializable("mBaseUsageList", mBaseUsageList);
 
         return state;
     }
@@ -228,6 +243,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private void createLineGraph()
     {
         if (mChartView == null) {
+            System.out.println("Creating graph");
             LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.lineChartView);
             mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
             mChartView.addZoomListener(new ZoomListener() {
@@ -301,7 +317,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         seriesRenderer.setLineWidth(3);
         seriesRenderer.setColor(colors[mColorIndex++%colors.length]);
         seriesRenderer.setShowLegendItem(true);
-        mCurrentRenderer = seriesRenderer;
         mRenderer.addSeriesRenderer(seriesRenderer);
         if(displayPoints) {
             seriesRenderer.setPointStyle(PointStyle.CIRCLE);
