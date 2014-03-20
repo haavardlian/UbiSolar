@@ -5,11 +5,12 @@
 
     <!-- Title fragment menu -->
     <string-array name="title_fragments">
-        <item>Devices</item>
+        <item>Home</item>
         <item>Usage</item>
         <item>Power saving</item>
-        <item>Profile</item>
+        <item>Devices</item>
         <item>Social</item>
+        <item>Profile</item>
         <item>Logout</item>
     </string-array>
 
