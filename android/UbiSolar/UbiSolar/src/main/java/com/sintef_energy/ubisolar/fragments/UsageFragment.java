@@ -52,8 +52,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private static final String TAG = UsageFragment.class.getName();
 
-    private TotalEnergyPresenter totalEnergyPresenter;
-
     private String[] mSelectedItems;
     private boolean[] mSelectDeviceDialogItems;
 
@@ -148,15 +146,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             createEnergyUsage();
         }
 
-        testDateQuery();
+        //testDateQuery();
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
-
-        totalEnergyPresenter = new TotalEnergyPresenter();
-        totalEnergyPresenter.loadEnergyData(getActivity().getContentResolver(),
-                0,
-                calendar.getTimeInMillis());
 
         /* Show fragment */
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
@@ -259,7 +252,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //If fragment have not been created.
         if(usageGraphPieFragment == null) {
             usageGraphPieFragment = UsageGraphPieFragment.newInstance();
-            usageGraphPieFragment.registerTotalEnergyPresenter(totalEnergyPresenter);
         }
 
         graphView = usageGraphPieFragment;
@@ -282,7 +274,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //If fragment have not been created.
         if(usageGraphLineFragment == null) {
             usageGraphLineFragment = UsageGraphLineFragment.newInstance();
-            usageGraphLineFragment.registerTotalEnergyPresenter(totalEnergyPresenter);
         }
 
         graphView = usageGraphLineFragment;

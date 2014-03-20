@@ -61,9 +61,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             Color.YELLOW};
     private int mColorIndex;
 
-    TotalEnergyPresenter presenter;
-    ArrayList<EnergyUsageModel> euModels;
-
     private Bundle mSavedState;
 
     /**
@@ -166,8 +163,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         Bundle state = new Bundle();
 
         ArrayList<Parcelable> usageModelState = new ArrayList<>();
-        for(EnergyUsageModel euModel : euModels)
-            usageModelState.add(euModel);
 
         state.putParcelableArrayList(STATE_euModels, usageModelState);
         state.putSerializable("mDataset", mDataset);
@@ -187,18 +182,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         super.onDestroy();
 
         Log.v(TAG, " onDestroy()");
-
-        if(presenter != null)
-            presenter.unregisterListener(this);
-    }
-
-    @Deprecated
-    public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
-        this.presenter = presenter;
-        presenter.registerListner(this);
-        euModels = presenter.getEnergyData();
-
-        Log.v(TAG, "registerTotalEnergypresenter: " + euModels.size());
     }
 
     @Override
