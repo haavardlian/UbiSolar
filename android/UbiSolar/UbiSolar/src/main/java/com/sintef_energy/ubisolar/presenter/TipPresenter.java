@@ -46,34 +46,33 @@ public class TipPresenter {
         this.requestQueue = requestQueue;
     }
 
-    public void getAllTips(final ArrayAdapter<Tip> adapter, final ArrayList<Tip> tipArrayList)
+    public void getAllTips(final ArrayAdapter<Tip> adapter, final ArrayList<Tip> tips)
     {
         String url = Global.BASE_URL + "/tips";
-
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray jsonArray) {
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-                try {
-                    List<Tip> tips = mapper.readValue(jsonArray.toString(), new TypeReference<List<Tip>>(){});
-                    tipArrayList.clear();
-                    for(Tip tip : tips) {
-                        tipArrayList.add(tip);
-                        Log.v(tag, tip.toString());
+
+                tips.clear();
+                for(int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        tips.add((Tip)mapper.readValue(jsonArray.get(i).toString(), Tip.class));
+                        Log.d(tag, tips.get(i).toString());
+                    } catch (IOException | JSONException e) {
+                        Log.e(tag, "Error in JSON Mapping:");
+                        Log.e(tag, e.toString());
                     }
-                    adapter.notifyDataSetChanged();
-                } catch (IOException e) {
-                    Log.e(tag, e.toString());
                 }
+                adapter.notifyDataSetChanged();
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(tag, error.toString());
-                //TODO display error
-                error.printStackTrace();
+                Log.e(tag, error.getMessage());
             }
         });
 

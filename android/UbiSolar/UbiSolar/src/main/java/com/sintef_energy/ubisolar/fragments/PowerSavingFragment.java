@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -52,13 +53,15 @@ public class PowerSavingFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_power_saving, container, false);
+        ArrayAdapter<Tip> tipAdapter = new ArrayAdapter<Tip>(getActivity(), android.R.layout.simple_list_item_1, tips);
         tipsView = (ListView) rootView.findViewById(R.id.tipList);
         tips = new ArrayList<>();
-        final ArrayAdapter<Tip> tipAdapter = new ArrayAdapter<Tip>(getActivity(), android.R.layout.simple_list_item_1, tips);
         tipsView.setAdapter(tipAdapter);
-        DrawerActivity activity = (DrawerActivity) getActivity();
-        activity.getTipPresenter().getAllTips(tipAdapter, tips);
+        
+        //Get all tips from server asynchronously
+        ((DrawerActivity) getActivity()).getTipPresenter().getAllTips(tipAdapter, tips);
 
         return rootView;
     }
