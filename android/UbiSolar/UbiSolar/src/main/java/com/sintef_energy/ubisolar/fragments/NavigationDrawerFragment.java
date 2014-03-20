@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.res.TypedArray;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -144,8 +145,17 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                //For smoother open fragment animation, we first close the drawer, then do a delayed
+                //fragment transaction.
+                mDrawerLayout.closeDrawer(mFragmentContainerView);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        selectItem(position); // your fragment transactions go here
+                    }
+                }, 200);
+                //selectItem(position);
             }
         });
 
@@ -236,7 +246,7 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerList != null) {
             mDrawerList.setItemChecked(position, true);
         }
-        if (mDrawerLayout != null) {
+        if (mDrawerLayout != null) { //TODO remove? handles in onClick
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
