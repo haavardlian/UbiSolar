@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -438,22 +439,31 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     {
         ContentResolver cr = getActivity().getContentResolver();
         EnergyUsageModel usageModel;
+        int n = 1000;
+        int nDevices = mDevices.size();
+        ContentValues[] values = new ContentValues[n * nDevices];
+
         Calendar cal = Calendar.getInstance();
         Random random = new Random();
-        Date date;
-
+        Date date = new Date();
+        cal.setTime(date);
+        int idCount = 1337;
+        int y = 0;
         for(Device device : mDevices.values()) {
             Log.v(TAG, "Creating data for: " + device.getName());
-            for (int i = 0; i < 1000; i++) {
-                date = new Date();
-                cal.setTime(date);
+            for (int i = 0; i < n; i++) {
                 cal.add(Calendar.HOUR_OF_DAY, i);
 
-                usageModel = new EnergyUsageModel(System.currentTimeMillis(), device.getDevice_id(),
-                        cal.getTime(), random.nextInt((200 - 50) + 1) + 50);
-                EnergyDataSource.addEnergyModel(cr, usageModel);
+                usageModel = new EnergyUsageModel(idCount++, device.getDevice_id(),
+                        cal.getTime(), random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
+                values[i + (y * n)] = usageModel.getContentValues();
+                //EnergyDataSource.addEnergyModel(cr, usageModel);
             }
+            y++;
         }
+        Log.v(TAG, "Starting to add data to DB.");
+        EnergyDataSource.addBatchEnergyModel(cr, values);
+        Log.v(TAG, "Done adding data to DB");
     }
 
     private void clearDatabase()

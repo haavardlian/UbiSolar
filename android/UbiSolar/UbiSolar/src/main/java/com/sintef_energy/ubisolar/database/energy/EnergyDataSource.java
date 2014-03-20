@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.database.energy;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -135,4 +136,16 @@ public class EnergyDataSource {
     public static void deleteAll(ContentResolver resolver){
         resolver.delete(EnergyContract.Devices.CONTENT_URI, null, null);
     }
+
+    public static int addBatchEnergyModel(ContentResolver resolver, ContentValues[] values){
+        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+
+        int n = resolver.bulkInsert(
+                builder.build(),
+                values
+            );
+
+        return n;
+    }
+
 }
