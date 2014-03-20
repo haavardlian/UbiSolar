@@ -12,6 +12,6 @@ import java.sql.SQLException;
  */
 public class TipMapper implements ResultSetMapper<Tip> {
     public Tip map(int index, ResultSet r, StatementContext statementContext) throws SQLException {
-        return new Tip(r.getInt(("id")), r.getString(("name")), r.getString("description"));
+        return new Tip(r.getInt(("id")), r.getString(("name")), r.getString("description"), r.getInt("n_ratings"), r.getInt("average_rating"));
     }
 }

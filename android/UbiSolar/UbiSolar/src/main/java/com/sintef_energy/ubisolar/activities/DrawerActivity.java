@@ -12,7 +12,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
@@ -22,6 +25,7 @@ import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.SocialFragment;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
+import com.sintef_energy.ubisolar.presenter.TipPresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
@@ -51,7 +55,8 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
      */
     private TotalEnergyPresenter mTotalEnergyPresenter;
     private DevicePresenter devicePresenter;
-
+    private RequestQueue requestQueue;
+    private TipPresenter tipPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //TODO: Check if user is logged in
@@ -63,7 +68,9 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 //        }
 
         super.onCreate(savedInstanceState);
-
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        requestQueue = Volley.newRequestQueue(this);
+        tipPresenter = new TipPresenter(requestQueue);
         /* Set up the presenters */
 
         /*UsagePresenter*/
@@ -211,4 +218,12 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 
     @Override
     public DevicePresenter getDevicePresenter() { return devicePresenter; }
+
+    public TipPresenter getTipPresenter() {
+        return tipPresenter;
+    }
+
+    public RequestQueue getRequestQueue() {
+        return requestQueue;
+    }
 }
