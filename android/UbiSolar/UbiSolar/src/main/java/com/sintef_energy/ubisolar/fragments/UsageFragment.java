@@ -43,6 +43,8 @@ import java.util.Random;
 
 /**
  * Created by perok on 2/11/14.
+ *
+ * BUG: Backstack for usage behaves weired.
  */
 public class UsageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -251,8 +253,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
      *
      * @param button
      */
-    private void setPieChart(ImageButton button)
-    {
+    private void setPieChart(ImageButton button){
         button.setImageResource(R.drawable.line);
         button.setTag(R.string.TAG_GRAPH_TYPE, "line");
 
@@ -272,11 +273,9 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
      *
      * @param button
      */
-    private void setLineChart(ImageButton button)
-    {
+    private void setLineChart(ImageButton button){
         button.setImageResource(R.drawable.pie);
         button.setTag(R.string.TAG_GRAPH_TYPE, "pie");
-
 
         Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
         deviceButton.setVisibility(View.VISIBLE);
@@ -318,9 +317,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-
-        switch (i)
-        {
+        switch (i){
             case LOADER_DEVICES:
                 return new CursorLoader(
                         getActivity(),
@@ -333,14 +330,13 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
             case LOADER_USAGE:
                 String where = "";
 
+                //TODO: BUG: How to handle when user selects no devices?
+
                 for(int n = 0; n < mSelectedItems.length; n++){
                     where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
                     if(n != mSelectedItems.length - 1)
                         where += " OR ";
                 }
-
-                Log.v(TAG, "WHERE: " + where);
-                Log.v(TAG, "SELECTED: " + mSelectedItems);
 
                 return new CursorLoader(
                         getActivity(),
@@ -355,8 +351,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
-    {
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
         switch (cursorLoader.getId()) {
             /* Fetch all device data. Is used to show list of devices and choose which to see. */
             case LOADER_DEVICES:
@@ -382,7 +377,6 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
      * @param data
      */
     private void populateDeviceUsageList(Cursor data){
-
         //Hashmap containt all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
