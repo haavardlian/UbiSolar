@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,8 @@ import java.util.ArrayList;
  *
  */
 public class EnergyDataSource {
+
+    private static final String TAG = EnergyDataSource.class.getName();
 
     /**
      * Add EnergyUsageModel to database.
@@ -143,6 +146,9 @@ public class EnergyDataSource {
                 builder.build(),
                 values
             );
+
+        if(n != values.length)
+            Log.e(TAG, "addBatchEnergyModel: Tried adding: " +values.length + ". Total added was: " + n);
 
         return n;
     }
