@@ -116,29 +116,14 @@ public class EnergyProvider extends ContentProvider{
                 builder.appendWhere(EnergyContract.Energy._ID + " = " +
                     uri.getLastPathSegment());
                 break;
-            case ENERGY_DAY_LIST: //TODO
-                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
-                if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
-                }
+            case ENERGY_DAY_LIST:
+                rawSql = generateRawDateSql("%Y-%m-%d");
                 break;
-            case ENERGY_MONTH_LIST: //TODO
-                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
-                if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
-                }
-                rawSql = "SELECT " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
-                        + "strftime(\'%Y-%m\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch')) As `month`,"
-                        + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
-                        + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
-                        + "GROUP BY strftime(\'%Y-%m\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME +"`, 'unixepoch')), "
-                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID;
+            case ENERGY_MONTH_LIST:
+                rawSql = generateRawDateSql("%Y-%m");
                 break;
-            case ENERGY_YEAR_LIST: //TODO
-                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
-                if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
-                }
+            case ENERGY_YEAR_LIST:
+                rawSql = generateRawDateSql("%Y");
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -353,4 +338,17 @@ public class EnergyProvider extends ContentProvider{
         // s.th. went wrong:
         throw new SQLException("Problem while inserting into uri: " + uri);
    }
+
+    private String generateRawDateSql(String date){
+
+        String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
+
+        String rawSql = "SELECT " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
+                        + time + " As `month`,"
+                        + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
+                        + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
+                        + "GROUP BY " + time + ", "
+                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID;
+        return rawSql;
+    }
 }

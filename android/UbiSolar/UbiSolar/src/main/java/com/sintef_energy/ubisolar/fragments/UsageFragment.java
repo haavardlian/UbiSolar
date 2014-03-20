@@ -29,7 +29,6 @@ import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
@@ -76,6 +75,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private static final int LOADER_DEVICES = 0;
     private static final int LOADER_USAGE = 1;
+    private static final int LOADER_USAGE_DAY = 2;
+    private static final int LOADER_USAGE_MONTH = 3;
+    private static final int LOADER_USAGE_YEAR = 4;
+
 
     /** The first fragment is added to the view. Should not be added to the backstack */
     private boolean mFirstFragmentAdd = false;
@@ -313,6 +316,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Uri.Builder builder;
+
         switch (i){
             case LOADER_DEVICES:
                 return new CursorLoader(
@@ -342,6 +347,42 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         mSelectedItems,
                         EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
                 );
+            case LOADER_USAGE_DAY:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Day);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            case LOADER_USAGE_MONTH:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Month);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            case LOADER_USAGE_YEAR:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Year);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
         }
         return null;
     }
@@ -363,6 +404,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             /* Load usage */
             case LOADER_USAGE:
                 populateDeviceUsageList(cursor);
+                break;
+            case LOADER_USAGE_DAY:
+            case LOADER_USAGE_MONTH:
+            case LOADER_USAGE_YEAR:
+                //TODO: Implement logic to handle. See testDataQuery()
                 break;
         }
     }
@@ -482,7 +528,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     }
 
     private void testDateQuery(){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
         builder.appendPath(EnergyContract.Energy.Date.Month);
         Cursor c = getActivity().getContentResolver().query(builder.build(), null, null, null, null);
