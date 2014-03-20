@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.TipAdapter;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.presenter.TipPresenter;
 import com.sintef_energy.ubisolar.structs.Tip;
@@ -28,7 +30,6 @@ public class PowerSavingFragment extends DefaultTabFragment {
      */
 
     ListView tipsView;
-    ArrayList<Tip> tips;
     public static PowerSavingFragment newInstance(int sectionNumber) {
         PowerSavingFragment fragment = new PowerSavingFragment();
         Bundle args = new Bundle();
@@ -53,16 +54,15 @@ public class PowerSavingFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_power_saving, container, false);
-        ArrayAdapter<Tip> tipAdapter = new ArrayAdapter<Tip>(getActivity(), android.R.layout.simple_list_item_1, tips);
-        tipsView = (ListView) rootView.findViewById(R.id.tipList);
-        tips = new ArrayList<>();
-        tipsView.setAdapter(tipAdapter);
-        
-        //Get all tips from server asynchronously
-        ((DrawerActivity) getActivity()).getTipPresenter().getAllTips(tipAdapter, tips);
+        TipAdapter tipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
 
+        tipsView = (ListView) rootView.findViewById(R.id.tipList);
+        tipsView.setAdapter(tipAdapter);
+
+        //Get all tips from server asynchronously
+        ((DrawerActivity) getActivity()).getTipPresenter().getAllTips(tipAdapter);
+        tipAdapter.notifyDataSetInvalidated();
         return rootView;
     }
 

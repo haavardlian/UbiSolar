@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.deser.std.JacksonDeserializers;
+import com.sintef_energy.ubisolar.TipAdapter;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.Tip;
 import com.sintef_energy.ubisolar.utils.Global;
@@ -46,7 +47,7 @@ public class TipPresenter {
         this.requestQueue = requestQueue;
     }
 
-    public void getAllTips(final ArrayAdapter<Tip> adapter, final ArrayList<Tip> tips)
+    public void getAllTips(final TipAdapter adapter)
     {
         String url = Global.BASE_URL + "/tips";
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
@@ -56,11 +57,11 @@ public class TipPresenter {
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
-                tips.clear();
+                adapter.clear();
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        tips.add((Tip)mapper.readValue(jsonArray.get(i).toString(), Tip.class));
-                        Log.d(tag, tips.get(i).toString());
+                        adapter.add((Tip)mapper.readValue(jsonArray.get(i).toString(), Tip.class));
+                        Log.d(tag, adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e(tag, "Error in JSON Mapping:");
                         Log.e(tag, e.toString());
@@ -72,6 +73,7 @@ public class TipPresenter {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.e(tag, "Error in JSON Mapping:");
                 Log.e(tag, error.getMessage());
             }
         });

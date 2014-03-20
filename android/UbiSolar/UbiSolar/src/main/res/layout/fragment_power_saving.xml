@@ -2,10 +2,26 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Power saving tips"
+        android:id="@+id/powerSavingTips"
+        android:textSize="30sp" />
 
     <ListView
         android:layout_width="match_parent"
+        android:layout_height="371dp"
+        android:id="@+id/tipList"
+        android:layout_weight="0.62" />
+
+    <Button
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tipList" />
+        android:text="Add tip"
+        android:id="@+id/btnAddTio"
+        android:singleLine="false" />
 </LinearLayout>
