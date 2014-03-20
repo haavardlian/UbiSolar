@@ -341,10 +341,15 @@ public class EnergyProvider extends ContentProvider{
 
     private String generateRawDateSql(String date){
 
+        //Time to aggregate on
         String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
 
-        String rawSql = "SELECT " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
-                        + time + " As `month`,"
+        //Unixtime
+        String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
+
+        String rawSql = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
+                        + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
+                        + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
                         + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
                         + "GROUP BY " + time + ", "

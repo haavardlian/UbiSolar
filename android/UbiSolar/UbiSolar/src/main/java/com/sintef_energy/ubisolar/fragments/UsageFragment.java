@@ -399,7 +399,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case LOADER_USAGE_DAY:
             case LOADER_USAGE_MONTH:
             case LOADER_USAGE_YEAR:
-                //TODO: Implement logic to handle. See testDataQuery()
+                populateDeviceUsageList(cursor);
+                //TODO: Implement logic to handle this correctly.
+                //Maybe populate.. can take in format argument?
                 break;
         }
     }
@@ -527,7 +529,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         c.moveToFirst();
         int i = 0;
         do{
-            Log.v(TAG, "TABLE: " + i++ + " -> " + c.getLong(0) + " " + c.getString(1) + " " + c.getLong(2));
+            Log.v(TAG, "TABLE: " + i++ + " -> " + c.getLong(0) + " " + c.getLong(1) + " " + c.getLong(2) + " " + c.getLong(3));
         } while(c.moveToNext());
 
         c.close();
