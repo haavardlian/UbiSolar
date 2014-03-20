@@ -14,14 +14,7 @@
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="371dp"
-        android:id="@+id/tipList"
-        android:layout_weight="0.62" />
+        android:layout_height="match_parent"
+        android:id="@+id/tipList" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add tip"
-        android:id="@+id/btnAddTip"
-        android:singleLine="false" />
 </LinearLayout>
