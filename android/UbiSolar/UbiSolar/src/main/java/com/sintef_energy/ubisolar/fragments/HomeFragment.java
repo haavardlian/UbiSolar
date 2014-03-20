@@ -13,13 +13,12 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 /**
  * Created by perok on 2/11/14.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends DefaultTabFragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = HomeFragment.class.getName();
-    private static final String ARG_SECTION_NUMBER = "section_number";
 
     private View view;
 

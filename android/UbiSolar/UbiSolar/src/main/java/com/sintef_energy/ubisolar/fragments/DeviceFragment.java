@@ -40,13 +40,12 @@ import java.util.ArrayList;
 /**
  * Created by perok on 2/11/14.
  */
-public class DeviceFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, IDeviceView {
+public class DeviceFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>, IDeviceView {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = DeviceFragment.class.getName();
-    private static final String ARG_SECTION_NUMBER = "section_number";
 
     //private EnergyUsageModel usageField;
     private SimpleCursorAdapter adapter;
