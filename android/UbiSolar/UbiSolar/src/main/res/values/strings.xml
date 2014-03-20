@@ -51,9 +51,16 @@
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
     <string name="add_device_button">Add Device</string>
+
     <!-- Fragment social-->
     <string name="socialUsername">User\'s name</string>
     <string name="socialPlaceHolder">Here there will be a list of all of your Facebook friends that also have the app.\n\nYou can compare yourself with friends, area or people with similar profiles in the search field in the ActionBar</string>
+    <string name="compHeader">Comparison of savings</string>
+    <string name="userName">You</string>
+    <string name="friendName">Your friend</string>
+    <string name="wattLvl">Wattitude level</string>
+    <string name="userWattLvl">Coal miner</string>
+    <string name="friendWattLvl">Windmill</string>
 
     <!-- TAGS -->
     <string name="TAG_GRAPH_TYPE">tag_graph_type</string>
