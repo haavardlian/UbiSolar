@@ -139,7 +139,6 @@ public class EnergyDataSource {
 
     public static int addBatchEnergyModel(ContentResolver resolver, ContentValues[] values){
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-
         int n = resolver.bulkInsert(
                 builder.build(),
                 values

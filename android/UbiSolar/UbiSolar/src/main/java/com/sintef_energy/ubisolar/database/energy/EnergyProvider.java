@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 
 import android.provider.BaseColumns;
@@ -295,6 +296,54 @@ public class EnergyProvider extends ContentProvider{
         }
 
         return updateCount;
+    }
+
+    /*
+    * For fast insert. ApplyBatch or bulkInsert?
+    * http://stackoverflow.com/questions/5596354/insertion-of-thousands-of-contact-entries-using-applybatch-is-slow
+    * */
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        final SQLiteDatabase db = mHelper.getWritableDatabase();
+        final int match = URI_MATCHER.match(uri);
+        switch(match){
+            case ENERGY_LIST:
+                mIsInBatchMode.set(true);
+                int numInserted= 0;
+                db.beginTransaction();
+                try {
+                    //standard SQL insert statement, that can be reused
+                    SQLiteStatement insert =
+                            db.compileStatement("insert into " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME
+                                    + "(" + EnergyUsageModel.EnergyUsageEntry._ID + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ")"
+                                    +" values " + "(?,?,?,?)");
+
+                    for (ContentValues value : values){
+                        //bind the 1-indexed ?'s to the values specified
+                        insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
+                        insert.bindLong(2, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID));
+                        insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME));
+                        insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
+                        insert.execute();
+                    }
+                    db.setTransactionSuccessful();
+                    insert.close();
+                    numInserted = values.length;
+                } finally {
+                    mIsInBatchMode.remove();
+
+                    db.endTransaction();
+                    getContext().getContentResolver().notifyChange(EnergyContract.CONTENT_URI, null);
+                }
+                return numInserted;
+            //....
+            default:
+                throw new UnsupportedOperationException("unsupported uri: " + uri);
+        }
     }
 
     @Override
