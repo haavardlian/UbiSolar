@@ -39,7 +39,7 @@
             android:writePermission=".alarm.db.AlarmModel.WRITE" />
 
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/APP_ID"/>
 
     </application>
 

@@ -40,8 +40,8 @@
     <string name="hello_world">Hello world!</string>
     <string name = "get_started">Log in to share your profile</string>
     <string name = "action_forgot_password">Have you forgotten your password?</string>
-
-    <string name = "app_id">598479706901551</string>
+    <string name = "usage_device_dialog_title">Usage</string>
+    <string name = "APP_ID">598479706901551</string>
 
     <!-- Fragment social-->
     <string name="socialUsername">User\'s name</string>

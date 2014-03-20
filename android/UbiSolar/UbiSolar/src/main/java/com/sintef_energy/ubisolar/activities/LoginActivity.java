@@ -1,16 +1,11 @@
 package com.sintef_energy.ubisolar.activities;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Base64;
-import android.util.Log;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -19,8 +14,6 @@ import com.sintef_energy.ubisolar.R;
 
 //import com.facebook.android.Facebook;
 //import com.facebook.widget.LoginButton;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -30,6 +23,7 @@ public class LoginActivity extends FragmentActivity {
     private static final int SPLASH = 0;
     private static final int SELECTION = 1;
     private static final int FRAGMENT_COUNT = SELECTION +1;
+    int APP_ID = R.string.APP_ID;
 
     private Fragment[] fragments = new Fragment[FRAGMENT_COUNT];
 
