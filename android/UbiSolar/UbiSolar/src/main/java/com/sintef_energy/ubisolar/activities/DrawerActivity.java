@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -93,7 +94,7 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
+        //FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = null;
 
         boolean logout = false;
@@ -123,7 +124,8 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
         }
 
         if(fragment != null)
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+            addFragment(fragment, false, true, titleNames[position]);
+            //fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
         else if(logout){
             Global.loggedIn = false;
             Intent loginIntent = new Intent(this, LoginActivity.class);
@@ -132,6 +134,24 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
         }
         else
             Log.e(LOG, "Error creating fragment from navigation drawer.");
+    }
+
+    /**
+     * Helper method to add fragments to the view.
+     */
+    public void addFragment(Fragment fragment, boolean animate, boolean addToBackStack, String tag) {
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        if (animate) {/*
+            ft.setCustomAnimations(android.R.anim.fragment_from_right,
+                    R.anim.fragment_from_left, R.anim.fragment_from_right,
+                    R.anim.fragment_from_left);*/
+        }
+        if (addToBackStack) {
+            ft.addToBackStack(tag);
+        }
+        ft.replace(R.id.container, fragment);
+        ft.commit();
     }
 
     public void onSectionAttached(int number) {

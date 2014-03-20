@@ -78,6 +78,9 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     private static final int LOADER_DEVICES = 0;
     private static final int LOADER_USAGE = 1;
 
+    /** The first fragment is added to the view. Should not be added to the backstack */
+    private boolean mFirstFragmentAdd = false;
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -261,16 +264,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
         graphView = usageGraphPieFragment;
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-        if(usageGraphPieFragment.isAdded())
-            ft.show(usageGraphPieFragment);
-        else{
-            ft.addToBackStack("usageGraphPieFragment");
-            ft.replace(R.id.fragment_usage_tab_graph_placeholder, usageGraphPieFragment);
-        }
-
-        ft.commit();
+        addFragment(usageGraphPieFragment, "usageGraphPieFragment");
     }
 
     /**
@@ -295,13 +289,28 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
         graphView = usageGraphLineFragment;
 
+        addFragment(usageGraphLineFragment, "usageGraphLineFragment");
+    }
+
+    /**
+     * Helper method for chaning the fragments.
+     *
+     * @param fragment
+     * @param tag
+     */
+    private void addFragment(Fragment fragment, String tag){
         FragmentTransaction ft = getFragmentManager().beginTransaction();
 
-        if(usageGraphLineFragment.isAdded())
-            ft.show(usageGraphLineFragment);
+        if(fragment.isAdded())
+            ft.show(fragment);
         else{
-            ft.addToBackStack("usageGraphLineFragment");
-            ft.replace(R.id.fragment_usage_tab_graph_placeholder, usageGraphLineFragment);
+            //Do not add the first time.
+            if(!mFirstFragmentAdd) {
+                ft.addToBackStack(tag);
+                mFirstFragmentAdd = true;
+            }
+
+            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
         }
 
         ft.commit();
