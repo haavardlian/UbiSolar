@@ -54,7 +54,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
             "CREATE TABLE " + EnergyUsageEntry.TABLE_NAME + " (" +
                     EnergyUsageEntry._ID + " INTEGER PRIMARY KEY," +
                     EnergyUsageEntry.COLUMN_DEVICE_ID + INTEGER_TYPE + COMMA_SEP +
-                    EnergyUsageEntry.COLUMN_DATETIME + INTEGER_TYPE + COMMA_SEP +
+                    EnergyUsageEntry.COLUMN_DATETIME + " DATE" + COMMA_SEP +
                     EnergyUsageEntry.COLUMN_POWER + REAL_TYPE + COMMA_SEP +
                     "FOREIGN KEY(" + EnergyUsageEntry.COLUMN_DEVICE_ID +
                         ") REFERENCES " + DeviceModel.DeviceEntry.TABLE_NAME +
@@ -127,7 +127,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
         ContentValues values = new ContentValues();
         values.put(EnergyUsageEntry._ID, getId());
         values.put(EnergyUsageEntry.COLUMN_DEVICE_ID, getDevice_id());
-        values.put(EnergyUsageEntry.COLUMN_DATETIME, getDatetime().getTime());
+        values.put(EnergyUsageEntry.COLUMN_DATETIME, getDatetime().getTime() / 1000L);
         values.put(EnergyUsageEntry.COLUMN_POWER, getPower_usage());
         return values;
     }
@@ -139,7 +139,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
     public EnergyUsageModel(Cursor cursor) {
         setId(cursor.getLong(_id));
         setDevice_id(cursor.getLong(_deviceId));
-        setDatetime(new Date(cursor.getLong(_dateTime)));
+        setDatetime(new Date(cursor.getLong(_dateTime) * 1000));
         setPower_usage(cursor.getDouble(_power));
     }
 

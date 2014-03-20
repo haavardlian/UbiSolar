@@ -34,7 +34,6 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     public static final String TAG = UsageGraphLineFragment.class.getName();
-    TotalEnergyPresenter presenter;
 
     private View rootView;
 
@@ -125,10 +124,7 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     @Override
     public void onDestroy(){
         super.onDestroy();
-
-        if(presenter != null)
-            presenter.unregisterListener(this);
-    }
+   }
 
     @Override
     public void onDestroyView(){
@@ -136,10 +132,6 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
         mSavedState = saveState();
         Log.v(TAG, " onDestroyView()");
-    }
-
-    public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
-        this.presenter = presenter;
     }
 
     @Override
