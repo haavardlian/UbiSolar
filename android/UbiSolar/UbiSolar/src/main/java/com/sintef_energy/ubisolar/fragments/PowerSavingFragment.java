@@ -57,8 +57,8 @@ public class PowerSavingFragment extends DefaultTabFragment {
         tips = new ArrayList<>();
         final ArrayAdapter<Tip> tipAdapter = new ArrayAdapter<Tip>(getActivity(), android.R.layout.simple_list_item_1, tips);
         tipsView.setAdapter(tipAdapter);
-        TipPresenter tipPresenter = new TipPresenter();
-        tipPresenter.getAllTips(getActivity(), tipAdapter, tips);
+        DrawerActivity activity = (DrawerActivity) getActivity();
+        activity.getTipPresenter().getAllTips(tipAdapter, tips);
 
         return rootView;
     }

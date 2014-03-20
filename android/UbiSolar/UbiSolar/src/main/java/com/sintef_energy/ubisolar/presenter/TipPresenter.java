@@ -40,16 +40,19 @@ import java.util.List;
  */
 public class TipPresenter {
     String tag = "SERVER";
+    RequestQueue requestQueue;
 
-    public void getAllTips(Activity activity, final ArrayAdapter<Tip> adapter, final ArrayList<Tip> tipArrayList)
+    public TipPresenter(RequestQueue requestQueue) {
+        this.requestQueue = requestQueue;
+    }
+
+    public void getAllTips(final ArrayAdapter<Tip> adapter, final ArrayList<Tip> tipArrayList)
     {
-        RequestQueue requestQueue = Volley.newRequestQueue(activity);
         String url = Global.BASE_URL + "/tips";
 
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray jsonArray) {
-                //TODO display success message
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
@@ -58,7 +61,7 @@ public class TipPresenter {
                     tipArrayList.clear();
                     for(Tip tip : tips) {
                         tipArrayList.add(tip);
-                        Log.v(tag, tip.getDescription());
+                        Log.v(tag, tip.toString());
                     }
                     adapter.notifyDataSetChanged();
                 } catch (IOException e) {
