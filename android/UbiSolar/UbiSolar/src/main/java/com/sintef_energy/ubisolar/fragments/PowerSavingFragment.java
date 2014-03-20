@@ -6,8 +6,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.presenter.TipPresenter;
+import com.sintef_energy.ubisolar.structs.Tip;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by perok on 2/11/14.
@@ -17,6 +25,9 @@ public class PowerSavingFragment extends DefaultTabFragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
+
+    ListView tipsView;
+    ArrayList<Tip> tips;
     public static PowerSavingFragment newInstance(int sectionNumber) {
         PowerSavingFragment fragment = new PowerSavingFragment();
         Bundle args = new Bundle();
@@ -41,12 +52,15 @@ public class PowerSavingFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_power_saving, container, false);
+        tipsView = (ListView) rootView.findViewById(R.id.tipList);
+        tips = new ArrayList<>();
+        final ArrayAdapter<Tip> tipAdapter = new ArrayAdapter<Tip>(getActivity(), android.R.layout.simple_list_item_1, tips);
+        tipsView.setAdapter(tipAdapter);
+        TipPresenter tipPresenter = new TipPresenter();
+        tipPresenter.getAllTips(getActivity(), tipAdapter, tips);
 
-        return super.onCreateView(inflater, container, savedInstanceState);
-        //View rootView = inflater.inflate(R.layout.fragment_test, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-        //return rootView;
+        return rootView;
     }
 
 
