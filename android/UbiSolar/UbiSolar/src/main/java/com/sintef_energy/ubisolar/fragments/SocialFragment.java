@@ -58,7 +58,7 @@ public class SocialFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_social_placeholder, container, false);
+        view = inflater.inflate(R.layout.fragment_compare_friend, container, false);
         return view;
     }
 
