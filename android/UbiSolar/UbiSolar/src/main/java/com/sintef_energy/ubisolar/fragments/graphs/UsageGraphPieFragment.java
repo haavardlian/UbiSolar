@@ -34,6 +34,8 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     public static final String TAG = UsageGraphLineFragment.class.getName();
+
+    @Deprecated
     TotalEnergyPresenter presenter;
 
     private View rootView;

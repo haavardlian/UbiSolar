@@ -10,6 +10,7 @@ import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsageList;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -135,14 +137,15 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         else
             mSelectedItems = new String[0];
 
-//        clearDatabase();
+        //clearDatabase();
 
         //prepoluate database if it is empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
-//            clearDatabase();
             createDevices();
             createEnergyUsage();
         }
+
+        testDateQuery();
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
@@ -446,16 +449,19 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         Calendar cal = Calendar.getInstance();
         Random random = new Random();
         Date date = new Date();
-        cal.setTime(date);
         int idCount = 1337;
         int y = 0;
         for(Device device : mDevices.values()) {
+            cal.setTime(date);
             Log.v(TAG, "Creating data for: " + device.getName());
             for (int i = 0; i < n; i++) {
-                cal.add(Calendar.HOUR_OF_DAY, i);
+                cal.add(Calendar.HOUR_OF_DAY, 1);
 
-                usageModel = new EnergyUsageModel(idCount++, device.getDevice_id(),
-                        cal.getTime(), random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
+                usageModel = new EnergyUsageModel(
+                        idCount++,
+                        device.getDevice_id(),
+                        cal.getTime(),
+                        random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
                 values[i + (y * n)] = usageModel.getContentValues();
                 //EnergyDataSource.addEnergyModel(cr, usageModel);
             }
@@ -473,5 +479,21 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         it = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
         Log.v(TAG, "EMPTY DATABASE: " + it);
+    }
+
+    private void testDateQuery(){
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
+        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.Energy.Date.Month);
+        Cursor c = getActivity().getContentResolver().query(builder.build(), null, null, null, null);
+
+        Log.v(TAG, "TESTQUERY: " + c.getCount());
+        c.moveToFirst();
+        int i = 0;
+        do{
+            Log.v(TAG, "TABLE: " + i++ + " -> " + c.getLong(0) + " " + c.getString(1) + " " + c.getLong(2));
+        } while(c.moveToNext());
+
+        c.close();
     }
 }

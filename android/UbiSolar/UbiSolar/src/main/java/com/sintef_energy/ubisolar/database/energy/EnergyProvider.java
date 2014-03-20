@@ -35,6 +35,9 @@ public class EnergyProvider extends ContentProvider{
     private static final int DEVICES_ID = 2;
     private static final int ENERGY_LIST = 3;
     private static final int ENERGY_ID = 4;
+    private static final int ENERGY_DAY_LIST = 5;
+    private static final int ENERGY_MONTH_LIST = 6;
+    private static final int ENERGY_YEAR_LIST = 7;
 
     private static final UriMatcher URI_MATCHER;
     // prepare the UriMatcher
@@ -44,6 +47,9 @@ public class EnergyProvider extends ContentProvider{
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "device/#", DEVICES_ID);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy", ENERGY_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/#", ENERGY_ID);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Day, ENERGY_DAY_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Month, ENERGY_MONTH_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Year, ENERGY_YEAR_LIST);
    }
 
     @Override
@@ -63,6 +69,12 @@ public class EnergyProvider extends ContentProvider{
                 return EnergyContract.Energy.CONTENT_TYPE;
             case ENERGY_ID:
                 return EnergyContract.Energy.CONTENT_ITEM_TYPE;
+            case ENERGY_DAY_LIST:
+                return EnergyContract.Energy.CONTENT_TYPE;
+            case ENERGY_MONTH_LIST:
+                return EnergyContract.Energy.CONTENT_TYPE;
+            case ENERGY_YEAR_LIST:
+                return EnergyContract.Energy.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -71,12 +83,14 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        //Log.v(TAG, "SORT ORDER BETCH BEFORE BETCH: " + sortOrder);
-        //Log.v(TAG, "SORT ORDER: "  + BaseColumns._ID);
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         boolean useAuthorityUri = false; //TODO: Automatic notification of changes to LoadManager?
         Cursor cursor = null;
+
+        //Used by day, month, year
+        String rawSql = null;
+
         switch (URI_MATCHER.match(uri)) {
             case DEVICES_LIST:
                 builder.setTables(DeviceModel.DeviceEntry.TABLE_NAME);
@@ -102,19 +116,47 @@ public class EnergyProvider extends ContentProvider{
                 builder.appendWhere(EnergyContract.Energy._ID + " = " +
                     uri.getLastPathSegment());
                 break;
+            case ENERGY_DAY_LIST: //TODO
+                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
+                }
+                break;
+            case ENERGY_MONTH_LIST: //TODO
+                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
+                }
+                rawSql = "SELECT " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
+                        + "strftime(\'%Y-%m\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch')) As `month`,"
+                        + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
+                        + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
+                        + "GROUP BY strftime(\'%Y-%m\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME +"`, 'unixepoch')), "
+                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID;
+                break;
+            case ENERGY_YEAR_LIST: //TODO
+                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
         //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
-        cursor =
-              builder.query(
-                    db,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    null,
-                    null,
-                    sortOrder);
+        if(rawSql == null)
+            cursor =
+                  builder.query(
+                        db,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+        else
+            cursor =
+                    db.rawQuery(rawSql, null);
 
         // if we want to be notified of any changes:
         if (useAuthorityUri) {

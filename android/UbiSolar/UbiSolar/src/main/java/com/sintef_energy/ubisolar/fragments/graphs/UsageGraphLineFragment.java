@@ -192,6 +192,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             presenter.unregisterListener(this);
     }
 
+    @Deprecated
     public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
         this.presenter = presenter;
         presenter.registerListner(this);
