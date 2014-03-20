@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
@@ -73,7 +74,7 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
                 calendar.getTimeInMillis());
 
 
-        titleNames = getResources().getStringArray(R.array.title_fragments);
+        titleNames = getResources().getStringArray(R.array.nav_drawer_items);
         setContentView(R.layout.activity_usage);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)

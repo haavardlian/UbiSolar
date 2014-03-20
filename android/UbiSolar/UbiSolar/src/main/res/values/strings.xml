@@ -4,7 +4,7 @@
     <string name="app_name">UbiSolar</string>
 
     <!-- Title fragment menu -->
-    <string-array name="title_fragments">
+    <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Usage</item>
         <item>Power saving</item>
@@ -12,6 +12,16 @@
         <item>Social</item>
         <item>Profile</item>
         <item>Logout</item>
+    </string-array>
+
+    <string-array name="nav_drawer_icons">
+        <item>@drawable/home</item>
+        <item>@drawable/usage</item>
+        <item>@drawable/power_savers</item>
+        <item>@drawable/devices</item>
+        <item>@drawable/social</item>
+        <item>@drawable/profile</item>
+        <item>@drawable/heat</item> <!-- TODO: Icons for log out -->
     </string-array>
 
     <!-- AddUsageDialog -->
