@@ -6,19 +6,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.TipAdapter;
+import com.sintef_energy.ubisolar.adapters.TipAdapter;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.presenter.TipPresenter;
+import com.sintef_energy.ubisolar.dialogs.AddTipDialog;
 import com.sintef_energy.ubisolar.structs.Tip;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by perok on 2/11/14.
@@ -61,8 +58,8 @@ public class PowerSavingFragment extends DefaultTabFragment {
         tipsView.setAdapter(tipAdapter);
 
         //Get all tips from server asynchronously
+        getActivity().setProgressBarIndeterminateVisibility(true);
         ((DrawerActivity) getActivity()).getTipPresenter().getAllTips(tipAdapter);
-        tipAdapter.notifyDataSetInvalidated();
         return rootView;
     }
 
@@ -70,6 +67,14 @@ public class PowerSavingFragment extends DefaultTabFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        Button btnAddTip = (Button) getActivity().findViewById(R.id.btnAddTip);
+        btnAddTip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                displayAddTipDialog();
+            }
+        });
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
@@ -81,6 +86,12 @@ public class PowerSavingFragment extends DefaultTabFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //outState.putInt("curChoice", mCurCheckPosition);
+    }
+
+    public void displayAddTipDialog(){
+        AddTipDialog dialog = new AddTipDialog();
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getFragmentManager(), "addTipDialog");
     }
 
     @Override

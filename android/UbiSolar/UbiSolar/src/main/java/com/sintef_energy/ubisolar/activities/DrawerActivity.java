@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
@@ -67,6 +68,7 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 //        }
 
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         requestQueue = Volley.newRequestQueue(this);
         tipPresenter = new TipPresenter(requestQueue);
         /* Set up the presenters */

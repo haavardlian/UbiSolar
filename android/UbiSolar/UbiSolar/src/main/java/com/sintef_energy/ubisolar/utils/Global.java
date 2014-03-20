@@ -7,5 +7,5 @@ public class Global {
     @Deprecated
     public static Boolean loggedIn = false;
 
-    public static String BASE_URL = "http://192.168.0.10:8080";
+    public static String BASE_URL = "http://m202i.studby.ntnu.no:1337";
 }

@@ -2,8 +2,7 @@ package com.sintef_energy.ubisolar.presenter;
 
 import android.app.Activity;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -11,19 +10,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.deser.std.JacksonDeserializers;
-import com.sintef_energy.ubisolar.TipAdapter;
-import com.sintef_energy.ubisolar.structs.Device;
+import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.adapters.TipAdapter;
 import com.sintef_energy.ubisolar.structs.Tip;
 import com.sintef_energy.ubisolar.utils.Global;
 
@@ -33,8 +26,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Håvard on 19.03.14.
@@ -68,7 +59,7 @@ public class TipPresenter {
                     }
                 }
                 adapter.notifyDataSetChanged();
-
+                adapter.getActivity().setProgressBarIndeterminateVisibility(false);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -79,5 +70,42 @@ public class TipPresenter {
         });
 
         requestQueue.add(jsonRequest);
+    }
+
+    public void createTip(final Activity activity, Tip tip) {
+        String url = Global.BASE_URL + "/tips";
+        JSONObject jsonObject;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+
+        try {
+            jsonObject = new JSONObject(mapper.writeValueAsString(tip));
+        } catch (JsonProcessingException | JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Toast.makeText(activity.getApplicationContext(), response.getString("message"),
+                                    Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(activity.getApplicationContext(), "An error occured",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        ((DrawerActivity) activity).getRequestQueue().add(jsonRequest);
     }
 }

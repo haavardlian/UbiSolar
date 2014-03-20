@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar;
+package com.sintef_energy.ubisolar.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.structs.Tip;
 
 import java.util.ArrayList;
@@ -27,6 +28,10 @@ public class TipAdapter extends ArrayAdapter<Tip> {
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.data = data;
+    }
+
+    public Activity getActivity() {
+        return (Activity) context;
     }
 
     @Override
@@ -72,7 +77,6 @@ public class TipAdapter extends ArrayAdapter<Tip> {
             Tip tip = data.get(position);
             holder.name.setText(tip.getName());
             holder.description.setText(tip.getDescription());
-            Log.d("ADAPTER", holder.name.getText().toString());
             holder.rating.setText("Rating: " + tip.getAverageRating());
         }
         return row;
