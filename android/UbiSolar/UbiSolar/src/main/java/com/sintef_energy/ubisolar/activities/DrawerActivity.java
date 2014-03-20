@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
+import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.SocialFragment;
@@ -98,7 +99,7 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 
         switch (position){
             case 0:
-                fragment = DeviceFragment.newInstance(position);
+                fragment = HomeFragment.newInstance(position);
                 break;
             case 1:
                 fragment = UsageFragment.newInstance(position);
@@ -107,12 +108,15 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
                 fragment = PowerSavingFragment.newInstance(position);
                 break;
             case 3:
-                fragment = ProfileFragment.newInstance(position);
+                fragment = DeviceFragment.newInstance(position);
                 break;
             case 4:
                 fragment = SocialFragment.newInstance(position);
                 break;
             case 5:
+                fragment = ProfileFragment.newInstance(position);
+                break;
+            case 6:
                 logout = true;
                 break;
         }
