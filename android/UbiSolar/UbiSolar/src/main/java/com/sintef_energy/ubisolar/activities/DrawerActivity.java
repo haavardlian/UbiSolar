@@ -70,9 +70,9 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
         mTotalEnergyPresenter = new TotalEnergyPresenter();
-        mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
-                0,
-                calendar.getTimeInMillis());
+        //mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
+        //        0,
+        //        calendar.getTimeInMillis());
 
 
         titleNames = getResources().getStringArray(R.array.nav_drawer_items);

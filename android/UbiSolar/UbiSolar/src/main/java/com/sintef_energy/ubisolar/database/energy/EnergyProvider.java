@@ -285,7 +285,6 @@ public class EnergyProvider extends ContentProvider{
             db.setTransactionSuccessful();
             getContext().getContentResolver().notifyChange(EnergyContract.CONTENT_URI, null);
 
-
             return retResult;
         }
         finally {
