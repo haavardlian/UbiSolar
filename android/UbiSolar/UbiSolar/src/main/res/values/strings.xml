@@ -38,6 +38,8 @@
     <string name="add_button">Add Usage</string>
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
+    <string name = "get_started">Log in to share your profile</string>
+    <string name = "action_forgot_password">Have you forgotten your password?</string>
 
     <string name = "app_id">598479706901551</string>
 
