@@ -3,7 +3,7 @@ package com.sintef_energy.ubisolar.structs;
 /**
  * Created by Lars Erik on 18.03.14.
  */
-public class UserModel {
+public class User {
 
     private String userId;
     private String name;
@@ -12,7 +12,7 @@ public class UserModel {
     private Residence[] residences;
     private String country;
 
-    public UserModel(String userId, byte postNr, byte age, String name,
+    public User (String userId, byte zipCode, byte age, String name,
                      Residence[] residences, String country) {
         this.userId = userId;
         this.zipCode = zipCode;
@@ -46,11 +46,11 @@ public class UserModel {
         this.age = age;
     }
 
-    public byte getPostNr() {
+    public byte getZipCode() {
         return zipCode;
     }
 
-    public void setPostNr(byte zipCode) {
+    public void setZipCode (byte zipCode) {
         this.zipCode = zipCode;
     }
 
