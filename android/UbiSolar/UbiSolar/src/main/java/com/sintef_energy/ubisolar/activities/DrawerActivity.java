@@ -82,13 +82,22 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        /*DevicePresenter*/
+        /* DevicePresenter */
         devicePresenter = new DevicePresenter();
 
-//        Set up the drawer.
+        // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        /* Update UX on backstack change *//*
+        getFragmentManager().addOnBackStackChangedListener(
+                new FragmentManager.OnBackStackChangedListener() {
+                    public void onBackStackChanged() {
+                        // Update your UI here.
+                        getFragmentManager().
+                    }
+                });*/
     }
 
     @Override
@@ -150,6 +159,7 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
         if (addToBackStack) {
             ft.addToBackStack(tag);
         }
+        //ft.add(R.id.container, fragment);
         ft.replace(R.id.container, fragment);
         ft.commit();
     }

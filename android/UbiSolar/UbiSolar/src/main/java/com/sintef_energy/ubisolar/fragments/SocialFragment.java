@@ -19,13 +19,12 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 /**
  * Created by perok on 2/11/14.
  */
-public class SocialFragment extends Fragment {
+public class SocialFragment extends DefaultTabFragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = SocialFragment.class.getName();
-    private static final String ARG_SECTION_NUMBER = "section_number";
 
     private SimpleCursorAdapter adapter;
     private String [] friends;

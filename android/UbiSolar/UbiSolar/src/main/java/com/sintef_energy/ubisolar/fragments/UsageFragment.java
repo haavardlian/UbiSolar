@@ -46,15 +46,9 @@ import java.util.Random;
  *
  * BUG: Backstack for usage behaves weired.
  */
-public class UsageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = UsageFragment.class.getName();
-
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    private static final String ARG_SECTION_NUMBER = "section_number";
 
     private TotalEnergyPresenter totalEnergyPresenter;
 
@@ -167,7 +161,6 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         graphButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 toggleGraph();
             }
         });
@@ -176,7 +169,6 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         deviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 displayDeviceFilter();
             }
         });
