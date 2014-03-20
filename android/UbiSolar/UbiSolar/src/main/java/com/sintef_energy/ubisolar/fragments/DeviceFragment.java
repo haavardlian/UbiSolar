@@ -97,6 +97,10 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
                 AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
                 addDeviceDialog.show(getFragmentManager(), "addDevice");
                 return true;
+            case R.id.menu_add_usage:
+                AddUsageDialog addUsageDialog = new AddUsageDialog();
+                addUsageDialog.show(getFragmentManager(), "addUsage");
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

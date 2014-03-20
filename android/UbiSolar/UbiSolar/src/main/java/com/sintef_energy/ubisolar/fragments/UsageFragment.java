@@ -119,7 +119,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         return rootView;
     }
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -187,10 +186,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+            /* Moved to deviceTab
             case R.id.fragment_usage_menu_add:
                 AddUsageDialog addUsageDialog = new AddUsageDialog();
                 addUsageDialog.show(getFragmentManager(), "addUsage");
-                return true;
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
