@@ -1,5 +1,6 @@
 package com.sintef_energy.ubisolar.database.energy;
 
+import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -141,6 +142,8 @@ public class EnergyDataSource {
     }
 
     public static int addBatchEnergyModel(ContentResolver resolver, ContentValues[] values){
+        //AsyncQueryHandler handler = new AsyncQueryHandler(resolver) {};
+
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
         int n = resolver.bulkInsert(
                 builder.build(),
