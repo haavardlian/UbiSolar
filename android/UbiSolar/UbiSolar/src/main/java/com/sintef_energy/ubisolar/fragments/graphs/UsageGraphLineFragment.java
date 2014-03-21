@@ -2,13 +2,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -20,14 +14,9 @@ import android.view.ViewGroup.LayoutParams;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
-import com.sintef_energy.ubisolar.structs.DeviceUsageList;
-import com.sintef_energy.ubisolar.structs.TotalUsage;
+import com.sintef_energy.ubisolar.model.DeviceUsage;
+import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -42,9 +31,7 @@ import org.achartengine.tools.ZoomListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
 
 /**
  * Created by perok on 2/11/14.
@@ -62,7 +49,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
-    private XYSeriesRenderer mCurrentRenderer;
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mBaseUsageList;
     private ArrayList<DeviceUsageList> mActiveUsageList;
@@ -70,11 +56,11 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private String mTitleFormat;
     private String mDataResolution;
     private int mActiveDateIndex = 0;
-    private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED, Color.YELLOW};
+    private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED,
+            Color.YELLOW};
     private int mColorIndex;
 
-    TotalEnergyPresenter presenter;
-    ArrayList<EnergyUsageModel> euModels;
+    private Bundle mSavedState;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -108,53 +94,93 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     }
 
     @Override
-    public void onActivityCreated(Bundle savedState) {
-        super.onActivityCreated(savedState);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(mSavedState);
 
-        if (savedState != null) {
-            mDataset = (XYMultipleSeriesDataset) savedState.getSerializable("mDataset");
-            mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("mRenderer");
-            mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
+        Log.v(TAG, "onActivityCreated()");
+
+        /* If the Fragment was destroyed inbetween (screen rotation), we need to recover the mSavedState first */
+        /* However, if it was not, it stays in the instance from the last onDestroyView() and we don't want to overwrite it */
+        if(savedInstanceState != null && mSavedState == null)
+            mSavedState = savedInstanceState.getBundle("mSavedState");
+
+        mChartView = null;
+
+        //Restore data
+        if(mSavedState != null) {
+            System.out.println("Loading");
+            mDataset = (XYMultipleSeriesDataset) mSavedState.getSerializable("mDataset");
+            mRenderer = (XYMultipleSeriesRenderer) mSavedState.getSerializable("mRenderer");
+            mTitleFormat = mSavedState.getString("mTitleFormat");
+            mDataResolution = mSavedState.getString("mDataResolution");
+            mTitleLabel = mSavedState.getString("mTitleLabel");
+            mActiveDateIndex = mSavedState.getInt("mActiveDateIndex");
+            mActiveUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mActiveUsageList");
+            mBaseUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mBaseUsageList");
+            System.out.println(mActiveDateIndex);
         }
+        //Initialize new data
+        else {
+            setupLineGraph();
 
-        setupLineGraph();
+            mActiveUsageList = new ArrayList<>();
+            mBaseUsageList = new ArrayList<>();
+            mTitleFormat = "EEEE dd/MM";
+            mDataResolution = "HH";
+        }
         createLineGraph();
+        populateGraph(mActiveDateIndex);
 
-        mActiveUsageList = new ArrayList<>();
-        mBaseUsageList = new ArrayList<>();
-        mTitleFormat = "EEEE dd/MM";
-        mDataResolution = "HH";
+        mSavedState = null;
     }
 
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        System.out.println("Saved");
+
+        /* If onDestroyView() is called first, we can use the previously mSavedState but we can't call saveState() anymore */
+        /* If onSaveInstanceState() is called first, we don't have mSavedState, so we need to call saveState() */
+        /* => (?:) operator inevitable! */
+        outState.putBundle("mSavedState", mSavedState != null ? mSavedState : saveState());
+    }
+
+    /**
+     * onDestroyView is run when fragment is replaced. Save state here.
+     */
+    @Override
+    public void onDestroyView(){
+        super.onDestroy();
+
+        mSavedState = saveState();
+        Log.v(TAG, " onDestroyView()");
+    }
+
+
+    private Bundle saveState(){
+        Bundle state = new Bundle();
 
         ArrayList<Parcelable> usageModelState = new ArrayList<>();
-        for(EnergyUsageModel euModel : euModels)
-            usageModelState.add(euModel);
 
-        outState.putParcelableArrayList(STATE_euModels, usageModelState);
-        super.onSaveInstanceState(outState);
-        outState.putSerializable("mDataset", mDataset);
-        outState.putSerializable("mRenderer", mRenderer);
-        outState.putSerializable("current_renderer", mCurrentRenderer);
+        state.putParcelableArrayList(STATE_euModels, usageModelState);
+        state.putSerializable("mDataset", mDataset);
+        state.putSerializable("mRenderer", mRenderer);
+        state.putString("mTitleFormat", mTitleFormat);
+        state.putString("mDataResolution", mDataResolution);
+        state.putString("mTitleLabel", mTitleLabel);
+        state.putInt("mActiveDateIndex", mActiveDateIndex);
+        state.putSerializable("mActiveUsageList", mActiveUsageList);
+        state.putSerializable("mBaseUsageList", mBaseUsageList);
+
+        return state;
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
 
-        if(presenter != null)
-            presenter.unregisterListener(this);
-    }
-
-    public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
-        this.presenter = presenter;
-        presenter.registerListner(this);
-        euModels = presenter.getEnergyData();
-
-        Log.v(TAG, "registerTotalEnergypresenter: " + euModels.size());
+        Log.v(TAG, " onDestroy()");
     }
 
     @Override
@@ -179,7 +205,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         mRenderer.setXLabels(0);
         mRenderer.setXLabelsPadding(10);
         mRenderer.setYLabelsPadding(20);
-        mRenderer.setMargins(new int[]{ 20, 40, 20, 20 });
+        mRenderer.setMargins(new int[]{ 20, 40, 35, 20 });
 
         setColors(Color.WHITE, Color.BLACK);
     }
@@ -190,6 +216,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private void createLineGraph()
     {
         if (mChartView == null) {
+            System.out.println("Creating graph");
             LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.lineChartView);
             mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
             mChartView.addZoomListener(new ZoomListener() {
@@ -261,9 +288,8 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
         XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
         seriesRenderer.setLineWidth(3);
-        seriesRenderer.setColor(colors[mColorIndex++%colors.length]);
+        seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
         seriesRenderer.setShowLegendItem(true);
-        mCurrentRenderer = seriesRenderer;
         mRenderer.addSeriesRenderer(seriesRenderer);
         if(displayPoints) {
             seriesRenderer.setPointStyle(PointStyle.CIRCLE);
@@ -305,10 +331,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
         setRange(min, max, centerIndex);
         DeviceUsageList largestUsageList = getLargestUsageList();
-//        if(largestUsageList != null) {
-//            if (mActiveDateIndex < largestUsageList.size())
         setLabels(formatDate(largestUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat));
-//        }
 
         if( mChartView != null)
             mChartView.repaint();
@@ -426,11 +449,10 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
                 double powerUsage = 0;
                 Date oldDate = new Date();
 
-                for (DeviceUsage usage : usageList.getUsage()) {
+                for (EnergyUsageModel usage : usageList.getUsage()) {
                     if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
                         date = formatDate(usage.getDatetime(), mDataResolution);
-                        compactList.add(new DeviceUsage(usage.getId(),usageList.getId(), oldDate, powerUsage) {
-                        });
+                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getDevice_id(), oldDate, powerUsage));
                         powerUsage = 0;
                     } else {
                         oldDate = usage.getDatetime();
@@ -481,9 +503,12 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         {
             mActiveUsageList.add(usage);
             mBaseUsageList.add(usage);
-            addSeries(usage.getName(), true, false);
+            addSeries(usage.getDevice().getName(), true, false);
         }
         changeResolution();
-        populateGraph(getLargestListSize());
+        if(mActiveDateIndex > 0)
+            populateGraph(mActiveDateIndex);
+        else
+            populateGraph(getLargestListSize());
     }
 }

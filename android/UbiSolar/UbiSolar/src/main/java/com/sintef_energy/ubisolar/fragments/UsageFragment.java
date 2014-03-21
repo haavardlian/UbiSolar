@@ -1,17 +1,16 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 
+import android.content.ContentValues;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,44 +24,61 @@ import android.widget.ImageButton;
 
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
-//import com.sintef_energy.ubisolar.activities.AddDeviceEnergyActivity;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
-import com.sintef_energy.ubisolar.structs.DeviceUsageList;
+import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
  * Created by perok on 2/11/14.
+ *
+ * BUG: Backstack for usage behaves weired.
  */
-public class UsageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = UsageFragment.class.getName();
 
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    private TotalEnergyPresenter totalEnergyPresenter;
+    private String[] mSelectedItems;
+    private boolean[] mSelectDeviceDialogItems;
 
-    private boolean[] mSelectedItems;
-    private ArrayList<Device> mDevices;
-    private ArrayList<Device> mSelectedDevices;
+    /** List of all devices */
+    private HashMap<Long, DeviceModel> mDevices;
+
+    /** List of the seleceted devices*/
+    private ArrayList<DeviceModel> mSelectedDevices;
+
+    /** List of usage from devices */
     private ArrayList<DeviceUsageList> mDeviceUsageList;
+
+    /** Callback for graphs */
     private ITotalEnergyView graphView;
+
+    /* Graphs fragments */
+    private UsageGraphPieFragment usageGraphPieFragment;
+    private UsageGraphLineFragment usageGraphLineFragment;
+
+    private static final int LOADER_DEVICES = 0;
+    private static final int LOADER_USAGE = 1;
+    private static final int LOADER_USAGE_DAY = 2;
+    private static final int LOADER_USAGE_MONTH = 3;
+    private static final int LOADER_USAGE_YEAR = 4;
+
+
+    /** The first fragment is added to the view. Should not be added to the backstack */
+    private boolean mFirstFragmentAdd = false;
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -100,62 +116,49 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //return super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-
         return rootView;
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mDevices = new ArrayList<>();
+        mSelectDeviceDialogItems = new boolean[0];
+
+        mDevices = new HashMap<>();
         mSelectedDevices = new ArrayList<>();
         mDeviceUsageList = new ArrayList<>();
 
         if (savedInstanceState != null) {
-            mSelectedItems = (boolean[]) savedInstanceState.getSerializable("mSelectedIndexes");
+            mSelectedItems = (String[]) savedInstanceState.getSerializable("mSelectedIndexes");
         }
         else
-            //TODO fix
-            mSelectedItems = new boolean[20];
+            mSelectedItems = new String[0];
 
-//        clearDatabase();
+        //clearDatabase();
 
         //prepoluate database if it is empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
-//            clearDatabase();
-            createDevies();
+            createDevices();
             createEnergyUsage();
         }
+
+        //testDateQuery();
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
 
-        totalEnergyPresenter = new TotalEnergyPresenter();
-        totalEnergyPresenter.loadEnergyData(getActivity().getContentResolver(),
-                0,
-                calendar.getTimeInMillis());
-
         /* Show fragment */
-        UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-        graphView = fragment;
-        fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-        ft.commit();
+        ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
+        setLineChart(button);
 
         /* Button listeners*/
         ImageButton graphButton = (ImageButton)getActivity().findViewById(R.id.usage_button_swap_graph);
         graphButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                toggleGraph(view);
+                toggleGraph();
             }
         });
 
@@ -163,41 +166,15 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         deviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                displayDeviceFilter(view);
+                displayDeviceFilter();
             }
         });
 
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch(requestCode) {
-            case (0) : {
-                if (resultCode == Activity.RESULT_OK) {
-//                    double value = data.getDoubleExtra(AddDeviceEnergyActivity.INTENT_KWH, -1);
-//                    Log.v(TAG, String.valueOf(value));
-//
-//                    EnergyUsageModel euModel = new EnergyUsageModel();
-//                    euModel.setDatetime(new Date(data.getLongExtra(AddDeviceEnergyActivity.INTENT_DATETIME, -1)));
-//
-//                    euModel.setPower_usage(value);
-//
-//                    totalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
-                }
-                break;
-            }
-            default:
-
-        }
+        getLoaderManager().initLoader(LOADER_DEVICES, null, this);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
         inflater.inflate(R.menu.fragment_usage_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -206,10 +183,11 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+            /* Moved to deviceTab
             case R.id.fragment_usage_menu_add:
-//                Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
-//                startActivityForResult(intent, 0);
-                return true;
+                AddUsageDialog addUsageDialog = new AddUsageDialog();
+                addUsageDialog.show(getFragmentManager(), "addUsage");
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -219,7 +197,7 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBooleanArray("mSelectedIndexes", mSelectedItems);
+        outState.putStringArray("mSelectedIndexes", mSelectedItems);
     }
 
     @Override
@@ -227,83 +205,110 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onDestroy();
     }
 
-    public void toggleGraph(View view)
-    {
+    /**
+     * Helper method for switching graph type
+     */
+    public void toggleGraph(){
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
 
-        if( button.getTag(R.string.graph_tag) == null)
-            button.setTag(R.string.graph_tag, "pie");
-
-        //TODO swap graphs
-        if(button.getTag(R.string.graph_tag).equals("pie"))
-        {
-            button.setImageResource(R.drawable.line);
-            button.setTag(R.string.graph_tag, "line");
-            UsageGraphPieFragment fragment = UsageGraphPieFragment.newInstance();
-            graphView = fragment;
-            fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-            ft.commit();
+        if(button.getTag(R.string.TAG_GRAPH_TYPE).equals("pie")){
+            setPieChart(button);
         }
-        else
-        {
-            button.setImageResource(R.drawable.pie);
-            button.setTag(R.string.graph_tag, "pie");
-            UsageGraphLineFragment fragment = UsageGraphLineFragment.newInstance();
-            graphView = fragment;
-            fragment.registerTotalEnergyPresenter(totalEnergyPresenter);
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-            ft.commit();
+        else{
+            setLineChart(button);
         }
     }
 
-    public void displayDeviceFilter(View view)
-    {
-        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.usage_device_dialog_title);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+    /**
+     * Created an AlertDialog for choosing what devices to filer on.
+     *
+     */
+    public void displayDeviceFilter(){
+        SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(new ArrayList<>(mDevices.values()), mSelectDeviceDialogItems);
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getFragmentManager(), "selectDeviceDialog");
+    }
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mSelectedDevices.clear();
-                for (int i = 0; i < mDevices.size(); i++) {
-                    if (mSelectedItems[i]) {
-                        mSelectedDevices.add(mDevices.get(i));
-                    }
-                }
-                getSelectedDeviceData();
+    public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
+        Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
+        mSelectedItems = selectedItems;
+
+        mSelectDeviceDialogItems = itemsSelected;
+
+        getLoaderManager().restartLoader(LOADER_USAGE, null, this);
+    }
+
+    /**
+     * Change the graph view to a pie chart.
+     *
+     * @param button
+     */
+    private void setPieChart(ImageButton button){
+        button.setImageResource(R.drawable.line);
+        button.setTag(R.string.TAG_GRAPH_TYPE, "line");
+
+        //If fragment have not been created.
+        if(usageGraphPieFragment == null) {
+            usageGraphPieFragment = UsageGraphPieFragment.newInstance();
+        }
+
+        graphView = usageGraphPieFragment;
+
+        addFragment(usageGraphPieFragment, "usageGraphPieFragment");
+    }
+
+    /**
+     * Set the graph view to line graph.
+     *
+     * @param button
+     */
+    private void setLineChart(ImageButton button){
+        button.setImageResource(R.drawable.pie);
+        button.setTag(R.string.TAG_GRAPH_TYPE, "pie");
+
+        Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
+        deviceButton.setVisibility(View.VISIBLE);
+
+        //If fragment have not been created.
+        if(usageGraphLineFragment == null) {
+            usageGraphLineFragment = UsageGraphLineFragment.newInstance();
+        }
+
+        graphView = usageGraphLineFragment;
+
+        addFragment(usageGraphLineFragment, "usageGraphLineFragment");
+    }
+
+    /**
+     * Helper method for chaning the fragments.
+     *
+     * @param fragment
+     * @param tag
+     */
+    private void addFragment(Fragment fragment, String tag){
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        if(fragment.isAdded())
+            ft.show(fragment);
+        else{
+            //Do not add the first time.
+            if(!mFirstFragmentAdd) {
+                ft.addToBackStack(tag);
+                mFirstFragmentAdd = true;
             }
-        });
 
-        ArrayList<String> deviceNames = new ArrayList<>();
+            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
+        }
 
-        for(Device device : mDevices)
-            deviceNames.add(device.getName());
-
-        builder.setMultiChoiceItems(deviceNames.toArray(new String[deviceNames.size()]), mSelectedItems,
-                new DialogInterface.OnMultiChoiceClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        mSelectedItems[which]=isChecked;
-                    }
-                });
-        builder.show();
-    }
-
-    private void getSelectedDeviceData()
-    {
-        getLoaderManager().initLoader(1, null, this);
+        ft.commit();
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Uri.Builder builder;
 
-        switch (i)
-        {
-            case 0:
+        switch (i){
+            case LOADER_DEVICES:
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Devices.CONTENT_URI,
@@ -312,72 +317,133 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
                         null,
                         DeviceModel.DeviceEntry._ID + " ASC"
                 );
-            case 1:
+            case LOADER_USAGE:
+                String where = "";
+
+                //TODO: BUG: How to handle when user selects no devices?
+
+                for(int n = 0; n < mSelectedItems.length; n++){
+                    where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
+                    if(n != mSelectedItems.length - 1)
+                        where += " OR ";
+                }
+
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Energy.CONTENT_URI,
                         EnergyContract.Energy.PROJECTION_ALL,
-                        null,
-                        null,
+                        where,
+                        mSelectedItems,
                         EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
+                );
+            case LOADER_USAGE_DAY:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Day);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            case LOADER_USAGE_MONTH:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Month);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            case LOADER_USAGE_YEAR:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Year);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
                 );
         }
         return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
-    {
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
         switch (cursorLoader.getId()) {
-            case 0:
+            /* Fetch all device data. Is used to show list of devices and choose which to see. */
+            case LOADER_DEVICES:
                 mDevices.clear();
                 cursor.moveToFirst();
                 if (cursor.getCount() != 0)
                     do {
                         DeviceModel model = new DeviceModel(cursor);
-                        mDevices.add(new Device(model.getDevice_id(),
-                                model.getName(), model.getDescription(), model.getUser_id()) {
-                        });
+                        mDevices.put(model.getDevice_id(), model);
                     }
                     while (cursor.moveToNext());
                 break;
-            case 1:
+            /* Load usage */
+            case LOADER_USAGE:
                 populateDeviceUsageList(cursor);
+                break;
+            case LOADER_USAGE_DAY:
+            case LOADER_USAGE_MONTH:
+            case LOADER_USAGE_YEAR:
+                populateDeviceUsageList(cursor);
+                //TODO: Implement logic to handle this correctly.
+                //Maybe populate.. can take in format argument?
                 break;
         }
     }
 
-    private void populateDeviceUsageList(Cursor data)
-    {
-        mDeviceUsageList.clear();
-        for(Device device : mSelectedDevices)
-        {
-            mDeviceUsageList.add(new DeviceUsageList(device.getDevice_id(), device.getName()));
-        }
+    /**
+     * Populate the graphview view usage data.
+     *
+     * @param data
+     */
+    private void populateDeviceUsageList(Cursor data){
+        //Hashmap containt all DevicesUsage
+        HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
-        if(mDeviceUsageList.size() < 1)
-        {
+        /* Only run if devices is selected */
+        if(data.getCount() < 1){
             Log.v(TAG, "No devices selected");
             return;
         }
 
+        /* Get data from cursor and add */
         data.moveToFirst();
-        if(data.getCount() != 0)
+        if(data.getCount() >= 1)
             do{
                 EnergyUsageModel eum = new EnergyUsageModel(data);
-                for(DeviceUsageList usageList : mDeviceUsageList) {
-                    if (usageList.getId() == eum.getDevice_id()) {
-                        usageList.add(new DeviceUsage(eum.getId(), eum.getDevice_id(),
-                                eum.getDatetime(), eum.getPower_usage()) {
-                        });
-                    }
+
+                DeviceUsageList dList = devices.get(eum.getDevice_id());
+
+                if(dList == null){
+                    dList = new DeviceUsageList(mDevices.get(eum.getDevice_id()));
+                    devices.put(Long.valueOf(dList.getDevice().getDevice_id()), dList);
                 }
 
-
+                /* Add Energy usage to device */
+                if(dList != null){
+                    dList.add(eum);
+                }
             }
             while(data.moveToNext());
 
         graphView.clearDevices();
+
+        mDeviceUsageList.clear();
+        mDeviceUsageList.addAll(devices.values());
+        Log.v(TAG, "TOTAL : " + mDeviceUsageList.size());
         graphView.addDeviceUsage(mDeviceUsageList);
     }
 
@@ -386,9 +452,11 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
 
     }
 
-    private void createDevies()
+
+    /* HELPER DATA GENERATION!!! Avoid. */
+
+    private void createDevices()
     {
-        DeviceModel device;
         addDevice("TV", "Livingroom");
         addDevice("Radio", "Kitchen");
         addDevice("Heater", "Second floor");
@@ -399,11 +467,11 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     {
         DeviceModel device = new DeviceModel(System.currentTimeMillis(),
                 name, description, System.currentTimeMillis());
+
         getActivity().getContentResolver().insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
-        mDevices.add(new Device(device.getDevice_id(),
-                device.getName(), device.getDescription(), device.getUser_id()) {
-        });
+
+        mDevices.put(device.getDevice_id(), device);
         Log.v(TAG, "Created device: " + device.getName());
     }
 
@@ -411,22 +479,34 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
     {
         ContentResolver cr = getActivity().getContentResolver();
         EnergyUsageModel usageModel;
+        int n = 1000;
+        int nDevices = mDevices.size();
+        ContentValues[] values = new ContentValues[n * nDevices];
+
         Calendar cal = Calendar.getInstance();
         Random random = new Random();
-        Date date;
-
-        for(Device device : mDevices) {
+        Date date = new Date();
+        int idCount = 1337;
+        int y = 0;
+        for(Device device : mDevices.values()) {
+            cal.setTime(date);
             Log.v(TAG, "Creating data for: " + device.getName());
-            for (int i = 0; i < 1000; i++) {
-                date = new Date();
-                cal.setTime(date);
-                cal.add(Calendar.HOUR_OF_DAY, i);
+            for (int i = 0; i < n; i++) {
+                cal.add(Calendar.HOUR_OF_DAY, 1);
 
-                usageModel = new EnergyUsageModel(System.currentTimeMillis(), device.getDevice_id(),
-                        cal.getTime(), random.nextInt((200 - 50) + 1) + 50);
-                EnergyDataSource.addEnergyModel(cr, usageModel);
+                usageModel = new EnergyUsageModel(
+                        idCount++,
+                        device.getDevice_id(),
+                        cal.getTime(),
+                        random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
+                values[i + (y * n)] = usageModel.getContentValues();
+                //EnergyDataSource.addEnergyModel(cr, usageModel);
             }
+            y++;
         }
+        Log.v(TAG, "Starting to add data to DB.");
+        EnergyDataSource.addBatchEnergyModel(cr, values);
+        Log.v(TAG, "Done adding data to DB");
     }
 
     private void clearDatabase()
@@ -438,5 +518,18 @@ public class UsageFragment extends Fragment implements LoaderManager.LoaderCallb
         Log.v(TAG, "EMPTY DATABASE: " + it);
     }
 
+    private void testDateQuery(){
+        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.Energy.Date.Month);
+        Cursor c = getActivity().getContentResolver().query(builder.build(), null, null, null, null);
 
+        Log.v(TAG, "TESTQUERY: " + c.getCount());
+        c.moveToFirst();
+        int i = 0;
+        do{
+            Log.v(TAG, "TABLE: " + i++ + " -> " + c.getLong(0) + " " + c.getLong(1) + " " + c.getLong(2) + " " + c.getLong(3));
+        } while(c.moveToNext());
+
+        c.close();
+    }
 }

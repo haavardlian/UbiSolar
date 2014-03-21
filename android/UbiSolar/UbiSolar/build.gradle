@@ -5,7 +5,8 @@ android {
     buildToolsVersion '19.0.0'
 
     defaultConfig {
-        minSdkVersion 11
+        //minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 19
         versionCode 1
         versionName "1.0"
@@ -29,7 +30,8 @@ repositories {
 
 dependencies {
     compile 'com.android.support:support-v4:+'
-    compile 'com.netflix.rxjava:rxjava-android:0.11.1'
+    //compile 'com.netflix.rxjava:rxjava-android:0.11.1'
+    compile 'com.github.gabrielemariotti.cards:library:1.5.0'
     compile 'com.mcxiaoke.volley:library-aar:1.0.0'
     compile 'com.fasterxml.jackson.core:jackson-core:2.1.4'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.1.4'

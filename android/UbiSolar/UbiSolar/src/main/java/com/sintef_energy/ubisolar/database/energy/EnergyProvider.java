@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 
 import android.provider.BaseColumns;
@@ -35,6 +36,9 @@ public class EnergyProvider extends ContentProvider{
     private static final int DEVICES_ID = 2;
     private static final int ENERGY_LIST = 3;
     private static final int ENERGY_ID = 4;
+    private static final int ENERGY_DAY_LIST = 5;
+    private static final int ENERGY_MONTH_LIST = 6;
+    private static final int ENERGY_YEAR_LIST = 7;
 
     private static final UriMatcher URI_MATCHER;
     // prepare the UriMatcher
@@ -44,6 +48,9 @@ public class EnergyProvider extends ContentProvider{
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "device/#", DEVICES_ID);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy", ENERGY_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/#", ENERGY_ID);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Day, ENERGY_DAY_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Month, ENERGY_MONTH_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Year, ENERGY_YEAR_LIST);
    }
 
     @Override
@@ -63,6 +70,12 @@ public class EnergyProvider extends ContentProvider{
                 return EnergyContract.Energy.CONTENT_TYPE;
             case ENERGY_ID:
                 return EnergyContract.Energy.CONTENT_ITEM_TYPE;
+            case ENERGY_DAY_LIST:
+                return EnergyContract.Energy.CONTENT_TYPE;
+            case ENERGY_MONTH_LIST:
+                return EnergyContract.Energy.CONTENT_TYPE;
+            case ENERGY_YEAR_LIST:
+                return EnergyContract.Energy.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -71,12 +84,14 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        //Log.v(TAG, "SORT ORDER BETCH BEFORE BETCH: " + sortOrder);
-        //Log.v(TAG, "SORT ORDER: "  + BaseColumns._ID);
 
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         boolean useAuthorityUri = false; //TODO: Automatic notification of changes to LoadManager?
         Cursor cursor = null;
+
+        //Used by day, month, year
+        String rawSql = null;
+
         switch (URI_MATCHER.match(uri)) {
             case DEVICES_LIST:
                 builder.setTables(DeviceModel.DeviceEntry.TABLE_NAME);
@@ -102,19 +117,32 @@ public class EnergyProvider extends ContentProvider{
                 builder.appendWhere(EnergyContract.Energy._ID + " = " +
                     uri.getLastPathSegment());
                 break;
+            case ENERGY_DAY_LIST:
+                rawSql = generateRawDateSql("%Y-%m-%d");
+                break;
+            case ENERGY_MONTH_LIST:
+                rawSql = generateRawDateSql("%Y-%m");
+                break;
+            case ENERGY_YEAR_LIST:
+                rawSql = generateRawDateSql("%Y");
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
         //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
-        cursor =
-              builder.query(
-                    db,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    null,
-                    null,
-                    sortOrder);
+        if(rawSql == null)
+            cursor =
+                  builder.query(
+                        db,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+        else
+            cursor =
+                    db.rawQuery(rawSql, null);
 
         // if we want to be notified of any changes:
         if (useAuthorityUri) {
@@ -270,6 +298,54 @@ public class EnergyProvider extends ContentProvider{
         return updateCount;
     }
 
+    /*
+    * For fast insert. ApplyBatch or bulkInsert?
+    * http://stackoverflow.com/questions/5596354/insertion-of-thousands-of-contact-entries-using-applybatch-is-slow
+    * */
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        final SQLiteDatabase db = mHelper.getWritableDatabase();
+        final int match = URI_MATCHER.match(uri);
+        switch(match){
+            case ENERGY_LIST:
+                mIsInBatchMode.set(true);
+                int numInserted= 0;
+                db.beginTransaction();
+                try {
+                    //standard SQL insert statement, that can be reused
+                    SQLiteStatement insert =
+                            db.compileStatement("insert into " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME
+                                    + "(" + EnergyUsageModel.EnergyUsageEntry._ID + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ")"
+                                    +" values " + "(?,?,?,?)");
+
+                    for (ContentValues value : values){
+                        //bind the 1-indexed ?'s to the values specified
+                        insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
+                        insert.bindLong(2, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID));
+                        insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME));
+                        insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
+                        insert.execute();
+                    }
+                    db.setTransactionSuccessful();
+                    insert.close();
+                    numInserted = values.length;
+                } finally {
+                    mIsInBatchMode.remove();
+
+                    db.endTransaction();
+                    getContext().getContentResolver().notifyChange(EnergyContract.CONTENT_URI, null);
+                }
+                return numInserted;
+            //....
+            default:
+                throw new UnsupportedOperationException("unsupported uri: " + uri);
+        }
+    }
+
     @Override
     public ContentProviderResult[] applyBatch(
             ArrayList<ContentProviderOperation> operations)
@@ -284,7 +360,6 @@ public class EnergyProvider extends ContentProvider{
             final ContentProviderResult[] retResult = super.applyBatch(operations);
             db.setTransactionSuccessful();
             getContext().getContentResolver().notifyChange(EnergyContract.CONTENT_URI, null);
-
 
             return retResult;
         }
@@ -312,4 +387,24 @@ public class EnergyProvider extends ContentProvider{
         // s.th. went wrong:
         throw new SQLException("Problem while inserting into uri: " + uri);
    }
+
+    private String generateRawDateSql(String date){
+
+        //Time to aggregate on
+        String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
+
+        //Unixtime
+        String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
+
+        String rawSql = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
+                        + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
+                        + time2 + " As `month`, "
+                        + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
+                        + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
+                        + "GROUP BY " + time + ", "
+                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
+                        + "SORT BY `month` ASC";
+
+        return rawSql;
+    }
 }

@@ -14,12 +14,7 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 /**
  * Created by perok on 2/11/14.
  */
-public class ProfileFragment extends Fragment {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    private static final String ARG_SECTION_NUMBER = "section_number";
+public class ProfileFragment extends DefaultTabFragment {
 
     /**
      * Returns a new instance of this fragment for the given section

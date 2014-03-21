@@ -1,6 +1,5 @@
-package com.sintef_energy.ubisolar.structs;
+package com.sintef_energy.ubisolar.model;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**

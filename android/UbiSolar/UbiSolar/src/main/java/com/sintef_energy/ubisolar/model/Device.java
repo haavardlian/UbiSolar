@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar.structs;
+package com.sintef_energy.ubisolar.model;
 
 /**
  * Created by thb on 19.02.14.

@@ -6,7 +6,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 
-import com.sintef_energy.ubisolar.structs.Device;
+import com.sintef_energy.ubisolar.model.Device;
 
 /**
  * Created by perok on 2/11/14.

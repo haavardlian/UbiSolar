@@ -5,20 +5,28 @@ import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
+import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.SocialFragment;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
+import com.sintef_energy.ubisolar.presenter.TipPresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
@@ -48,6 +56,8 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
      */
     private TotalEnergyPresenter mTotalEnergyPresenter;
     private DevicePresenter devicePresenter;
+    private RequestQueue requestQueue;
+    private TipPresenter tipPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,47 +68,75 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 //            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 //            startActivity(loginIntent);
 //        }
+        /* DEBUG with strict mode */
+        if(Global.DEVELOPER_MADE){
+            StrictMode.setThreadPolicy(
+                    new StrictMode.ThreadPolicy.Builder()
+            .detectDiskReads()
+            .detectDiskWrites()
+            .detectNetwork()
+            .penaltyLog()
+            .build());
+            StrictMode.setVmPolicy(
+                    new StrictMode.VmPolicy.Builder()
+            .detectLeakedSqlLiteObjects()
+            .detectLeakedClosableObjects()
+            .penaltyLog()
+            .penaltyDeath()
+            .build());
+        }
 
         super.onCreate(savedInstanceState);
-
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        requestQueue = Volley.newRequestQueue(this);
+        tipPresenter = new TipPresenter(requestQueue);
         /* Set up the presenters */
 
         /*UsagePresenter*/
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
         mTotalEnergyPresenter = new TotalEnergyPresenter();
-        mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
-                0,
-                calendar.getTimeInMillis());
+        //mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
+        //        0,
+        //        calendar.getTimeInMillis());
 
 
-        titleNames = getResources().getStringArray(R.array.title_fragments);
+        titleNames = getResources().getStringArray(R.array.nav_drawer_items);
         setContentView(R.layout.activity_usage);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        /*DevicePresenter*/
+        /* DevicePresenter */
         devicePresenter = new DevicePresenter();
 
-//        Set up the drawer.
+        // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        /* Update UX on backstack change *//*
+        getFragmentManager().addOnBackStackChangedListener(
+                new FragmentManager.OnBackStackChangedListener() {
+                    public void onBackStackChanged() {
+                        // Update your UI here.
+                        getFragmentManager().
+                    }
+                });*/
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
-        FragmentManager fragmentManager = getFragmentManager();
+        //FragmentManager fragmentManager = getFragmentManager();
         Fragment fragment = null;
 
         boolean logout = false;
 
         switch (position){
             case 0:
-                fragment = DeviceFragment.newInstance(position);
+                fragment = HomeFragment.newInstance(position);
                 break;
             case 1:
                 fragment = UsageFragment.newInstance(position);
@@ -107,18 +145,22 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
                 fragment = PowerSavingFragment.newInstance(position);
                 break;
             case 3:
-                fragment = ProfileFragment.newInstance(position);
+                fragment = DeviceFragment.newInstance(position);
                 break;
             case 4:
                 fragment = SocialFragment.newInstance(position);
                 break;
             case 5:
+                fragment = ProfileFragment.newInstance(position);
+                break;
+            case 6:
                 logout = true;
                 break;
         }
 
-        if(fragment != null)
-            fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
+        if(fragment != null) //todo: Add to backstack? Or add null?
+            addFragment(fragment, false, true, titleNames[position]);
+            //fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
         else if(logout){
             Global.loggedIn = false;
             Intent loginIntent = new Intent(this, LoginActivity.class);
@@ -127,6 +169,25 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
         }
         else
             Log.e(LOG, "Error creating fragment from navigation drawer.");
+    }
+
+    /**
+     * Helper method to add fragments to the view.
+     */
+    public void addFragment(Fragment fragment, boolean animate, boolean addToBackStack, String tag) {
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        if (animate) {/*
+            ft.setCustomAnimations(android.R.anim.fragment_from_right,
+                    R.anim.fragment_from_left, R.anim.fragment_from_right,
+                    R.anim.fragment_from_left);*/
+        }
+        if (addToBackStack) {
+            ft.addToBackStack(tag);
+        }
+        //ft.add(R.id.container, fragment);
+        ft.replace(R.id.container, fragment);
+        ft.commit();
     }
 
     public void onSectionAttached(int number) {
@@ -176,4 +237,12 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
 
     @Override
     public DevicePresenter getDevicePresenter() { return devicePresenter; }
+
+    public TipPresenter getTipPresenter() {
+        return tipPresenter;
+    }
+
+    public RequestQueue getRequestQueue() {
+        return requestQueue;
+    }
 }
