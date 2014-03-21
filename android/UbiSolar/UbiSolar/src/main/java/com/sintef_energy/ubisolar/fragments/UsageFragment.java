@@ -146,9 +146,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         //testDateQuery();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 8);
-
         /* Show fragment */
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
         setLineChart(button);
@@ -220,25 +217,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     }
 
     /**
-     * Created an AlertDialog for choosing what devices to filer on.
-     *
-     */
-    public void displayDeviceFilter(){
-        SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(new ArrayList<>(mDevices.values()), mSelectDeviceDialogItems);
-        dialog.setTargetFragment(this, 0);
-        dialog.show(getFragmentManager(), "selectDeviceDialog");
-    }
-
-    public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
-        Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
-        mSelectedItems = selectedItems;
-
-        mSelectDeviceDialogItems = itemsSelected;
-
-        getLoaderManager().restartLoader(LOADER_USAGE, null, this);
-    }
-
-    /**
      * Change the graph view to a pie chart.
      *
      * @param button
@@ -277,6 +255,25 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         graphView = usageGraphLineFragment;
 
         addFragment(usageGraphLineFragment, "usageGraphLineFragment");
+    }
+
+    /**
+     * Created an AlertDialog for choosing what devices to filer on.
+     *
+     */
+    public void displayDeviceFilter(){
+        SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(new ArrayList<>(mDevices.values()), mSelectDeviceDialogItems);
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getFragmentManager(), "selectDeviceDialog");
+    }
+
+    public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
+        Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
+        mSelectedItems = selectedItems;
+
+        mSelectDeviceDialogItems = itemsSelected;
+
+        getLoaderManager().restartLoader(LOADER_USAGE, null, this);
     }
 
     /**
