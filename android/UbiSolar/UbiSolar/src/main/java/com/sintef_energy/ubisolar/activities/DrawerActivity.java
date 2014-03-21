@@ -1,7 +1,5 @@
 package com.sintef_energy.ubisolar.activities;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -9,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
@@ -19,11 +18,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
-import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
-import com.sintef_energy.ubisolar.fragments.PowerSavingFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.SocialFragment;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
@@ -36,7 +33,7 @@ import com.sintef_energy.ubisolar.fragments.UsageFragment;
 
 import java.util.Calendar;
 
-public class DrawerActivity extends Activity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
+public class DrawerActivity extends FragmentActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
         IPresenterCallback{
 
     private static final String LOG = DrawerActivity.class.getName();

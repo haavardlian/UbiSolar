@@ -1,24 +1,25 @@
 package com.sintef_energy.ubisolar.fragments;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TabHost;
-import android.widget.TextView;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-
 
 /**
  * Created by perok on 21.03.14.
  */
-public class EnergySavingTabFragment extends DefaultTabFragment implements TabHost.OnTabChangeListener {
+public class EnergySavingTabFragment extends DefaultTabFragment {
 
     private static final String TAG = EnergySavingTabFragment.class.getName();
     public static final String TAB_WORDS = "tips";
@@ -50,9 +51,17 @@ public class EnergySavingTabFragment extends DefaultTabFragment implements TabHo
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRoot = inflater.inflate(R.layout.fragment_energy_saving_tab, null);
-        mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
-        setupTabs();
+        mRoot = inflater.inflate(R.layout.fragment_energy_saving_tab, container, false);
+        //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
+
+        // Initialize the ViewPager and set an adapter
+        ViewPager pager = (ViewPager) mRoot.findViewById(R.id.lol_container);
+        pager.setAdapter(new MyPagerAdapter(getFragmentManager()));
+
+        // Bind the tabs to the ViewPager
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.lol_tabs);
+        tabs.setViewPager(pager);
+
         return mRoot;
     }
 
@@ -61,56 +70,36 @@ public class EnergySavingTabFragment extends DefaultTabFragment implements TabHo
         super.onActivityCreated(savedInstanceState);
         setRetainInstance(true);
 
-        mTabHost.setOnTabChangedListener(this);
-        mTabHost.setCurrentTab(mCurrentTab);
+        //mTabHost.setOnTabChangedListener(this);
+        //mTabHost.setCurrentTab(mCurrentTab);
         // manually start loading stuff in the first tab
-        updateTab(TAB_WORDS, R.id.fragment_energy_saving_tab_tips);
+        //updateTab(TAB_WORDS, R.id.fragment_energy_saving_tab_tips);
     }
 
-    private void setupTabs() {
-        mTabHost.setup(); // you must call this before adding your tabs!
-        mTabHost.addTab(newTab(TAB_WORDS, R.string.fragment_energy_saving_tab_tips, R.id.fragment_energy_saving_tab_tips));
-        mTabHost.addTab(newTab(TAB_NUMBERS, R.string.fragment_energy_saving_tab_your, R.id.fragment_energy_saving_tab_your));
-    }
+    public class MyPagerAdapter extends FragmentPagerAdapter {
 
-    private TabHost.TabSpec newTab(String tag, int labelId, int tabContentId) {
-        Log.d(TAG, "buildTab(): tag=" + tag);
+        private final String[] TITLES = { "Tips", "Your"};
 
-        View indicator = LayoutInflater.from(getActivity()).inflate(
-                R.layout.tab,
-                (ViewGroup) mRoot.findViewById(android.R.id.tabs), false);
-
-        ((TextView) indicator.findViewById(R.id.text)).setText(labelId);
-
-        TabHost.TabSpec tabSpec = mTabHost.newTabSpec(tag);
-        tabSpec.setIndicator(indicator);
-        tabSpec.setContent(tabContentId);
-
-        return tabSpec;
-    }
-
-    @Override
-    public void onTabChanged(String tabId) {
-        Log.d(TAG, "onTabChanged(): tabId=" + tabId);
-        if (TAB_WORDS.equals(tabId)) {
-            updateTab(tabId, R.id.fragment_energy_saving_tab_tips);
-            mCurrentTab = 0;
-            return;
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
-        if (TAB_NUMBERS.equals(tabId)) {
-            updateTab(tabId, R.id.fragment_energy_saving_tab_your);
-            mCurrentTab = 1;
-            return;
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TITLES[position];
         }
+
+        @Override
+        public int getCount() {
+            return TITLES.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return new PowerSavingFragment();//SuperAwesomeCardFragment.newInstance(position);
+        }
+
     }
 
-    private void updateTab(String tabId, int placeholder) {
-        FragmentManager fm = getFragmentManager();
-        if (fm.findFragmentByTag(tabId) == null) {
-            fm.beginTransaction()
-                    .replace(placeholder, new PowerSavingFragment(), tabId)
-                    .commit();
-        }
-    }
 
 }

@@ -1,36 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TabHost
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/tabhost"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#EFEFEF">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-        <TabWidget
-            android:id="@android:id/tabs"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+    <com.astuetz.PagerSlidingTabStrip
+        android:id="@+id/lol_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="48dip" />
 
-        <FrameLayout
-            android:id="@android:id/tabcontent"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <FrameLayout
-                android:id="@+id/fragment_energy_saving_tab_tips"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />
-
-            <FrameLayout
-                android:id="@+id/fragment_energy_saving_tab_your"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />
-
-        </FrameLayout>
-    </LinearLayout>
-</TabHost>
+    <android.support.v4.view.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/lol_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/lol_tabs"/>
+</RelativeLayout>
