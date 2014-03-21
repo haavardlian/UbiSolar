@@ -20,6 +20,10 @@ import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
 
+import it.gmariotti.cardslib.library.internal.Card;
+import it.gmariotti.cardslib.library.internal.CardHeader;
+import it.gmariotti.cardslib.library.view.CardView;
+
 /**
  * Created by perok on 2/11/14.
  */
@@ -66,6 +70,13 @@ public class SocialFragment extends DefaultTabFragment implements LoaderManager.
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_social, container, false);
         Card card = new Card(getActivity().getApplicationContext());
+
+        CardHeader header = new CardHeader(getActivity().getApplicationContext());
+
+        card.addCardHeader(header);
+
+        CardView cardView = (CardView)view.findViewById(R.id.cardview);
+        cardView.setCard(card);
 
         return view;
     }
