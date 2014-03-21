@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar.structs;
+package com.sintef_energy.ubisolar.model;
 
 /**
  * Created by perok on 20.03.14.

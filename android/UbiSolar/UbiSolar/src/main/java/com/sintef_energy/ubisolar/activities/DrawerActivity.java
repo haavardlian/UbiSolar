@@ -57,6 +57,7 @@ public class DrawerActivity extends Activity implements NavigationDrawerFragment
     private DevicePresenter devicePresenter;
     private RequestQueue requestQueue;
     private TipPresenter tipPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //TODO: Check if user is logged in

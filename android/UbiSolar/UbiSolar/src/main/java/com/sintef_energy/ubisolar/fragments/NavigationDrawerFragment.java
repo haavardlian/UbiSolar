@@ -20,13 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
-import com.sintef_energy.ubisolar.structs.NavDrawerItem;
+import com.sintef_energy.ubisolar.model.NavDrawerItem;
 
 import java.util.ArrayList;
 

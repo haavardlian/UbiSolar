@@ -11,12 +11,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.presenter.TipPresenter;
-import com.sintef_energy.ubisolar.structs.Tip;
+import com.sintef_energy.ubisolar.model.Tip;
 
 /**
  * Created by Håvard on 20.03.14.

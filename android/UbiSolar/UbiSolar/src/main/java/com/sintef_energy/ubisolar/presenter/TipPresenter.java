@@ -13,17 +13,15 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapters.TipAdapter;
-import com.sintef_energy.ubisolar.structs.Tip;
+import com.sintef_energy.ubisolar.adapter.TipAdapter;
+import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.utils.Global;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.IOException;
 

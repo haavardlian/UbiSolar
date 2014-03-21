@@ -15,9 +15,8 @@ import android.view.ViewGroup.LayoutParams;
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
-import com.sintef_energy.ubisolar.structs.DeviceUsageList;
+import com.sintef_energy.ubisolar.model.DeviceUsage;
+import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
