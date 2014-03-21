@@ -402,7 +402,9 @@ public class EnergyProvider extends ContentProvider{
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
                         + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
                         + "GROUP BY " + time + ", "
-                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID;
+                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
+                        + "SORT BY `month` ASC";
+
         return rawSql;
     }
 }
