@@ -57,7 +57,9 @@
     <!-- Fragment social-->
     <string name="socialUsername">User\'s name</string>
     <string name="socialPlaceHolder">Here there will be a list of all of your Facebook friends that also have the app.\n\nYou can compare yourself with friends, area or people with similar profiles in the search field in the ActionBar</string>
-
+    <!-- Fragment Energy saving tabs -->
+    <string name="fragment_energy_saving_tab_tips">Tips</string>
+    <string name="fragment_energy_saving_tab_your">Your</string>
     <!-- TAGS -->
     <string name="TAG_GRAPH_TYPE">tag_graph_type</string>
 </resources>
