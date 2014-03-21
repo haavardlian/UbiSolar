@@ -7,4 +7,8 @@
         android:title="Add Device"
         android:icon="@android:drawable/ic_input_add"
         android:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/menu_add_usage"
+        android:title="Add usage"
+        android:showAsAction="withText|ifRoom" />
 </menu>

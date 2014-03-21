@@ -6,9 +6,11 @@ import android.app.FragmentTransaction;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 
+import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,13 +29,11 @@ import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsageList;
+import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,8 +49,6 @@ import java.util.Random;
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = UsageFragment.class.getName();
-
-    private TotalEnergyPresenter totalEnergyPresenter;
 
     private String[] mSelectedItems;
     private boolean[] mSelectDeviceDialogItems;
@@ -73,6 +71,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private static final int LOADER_DEVICES = 0;
     private static final int LOADER_USAGE = 1;
+    private static final int LOADER_USAGE_DAY = 2;
+    private static final int LOADER_USAGE_MONTH = 3;
+    private static final int LOADER_USAGE_YEAR = 4;
+
 
     /** The first fragment is added to the view. Should not be added to the backstack */
     private boolean mFirstFragmentAdd = false;
@@ -118,7 +120,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         return rootView;
     }
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -135,22 +136,18 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         else
             mSelectedItems = new String[0];
 
-//        clearDatabase();
+        //clearDatabase();
 
         //prepoluate database if it is empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
-//            clearDatabase();
             createDevices();
             createEnergyUsage();
         }
 
+        //testDateQuery();
+
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 8);
-
-        totalEnergyPresenter = new TotalEnergyPresenter();
-        totalEnergyPresenter.loadEnergyData(getActivity().getContentResolver(),
-                0,
-                calendar.getTimeInMillis());
 
         /* Show fragment */
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
@@ -186,10 +183,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+            /* Moved to deviceTab
             case R.id.fragment_usage_menu_add:
                 AddUsageDialog addUsageDialog = new AddUsageDialog();
                 addUsageDialog.show(getFragmentManager(), "addUsage");
-                return true;
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -252,7 +250,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //If fragment have not been created.
         if(usageGraphPieFragment == null) {
             usageGraphPieFragment = UsageGraphPieFragment.newInstance();
-            usageGraphPieFragment.registerTotalEnergyPresenter(totalEnergyPresenter);
         }
 
         graphView = usageGraphPieFragment;
@@ -275,7 +272,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //If fragment have not been created.
         if(usageGraphLineFragment == null) {
             usageGraphLineFragment = UsageGraphLineFragment.newInstance();
-            usageGraphLineFragment.registerTotalEnergyPresenter(totalEnergyPresenter);
         }
 
         graphView = usageGraphLineFragment;
@@ -309,6 +305,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Uri.Builder builder;
+
         switch (i){
             case LOADER_DEVICES:
                 return new CursorLoader(
@@ -338,6 +336,42 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         mSelectedItems,
                         EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
                 );
+            case LOADER_USAGE_DAY:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Day);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            case LOADER_USAGE_MONTH:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Month);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            case LOADER_USAGE_YEAR:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Year);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
         }
         return null;
     }
@@ -359,6 +393,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             /* Load usage */
             case LOADER_USAGE:
                 populateDeviceUsageList(cursor);
+                break;
+            case LOADER_USAGE_DAY:
+            case LOADER_USAGE_MONTH:
+            case LOADER_USAGE_YEAR:
+                populateDeviceUsageList(cursor);
+                //TODO: Implement logic to handle this correctly.
+                //Maybe populate.. can take in format argument?
                 break;
         }
     }
@@ -438,22 +479,34 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     {
         ContentResolver cr = getActivity().getContentResolver();
         EnergyUsageModel usageModel;
+        int n = 1000;
+        int nDevices = mDevices.size();
+        ContentValues[] values = new ContentValues[n * nDevices];
+
         Calendar cal = Calendar.getInstance();
         Random random = new Random();
-        Date date;
-
+        Date date = new Date();
+        int idCount = 1337;
+        int y = 0;
         for(Device device : mDevices.values()) {
+            cal.setTime(date);
             Log.v(TAG, "Creating data for: " + device.getName());
-            for (int i = 0; i < 1000; i++) {
-                date = new Date();
-                cal.setTime(date);
-                cal.add(Calendar.HOUR_OF_DAY, i);
+            for (int i = 0; i < n; i++) {
+                cal.add(Calendar.HOUR_OF_DAY, 1);
 
-                usageModel = new EnergyUsageModel(System.currentTimeMillis(), device.getDevice_id(),
-                        cal.getTime(), random.nextInt((200 - 50) + 1) + 50);
-                EnergyDataSource.addEnergyModel(cr, usageModel);
+                usageModel = new EnergyUsageModel(
+                        idCount++,
+                        device.getDevice_id(),
+                        cal.getTime(),
+                        random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
+                values[i + (y * n)] = usageModel.getContentValues();
+                //EnergyDataSource.addEnergyModel(cr, usageModel);
             }
+            y++;
         }
+        Log.v(TAG, "Starting to add data to DB.");
+        EnergyDataSource.addBatchEnergyModel(cr, values);
+        Log.v(TAG, "Done adding data to DB");
     }
 
     private void clearDatabase()
@@ -463,5 +516,20 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         it = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
         Log.v(TAG, "EMPTY DATABASE: " + it);
+    }
+
+    private void testDateQuery(){
+        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.Energy.Date.Month);
+        Cursor c = getActivity().getContentResolver().query(builder.build(), null, null, null, null);
+
+        Log.v(TAG, "TESTQUERY: " + c.getCount());
+        c.moveToFirst();
+        int i = 0;
+        do{
+            Log.v(TAG, "TABLE: " + i++ + " -> " + c.getLong(0) + " " + c.getLong(1) + " " + c.getLong(2) + " " + c.getLong(3));
+        } while(c.moveToNext());
+
+        c.close();
     }
 }

@@ -1,35 +1,25 @@
-package com.sintef_energy.ubisolar.structs;
+package com.sintef_energy.ubisolar.model;
 
-import com.yammer.dropwizard.json.JsonSnakeCase;
 
 /**
  * Created by Håvard on 05.03.14.
  */
-@JsonSnakeCase
 public class Tip {
     private int id;
     private String name;
     private String description;
-    private int numberOfRatings;
     private int averageRating;
+    private int numberOfRatings;
 
-    public Tip(int id, String name, String description, int numberOfRatings, int averageRating) {
+    public Tip(int id, String name, String description, int averageRating, int numberOfRatings) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.numberOfRatings = numberOfRatings;
         this.averageRating = averageRating;
+        this.numberOfRatings = numberOfRatings;
     }
 
     public Tip() {
-    }
-
-    public int getNumberOfRatings() {
-        return numberOfRatings;
-    }
-
-    public void setNumberOfRatings(int numberOfRatings) {
-        this.numberOfRatings = numberOfRatings;
     }
 
     public int getAverageRating() {
@@ -38,6 +28,14 @@ public class Tip {
 
     public void setAverageRating(int averageRating) {
         this.averageRating = averageRating;
+    }
+
+    public int getNumberOfRatings() {
+        return numberOfRatings;
+    }
+
+    public void setNumberOfRatings(int numberOfRatings) {
+        this.numberOfRatings = numberOfRatings;
     }
 
     public int getId() {
@@ -62,5 +60,9 @@ public class Tip {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String toString() {
+        return this.name + ": " + this.description + " | " + this.averageRating + ":" + this.numberOfRatings;
     }
 }

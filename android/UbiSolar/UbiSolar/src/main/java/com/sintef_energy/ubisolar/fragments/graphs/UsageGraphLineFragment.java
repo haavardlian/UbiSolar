@@ -15,9 +15,8 @@ import android.view.ViewGroup.LayoutParams;
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
-import com.sintef_energy.ubisolar.structs.DeviceUsageList;
+import com.sintef_energy.ubisolar.model.DeviceUsage;
+import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -60,9 +59,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED,
             Color.YELLOW};
     private int mColorIndex;
-
-    TotalEnergyPresenter presenter;
-    ArrayList<EnergyUsageModel> euModels;
 
     private Bundle mSavedState;
 
@@ -166,8 +162,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         Bundle state = new Bundle();
 
         ArrayList<Parcelable> usageModelState = new ArrayList<>();
-        for(EnergyUsageModel euModel : euModels)
-            usageModelState.add(euModel);
 
         state.putParcelableArrayList(STATE_euModels, usageModelState);
         state.putSerializable("mDataset", mDataset);
@@ -187,17 +181,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         super.onDestroy();
 
         Log.v(TAG, " onDestroy()");
-
-        if(presenter != null)
-            presenter.unregisterListener(this);
-    }
-
-    public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
-        this.presenter = presenter;
-        presenter.registerListner(this);
-        euModels = presenter.getEnergyData();
-
-        Log.v(TAG, "registerTotalEnergypresenter: " + euModels.size());
     }
 
     @Override

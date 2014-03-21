@@ -65,7 +65,7 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO total_power_usage (user_id, timestamp, power_usage) VALUES(:usage.userId, :usage.datetime, :usage.powerUsage)")
     int addTotalUsageForUser(@BindBean("usage") TotalUsage usage);
 
-    @SqlQuery("SELECT * FROM tip")
+    @SqlQuery("SELECT tip.*, (SELECT AVG(rating) FROM tip_rating WHERE tip_id=tip.id) AS average_rating, (SELECT COUNT(rating) FROM tip_rating WHERE tip_id=tip.id) AS n_ratings FROM tip")
     @Mapper(TipMapper.class)
     List<Tip> getAllTips();
 

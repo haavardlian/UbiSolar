@@ -13,6 +13,12 @@ import java.util.Collections;
 
 /**
  * Created by perok on 2/19/14.
+ *
+ * The Presenter class for energy usage.
+ *
+ * Contains ALL logic related to business logic manupulation, syncing, etc.
+ * NOT for getting data the view. That should be done through cursors.
+ *
  */
 public class TotalEnergyPresenter {
 
@@ -40,7 +46,10 @@ public class TotalEnergyPresenter {
 
     /**
      * Loads the data with ContentProvider.
+     *
+     * Should NOT be used.
      */
+    @Deprecated
     public void loadEnergyData(ContentResolver resolver, long from , long to){
         ArrayList<EnergyUsageModel> tempEuModels = EnergyDataSource.getEnergyModels(resolver, from, to);
 
@@ -55,6 +64,11 @@ public class TotalEnergyPresenter {
             view.newData(null); //todo: handle correctly...
     }
 
+    /**
+     * Avoid usage.. Data for view should be used through cursors.
+     * @return
+     */
+    @Deprecated
     public ArrayList<EnergyUsageModel> getEnergyData(){
         return euModels;
     }

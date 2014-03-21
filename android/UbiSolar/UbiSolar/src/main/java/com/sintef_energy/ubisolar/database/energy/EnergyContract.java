@@ -74,5 +74,14 @@ public class EnergyContract {
          * The default sort order for queries containing NAME fields.
          */
         public static final String SORT_ORDER_DEFAULT = BaseColumns._ID + " ASC";
+
+        /**
+         * Used with Energy table. Add /*value* to URI to group on that date type
+         */
+        public static interface Date {
+            public static final String Day = "date";
+            public static final String Month = "month";
+            public static final String Year = "year";
+        }
     }
 }

@@ -1,13 +1,22 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.adapter.TipAdapter;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.dialogs.AddTipDialog;
+import com.sintef_energy.ubisolar.model.Tip;
+
+import java.util.ArrayList;
 
 /**
  * Created by perok on 2/11/14.
@@ -17,6 +26,8 @@ public class PowerSavingFragment extends DefaultTabFragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
+
+    ListView tipsView;
     public static PowerSavingFragment newInstance(int sectionNumber) {
         PowerSavingFragment fragment = new PowerSavingFragment();
         Bundle args = new Bundle();
@@ -40,13 +51,36 @@ public class PowerSavingFragment extends DefaultTabFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_add_tip:
+                displayAddTipDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-        return super.onCreateView(inflater, container, savedInstanceState);
-        //View rootView = inflater.inflate(R.layout.fragment_test, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-        //return rootView;
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_tip, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        View rootView = inflater.inflate(R.layout.fragment_power_saving, container, false);
+        TipAdapter tipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
+
+        tipsView = (ListView) rootView.findViewById(R.id.tipList);
+        tipsView.setAdapter(tipAdapter);
+
+        //Get all tips from server asynchronously
+        getActivity().setProgressBarIndeterminateVisibility(true);
+        ((DrawerActivity) getActivity()).getTipPresenter().getAllTips(tipAdapter);
+        return rootView;
     }
 
 
@@ -64,6 +98,12 @@ public class PowerSavingFragment extends DefaultTabFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //outState.putInt("curChoice", mCurCheckPosition);
+    }
+
+    public void displayAddTipDialog(){
+        AddTipDialog dialog = new AddTipDialog();
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getFragmentManager(), "addTipDialog");
     }
 
     @Override

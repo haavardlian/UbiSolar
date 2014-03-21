@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.structs.NavDrawerItem;
+import com.sintef_energy.ubisolar.model.NavDrawerItem;
 
 import java.util.ArrayList;
 

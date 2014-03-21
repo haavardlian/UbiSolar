@@ -7,7 +7,7 @@
     <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Usage</item>
-        <item>Power saving</item>
+        <item>Energy saving</item>
         <item>Devices</item>
         <item>Social</item>
         <item>Profile</item>
@@ -24,6 +24,9 @@
         <item>@drawable/heat</item> <!-- TODO: Icons for log out -->
     </string-array>
 
+    <!-- AddTipDialog -->
+    <string name="addTipDialog_title">Create tip</string>
+    <string name="addTipDialog_buttonText">Create</string>
     <!-- AddUsageDialog -->
     <string name="addUsageDialog_title">Add device mUsage</string>
     <!-- AddDeviceDialog -->

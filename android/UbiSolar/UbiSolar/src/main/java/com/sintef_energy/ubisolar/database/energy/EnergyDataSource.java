@@ -1,9 +1,12 @@
 package com.sintef_energy.ubisolar.database.energy;
 
+import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -14,6 +17,8 @@ import java.util.ArrayList;
  *
  */
 public class EnergyDataSource {
+
+    private static final String TAG = EnergyDataSource.class.getName();
 
     /**
      * Add EnergyUsageModel to database.
@@ -135,4 +140,20 @@ public class EnergyDataSource {
     public static void deleteAll(ContentResolver resolver){
         resolver.delete(EnergyContract.Devices.CONTENT_URI, null, null);
     }
+
+    public static int addBatchEnergyModel(ContentResolver resolver, ContentValues[] values){
+        //AsyncQueryHandler handler = new AsyncQueryHandler(resolver) {};
+
+        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+        int n = resolver.bulkInsert(
+                builder.build(),
+                values
+            );
+
+        if(n != values.length)
+            Log.e(TAG, "addBatchEnergyModel: Tried adding: " +values.length + ". Total added was: " + n);
+
+        return n;
+    }
+
 }

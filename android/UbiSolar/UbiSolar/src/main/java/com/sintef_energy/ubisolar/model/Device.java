@@ -1,6 +1,4 @@
-package com.sintef_energy.ubisolar.structs;
-
-import java.io.Serializable;
+package com.sintef_energy.ubisolar.model;
 
 /**
  * Created by thb on 19.02.14.
