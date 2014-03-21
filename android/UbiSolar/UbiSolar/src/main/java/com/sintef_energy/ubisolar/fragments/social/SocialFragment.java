@@ -1,25 +1,29 @@
-package com.sintef_energy.ubisolar.fragments;
+package com.sintef_energy.ubisolar.fragments.social;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.adapter.FriendAdapter;
+import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
+import com.sintef_energy.ubisolar.model.User;
+
+import java.util.ArrayList;
 
 /**
  * Created by perok on 2/11/14.
  */
-public class SocialFragment extends DefaultTabFragment {
+public class SocialFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -27,8 +31,10 @@ public class SocialFragment extends DefaultTabFragment {
     public static final String TAG = SocialFragment.class.getName();
 
     private SimpleCursorAdapter adapter;
-    private String [] friends;
+    private ArrayList<User> friends;
     private View view;
+
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -58,7 +64,9 @@ public class SocialFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_compare_friend, container, false);
+        view = inflater.inflate(R.layout.fragment_social, container, false);
+        Card card = new Card(getActivity().getApplicationContext());
+
         return view;
     }
 
@@ -66,14 +74,6 @@ public class SocialFragment extends DefaultTabFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        //final ListView listview = (ListView)getActivity().findViewById(R.id.socialList);
-        friends = new String[] {"Tor-Håkon", "Pia",
-                "Beate", "Per-Øyvind", "Håvard", "Lars Erik"};
-
-        /**adapter = new SimpleCursorAdapter();*/
-
-        //listview.setAdapter(adapter);
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
@@ -90,5 +90,23 @@ public class SocialFragment extends DefaultTabFragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
+    }
+
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        this.adapter.swapCursor(cursor);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        this.adapter.swapCursor(null);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(getActivity());
+
     }
 }
