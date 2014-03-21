@@ -1,7 +1,6 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -71,7 +70,7 @@ public class PowerSavingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View rootView = inflater.inflate(R.layout.fragment_power_saving, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_tip_list, container, false);
         TipAdapter tipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
 
         tipsView = (ListView) rootView.findViewById(R.id.tipList);

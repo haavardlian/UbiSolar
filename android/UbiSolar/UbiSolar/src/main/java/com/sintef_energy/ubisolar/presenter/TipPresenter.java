@@ -62,8 +62,10 @@ public class TipPresenter {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(tag, "Error in JSON Mapping:");
-                Log.e(tag, error.getMessage());
+                adapter.getActivity().setProgressBarIndeterminateVisibility(false);
+                Toast.makeText(adapter.getActivity().getApplicationContext(), "Could not get data from server",
+                        Toast.LENGTH_LONG).show();
+                Log.e(tag, "Error from server!!");
             }
         });
 
