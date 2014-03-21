@@ -55,11 +55,11 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
 
         // Initialize the ViewPager and set an adapter
-        ViewPager pager = (ViewPager) mRoot.findViewById(R.id.lol_container);
+        ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_energy_saving_pager);
         pager.setAdapter(new MyPagerAdapter(getFragmentManager()));
 
         // Bind the tabs to the ViewPager
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.lol_tabs);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_energy_saving_tabs);
         tabs.setViewPager(pager);
 
         return mRoot;
