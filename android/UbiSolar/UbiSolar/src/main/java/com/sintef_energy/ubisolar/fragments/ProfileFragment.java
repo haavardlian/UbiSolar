@@ -13,6 +13,8 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
 /**
  * Created by perok on 2/11/14.
+ *
+ * UI design based on: https://github.com/gabrielemariotti/cardslib
  */
 public class ProfileFragment extends DefaultTabFragment {
 

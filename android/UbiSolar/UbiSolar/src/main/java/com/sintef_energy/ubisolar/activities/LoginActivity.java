@@ -18,6 +18,8 @@ import com.sintef_energy.ubisolar.R;
 /**
  * Activity which displays a login screen to the user, offering registration as
  * well.
+ *
+ * Read about this: https://developers.facebook.com/docs/android/scrumptious/authenticate
  */
 public class LoginActivity extends FragmentActivity {
     private static final int SPLASH = 0;
