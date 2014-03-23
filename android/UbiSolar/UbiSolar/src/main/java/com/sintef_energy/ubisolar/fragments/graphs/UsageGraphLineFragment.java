@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -15,6 +16,7 @@ import android.view.ViewGroup.LayoutParams;
 import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
@@ -61,6 +63,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     private int mColorIndex;
 
     private Bundle mSavedState;
+    private UsageFragment mUsageFragment;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -108,7 +111,6 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
         //Restore data
         if(mSavedState != null) {
-            System.out.println("Loading");
             mDataset = (XYMultipleSeriesDataset) mSavedState.getSerializable("mDataset");
             mRenderer = (XYMultipleSeriesRenderer) mSavedState.getSerializable("mRenderer");
             mTitleFormat = mSavedState.getString("mTitleFormat");
@@ -360,7 +362,7 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
         return usageList.size();
     }
 
-    private void setFormat(String labelFormat, String titleFormat)
+    public void setFormat(String labelFormat, String titleFormat)
     {
         mTitleFormat = titleFormat;
         mDataResolution = labelFormat;
@@ -399,13 +401,17 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     {
         if(mDataResolution.equals("dd")) {
             setFormat("HH", "EEEE dd/MM");
-            changeResolution();
-            populateGraph(mActiveDateIndex * 24);
+            mActiveDateIndex *= 24;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, mUsageFragment);
+//            changeResolution();
+//            populateGraph(mActiveDateIndex * 24);
         }
         else if(mDataResolution.equals("w")) {
             setFormat("dd", "MMMM");
-            changeResolution();
-            populateGraph(mActiveDateIndex * 7);
+            mActiveDateIndex *= 7;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
+//            changeResolution();
+//            populateGraph(mActiveDateIndex * 7);
         }
 //        else if(mDataResolution.equals("MMMM")) {
 //            setFormat("w", "MMMMM y");
@@ -418,13 +424,18 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
     {
         if(mDataResolution.equals("HH")) {
             setFormat("dd", "MMMM");
-            changeResolution();
-            populateGraph(mActiveDateIndex / 24);
+            mActiveDateIndex /= 24;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
+//            changeResolution();
+//            populateGraph(mActiveDateIndex / 24);
         }
         else if(mDataResolution.equals("dd")) {
             setFormat("w", "MMMMM y");
-            changeResolution();
-            populateGraph(mActiveDateIndex / 7);
+            mActiveDateIndex /= 7;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, mUsageFragment);
+
+//            changeResolution();
+//            populateGraph(mActiveDateIndex / 7);
         }
 //        else if(mDataResolution.equals("w"))
 //            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
@@ -505,10 +516,14 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             mBaseUsageList.add(usage);
             addSeries(usage.getDevice().getName(), true, false);
         }
-        changeResolution();
+//        changeResolution();
         if(mActiveDateIndex > 0)
             populateGraph(mActiveDateIndex);
         else
             populateGraph(getLargestListSize());
+    }
+
+    public void setmUsageFragment(UsageFragment usageFragment) {
+        this.mUsageFragment = usageFragment;
     }
 }

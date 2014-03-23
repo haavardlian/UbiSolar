@@ -51,13 +51,18 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private static final String TAG = UsageFragment.class.getName();
 
     private String[] mSelectedItems;
-    private boolean[] mSelectDeviceDialogItems;
+    private boolean[] mSelectDialogItems;
+
+    private String[] mSelectedLineItems;
+    private String[] mSelectedPieItems;
+
+    private boolean[] mSelectedLineDialogItems;
+    private boolean[] mSelectedPieDialogItems;
+
+    private Bundle mSavedState;
 
     /** List of all devices */
     private HashMap<Long, DeviceModel> mDevices;
-
-    /** List of the seleceted devices*/
-    private ArrayList<DeviceModel> mSelectedDevices;
 
     /** List of usage from devices */
     private ArrayList<DeviceUsageList> mDeviceUsageList;
@@ -69,11 +74,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private UsageGraphPieFragment usageGraphPieFragment;
     private UsageGraphLineFragment usageGraphLineFragment;
 
-    private static final int LOADER_DEVICES = 0;
-    private static final int LOADER_USAGE = 1;
-    private static final int LOADER_USAGE_DAY = 2;
-    private static final int LOADER_USAGE_MONTH = 3;
-    private static final int LOADER_USAGE_YEAR = 4;
+    public static final int LOADER_DEVICES = 0;
+    public static final int LOADER_USAGE = 1;
+    public static final int LOADER_USAGE_DAY = 2;
+    public static final int LOADER_USAGE_MONTH = 3;
+    public static final int LOADER_USAGE_YEAR = 4;
 
 
     /** The first fragment is added to the view. Should not be added to the backstack */
@@ -124,17 +129,33 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mSelectDeviceDialogItems = new boolean[0];
-
         mDevices = new HashMap<>();
-        mSelectedDevices = new ArrayList<>();
+//        mSelectedDevices = new ArrayList<>();
         mDeviceUsageList = new ArrayList<>();
 
-        if (savedInstanceState != null) {
-            mSelectedItems = (String[]) savedInstanceState.getSerializable("mSelectedIndexes");
+        if(savedInstanceState != null && mSavedState == null)
+            mSavedState = savedInstanceState.getBundle("mSavedState");
+
+        if(savedInstanceState == null)
+            System.out.println("Derp");
+
+        if (mSavedState != null) {
+            System.out.println("Loaded");
+            mSelectedItems = mSavedState.getStringArray("mSelectedItems");
+            mSelectedLineItems = mSavedState.getStringArray("mSelectedLineItems");
+            mSelectedPieItems = mSavedState.getStringArray("mSelectedPieItems");
+            mSelectDialogItems = mSavedState.getBooleanArray("mSelectDialogItems");
+            mSelectedLineDialogItems = mSavedState.getBooleanArray("mSelectedLineDialogItems");
+            mSelectedPieDialogItems = mSavedState.getBooleanArray("mSelectedPieDialogItems");
         }
-        else
+        else {
             mSelectedItems = new String[0];
+            mSelectedLineItems = new String[0];
+            mSelectedPieItems = new String[0];
+            mSelectDialogItems = new boolean[0];
+            mSelectedLineDialogItems = new boolean[0];
+            mSelectedPieDialogItems = new boolean[0];
+        }
 
         //clearDatabase();
 
@@ -144,7 +165,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             createEnergyUsage();
         }
 
-        //testDateQuery();
+        getLoaderManager().initLoader(LOADER_DEVICES, null, this);
 
         /* Show fragment */
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
@@ -166,8 +187,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 displayDeviceFilter();
             }
         });
-
-        getLoaderManager().initLoader(LOADER_DEVICES, null, this);
     }
 
     @Override
@@ -194,7 +213,31 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArray("mSelectedIndexes", mSelectedItems);
+        outState.putBundle("mSavedState", mSavedState != null ? mSavedState : saveState());
+    }
+
+    private Bundle saveState(){
+        Bundle state = new Bundle();
+
+        state.putStringArray("mSelectedItems", mSelectedItems);
+        state.putStringArray("mSelectedListItems", mSelectedLineItems);
+        state.putStringArray("mSelectedPieItems", mSelectedPieItems);
+        state.putBooleanArray("mSelectDialogItems", mSelectDialogItems);
+        state.putBooleanArray("mSelectedLineDialogItems", mSelectedLineDialogItems);
+        state.putBooleanArray("mSelectedPieDialogItems", mSelectedPieDialogItems);
+
+        for(boolean d : mSelectDialogItems)
+            System.out.println(d);
+
+        return state;
+    }
+
+    public void onDestroyView(){
+        super.onDestroy();
+
+        System.out.println("Saved");
+        mSavedState = saveState();
+        Log.v(TAG, " onDestroyView()");
     }
 
     @Override
@@ -225,6 +268,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         button.setImageResource(R.drawable.line);
         button.setTag(R.string.TAG_GRAPH_TYPE, "line");
 
+        mSelectedItems =  mSelectedPieItems;
+        mSelectDialogItems = mSelectedPieDialogItems;
+
         //If fragment have not been created.
         if(usageGraphPieFragment == null) {
             usageGraphPieFragment = UsageGraphPieFragment.newInstance();
@@ -244,8 +290,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         button.setImageResource(R.drawable.pie);
         button.setTag(R.string.TAG_GRAPH_TYPE, "pie");
 
-        Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
-        deviceButton.setVisibility(View.VISIBLE);
+        mSelectDialogItems = mSelectedLineDialogItems;
+        mSelectedItems = mSelectedLineItems;
 
         //If fragment have not been created.
         if(usageGraphLineFragment == null) {
@@ -253,6 +299,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         }
 
         graphView = usageGraphLineFragment;
+
+        usageGraphLineFragment.setmUsageFragment(this);
 
         addFragment(usageGraphLineFragment, "usageGraphLineFragment");
     }
@@ -262,7 +310,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
      *
      */
     public void displayDeviceFilter(){
-        SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(new ArrayList<>(mDevices.values()), mSelectDeviceDialogItems);
+        SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(new ArrayList<>(mDevices.values()), mSelectDialogItems);
         dialog.setTargetFragment(this, 0);
         dialog.show(getFragmentManager(), "selectDeviceDialog");
     }
@@ -271,9 +319,16 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
         mSelectedItems = selectedItems;
 
-        mSelectDeviceDialogItems = itemsSelected;
+        mSelectDialogItems = itemsSelected;
 
-        getLoaderManager().restartLoader(LOADER_USAGE, null, this);
+        System.out.println(selectedItems.length);
+
+
+        //Clear the graph if no devices are selected
+        if(selectedItems.length > 0)
+            getLoaderManager().restartLoader(LOADER_USAGE, null, this);
+        else
+            graphView.clearDevices();
     }
 
     /**
@@ -384,6 +439,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                     do {
                         DeviceModel model = new DeviceModel(cursor);
                         mDevices.put(model.getDevice_id(), model);
+                        System.out.println("Added device: " + model.getName());
                     }
                     while (cursor.moveToNext());
                 break;

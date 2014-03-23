@@ -44,7 +44,7 @@ public class TabListener<T extends Fragment> implements android.app.ActionBar.Ta
             // If not, instantiate and add it to the activity
             mFragment = Fragment.instantiate(mActivity, mClass.getName());
         	//mFragment = new FragmentCalendar(bus, mActivity, mTag);
-            ft.add(R.id.lol_container, mFragment, mTag);
+//            ft.add(R.id.lol_container, mFragment, mTag);
         } else if (mFragment != null) {
             // If it exists, simply attach it in order to show it
             ft.attach(mFragment);

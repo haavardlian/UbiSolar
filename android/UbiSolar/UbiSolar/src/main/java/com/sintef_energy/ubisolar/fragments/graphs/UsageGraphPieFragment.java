@@ -248,6 +248,7 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     public void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
+        mChartView.repaint();
 
     }
 

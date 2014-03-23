@@ -43,6 +43,8 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
+    private UsageFragment usageFragment = null;
+
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -137,6 +139,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 fragment = HomeFragment.newInstance(position);
                 break;
             case 1:
+//                if(usageFragment == null) {
+//                    usageFragment = UsageFragment.newInstance(position);
+//                    fragment = usageFragment;
+//                }
+//                else
+//                    fragment = usageFragment;
                 fragment = UsageFragment.newInstance(position);
                 break;
             case 2:
