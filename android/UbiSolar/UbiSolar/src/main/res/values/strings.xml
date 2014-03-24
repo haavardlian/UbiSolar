@@ -69,6 +69,9 @@
     <string name="area_header_title">People in your area</string>
 
 
+    <!-- Fragment Energy saving tabs -->
+    <string name="fragment_energy_saving_tab_tips">Tips</string>
+    <string name="fragment_energy_saving_tab_your">Your</string>
     <!-- TAGS -->
     <string name="TAG_GRAPH_TYPE">tag_graph_type</string>
 </resources>
