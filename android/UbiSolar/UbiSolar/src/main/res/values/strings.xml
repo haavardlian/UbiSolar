@@ -57,12 +57,6 @@
 
     <!-- Fragment social-->
     <string name="social_user_name">User\'s name</string>
-
-
-    <!-- Fragment Energy saving tabs -->
-    <string name="fragment_energy_saving_tab_tips">Tips</string>
-    <string name="fragment_energy_saving_tab_your">Your</string>
-
     <string name="social_home_tab_label">Comparison areas</string>
     <string name="comp_header">Comparison of savings</string>
     <string name="user_name">You</string>
@@ -73,6 +67,10 @@
     <string name="friends_header_title">Friends</string>
     <string name="similar_header_title">People with similar profiles</string>
     <string name="area_header_title">People in your area</string>
+
+    <!-- Fragment Energy saving tabs -->
+    <string name="fragment_energy_saving_tab_tips">Tips</string>
+    <string name="fragment_energy_saving_tab_your">Your</string>
 
 
     <!-- TAGS -->
