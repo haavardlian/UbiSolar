@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
-    android:id="@+id/tipRow">
+    android:id="@+id/tipRow"
+    android:focusable="false">
 
 
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="235dp"
+        android:layout_height="50dp"
         android:id="@+id/tipRowName"
         android:singleLine="true"
         android:textSize="25sp"
-        android:textIsSelectable="false"/>
+        android:textIsSelectable="false"
+        android:text="Tip title"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center_vertical"
+        android:layout_toLeftOf="@+id/tipRowRating"
+        android:layout_marginLeft="10dp"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:id="@+id/tipRowDescription"
-        android:layout_weight="0.08" />
-
-    <TextView
-        android:layout_width="match_parent"
+    <RatingBar
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tipRowRating" />
+        android:id="@+id/tipRowRating"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_alignBottom="@+id/tipRowName"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="17dp" />
 
-</LinearLayout>
+</RelativeLayout>

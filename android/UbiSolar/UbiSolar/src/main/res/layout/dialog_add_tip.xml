@@ -15,7 +15,7 @@
         android:layout_width="147dp"
         android:layout_toRightOf="@id/tipTxtDialogName"
         android:layout_height="wrap_content"
-        android:id="@+id/tipDialogName"
+        android:id="@+id/createTipDialogName"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="18dp" />
@@ -25,7 +25,7 @@
         android:layout_height="1dp"
         android:background="?android:attr/dividerVertical"
         android:id="@+id/view"
-        android:layout_below="@+id/tipDialogName"
+        android:layout_below="@+id/createTipDialogName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp" />
@@ -44,7 +44,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tipDialogDescription"
+        android:id="@+id/createTipDialogDescription"
         android:layout_below="@+id/view"
         android:layout_toRightOf="@+id/textView"
         android:layout_marginLeft="18dp"
