@@ -23,8 +23,10 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sintef_energy.ubisolar.IView.IDeviceView;
 import com.sintef_energy.ubisolar.R;
@@ -54,6 +56,7 @@ public class SocialFragment extends DefaultTabFragment {
 
     private View view;
     private ArrayList<User> friends;
+    //TODO: swap User to String or SocialMenuItem
 
     private ArrayList<SocialMenuItem> homeTabs;
 
@@ -88,14 +91,32 @@ public class SocialFragment extends DefaultTabFragment {
         view = inflater.inflate(R.layout.fragment_social, container, false);
         friends = new ArrayList<User>();
         FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_row, friends);
-        ListView friendsList = (ListView) view.findViewById(R.id.social_menu_list);
+        final ListView friendsList = (ListView) view.findViewById(R.id.social_menu_list);
         friendsList.setAdapter(friendAdapter);
 
-        friends.add(new User("Friends", getActivity().getResources().getDrawable(R.drawable.profile)));
-        friends.add(new User("Similar", getActivity().getResources().getDrawable(R.drawable.heat)));
-        friends.add(new User("Area", getActivity().getResources().getDrawable(R.drawable.profile)));
+        friends.add(new User(this.getString(R.string.friends_header_title), getActivity().getResources().getDrawable(R.drawable.profile)));
+        friends.add(new User(this.getString(R.string.similar_header_title), getActivity().getResources().getDrawable(R.drawable.heat)));
+        friends.add(new User(this.getString(R.string.area_header_title), getActivity().getResources().getDrawable(R.drawable.profile)));
 
         friendAdapter.notifyDataSetChanged();
+
+        friendsList.setClickable(true);
+        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+                if(position == 0) {
+                    friendsList.setVisibility(View.GONE);
+                }
+                if(position == 1) {
+
+                }
+                if(position == 2) {
+
+                }
+            }
+        });
 
         return view;
     }
