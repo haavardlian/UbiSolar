@@ -139,13 +139,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 fragment = HomeFragment.newInstance(position);
                 break;
             case 1:
-//                if(usageFragment == null) {
-//                    usageFragment = UsageFragment.newInstance(position);
-//                    fragment = usageFragment;
-//                }
-//                else
-//                    fragment = usageFragment;
-                fragment = UsageFragment.newInstance(position);
+                if(usageFragment == null) {
+                    usageFragment = UsageFragment.newInstance(position);
+                    fragment = usageFragment;
+                }
+                else
+                    fragment = usageFragment;
+//                fragment = UsageFragment.newInstance(position);
                 break;
             case 2:
                 fragment = EnergySavingTabFragment.newInstance(position);

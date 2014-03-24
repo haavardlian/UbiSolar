@@ -133,11 +133,17 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 //        mSelectedDevices = new ArrayList<>();
         mDeviceUsageList = new ArrayList<>();
 
+        //clearDatabase();
+
+        //prepoluate database if it is empty
+        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
+            createDevices();
+            createEnergyUsage();
+        }
+
+
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
-
-        if(savedInstanceState == null)
-            System.out.println("Derp");
 
         if (mSavedState != null) {
             System.out.println("Loaded");
@@ -147,6 +153,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             mSelectDialogItems = mSavedState.getBooleanArray("mSelectDialogItems");
             mSelectedLineDialogItems = mSavedState.getBooleanArray("mSelectedLineDialogItems");
             mSelectedPieDialogItems = mSavedState.getBooleanArray("mSelectedPieDialogItems");
+            getLoaderManager().restartLoader(LOADER_DEVICES, null, this);
         }
         else {
             mSelectedItems = new String[0];
@@ -155,17 +162,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             mSelectDialogItems = new boolean[0];
             mSelectedLineDialogItems = new boolean[0];
             mSelectedPieDialogItems = new boolean[0];
+            getLoaderManager().initLoader(LOADER_DEVICES, null, this);
         }
-
-        //clearDatabase();
-
-        //prepoluate database if it is empty
-        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
-            createDevices();
-            createEnergyUsage();
-        }
-
-        getLoaderManager().initLoader(LOADER_DEVICES, null, this);
 
         /* Show fragment */
         ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
@@ -226,16 +224,12 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         state.putBooleanArray("mSelectedLineDialogItems", mSelectedLineDialogItems);
         state.putBooleanArray("mSelectedPieDialogItems", mSelectedPieDialogItems);
 
-        for(boolean d : mSelectDialogItems)
-            System.out.println(d);
-
         return state;
     }
 
     public void onDestroyView(){
         super.onDestroy();
 
-        System.out.println("Saved");
         mSavedState = saveState();
         Log.v(TAG, " onDestroyView()");
     }
@@ -290,8 +284,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         button.setImageResource(R.drawable.pie);
         button.setTag(R.string.TAG_GRAPH_TYPE, "pie");
 
-        mSelectDialogItems = mSelectedLineDialogItems;
         mSelectedItems = mSelectedLineItems;
+        mSelectDialogItems = mSelectedLineDialogItems;
 
         //If fragment have not been created.
         if(usageGraphLineFragment == null) {
@@ -300,7 +294,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         graphView = usageGraphLineFragment;
 
-        usageGraphLineFragment.setmUsageFragment(this);
+//        usageGraphLineFragment.setmUsageFragment(this);
 
         addFragment(usageGraphLineFragment, "usageGraphLineFragment");
     }
@@ -439,7 +433,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                     do {
                         DeviceModel model = new DeviceModel(cursor);
                         mDevices.put(model.getDevice_id(), model);
-                        System.out.println("Added device: " + model.getName());
                     }
                     while (cursor.moveToNext());
                 break;
