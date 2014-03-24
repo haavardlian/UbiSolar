@@ -1,6 +1,7 @@
 package com.sintef_energy.ubisolar.fragments.social;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 /**
  * Created by baier on 3/21/14.
  */
-public class SocialFriendListFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class SocialFriendListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -43,7 +44,6 @@ public class SocialFriendListFragment extends DefaultTabFragment implements Load
     public static SocialFriendListFragment newInstance(int sectionNumber) {
         SocialFriendListFragment fragment = new SocialFriendListFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,8 +58,6 @@ public class SocialFriendListFragment extends DefaultTabFragment implements Load
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        //Callback to activity
-        ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override

@@ -1,44 +1,61 @@
 package com.sintef_energy.ubisolar.fragments.social;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.util.Log;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
+import com.sintef_energy.ubisolar.IView.IDeviceView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
+import com.sintef_energy.ubisolar.adapter.SocialMenuAdapter;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
+import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
+import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
+import com.sintef_energy.ubisolar.model.SocialMenuItem;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
 
-import it.gmariotti.cardslib.library.internal.Card;
-import it.gmariotti.cardslib.library.internal.CardHeader;
-import it.gmariotti.cardslib.library.view.CardView;
-
 /**
  * Created by perok on 2/11/14.
  */
-public class SocialFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class SocialFragment extends DefaultTabFragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = SocialFragment.class.getName();
 
-    private SimpleCursorAdapter adapter;
-    private ArrayList<User> friends;
     private View view;
+    private ArrayList<User> friends;
 
-
+    private ArrayList<SocialMenuItem> homeTabs;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -69,17 +86,20 @@ public class SocialFragment extends DefaultTabFragment implements LoaderManager.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_social, container, false);
-        Card card = new Card(getActivity().getApplicationContext());
+        friends = new ArrayList<User>();
+        FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_row, friends);
+        ListView friendsList = (ListView) view.findViewById(R.id.social_menu_list);
+        friendsList.setAdapter(friendAdapter);
 
-        CardHeader header = new CardHeader(getActivity().getApplicationContext());
+        friends.add(new User("Friends", getActivity().getResources().getDrawable(R.drawable.profile)));
+        friends.add(new User("Similar", getActivity().getResources().getDrawable(R.drawable.heat)));
+        friends.add(new User("Area", getActivity().getResources().getDrawable(R.drawable.profile)));
 
-        card.addCardHeader(header);
-
-        CardView cardView = (CardView)view.findViewById(R.id.cardview);
-        cardView.setCard(card);
+        friendAdapter.notifyDataSetChanged();
 
         return view;
     }
+
 
 
     @Override
@@ -95,29 +115,10 @@ public class SocialFragment extends DefaultTabFragment implements LoaderManager.
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //outState.putInt("curChoice", mCurCheckPosition);
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-    }
-
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        this.adapter.swapCursor(cursor);
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        this.adapter.swapCursor(null);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(getActivity());
-
     }
 }
