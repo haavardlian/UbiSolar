@@ -32,9 +32,12 @@ import java.io.IOException;
 public class TipPresenter {
     String tag = "SERVER";
     RequestQueue requestQueue;
-
+    ObjectMapper mapper;
     public TipPresenter(RequestQueue requestQueue) {
         this.requestQueue = requestQueue;
+        this.mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
     }
 
     public void getAllTips(final TipAdapter adapter)
@@ -43,10 +46,6 @@ public class TipPresenter {
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray jsonArray) {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-
                 adapter.clear();
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
@@ -76,9 +75,6 @@ public class TipPresenter {
     public void createTip(final Activity activity, Tip tip) {
         String url = Global.BASE_URL + "/tips";
         JSONObject jsonObject;
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
         try {
             jsonObject = new JSONObject(mapper.writeValueAsString(tip));
@@ -113,9 +109,6 @@ public class TipPresenter {
     public void createRating(final Activity activity, TipRating rating) {
         String url = Global.BASE_URL + "/tips/" + rating.getTipId() + "/rating/";
         JSONObject jsonObject;
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
 
         try {
             jsonObject = new JSONObject(mapper.writeValueAsString(rating));

@@ -17,6 +17,7 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
+import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.presenter.TipPresenter;
 
 import java.util.ArrayList;
@@ -55,7 +56,6 @@ public class TipDialog extends DialogFragment {
                 .setPositiveButton("Add to your tips", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        Log.d("TIP", "Added to your tips");
                         yourAdapter.add(tip);
                     }
                 })
@@ -76,9 +76,10 @@ public class TipDialog extends DialogFragment {
         ratingField.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                //TODO: Save rating
                 ratingBar.setRating(v);
-                Log.d("RATING", "TODO: Save rating");
+                tip.setAverageRating((int)v);
+                TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
+                ((DrawerActivity) getActivity()).getTipPresenter().createRating(getActivity(), rating);
             }
         });
 

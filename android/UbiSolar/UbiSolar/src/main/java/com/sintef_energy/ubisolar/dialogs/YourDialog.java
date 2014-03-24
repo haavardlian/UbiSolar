@@ -13,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
@@ -70,10 +71,10 @@ public class YourDialog extends DialogFragment {
         ratingField.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                //TODO: Save rating
                 ratingBar.setRating(v);
+                tip.setAverageRating((int)v);
                 TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
-                Log.d("RATING", "TODO: Save rating");
+                ((DrawerActivity) getActivity()).getTipPresenter().createRating(getActivity(), rating);
             }
         });
         return builder.create();

@@ -55,7 +55,6 @@ public class YourFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 YourDialog dialog = new YourDialog(yourAdapter.getItem(i), yourAdapter);
                 dialog.show(getFragmentManager(), "yourDialog");
-                Log.d("YOUR", "Clicked item");
             }
         });
         return rootView;
