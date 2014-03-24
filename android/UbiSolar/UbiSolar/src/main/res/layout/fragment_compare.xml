@@ -23,7 +23,7 @@ android:paddingLeft="0dp" >
             android:gravity="center_horizontal"
             android:textStyle="bold"
             android:layout_centerInParent="true"
-            android:text="@string/userName" />
+            android:text="@string/user_name" />
 
 
 
@@ -38,7 +38,7 @@ android:paddingLeft="0dp" >
             android:gravity="center_horizontal"
             android:textStyle="bold"
             android:layout_centerInParent="true"
-            android:text="@string/friendName" />
+            android:text="@string/friend_name" />
 
 
 
@@ -115,7 +115,7 @@ android:paddingLeft="0dp" >
                 android:layout_gravity="center_horizontal|top"
                 android:padding="12dp"
                 android:textStyle="bold"
-                android:text="@string/compHeader"
+                android:text="@string/comp_header"
                 />
 
         </FrameLayout>
@@ -132,7 +132,7 @@ android:paddingLeft="0dp" >
         android:layout_weight="1"
         android:layout_alignParentTop="true"
         android:textStyle="bold"
-        android:text="@string/wattLvl"
+        android:text="@string/watt_lvl"
         />
 
     <View
@@ -169,7 +169,7 @@ android:paddingLeft="0dp" >
             android:layout_weight="1"
             android:gravity="right"
             android:layout_centerInParent="true"
-            android:text="@string/userWattLvl" />
+            android:text="@string/user_watt_lvl" />
 
 
 
@@ -185,7 +185,7 @@ android:paddingLeft="0dp" >
             android:gravity="left"
             android:layout_below="@+id/horizontalLine"
             android:layout_centerInParent="true"
-            android:text="@string/friendWattLvl" />
+            android:text="@string/friend_watt_lvl" />
 
 
 
