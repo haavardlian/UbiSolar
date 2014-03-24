@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.TipAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
+import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.utils.Global;
 
 import org.json.JSONArray;
@@ -50,7 +51,7 @@ public class TipPresenter {
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
                         adapter.add((Tip)mapper.readValue(jsonArray.get(i).toString(), Tip.class));
-                        Log.d(tag, adapter.getItem(i).toString());
+                        //Log.d(tag, adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e(tag, "Error in JSON Mapping:");
                         Log.e(tag, e.toString());
@@ -108,4 +109,42 @@ public class TipPresenter {
 
         ((DrawerActivity) activity).getRequestQueue().add(jsonRequest);
     }
+
+    public void createRating(final Activity activity, TipRating rating) {
+        String url = Global.BASE_URL + "/tips/" + rating.getTipId() + "/rating/";
+        JSONObject jsonObject;
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+
+        try {
+            jsonObject = new JSONObject(mapper.writeValueAsString(rating));
+        } catch (JsonProcessingException | JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Toast.makeText(activity.getApplicationContext(), response.getString("message"),
+                                    Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(activity.getApplicationContext(), "An error occured",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+        ((DrawerActivity) activity).getRequestQueue().add(jsonRequest);
+    }
+
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque convallis, libero id placerat tristique, eros justo imperdiet nibh, eget scelerisque odio nisi eu orci"
+        android:id="@+id/tipDialogDescription"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tipDialogRatingBar"
+        android:layout_below="@+id/tipDialogDescription"
+        android:layout_alignLeft="@+id/tipDialogDescription"
+        android:layout_alignStart="@+id/tipDialogDescription"
+        style="?android:attr/ratingBarStyleIndicator"
+        android:stepSize="1"
+        android:numStars="5"/>
+
+</RelativeLayout>

@@ -2,16 +2,17 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/yourTipsRowName"
         android:singleLine="true"
-        android:textSize="35sp"
+        android:textSize="25sp"
         android:textIsSelectable="false"
-        android:text="Tip title"
+        android:text="Tip name"
         android:layout_toLeftOf="@+id/yourTipsRowChecked"
         android:gravity="center_vertical"
         android:layout_marginLeft="10dp" />
@@ -24,7 +25,9 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/yourTipsRowName" />
+        android:layout_alignBottom="@+id/yourTipsRowName"
+        android:enabled="false"
+        android:focusable="false" />
 
 
 </RelativeLayout>

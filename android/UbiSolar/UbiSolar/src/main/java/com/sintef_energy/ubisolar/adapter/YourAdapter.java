@@ -1,8 +1,7 @@
-package com.sintef_energy.ubisolar.adapters;
+package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.structs.Tip;
+import com.sintef_energy.ubisolar.model.Tip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +18,12 @@ import java.util.List;
 /**
  * Created by Håvard on 20.03.14.
  */
-public class YourTipAdapter extends ArrayAdapter<Tip> {
+public class YourAdapter extends ArrayAdapter<Tip> {
     Context context;
     int layoutResourceId;
     List<Tip> data = null;
 
-    public YourTipAdapter(Context context, int layoutResourceId, ArrayList<Tip> data) {
+    public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data) {
         super(context, layoutResourceId);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
@@ -38,11 +37,19 @@ public class YourTipAdapter extends ArrayAdapter<Tip> {
     @Override
     public void add(Tip object) {
         data.add(object);
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void remove(Tip object) {
+        data.remove(object);
+        notifyDataSetChanged();
     }
 
     @Override
     public void clear() {
         data.clear();
+        notifyDataSetChanged();
     }
 
     @Override
@@ -78,6 +85,7 @@ public class YourTipAdapter extends ArrayAdapter<Tip> {
             holder.name.setText(tip.getName());
             holder.checked.setChecked(true);
         }
+
         return row;
     }
 
