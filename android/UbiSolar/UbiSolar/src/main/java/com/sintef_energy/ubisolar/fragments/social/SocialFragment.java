@@ -106,7 +106,7 @@ public class SocialFragment extends DefaultTabFragment {
                 case 0:
                     return SocialFriendListFragment.newInstance(0, friendAdapter);
                 case 1:
-                    //return SocialCompareFragment.newInstance(1, friendAdapter);
+                    return SocialCompareFragment.newInstance(1, friendAdapter);
                 default:
                     return null;
             }
