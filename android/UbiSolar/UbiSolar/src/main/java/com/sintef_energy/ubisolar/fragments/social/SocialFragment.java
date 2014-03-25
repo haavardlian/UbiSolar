@@ -32,14 +32,14 @@ import com.sintef_energy.ubisolar.IView.IDeviceView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.adapter.SocialMenuAdapter;
+//import com.sintef_energy.ubisolar.adapter.SocialMenuAdapter;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
-import com.sintef_energy.ubisolar.model.SocialMenuItem;
+//import com.sintef_energy.ubisolar.model.SocialMenuItem;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ public class SocialFragment extends DefaultTabFragment {
     private ArrayList<User> friends;
     //TODO: swap User to String or SocialMenuItem
 
-    private ArrayList<SocialMenuItem> homeTabs;
+//    private ArrayList<SocialMenuItem> homeTabs;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -107,7 +107,7 @@ public class SocialFragment extends DefaultTabFragment {
                                     int position, long id) {
 
                 if(position == 0) {
-                    friendsList.setVisibility(View.GONE);
+//                    friendsList.setVisibility(View.GONE);
                 }
                 if(position == 1) {
 
