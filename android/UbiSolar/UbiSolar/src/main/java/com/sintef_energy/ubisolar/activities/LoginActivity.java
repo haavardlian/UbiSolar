@@ -21,6 +21,7 @@ import com.sintef_energy.ubisolar.R;
 public class LoginActivity extends FragmentActivity {
     private static final int SPLASH = 0;
     private static final int SELECTION = 1;
+    private static final int SETTINGS = 2;
     private static final int FRAGMENT_COUNT = SELECTION +1;
     int APP_ID = R.string.APP_ID;
 
