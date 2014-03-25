@@ -24,16 +24,17 @@ import java.util.ArrayList;
 /**
  * Created by baier on 3/21/14.
  */
-public class SocialFriendListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class SocialFriendListFragment extends Fragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = SocialFragment.class.getName();
 
-    private SimpleCursorAdapter adapter;
     private ArrayList<User> friends;
+    private static final String ARG_POSITION = "position";
     private View view;
+    private FriendAdapter friendAdapter;
 
 
 
@@ -41,14 +42,16 @@ public class SocialFriendListFragment extends Fragment implements LoaderManager.
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static SocialFriendListFragment newInstance(int sectionNumber) {
-        SocialFriendListFragment fragment = new SocialFriendListFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+    public static SocialFriendListFragment newInstance(int position, FriendAdapter friendAdapter) {
+        SocialFriendListFragment fragment = new SocialFriendListFragment(friendAdapter);
+        Bundle b = new Bundle();
+        b.putInt(ARG_POSITION, position);
+        fragment.setArguments(b);
         return fragment;
     }
 
-    public SocialFriendListFragment() {
+    public SocialFriendListFragment(FriendAdapter friendAdapter) {
+        this.friendAdapter = friendAdapter;
     }
 
     /**
@@ -100,21 +103,4 @@ public class SocialFriendListFragment extends Fragment implements LoaderManager.
         super.onDestroy();
     }
 
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        this.adapter.swapCursor(cursor);
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        this.adapter.swapCursor(null);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(getActivity());
-
-    }
 }

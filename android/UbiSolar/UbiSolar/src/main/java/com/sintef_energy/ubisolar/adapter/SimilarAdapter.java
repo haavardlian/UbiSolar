@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,77 +10,76 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.model.User;
+import com.sintef_energy.ubisolar.model.Residence;
+
 import java.util.List;
 
 /**
- * Created by baier on 3/21/14.
+ * Created by baier on 3/25/14.
  */
-public class FriendAdapter extends ArrayAdapter<User> {
+public class SimilarAdapter extends ArrayAdapter<Residence> {
 
     protected Context context;
     protected int resource;
-    List<User> users = null;
+    List<Residence> residences = null;
 
-    public FriendAdapter(Context context, int resource, List<User> users) {
-        super(context, resource);
+    public SimilarAdapter(Context context, int resource, List<Residence> residences) {
+        super(context, resource, residences);
 
         this.context = context;
         this.resource = resource;
-        this.users = users;
+        this.residences = residences;
     }
 
     @Override
-    public void add(User object) {
-        users.add(object);
+    public void add(Residence object) {
+        residences.add(object);
         notifyDataSetChanged();
     }
 
     @Override
     public void clear() {
-        users.clear();
+        residences.clear();
         notifyDataSetChanged();
     }
 
     @Override
-    public User getItem(int position) {
-        return users.get(position);
+    public Residence getItem(int position) {
+        return residences.get(position);
     }
 
     @Override
     public int getCount() {
-        return users.size();
+        return residences.size();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        FriendHolder holder = null;
+        SimilarHolder holder = null;
 
         if(row == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(resource, parent, false);
 
-            holder = new FriendHolder();
+            holder = new SimilarHolder();
             holder.name = (TextView)row.findViewById(R.id.social_user_name);
-            holder.profilePic = (ImageView)row.findViewById(R.id.social_profile_pic);
 
             row.setTag(holder);
         } else {
-            holder = (FriendHolder)row.getTag();
+            holder = (SimilarHolder)row.getTag();
         }
 
-        if(!users.isEmpty()) {
-            User user = users.get(position);
-            holder.name.setText(user.getName());
-            holder.profilePic.setImageDrawable(user.getProfilePic());
+        if(!residences.isEmpty()) {
+            Residence residence = residences.get(position);
+            holder.name.setText(residence.getHouseId());
         }
         return row;
     }
 
-    static class FriendHolder {
+    static class SimilarHolder {
         TextView name;
-        ImageView profilePic;
     }
 
 }
+
