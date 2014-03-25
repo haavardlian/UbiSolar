@@ -54,6 +54,10 @@
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
     <string name="add_device_button">Add Device</string>
+    <string-array name="fragment_usage_tabs">
+        <item>Line chart</item>
+        <item>Pie chart</item>
+    </string-array>
 
     <!-- Fragment social-->
     <string name="social_user_name">User\'s name</string>
@@ -76,7 +80,5 @@
         <item>Yours</item>
     </string-array>
 
-
     <!-- TAGS -->
-    <string name="TAG_GRAPH_TYPE">tag_graph_type</string>
 </resources>
