@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.http.AndroidHttpClient;
 import android.os.Build;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -86,10 +87,15 @@ public class RequestProxy {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                activity.setProgressBarIndeterminateVisibility(false);
-                Toast.makeText(activity, "Could not get data from server",
-                        Toast.LENGTH_LONG).show();
-                Log.e("REQUEST", "Error from server!!");
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        activity.setProgressBarIndeterminateVisibility(false);
+                        Toast.makeText(activity, "Could not get data from server",
+                                Toast.LENGTH_LONG).show();
+                        Log.e("REQUEST", "Error from server!!");
+                    }
+                });
             }
         });
 
@@ -110,20 +116,30 @@ public class RequestProxy {
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            Toast.makeText(activity, response.getString("message"),
-                                    Toast.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    public void onResponse(final JSONObject response) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Toast.makeText(activity, response.getString("message"),
+                                            Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(activity, "An error occured",
-                                Toast.LENGTH_LONG).show();
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(activity, "An error occurred",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
 
@@ -144,20 +160,30 @@ public class RequestProxy {
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            Toast.makeText(activity, response.getString("message"),
-                                    Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    public void onResponse(final JSONObject response) {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Toast.makeText(activity, response.getString("message"),
+                                            Toast.LENGTH_SHORT).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(activity, "An error occured",
-                                Toast.LENGTH_LONG).show();
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(activity, "An error occurred",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
 
