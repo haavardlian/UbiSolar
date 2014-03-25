@@ -15,6 +15,10 @@ import android.widget.TabHost;
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.adapter.YourAdapter;
+import com.sintef_energy.ubisolar.model.Tip;
+
+import java.util.ArrayList;
 
 /**
  * Created by perok on 21.03.14.
@@ -28,6 +32,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
     private View mRoot;
     private TabHost mTabHost;
     private int mCurrentTab;
+    private YourAdapter yourAdapter;
 
     public static EnergySavingTabFragment newInstance(int sectionNumber) {
         EnergySavingTabFragment fragment = new EnergySavingTabFragment();
@@ -53,14 +58,14 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.fragment_energy_saving_tab, container, false);
         //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
-
+        yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row, new ArrayList<Tip>());
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_energy_saving_pager);
-        pager.setAdapter(new MyPagerAdapter(getFragmentManager()));
-
+        pager.setAdapter(new MyPagerAdapter(getFragmentManager(), yourAdapter));
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_energy_saving_tabs);
         tabs.setViewPager(pager);
+
 
         return mRoot;
     }
@@ -78,10 +83,11 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
 
     public class MyPagerAdapter extends FragmentPagerAdapter {
 
-        private final String[] TITLES = { "Tips", "Your"};
-
-        public MyPagerAdapter(FragmentManager fm) {
+        private final String[] TITLES = { "Tips", "Your tips"};
+        private YourAdapter yourAdapter;
+        public MyPagerAdapter(FragmentManager fm, YourAdapter yourAdapter) {
             super(fm);
+            this.yourAdapter = yourAdapter;
         }
 
         @Override
@@ -96,10 +102,15 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
 
         @Override
         public Fragment getItem(int position) {
-            return new PowerSavingFragment();//SuperAwesomeCardFragment.newInstance(position);
+            switch(position) {
+                case 0:
+                    return TipsFragment.newInstance(0, yourAdapter);
+                case 1:
+                    return YourFragment.newInstance(1, yourAdapter);
+                default:
+                    return null;
+            }
         }
 
     }
-
-
 }

@@ -80,7 +80,7 @@ public interface ServerDAO {
     @Mapper(TipRatingMapper.class)
     List<TipRating> getRatingsForTip(@Bind("id") int id);
 
-    @SqlUpdate("INSERT INTO tip_rating (tip_id, rating, user_id) VALUES (:rating.tipId, :rating.rating, :rating.userId)")
+    @SqlUpdate("INSERT INTO tip_rating (tip_id, rating, user_id) VALUES (:rating.tipId, :rating.rating, :rating.userId) ON DUPLICATE KEY UPDATE rating = :rating.rating")
     int createRating(@BindBean("rating") TipRating rating);
 
  }

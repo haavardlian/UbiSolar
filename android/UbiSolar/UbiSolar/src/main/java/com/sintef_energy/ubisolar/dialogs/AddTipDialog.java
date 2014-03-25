@@ -58,8 +58,8 @@ public class AddTipDialog extends DialogFragment {
 
 
 
-        nameField = (EditText) view.findViewById(R.id.tipDialogName);
-        descriptionField = (EditText) view.findViewById(R.id.tipDialogDescription);
+        nameField = (EditText) view.findViewById(R.id.createTipDialogName);
+        descriptionField = (EditText) view.findViewById(R.id.createTipDialogDescription);
 
 
         AlertDialog alertDialog = builder.create();
