@@ -21,7 +21,7 @@ public class FriendAdapter extends ArrayAdapter<User> {
 
     protected Context context;
     protected int resource;
-    protected List<User> users = null;
+    List<User> users = null;
 
     public FriendAdapter(Context context, int resource, List<User> users) {
         super(context, resource, users);
@@ -34,11 +34,13 @@ public class FriendAdapter extends ArrayAdapter<User> {
     @Override
     public void add(User object) {
         users.add(object);
+        notifyDataSetChanged();
     }
 
     @Override
     public void clear() {
         users.clear();
+        notifyDataSetChanged();
     }
 
     @Override

@@ -33,7 +33,9 @@ public class SocialFriendListFragment extends Fragment implements LoaderManager.
 
     private SimpleCursorAdapter adapter;
     private ArrayList<User> friends;
+    private static final String ARG_POSITION = "position";
     private View view;
+    private FriendAdapter friendAdapter;
 
 
 
@@ -41,14 +43,16 @@ public class SocialFriendListFragment extends Fragment implements LoaderManager.
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static SocialFriendListFragment newInstance(int sectionNumber) {
-        SocialFriendListFragment fragment = new SocialFriendListFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
+    public static SocialFriendListFragment newInstance(int position, FriendAdapter friendAdapter) {
+        SocialFriendListFragment fragment = new SocialFriendListFragment(friendAdapter);
+        Bundle b = new Bundle();
+        b.putInt(ARG_POSITION, position);
+        fragment.setArguments(b);
         return fragment;
     }
 
-    public SocialFriendListFragment() {
+    public SocialFriendListFragment(FriendAdapter friendAdapter) {
+        this.friendAdapter = friendAdapter;
     }
 
     /**

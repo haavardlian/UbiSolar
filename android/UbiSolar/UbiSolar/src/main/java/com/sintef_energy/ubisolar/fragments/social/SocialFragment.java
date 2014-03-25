@@ -1,69 +1,44 @@
 package com.sintef_energy.ubisolar.fragments.social;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-
-import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
+import android.app.FragmentManager;
 import android.os.Bundle;
-import android.provider.BaseColumns;
+import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TabHost;
 
-import android.util.Log;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CursorAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.sintef_energy.ubisolar.IView.IDeviceView;
+import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-//import com.sintef_energy.ubisolar.adapter.SocialMenuAdapter;
-import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
-import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
+import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
-//import com.sintef_energy.ubisolar.model.SocialMenuItem;
+import com.sintef_energy.ubisolar.fragments.social.SocialCompareFragment;
+import com.sintef_energy.ubisolar.fragments.social.SocialFriendListFragment;
+import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
 
 /**
- * Created by perok on 2/11/14.
+ * Created by perok on 21.03.14.
  */
 public class SocialFragment extends DefaultTabFragment {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    public static final String TAG = SocialFragment.class.getName();
 
-    private View view;
-    private ArrayList<User> friends;
-    //TODO: swap User to String or SocialMenuItem
+    private static final String TAG = SocialFragment.class.getName();
+    public static final String TAB_WORDS = "tips";
+    public static final String TAB_NUMBERS = "your";
 
-//    private ArrayList<SocialMenuItem> homeTabs;
+    private View mRoot;
+    private TabHost mTabHost;
+    private int mCurrentTab;
+    private FriendAdapter friendAdapter;
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
     public static SocialFragment newInstance(int sectionNumber) {
         SocialFragment fragment = new SocialFragment();
         Bundle args = new Bundle();
@@ -72,8 +47,6 @@ public class SocialFragment extends DefaultTabFragment {
         return fragment;
     }
 
-    public SocialFragment() {
-    }
 
     /**
      * The first call to a created fragment
@@ -88,58 +61,56 @@ public class SocialFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_social, container, false);
-        friends = new ArrayList<User>();
-        FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_row, friends);
-        final ListView friendsList = (ListView) view.findViewById(R.id.social_menu_list);
-        friendsList.setAdapter(friendAdapter);
+        mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
+        //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
+        friendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<User>());
+        // Initialize the ViewPager and set an adapter
+        ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
+        pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter));
+        // Bind the tabs to the ViewPager
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
+        tabs.setViewPager(pager);
 
-        friends.add(new User(this.getString(R.string.friends_header_title), getActivity().getResources().getDrawable(R.drawable.profile)));
-        friends.add(new User(this.getString(R.string.similar_header_title), getActivity().getResources().getDrawable(R.drawable.heat)));
-        friends.add(new User(this.getString(R.string.area_header_title), getActivity().getResources().getDrawable(R.drawable.profile)));
 
-        friendAdapter.notifyDataSetChanged();
-
-        friendsList.setClickable(true);
-        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-
-                if(position == 0) {
-//                    friendsList.setVisibility(View.GONE);
-                }
-                if(position == 1) {
-
-                }
-                if(position == 2) {
-
-                }
-            }
-        });
-
-        return view;
+        return mRoot;
     }
-
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setRetainInstance(true);
+    }
 
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
+    public class MyPagerAdapter extends FragmentPagerAdapter {
+
+        private final String[] TITLES = { "Friends", "Similar"};
+        private FriendAdapter friendAdapter;
+        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter) {
+            super(fm);
+            this.friendAdapter = friendAdapter;
         }
-    }
 
-    /*End lifecycle*/
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TITLES[position];
+        }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
+        @Override
+        public int getCount() {
+            return TITLES.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch(position) {
+                case 0:
+                    return SocialFriendListFragment.newInstance(0, friendAdapter);
+                case 1:
+                    //return SocialCompareFragment.newInstance(1, friendAdapter);
+                default:
+                    return null;
+            }
+        }
+
     }
 }
