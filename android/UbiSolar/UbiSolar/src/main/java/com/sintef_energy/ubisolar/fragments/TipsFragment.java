@@ -15,6 +15,7 @@ import com.sintef_energy.ubisolar.adapter.TipAdapter;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.dialogs.TipDialog;
 import com.sintef_energy.ubisolar.model.Tip;
+import com.sintef_energy.ubisolar.utils.RequestManager;
 
 import java.util.ArrayList;
 
@@ -55,7 +56,7 @@ public class TipsFragment extends Fragment {
 
         //Get all tips from server asynchronously
         getActivity().setProgressBarIndeterminateVisibility(true);
-        ((DrawerActivity) getActivity()).getTipPresenter().getAllTips(tipAdapter);
+        RequestManager.getInstance().doRequest().getAllTips(tipAdapter);
         return rootView;
     }
 }

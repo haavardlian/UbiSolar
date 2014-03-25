@@ -35,12 +35,12 @@ import com.sintef_energy.ubisolar.fragments.social.SocialFragment;
 import com.sintef_energy.ubisolar.model.NavDrawerItem;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
-import com.sintef_energy.ubisolar.presenter.TipPresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
+import com.sintef_energy.ubisolar.utils.RequestManager;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -68,8 +68,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     private TotalEnergyPresenter mTotalEnergyPresenter;
     private DevicePresenter devicePresenter;
-    private RequestQueue requestQueue;
-    private TipPresenter tipPresenter;
 
     FacebookSessionStatusCallback mFacebookSessionStatusCallback;
 
@@ -103,9 +101,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
 
         super.onCreate(savedInstanceState);
+        //We want to use the progress bar
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-        requestQueue = Volley.newRequestQueue(this);
-        tipPresenter = new TipPresenter(requestQueue);
+        //Create RequestManager instance
+        RequestManager.getInstance(this);
         /* Set up the presenters */
 
         /*UsagePresenter*/
@@ -405,14 +404,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     @Override
     public DevicePresenter getDevicePresenter() { return devicePresenter; }
-
-    public TipPresenter getTipPresenter() {
-        return tipPresenter;
-    }
-
-    public RequestQueue getRequestQueue() {
-        return requestQueue;
-    }
 
     /**
      * Helper class to check if app has internet connection.
