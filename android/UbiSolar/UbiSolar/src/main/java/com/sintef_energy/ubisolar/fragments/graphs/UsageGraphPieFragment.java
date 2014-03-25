@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
+import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView {
+public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     public static final String TAG = UsageGraphLineFragment.class.getName();
@@ -44,6 +44,9 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     private ArrayList<DeviceUsageList> mDeviceUsageList;
     private Bundle mSavedState;
     private int mSelected = -1;
+
+    private String[] selectedItems;
+    private boolean[] selectedDialogItems;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -248,12 +251,13 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     public void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
+        mChartView.repaint();
 
     }
 
     private void updateDetails()
     {
-        if(mSelected > -1) {
+        if(mSelected > -1 && mSelected < mDeviceUsageList.size()) {
             TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
             TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
             TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
@@ -275,5 +279,37 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
         nameView.setText("");
         descriptionView.setText("");
         powerUsageView.setText("");
+    }
+
+    @Override
+    public String[] getSelectedItems() {
+        if(selectedItems == null)
+            return new String[0];
+        else
+            return selectedItems;
+    }
+
+    @Override
+    public void setSelectedItems(String[] selectedItems) {
+        this.selectedItems = selectedItems;
+    }
+
+    @Override
+    public boolean[] getSelectedDialogItems() {
+        if(selectedDialogItems == null)
+            return new boolean[0];
+        else
+            return selectedDialogItems;
+    }
+
+    @Override
+    public void setSelectedDialogItems(boolean[] selectedDialogItems) {
+        this.selectedDialogItems = selectedDialogItems;
+    }
+
+    @Override
+    public void redraw() {
+        if(mChartView != null)
+            mChartView.repaint();
     }
 }
