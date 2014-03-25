@@ -321,7 +321,6 @@ public class EnergyProvider extends ContentProvider{
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ")"
                                     +" values " + "(?,?,?,?)");
-
                     for (ContentValues value : values){
                         //bind the 1-indexed ?'s to the values specified
                         insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
@@ -403,7 +402,7 @@ public class EnergyProvider extends ContentProvider{
                         + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
                         + "GROUP BY " + time + ", "
                             + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
-                        + "SORT BY `month` ASC";
+                        + "ORDER BY `month` ASC";
 
         return rawSql;
     }

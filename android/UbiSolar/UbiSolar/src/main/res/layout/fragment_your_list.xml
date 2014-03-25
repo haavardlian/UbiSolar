@@ -5,13 +5,9 @@
     android:layout_height="match_parent"
     android:weightSum="1">
 
-    <TextView
-        android:id="@+id/socialPlaceHolder"
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:textSize="22dp"
-        android:text="@string/socialPlaceHolder"
-        android:textColor="#000"/>
+        android:layout_height="match_parent"
+        android:id="@+id/yourList" />
 
 </LinearLayout>
