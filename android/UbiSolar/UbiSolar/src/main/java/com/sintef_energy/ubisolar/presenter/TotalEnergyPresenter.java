@@ -4,7 +4,7 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.util.Log;
 
-import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
+import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 
@@ -28,7 +28,7 @@ public class TotalEnergyPresenter {
     ArrayList<EnergyUsageModel> euModels;
 
     /* The listeners */
-    ArrayList<ITotalEnergyView> listeners;
+    ArrayList<IUsageView> listeners;
 
     public TotalEnergyPresenter(){
         listeners = new ArrayList<>();
@@ -36,11 +36,11 @@ public class TotalEnergyPresenter {
     }
 
     /* Listeners */
-    public void registerListner(ITotalEnergyView view){
+    public void registerListner(IUsageView view){
         listeners.add(view);
     }
 
-    public void unregisterListener(ITotalEnergyView view){
+    public void unregisterListener(IUsageView view){
         listeners.remove(view);
     }
 
@@ -60,7 +60,7 @@ public class TotalEnergyPresenter {
         else
             euModels = new ArrayList<>();
 
-        for(ITotalEnergyView view : listeners)
+        for(IUsageView view : listeners)
             view.newData(null); //todo: handle correctly...
     }
 
@@ -90,7 +90,7 @@ public class TotalEnergyPresenter {
 
         Collections.sort(euModels);
 
-        for(ITotalEnergyView view : listeners)
+        for(IUsageView view : listeners)
             view.newData(euModel);
     }
 }

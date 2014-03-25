@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -13,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 
-import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
+import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
@@ -38,7 +37,7 @@ import java.util.Date;
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView{
+public class UsageGraphLineFragment extends Fragment implements IUsageView {
 
     public static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -64,6 +63,9 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
 
     private Bundle mSavedState;
     private UsageFragment mUsageFragment;
+
+    private String[] selectedItems;
+    private boolean[] selectedDialogItems;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -523,7 +525,35 @@ public class UsageGraphLineFragment extends Fragment implements ITotalEnergyView
             populateGraph(getLargestListSize());
     }
 
-    public void setmUsageFragment(UsageFragment usageFragment) {
+    public void setUsageFragment(UsageFragment usageFragment) {
         this.mUsageFragment = usageFragment;
+    }
+
+    public String[] getSelectedItems() {
+        if(selectedItems == null)
+            return new String[0];
+        else
+            return selectedItems;
+    }
+
+    public void setSelectedItems(String[] selectedItems) {
+        this.selectedItems = selectedItems;
+    }
+
+    public boolean[] getSelectedDialogItems() {
+        if(selectedDialogItems == null)
+            return new boolean[0];
+        else
+            return selectedDialogItems;
+    }
+
+    public void setSelectedDialogItems(boolean[] selectedDialogItems) {
+        this.selectedDialogItems = selectedDialogItems;
+    }
+
+    @Override
+    public void redraw() {
+        if(mChartView != null)
+            mChartView.repaint();
     }
 }
