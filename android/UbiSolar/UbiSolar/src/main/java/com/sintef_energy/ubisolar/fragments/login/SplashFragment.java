@@ -8,6 +8,7 @@ import com.sintef_energy.ubisolar.R;
 /**
  * Created by Lars Erik on 12.03.14.
  */
+@Deprecated
 public class SplashFragment extends Fragment {
 
     @Override

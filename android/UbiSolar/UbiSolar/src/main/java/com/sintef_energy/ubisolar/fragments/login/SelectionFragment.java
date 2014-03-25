@@ -9,6 +9,7 @@ import com.sintef_energy.ubisolar.R;
 /**
  * Created by Lars Erik on 12.03.14.
  */
+@Deprecated
 public class SelectionFragment extends Fragment{
 
     private static final String TAG = "SelectionFragment";

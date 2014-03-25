@@ -18,6 +18,7 @@ import com.sintef_energy.ubisolar.R;
  *
  * Read about this: https://developers.facebook.com/docs/android/scrumptious/authenticate
  */
+@Deprecated
 public class LoginActivity extends FragmentActivity {
     private static final int SPLASH = 0;
     private static final int SELECTION = 1;
