@@ -57,6 +57,10 @@
     <string name = "action_forgot_password">Have you forgotten your password?</string>
     <string name = "APP_ID">598479706901551</string>
     <string name="add_device_button">Add Device</string>
+    <string-array name="fragment_usage_tabs">
+        <item>Line chart</item>
+        <item>Pie chart</item>
+    </string-array>
 
     <!-- Fragment social-->
     <string name="social_user_name">User\'s name</string>
@@ -79,7 +83,5 @@
         <item>Yours</item>
     </string-array>
 
-
     <!-- TAGS -->
-    <string name="TAG_GRAPH_TYPE">tag_graph_type</string>
 </resources>

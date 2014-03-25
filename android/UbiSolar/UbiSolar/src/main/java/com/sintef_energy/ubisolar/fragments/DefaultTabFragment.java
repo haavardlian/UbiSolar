@@ -1,7 +1,6 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Fragment;
-import android.os.Bundle;
 
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
