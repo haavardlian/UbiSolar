@@ -1,20 +1,25 @@
-package com.sintef_energy.ubisolar.fragments;
+package com.sintef_energy.ubisolar.fragments.login;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.*;
+
 import com.sintef_energy.ubisolar.R;
 
 /**
  * Created by Lars Erik on 12.03.14.
  */
-public class ProfileSplashFragment extends Fragment {
+public class SelectionFragment extends Fragment{
+
+    private static final String TAG = "SelectionFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_profile_splash,
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_profile_selection,
                 container, false);
         return view;
     }
 }
+

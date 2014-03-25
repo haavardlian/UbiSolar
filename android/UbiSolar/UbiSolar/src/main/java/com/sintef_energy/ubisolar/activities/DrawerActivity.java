@@ -13,9 +13,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
@@ -124,7 +130,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         getFragmentManager().
                     }
                 });*/
-    }
+   }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {

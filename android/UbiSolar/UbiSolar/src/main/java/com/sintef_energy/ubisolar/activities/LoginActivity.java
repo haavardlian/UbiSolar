@@ -12,9 +12,6 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.sintef_energy.ubisolar.R;
 
-//import com.facebook.android.Facebook;
-//import com.facebook.widget.LoginButton;
-
 /**
  * Activity which displays a login screen to the user, offering registration as
  * well.
@@ -35,8 +32,7 @@ public class LoginActivity extends FragmentActivity {
     private Session.StatusCallback callback =
             new Session.StatusCallback() {
                 @Override
-                public void call(Session session,
-                                 SessionState state, Exception exception) {
+                public void call(Session session, SessionState state, Exception exception) {
                     onSessionStateChange(session, state, exception);
                 }
             };
@@ -45,10 +41,10 @@ public class LoginActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        setContentView(R.layout.fragment_profile);
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
+
+        setContentView(R.layout.fragment_profile);
 
         FragmentManager fm = getSupportFragmentManager();
         fragments[SPLASH] = fm.findFragmentById(R.id.splashFragment);
@@ -146,5 +142,4 @@ public class LoginActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
     }
-
 }
