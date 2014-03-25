@@ -71,6 +71,10 @@
     <!-- Fragment Energy saving tabs -->
     <string name="fragment_energy_saving_tab_tips">Tips</string>
     <string name="fragment_energy_saving_tab_your">Your</string>
+    <string-array name="fragment_energy_saving_tabs">
+        <item>Tips</item>
+        <item>Yours</item>
+    </string-array>
 
 
     <!-- TAGS -->
