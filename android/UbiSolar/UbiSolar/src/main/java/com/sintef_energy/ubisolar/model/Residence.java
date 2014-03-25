@@ -6,12 +6,12 @@ package com.sintef_energy.ubisolar.model;
 public class Residence {
     private String houseId;
     private int area;
-    private byte residents;
-    private byte zipCode;
+    private int residents;
+    private int zipCode;
     private char energyClass;
 
-    public Residence(String houseId, byte residents, int area,
-                     byte zipCode, char energyClass) {
+    public Residence(String houseId, int residents, int area,
+                     int zipCode, char energyClass) {
         this.houseId = houseId;
         this.residents = residents;
         this.area = area;
@@ -35,7 +35,7 @@ public class Residence {
         this.energyClass = energyClass;
     }
 
-    public byte getZipCode() {
+    public int getZipCode() {
         return zipCode;
     }
 
@@ -43,7 +43,7 @@ public class Residence {
         this.zipCode = zipCode;
     }
 
-    public byte getResidents() {
+    public int getResidents() {
         return residents;
     }
 

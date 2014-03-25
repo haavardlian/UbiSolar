@@ -16,10 +16,12 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
+import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
 import com.sintef_energy.ubisolar.fragments.social.SocialCompareFragment;
 import com.sintef_energy.ubisolar.fragments.social.SocialFriendListFragment;
+import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.User;
 
@@ -38,6 +40,7 @@ public class SocialFragment extends DefaultTabFragment {
     private TabHost mTabHost;
     private int mCurrentTab;
     private FriendAdapter friendAdapter;
+    private SimilarAdapter similarAdapter;
 
     public static SocialFragment newInstance(int sectionNumber) {
         SocialFragment fragment = new SocialFragment();
@@ -64,9 +67,10 @@ public class SocialFragment extends DefaultTabFragment {
         mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
         //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
         friendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<User>());
+        similarAdapter = new SimilarAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<Residence>());
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
-        pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter));
+        pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter, similarAdapter));
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
         tabs.setViewPager(pager);
@@ -85,10 +89,13 @@ public class SocialFragment extends DefaultTabFragment {
 
         private final String[] TITLES = { "Friends", "Similar"};
         private FriendAdapter friendAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter) {
+        private SimilarAdapter similarAdapter;
+        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter similarAdapter) {
             super(fm);
             this.friendAdapter = friendAdapter;
+            this.similarAdapter = similarAdapter;
         }
+
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -106,7 +113,7 @@ public class SocialFragment extends DefaultTabFragment {
                 case 0:
                     return SocialFriendListFragment.newInstance(0, friendAdapter);
                 case 1:
-                    return SocialCompareFragment.newInstance(1, friendAdapter);
+                    return SocialCompareFragment.newInstance(1, similarAdapter);
                 default:
                     return null;
             }
