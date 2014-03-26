@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -29,8 +28,6 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.achartengine.tools.PanListener;
-import org.achartengine.tools.ZoomEvent;
-import org.achartengine.tools.ZoomListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,8 +64,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
     private UsageFragment mUsageFragment;
     private View mRootView;
 
-    private String[] selectedItems;
-    private boolean[] selectedDialogItems;
+    private String[] mSelectedItems;
+    private boolean[] mSelectedDialogItems;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -140,7 +137,10 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             mActiveDateIndex = mSavedState.getInt("mActiveDateIndex");
             mActiveUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mActiveUsageList");
             mBaseUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mBaseUsageList");
-            System.out.println(mActiveDateIndex);
+            mSelectedDialogItems = mSavedState.getBooleanArray("mSelectedDialogItems");
+            mSelectedItems = mSavedState.getStringArray("mSelectedItems");
+            System.out.println("Loaded");
+
         }
         //Initialize new data
         else {
@@ -150,6 +150,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             mBaseUsageList = new ArrayList<>();
             mTitleFormat = "EEEE dd/MM";
             mDataResolution = "HH";
+//            mSelectedDialogItems = {false, true};
         }
         createLineGraph();
         populateGraph(mActiveDateIndex);
@@ -195,6 +196,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
         state.putInt("mActiveDateIndex", mActiveDateIndex);
         state.putSerializable("mActiveUsageList", mActiveUsageList);
         state.putSerializable("mBaseUsageList", mBaseUsageList);
+        state.putBooleanArray("mSelectedDialogItems", mSelectedDialogItems);
+        state.putStringArray("mSelectedItems", mSelectedItems);
 
         return state;
     }
@@ -527,7 +530,10 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
     private String formatDate(Date date, String format)
     {
         SimpleDateFormat formater = new SimpleDateFormat (format);
-        return formater.format(date);
+        if(date != null)
+            return formater.format(date);
+        else
+            return null;
     }
 
     private void setLabels(String label)
@@ -566,25 +572,25 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
         this.mUsageFragment = usageFragment;
     }
 
-    public String[] getSelectedItems() {
-        if(selectedItems == null)
+    public String[] getmSelectedItems() {
+        if(mSelectedItems == null)
             return new String[0];
         else
-            return selectedItems;
+            return mSelectedItems;
     }
 
-    public void setSelectedItems(String[] selectedItems) {
-        this.selectedItems = selectedItems;
+    public void setmSelectedItems(String[] mSelectedItems) {
+        this.mSelectedItems = mSelectedItems;
     }
 
-    public boolean[] getSelectedDialogItems() {
-        if(selectedDialogItems == null)
+    public boolean[] getmSelectedDialogItems() {
+        if(mSelectedDialogItems == null)
             return new boolean[0];
         else
-            return selectedDialogItems;
+            return mSelectedDialogItems;
     }
 
-    public void setSelectedDialogItems(boolean[] selectedDialogItems) {
-        this.selectedDialogItems = selectedDialogItems;
+    public void setmSelectedDialogItems(boolean[] mSelectedDialogItems) {
+        this.mSelectedDialogItems = mSelectedDialogItems;
     }
 }

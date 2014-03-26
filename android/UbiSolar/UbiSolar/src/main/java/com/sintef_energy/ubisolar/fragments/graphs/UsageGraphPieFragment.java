@@ -284,7 +284,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     @Override
-    public String[] getSelectedItems() {
+    public String[] getmSelectedItems() {
         if(selectedItems == null)
             return new String[0];
         else
@@ -292,12 +292,12 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     @Override
-    public void setSelectedItems(String[] selectedItems) {
+    public void setmSelectedItems(String[] selectedItems) {
         this.selectedItems = selectedItems;
     }
 
     @Override
-    public boolean[] getSelectedDialogItems() {
+    public boolean[] getmSelectedDialogItems() {
         if(selectedDialogItems == null)
             return new boolean[0];
         else
@@ -305,7 +305,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     @Override
-    public void setSelectedDialogItems(boolean[] selectedDialogItems) {
+    public void setmSelectedDialogItems(boolean[] selectedDialogItems) {
         this.selectedDialogItems = selectedDialogItems;
     }
 

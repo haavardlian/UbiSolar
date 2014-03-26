@@ -185,7 +185,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case R.id.fragment_usage_menu_action_devices:
                 SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(
                         new ArrayList<>(mDevices.values()),
-                        graphView.getSelectedDialogItems());
+                        graphView.getmSelectedDialogItems());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getFragmentManager(), "selectDeviceDialog");
                 return true;
@@ -223,8 +223,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
         Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
-        graphView.setSelectedItems(selectedItems);
-        graphView.setSelectedDialogItems(itemsSelected);
+        graphView.setmSelectedItems(selectedItems);
+        graphView.setmSelectedDialogItems(itemsSelected);
 
         //Clear the graph if no devices are selected
         if(selectedItems.length > 0)
@@ -250,9 +250,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case LOADER_USAGE:
                 String where = "";
 
-                for(int n = 0; n < graphView.getSelectedItems().length; n++){
+                for(int n = 0; n < graphView.getmSelectedItems().length; n++){
                     where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
-                    if(n != graphView.getSelectedItems().length - 1)
+                    if(n != graphView.getmSelectedItems().length - 1)
                         where += " OR ";
                 }
                 return new CursorLoader(
@@ -260,7 +260,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         EnergyContract.Energy.CONTENT_URI,
                         EnergyContract.Energy.PROJECTION_ALL,
                         sqlWhereDevices(),
-                        graphView.getSelectedItems(),
+                        graphView.getmSelectedItems(),
                         EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
                 );
             case LOADER_USAGE_DAY:
@@ -321,9 +321,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         //TODO: BUG: How to handle when user selects no devices?
 
-        for(int n = 0; n < graphView.getSelectedItems().length; n++){
+        for(int n = 0; n < graphView.getmSelectedItems().length; n++){
             where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
-            if(n != graphView.getSelectedItems().length - 1)
+            if(n != graphView.getmSelectedItems().length - 1)
                 where += " OR ";
         }
 
@@ -373,7 +373,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(data.getCount() >= 1) {
             do {
                 EnergyUsageModel model = new EnergyUsageModel(data);
-                System.out.println(model.getDatetime());
+//                System.out.println(model.getDatetime());
 
                 DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
 

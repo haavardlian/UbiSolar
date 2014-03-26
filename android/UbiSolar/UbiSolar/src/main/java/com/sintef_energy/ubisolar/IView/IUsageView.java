@@ -15,9 +15,9 @@ public interface IUsageView {
     public void clearDevices();
     public void setUsageFragment(UsageFragment fragment);
 
-    public String[] getSelectedItems();
-    public boolean[] getSelectedDialogItems();
+    public String[] getmSelectedItems();
+    public boolean[] getmSelectedDialogItems();
 
-    public void setSelectedItems(String[] selectedItems);
-    public void setSelectedDialogItems(boolean[] selectedDialogItems);
+    public void setmSelectedItems(String[] selectedItems);
+    public void setmSelectedDialogItems(boolean[] selectedDialogItems);
 }
