@@ -27,9 +27,10 @@ public class DeviceFragment extends DefaultTabFragment {
     private ExpandableListView expListView;
     private ArrayList<DeviceModel> devices;
 
-    public static DeviceFragment newInstance() {
+    public static DeviceFragment newInstance(int sectionNumber) {
         DeviceFragment fragment = new DeviceFragment();
         Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
