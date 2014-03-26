@@ -2,10 +2,7 @@ package com.sintef_energy.ubisolar;
 
 import com.sintef_energy.ubisolar.mappers.*;
 import com.sintef_energy.ubisolar.structs.*;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
@@ -82,5 +79,16 @@ public interface ServerDAO {
 
     @SqlUpdate("INSERT INTO tip_rating (tip_id, rating, user_id) VALUES (:rating.tipId, :rating.rating, :rating.userId) ON DUPLICATE KEY UPDATE rating = :rating.rating")
     int createRating(@BindBean("rating") TipRating rating);
+
+    @SqlUpdate("INSERT INTO user (access_token) VALUES (:access_token)")
+    @GetGeneratedKeys
+    int createUser(@Bind("access_token") String access_token);
+
+    @SqlQuery("SELECT access_token FROM user WHERE id = :id")
+    @Mapper(SimpleTokenMapper.class)
+    SimpleToken getAccessToken(@Bind("id") int id);
+
+    @SqlQuery("SELECT id FROM user WHERE access_token = :access_token")
+    int getUserId(@Bind("access_token") String access_token);
 
  }
