@@ -325,4 +325,12 @@ public class NavigationDrawerFragment extends Fragment {
          */
         void onNavigationDrawerItemSelected(int position);
     }
+
+    public NavDrawerItem getNavnDrawerItem(int position){
+        return navDrawerItems.get(position);
+    }
+
+    public NavDrawerListAdapter getNavDrawerListAdapter(){
+        return adapter;
+    }
 }

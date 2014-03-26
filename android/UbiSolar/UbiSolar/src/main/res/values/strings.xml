@@ -12,7 +12,7 @@
         <item>Devices</item>
         <item>Social</item>
         <item>Profile</item>
-        <item>Logout</item>
+        <item>Log out</item>
     </string-array>
     <string-array name="nav_drawer_icons">
         <item>@drawable/home</item>
