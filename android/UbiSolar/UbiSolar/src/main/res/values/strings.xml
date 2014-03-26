@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">UbiSolar</string>
+    <string name="app_name">Wattitude</string>
+    <string name="APP_ID">499884913456996</string>
 
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
@@ -13,7 +14,6 @@
         <item>Profile</item>
         <item>Logout</item>
     </string-array>
-
     <string-array name="nav_drawer_icons">
         <item>@drawable/home</item>
         <item>@drawable/usage</item>
@@ -21,7 +21,8 @@
         <item>@drawable/devices</item>
         <item>@drawable/social</item>
         <item>@drawable/profile</item>
-        <item>@drawable/heat</item> <!-- TODO: Icons for log out -->
+        <item>@drawable/heat</item>
+ <!-- TODO: Icons for log out -->
     </string-array>
 
     <!-- AddTipDialog -->
@@ -53,7 +54,10 @@
     <string name="add_button">Add Usage</string>
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
+    <string name="get_started">Log in to share your profile</string>
+    <string name="action_forgot_password">Have you forgotten your password?</string>
     <string name="add_device_button">Add Device</string>
+
     <string-array name="fragment_usage_tabs">
         <item>Line chart</item>
         <item>Pie chart</item>
@@ -80,5 +84,4 @@
         <item>Yours</item>
     </string-array>
 
-    <!-- TAGS -->
 </resources>
