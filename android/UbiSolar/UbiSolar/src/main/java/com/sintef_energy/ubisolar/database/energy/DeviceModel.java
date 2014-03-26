@@ -118,7 +118,6 @@ public class DeviceModel extends Device implements Parcelable{
         return values;
     }
 
-
     /**
      * Create DeviceModel from cursor
      * @param cursor
