@@ -3,6 +3,9 @@ package com.sintef_energy.ubisolar.fragments;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -10,6 +13,8 @@ import android.widget.ExpandableListView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
+import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.utils.ExpandableListAdapter;
 
 import java.util.ArrayList;
@@ -40,14 +45,35 @@ public class DeviceFragment extends DefaultTabFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
+
         super.onCreate(savedInstanceState);
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_device, menu);
+        inflater.inflate(R.menu.add_device_energy, menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menu_add_device:
+                AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
+                addDeviceDialog.show(getFragmentManager(), "addDevice");
+                return true;
+            case R.id.menu_add_usage:
+                AddUsageDialog addUsageDialog = new AddUsageDialog();
+                addUsageDialog.show(getFragmentManager(), "addUsage");
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    };
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        setHasOptionsMenu(true);
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
         setupList();
         return mRootview;
@@ -65,12 +91,12 @@ public class DeviceFragment extends DefaultTabFragment {
 
     private void createGroupList() {
         devices = new ArrayList<DeviceModel>();
-        devices.add(new DeviceModel(1, "TV", "Stue 1 etg", 1));
-        devices.add(new DeviceModel(2, "Oven", "In kitchen", 1));
-        devices.add(new DeviceModel(3, "Warm water", "-", 1));
-        devices.add(new DeviceModel(4, "Dishwasher", "Kitchen", 1));
-        devices.add(new DeviceModel(5, "Heating", "Main heating 2 floor", 1));
-        devices.add(new DeviceModel(6, "Radio", "Radio livingroom", 1));
+        devices.add(new DeviceModel(1, "TV", "Stue 1 etg", 1, 1));
+        devices.add(new DeviceModel(2, "Oven", "In kitchen", 1, 1));
+        devices.add(new DeviceModel(3, "Warm water", "-", 1, 1));
+        devices.add(new DeviceModel(4, "Dishwasher", "Kitchen", 1, 1));
+        devices.add(new DeviceModel(5, "Heating", "Main heating 2 floor", 1, 1));
+        devices.add(new DeviceModel(6, "Radio", "Radio livingroom", 1, 1));
     }
 
     private void setGroupIndicatorToRight() {

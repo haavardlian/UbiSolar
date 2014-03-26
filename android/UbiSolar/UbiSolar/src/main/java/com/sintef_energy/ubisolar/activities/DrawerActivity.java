@@ -107,9 +107,9 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         /* Set up the presenters */
 
         /*UsagePresenter*/
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 8);
-        mTotalEnergyPresenter = new TotalEnergyPresenter();
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.MONTH, 8);
+//        mTotalEnergyPresenter = new TotalEnergyPresenter();
         //mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
         //        0,
         //        calendar.getTimeInMillis());

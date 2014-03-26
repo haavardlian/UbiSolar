@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
 import org.achartengine.ChartFactory;
@@ -282,7 +284,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     @Override
-    public String[] getSelectedItems() {
+    public String[] getmSelectedItems() {
         if(selectedItems == null)
             return new String[0];
         else
@@ -290,12 +292,12 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     @Override
-    public void setSelectedItems(String[] selectedItems) {
+    public void setmSelectedItems(String[] selectedItems) {
         this.selectedItems = selectedItems;
     }
 
     @Override
-    public boolean[] getSelectedDialogItems() {
+    public boolean[] getmSelectedDialogItems() {
         if(selectedDialogItems == null)
             return new boolean[0];
         else
@@ -303,13 +305,12 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     @Override
-    public void setSelectedDialogItems(boolean[] selectedDialogItems) {
+    public void setmSelectedDialogItems(boolean[] selectedDialogItems) {
         this.selectedDialogItems = selectedDialogItems;
     }
 
     @Override
-    public void redraw() {
-        if(mChartView != null)
-            mChartView.repaint();
+    public void setUsageFragment(UsageFragment usageFragment)
+    {
     }
 }
