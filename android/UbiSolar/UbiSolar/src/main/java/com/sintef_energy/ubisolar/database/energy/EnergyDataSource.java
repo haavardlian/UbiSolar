@@ -133,13 +133,50 @@ public class EnergyDataSource {
         return crm;
     }
 
+    /*
+    *Insert device into database
+    */
     public static void  insertDevice(ContentResolver resolver, DeviceModel model){
         resolver.insert(EnergyContract.Devices.CONTENT_URI, model.getContentValues());
     }
-
+    /*
+    *Delete all devices from database
+    */
     public static void deleteAll(ContentResolver resolver){
         resolver.delete(EnergyContract.Devices.CONTENT_URI, null, null);
     }
+
+    public static ArrayList<DeviceModel> getAllDeviceModels(ContentResolver resolver){
+        ArrayList<DeviceModel> deviceModels = new ArrayList<>();
+
+        Cursor cursor = resolver.query(
+                EnergyContract.Devices.CONTENT_URI,
+                EnergyContract.Devices.PROJECTION_ALL,
+                null,
+                null,
+                null
+        );
+
+        if(cursor == null){
+            return null;
+        }
+        else if(cursor.getCount() < 1){
+            cursor.close();
+            return null;
+        }
+        else {
+
+        }
+
+        cursor.moveToFirst();
+        deviceModels.add(new DeviceModel(cursor));
+
+        while (cursor.moveToNext())
+            deviceModels.add(new DeviceModel(cursor));
+
+        cursor.close();
+        return deviceModels;
+     }
 
     public static int addBatchEnergyModel(ContentResolver resolver, ContentValues[] values){
         //AsyncQueryHandler handler = new AsyncQueryHandler(resolver) {};

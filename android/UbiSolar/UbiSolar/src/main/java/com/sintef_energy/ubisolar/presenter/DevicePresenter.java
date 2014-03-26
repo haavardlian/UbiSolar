@@ -44,8 +44,9 @@ public class DevicePresenter {
         this.dmModels.add(device);
     }
 
-    public ArrayList<DeviceModel> getDeviceModels(){
-        return this.dmModels;
+    public ArrayList<DeviceModel> getDeviceModels(ContentResolver contentResolver){
+        dmModels = EnergyDataSource.getAllDeviceModels(contentResolver);
+        return dmModels;
     }
 
     public void deleteDevices(ContentResolver contentResolver){
