@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">UbiSolar</string>
+    <string name="app_name">Wattitude</string>
+    <string name="APP_ID">499884913456996</string>
 
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
@@ -53,6 +54,8 @@
     <string name="add_button">Add Usage</string>
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
+    <string name="get_started">Log in to share your profile</string>
+    <string name="action_forgot_password">Have you forgotten your password?</string>
     <string name="add_device_button">Add Device</string>
     <string-array name="fragment_usage_tabs">
         <item>Line chart</item>
