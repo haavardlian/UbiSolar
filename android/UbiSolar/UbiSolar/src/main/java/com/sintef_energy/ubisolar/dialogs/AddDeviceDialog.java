@@ -67,14 +67,17 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                 .setPositiveButton(R.string.addDeviceDialog_buttonText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        /*Create new device model*/
                         DeviceModel deviceModel = new DeviceModel();
                         deviceModel.setUser_id(System.currentTimeMillis());
                         deviceModel.setDevice_id(System.currentTimeMillis());
+
                         deviceModel.setDescription(descriptionField.getText().toString());
                         deviceModel.setName(nameField.getText().toString());
-                        devicePresenter.addDevice(deviceModel, getActivity().getContentResolver());
 
+                        /*Get selected category*/
+                        deviceModel.setCategory(categorySpinner.getSelectedItemPosition());
+                        devicePresenter.addDevice(deviceModel, getActivity().getContentResolver());
 
                     }
                 })
