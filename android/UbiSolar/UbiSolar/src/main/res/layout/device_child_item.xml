@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp" >
+
+
+    <TextView
+        android:id="@+id/deviceID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="id"
+        android:paddingLeft="25dp"
+        android:enabled="false"/>
+
+    <TextView
+        android:id="@+id/deviceDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="description"
+        android:layout_below="@id/deviceID"
+        android:paddingLeft="25dp"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/powerUsage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Power consumtion: 15%"
+        android:layout_below="@id/deviceDescription"
+        android:paddingLeft="25dp"
+        android:layout_marginTop="8dp"/>
+</RelativeLayout>

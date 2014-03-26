@@ -14,7 +14,6 @@
         <item>Profile</item>
         <item>Logout</item>
     </string-array>
-
     <string-array name="nav_drawer_icons">
         <item>@drawable/home</item>
         <item>@drawable/usage</item>
@@ -22,7 +21,8 @@
         <item>@drawable/devices</item>
         <item>@drawable/social</item>
         <item>@drawable/profile</item>
-        <item>@drawable/heat</item> <!-- TODO: Icons for log out -->
+        <item>@drawable/heat</item>
+ <!-- TODO: Icons for log out -->
     </string-array>
 
     <!-- AddTipDialog -->
@@ -57,6 +57,7 @@
     <string name="get_started">Log in to share your profile</string>
     <string name="action_forgot_password">Have you forgotten your password?</string>
     <string name="add_device_button">Add Device</string>
+
     <string-array name="fragment_usage_tabs">
         <item>Line chart</item>
         <item>Pie chart</item>
@@ -83,5 +84,4 @@
         <item>Yours</item>
     </string-array>
 
-    <!-- TAGS -->
 </resources>
