@@ -69,9 +69,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return devices.get(groupPosition);
     }
 
-    public int getGroupCount() {
-        return devices.size();
-    }
+    public int getGroupCount() { return devices.size(); }
 
     public long getGroupId(int groupPosition) {
         return groupPosition;

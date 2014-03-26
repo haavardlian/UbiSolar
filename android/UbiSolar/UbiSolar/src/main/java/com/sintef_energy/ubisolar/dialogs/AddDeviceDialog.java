@@ -45,7 +45,6 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         try {
             devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
 
@@ -76,7 +75,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                         deviceModel.setName(nameField.getText().toString());
 
                         /*Get selected category*/
-                        deviceModel.setCategory(categorySpinner.getSelectedItemPosition());
+                        //deviceModel.setCategory(categorySpinner.getSelectedItemPosition());
                         devicePresenter.addDevice(deviceModel, getActivity().getContentResolver());
 
                     }
@@ -93,9 +92,8 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
         descriptionField = (EditText) view.findViewById(R.id.edit_description);
         categorySpinner = (Spinner) view.findViewById(R.id.dialog_add_device_category_spinner);
 
-        //EnergyDataSource.deleteAll(getActivity().getContentResolver());
 
-        /*Fill spinner with data*/
+        /*Fill spinner with categories*/
         categoryAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 android.R.layout.simple_spinner_item,
