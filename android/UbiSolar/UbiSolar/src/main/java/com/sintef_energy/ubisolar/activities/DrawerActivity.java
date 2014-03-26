@@ -215,7 +215,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 fragment = EnergySavingTabFragment.newInstance(position);
                 break;
             case 3:
-                fragment = DeviceFragment.newInstance(position);
+                fragment = DeviceFragment.newInstance();
                 break;
             case 4:
                 fragment = SocialFragment.newInstance(position);
