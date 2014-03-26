@@ -21,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
@@ -136,13 +137,18 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 });*/
    }
 
+    /**
+     * The view has been created.
+     * Authentication will be handled here.
+     */
     @Override
     public void onStart(){
         super.onStart();
         // start Facebook Login
         // This will _only_ log in if the user is logged in from before.
         // To log in, the user must choose so himself from the menu.
-        Session.openActiveSession(this, false, new Session.StatusCallback() {
+        /* Check if we have an open session */
+        Session fbSession = Session.openActiveSession(this, false, new Session.StatusCallback() {
 
             // callback when session changes state
             @Override
@@ -172,6 +178,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     Toast.makeText(getBaseContext(), "APP STARTED AND WTF?? TO FACEBOOOK", Toast.LENGTH_LONG).show();
             }
         });
+
+        /* If fbSession is null, then we can create a new session from our auth key and set it has an active session */
+
+        //Session.Builder builder = Session.Builder(getApplicationContext());
     }
 
     @Override

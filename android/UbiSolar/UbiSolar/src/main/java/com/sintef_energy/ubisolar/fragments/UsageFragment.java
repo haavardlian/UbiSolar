@@ -247,21 +247,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         DeviceModel.DeviceEntry._ID + " ASC"
                 );
             case LOADER_USAGE:
-                String where = "";
-
-                //TODO: BUG: How to handle when user selects no devices?
-
-                for(int n = 0; n < graphView.getSelectedItems().length; n++){
-                    where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
-                    if(n != graphView.getSelectedItems().length - 1)
-                        where += " OR ";
-                }
-
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Energy.CONTENT_URI,
                         EnergyContract.Energy.PROJECTION_ALL,
-                        where,
+                        sqlWhereDevices(),
                         graphView.getSelectedItems(),
                         EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
                 );
@@ -273,7 +263,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         getActivity(),
                         builder.build(),
                         null,
-                        null,
+                        sqlWhereDevices(),
                         null,
                         null
                 );
@@ -285,7 +275,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         getActivity(),
                         builder.build(),
                         null,
-                        null,
+                        sqlWhereDevices(),
                         null,
                         null
                 );
@@ -297,12 +287,27 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         getActivity(),
                         builder.build(),
                         null,
-                        null,
+                        sqlWhereDevices(),
                         null,
                         null
                 );
         }
         return null;
+    }
+
+    private String sqlWhereDevices(){
+
+        String where = "";
+
+        //TODO: BUG: How to handle when user selects no devices?
+
+        for(int n = 0; n < graphView.getSelectedItems().length; n++){
+            where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
+            if(n != graphView.getSelectedItems().length - 1)
+                where += " OR ";
+        }
+
+        return where;
     }
 
     @Override
