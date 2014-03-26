@@ -19,6 +19,7 @@ package com.sintef_energy.ubisolar.fragments.social;
         import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
         import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
         import com.sintef_energy.ubisolar.model.Residence;
+        import com.sintef_energy.ubisolar.model.ResidenceAttributes;
         import com.sintef_energy.ubisolar.model.User;
 
         import java.util.ArrayList;
@@ -35,9 +36,8 @@ public class SocialCompareFragment extends Fragment {
 
     private SimpleCursorAdapter adapter;
     private View view;
-    //private FriendAdapter friendAdapter;
     private SimilarAdapter similarAdapter;
-    private ArrayList<Residence> houseDescription;
+    private ArrayList<ResidenceAttributes> houseDescription;
     private static final String ARG_POSITION = "position";
 
 
@@ -69,15 +69,17 @@ public class SocialCompareFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             view = inflater.inflate(R.layout.fragment_social_similar, container, false);
-            houseDescription = new ArrayList<Residence>();
+            houseDescription = new ArrayList<ResidenceAttributes>();
+
+            houseDescription.add(new ResidenceAttributes("Area"));
+            houseDescription.add(new ResidenceAttributes("Number of residents"));
+            houseDescription.add(new ResidenceAttributes("Resident size"));
+            houseDescription.add(new ResidenceAttributes("Energy class"));
+
+
             SimilarAdapter similarAdapter = new SimilarAdapter(getActivity(),R.layout.fragment_social_similar_row, houseDescription);
             ListView houseDescrList = (ListView) view.findViewById(R.id.social_similar_list);
             houseDescrList.setAdapter(similarAdapter);
-
-            houseDescription.add(new Residence("Area", 1, 40, 7040, 'A'));
-            houseDescription.add(new Residence("Number of residents", 1, 40, 7040, 'A'));
-            houseDescription.add(new Residence("Energy class", 1, 40, 7040, 'A'));
-            houseDescription.add(new Residence("Residence area", 1, 40, 7040, 'A'));
 
 
 

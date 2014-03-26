@@ -12,46 +12,47 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.Residence;
+import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 
 import java.util.List;
 
 /**
  * Created by baier on 3/25/14.
  */
-public class SimilarAdapter extends ArrayAdapter<Residence> {
+public class SimilarAdapter extends ArrayAdapter<ResidenceAttributes> {
 
     protected Context context;
     protected int resource;
-    List<Residence> residences = null;
+    List<ResidenceAttributes> residenceAttr = null;
 
-    public SimilarAdapter(Context context, int resource, List<Residence> residences) {
-        super(context, resource, residences);
+    public SimilarAdapter(Context context, int resource, List<ResidenceAttributes> residenceAttr) {
+        super(context, resource);
 
         this.context = context;
         this.resource = resource;
-        this.residences = residences;
+        this.residenceAttr = residenceAttr;
     }
 
     @Override
-    public void add(Residence object) {
-        residences.add(object);
+    public void add(ResidenceAttributes object) {
+        residenceAttr.add(object);
         notifyDataSetChanged();
     }
 
     @Override
     public void clear() {
-        residences.clear();
+        residenceAttr.clear();
         notifyDataSetChanged();
     }
 
     @Override
-    public Residence getItem(int position) {
-        return residences.get(position);
+    public int getCount() {
+        return residenceAttr.size();
     }
 
     @Override
-    public int getCount() {
-        return residences.size();
+    public ResidenceAttributes getItem(int position) {
+        return residenceAttr.get(position);
     }
 
     @Override
@@ -60,6 +61,7 @@ public class SimilarAdapter extends ArrayAdapter<Residence> {
         SimilarHolder holder = null;
 
         if(row == null) {
+
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(resource, parent, false);
 
@@ -72,9 +74,9 @@ public class SimilarAdapter extends ArrayAdapter<Residence> {
             holder = (SimilarHolder)row.getTag();
         }
 
-        if(!residences.isEmpty()) {
-            Residence residence = residences.get(position);
-            holder.name.setText(residence.getHouseId());
+        if(!residenceAttr.isEmpty()) {
+            ResidenceAttributes residenceAttribute = residenceAttr.get(position);
+            holder.name.setText(residenceAttribute.getResidenceAttributeLabel());
         }
         return row;
     }
@@ -85,4 +87,3 @@ public class SimilarAdapter extends ArrayAdapter<Residence> {
     }
 
 }
-
