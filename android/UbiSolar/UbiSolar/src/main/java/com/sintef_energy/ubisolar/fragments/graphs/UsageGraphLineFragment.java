@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -227,13 +228,14 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
                 @Override
                 public void zoomApplied(ZoomEvent zoomEvent) {
                     double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
-//                    System.out.println(zoom);
-                    if(zoom > 60 && zoom < 90)
+
+
+                    if(zoom < 90)
                     {
                         zoomIn();
                         System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
                     }
-                    if(zoom > 250 && zoom < 270)
+                    if(zoom > 250)
                     {
                         zoomOut();
                         System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
@@ -556,11 +558,5 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
 
     public void setSelectedDialogItems(boolean[] selectedDialogItems) {
         this.selectedDialogItems = selectedDialogItems;
-    }
-
-    @Override
-    public void redraw() {
-        if(mChartView != null)
-            mChartView.repaint();
     }
 }

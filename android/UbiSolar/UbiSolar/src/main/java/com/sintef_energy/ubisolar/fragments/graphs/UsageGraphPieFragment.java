@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.LoaderManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
 import org.achartengine.ChartFactory;
@@ -308,8 +310,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     @Override
-    public void redraw() {
-        if(mChartView != null)
-            mChartView.repaint();
+    public void setUsageFragment(UsageFragment usageFragment)
+    {
     }
 }

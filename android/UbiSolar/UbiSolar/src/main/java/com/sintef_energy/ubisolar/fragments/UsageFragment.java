@@ -140,6 +140,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //BUG: onPageChangeLIstener does not set graphView the first time.
         //This is an ugly fix
         graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(pager, 0);
+        graphView.setUsageFragment(this);
 
         return rootView;
     }
