@@ -450,7 +450,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private void addDevice(String name, String description)
     {
         DeviceModel device = new DeviceModel(System.currentTimeMillis(),
-                name, description, System.currentTimeMillis());
+                name, description, System.currentTimeMillis(), -1);
 
         getActivity().getContentResolver().insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());

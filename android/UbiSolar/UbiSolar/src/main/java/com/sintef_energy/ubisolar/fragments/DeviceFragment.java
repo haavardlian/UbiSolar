@@ -91,12 +91,12 @@ public class DeviceFragment extends DefaultTabFragment {
 
     private void createGroupList() {
         devices = new ArrayList<DeviceModel>();
-        devices.add(new DeviceModel(1, "TV", "Stue 1 etg", 1));
-        devices.add(new DeviceModel(2, "Oven", "In kitchen", 1));
-        devices.add(new DeviceModel(3, "Warm water", "-", 1));
-        devices.add(new DeviceModel(4, "Dishwasher", "Kitchen", 1));
-        devices.add(new DeviceModel(5, "Heating", "Main heating 2 floor", 1));
-        devices.add(new DeviceModel(6, "Radio", "Radio livingroom", 1));
+        devices.add(new DeviceModel(1, "TV", "Stue 1 etg", 1, 1));
+        devices.add(new DeviceModel(2, "Oven", "In kitchen", 1, 1));
+        devices.add(new DeviceModel(3, "Warm water", "-", 1, 1));
+        devices.add(new DeviceModel(4, "Dishwasher", "Kitchen", 1, 1));
+        devices.add(new DeviceModel(5, "Heating", "Main heating 2 floor", 1, 1));
+        devices.add(new DeviceModel(6, "Radio", "Radio livingroom", 1, 1));
     }
 
     private void setGroupIndicatorToRight() {
