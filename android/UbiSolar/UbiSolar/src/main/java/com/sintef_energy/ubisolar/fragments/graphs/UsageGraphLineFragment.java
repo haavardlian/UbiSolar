@@ -403,45 +403,52 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
     {
         if(mDataResolution.equals("dd")) {
             setFormat("HH", "EEEE dd/MM");
-//            mActiveDateIndex *= 24;
-//            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, mUsageFragment);
-            changeResolution();
-            populateGraph(mActiveDateIndex * 24);
+            mActiveDateIndex *= 24;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, mUsageFragment);
+//            changeResolution();
+//            populateGraph(mActiveDateIndex * 24);
         }
         else if(mDataResolution.equals("w")) {
             setFormat("dd", "MMMM");
-//            mActiveDateIndex *= 7;
-//            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
-            changeResolution();
-            populateGraph(mActiveDateIndex * 7);
+            mActiveDateIndex *= 7;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
+//            changeResolution();
+//            populateGraph(mActiveDateIndex * 7);
         }
-//        else if(mDataResolution.equals("MMMM")) {
-//            setFormat("w", "MMMMM y");
+        else if(mDataResolution.equals("MMMM")) {
+            setFormat("w", "MMMMM y");
+            mActiveDateIndex *= 4;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, mUsageFragment);
 //            changeResolution();
 //            populateGraph(mActiveDateIndex * 4);
-//        }
+        }
     }
 
     private void zoomOut()
     {
         if(mDataResolution.equals("HH")) {
             setFormat("dd", "MMMM");
-//            mActiveDateIndex /= 24;
-//            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
-            changeResolution();
-            populateGraph(mActiveDateIndex / 24);
+            mActiveDateIndex /= 24;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
+//            changeResolution();
+//            populateGraph(mActiveDateIndex / 24);
         }
         else if(mDataResolution.equals("dd")) {
             setFormat("w", "MMMMM y");
-//            mActiveDateIndex /= 7;
-//            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, mUsageFragment);
+            mActiveDateIndex /= 7;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, mUsageFragment);
 
-            changeResolution();
-            populateGraph(mActiveDateIndex / 7);
+//            changeResolution();
+//            populateGraph(mActiveDateIndex / 7);
         }
-//        else if(mDataResolution.equals("w"))
+        else if(mDataResolution.equals("w")) {
+            setFormat("MMMM", "y");
+            mActiveDateIndex /= 4;
+            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, mUsageFragment);
+
 //            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
 //                    mActiveDateIndex / 4);
+        }
     }
 
     private void changeResolution()

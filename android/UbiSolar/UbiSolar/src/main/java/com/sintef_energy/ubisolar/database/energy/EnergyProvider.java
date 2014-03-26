@@ -37,8 +37,9 @@ public class EnergyProvider extends ContentProvider{
     private static final int ENERGY_LIST = 3;
     private static final int ENERGY_ID = 4;
     private static final int ENERGY_DAY_LIST = 5;
-    private static final int ENERGY_MONTH_LIST = 6;
-    private static final int ENERGY_YEAR_LIST = 7;
+    private static final int ENERGY_WEEK_LIST = 6;
+    private static final int ENERGY_MONTH_LIST = 7;
+    private static final int ENERGY_YEAR_LIST = 8;
 
     private static final UriMatcher URI_MATCHER;
     // prepare the UriMatcher
@@ -49,6 +50,7 @@ public class EnergyProvider extends ContentProvider{
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy", ENERGY_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/#", ENERGY_ID);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Day, ENERGY_DAY_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Week, ENERGY_WEEK_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Month, ENERGY_MONTH_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Year, ENERGY_YEAR_LIST);
    }
@@ -119,6 +121,9 @@ public class EnergyProvider extends ContentProvider{
                 break;
             case ENERGY_DAY_LIST:
                 rawSql = generateRawDateSql("%Y-%m-%d");
+                break;
+            case ENERGY_WEEK_LIST:
+                rawSql = generateRawDateSql("%Y-%w");
                 break;
             case ENERGY_MONTH_LIST:
                 rawSql = generateRawDateSql("%Y-%m");

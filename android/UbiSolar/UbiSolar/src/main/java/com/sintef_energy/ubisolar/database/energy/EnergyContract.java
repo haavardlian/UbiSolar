@@ -86,6 +86,7 @@ public class EnergyContract {
          */
         public static interface Date {
             public static final String Day = "date";
+            public static final String Week = "week";
             public static final String Month = "month";
             public static final String Year = "year";
         }

@@ -66,8 +66,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public static final int LOADER_DEVICES = 0;
     public static final int LOADER_USAGE = 1;
     public static final int LOADER_USAGE_DAY = 2;
-    public static final int LOADER_USAGE_MONTH = 3;
-    public static final int LOADER_USAGE_YEAR = 4;
+    public static final int LOADER_USAGE_WEEK= 3;
+    public static final int LOADER_USAGE_MONTH = 4;
+    public static final int LOADER_USAGE_YEAR = 5;
 
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
 
@@ -149,7 +150,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new HashMap<>();
 
-        //clearDatabase();
+        clearDatabase();
 
         //Populate the database if it's empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
@@ -202,14 +203,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private Bundle saveState(){
         Bundle state = new Bundle();
 
-          state.putParcelableArrayList("mDeviceUsageList", mDeviceUsageList);
-
-//        state.putStringArray("mSelectedItems", mSelectedItems);
-//        state.putStringArray("mSelectedLineItems", mSelectedLineItems);
-//        state.putStringArray("mSelectedPieItems", mSelectedPieItems);
-//        state.putBooleanArray("mSelectDialogItems", mSelectDialogItems);
-//        state.putBooleanArray("mSelectedLineDialogItems", mSelectedLineDialogItems);
-//        state.putBooleanArray("mSelectedPieDialogItems", mSelectedPieDialogItems);
+        state.putParcelableArrayList("mDeviceUsageList", mDeviceUsageList);
 
         return state;
     }
@@ -330,6 +324,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 populateDeviceUsageList(cursor);
                 break;
             case LOADER_USAGE_DAY:
+            case LOADER_USAGE_WEEK:
             case LOADER_USAGE_MONTH:
             case LOADER_USAGE_YEAR:
                 populateDeviceUsageList(cursor);
@@ -348,31 +343,23 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //Hashmap containt all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
-        /* Only run if devices is selected */
-        if(data.getCount() < 1){
-            Log.v(TAG, "No devices selected");
-            return;
-        }
-
         /* Get data from cursor and add */
         data.moveToFirst();
-        if(data.getCount() >= 1)
-            do{
-                EnergyUsageModel eum = new EnergyUsageModel(data);
+        if(data.getCount() >= 1) {
+            do {
+                EnergyUsageModel model = new EnergyUsageModel(data);
 
-                DeviceUsageList dList = devices.get(eum.getDevice_id());
+                DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
 
-                if(dList == null){
-                    dList = new DeviceUsageList(mDevices.get(eum.getDevice_id()));
-                    devices.put(Long.valueOf(dList.getDevice().getDevice_id()), dList);
+                if (deviceUsageList == null) {
+                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
+                    devices.put(Long.valueOf(deviceUsageList.getDevice().getDevice_id()), deviceUsageList);
                 }
 
-                /* Add Energy usage to device */
-                if(dList != null){
-                    dList.add(eum);
-                }
+                deviceUsageList.add(model);
             }
-            while(data.moveToNext());
+            while (data.moveToNext());
+        }
 
         graphView.clearDevices();
 
