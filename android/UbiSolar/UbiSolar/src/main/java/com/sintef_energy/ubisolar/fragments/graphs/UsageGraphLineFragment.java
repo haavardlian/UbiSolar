@@ -235,7 +235,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
                         zoomIn();
                         System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
                     }
-                    if(zoom > 250)
+                    if(zoom > 300)
                     {
                         zoomOut();
                         System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
