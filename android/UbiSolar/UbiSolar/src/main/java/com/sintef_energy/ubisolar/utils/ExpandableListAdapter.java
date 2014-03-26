@@ -78,6 +78,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
+        //Working with dummydata:
         String deviceName =  getGroup(groupPosition).toString();
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) context
@@ -89,6 +90,22 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         item.setTypeface(null, Typeface.BOLD);
         item.setText(deviceName);
         return convertView;
+
+        //Experimenting
+        /*
+        String category = getGroup(groupPosition).toString();
+        if (convertView == null) {
+            LayoutInflater infalInflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = infalInflater.inflate(R.layout.device_list_item,
+                    null);
+        }
+        TextView item = (TextView) convertView.findViewById(R.id.device);
+        item.setTypeface(null, Typeface.BOLD);
+        item.setText(category);
+        return convertView;
+        */
+
     }
 
     public boolean hasStableIds() {

@@ -30,9 +30,17 @@
     <string name="addTipDialog_buttonText">Create</string>
     <!-- AddUsageDialog -->
     <string name="addUsageDialog_title">Add device mUsage</string>
+
     <!-- AddDeviceDialog -->
     <string name="addDeviceDialog_title">Add device</string>
+    <string-array name="device_categories">
+    <item>Kitchen</item>
+    <item>Heat</item>
+    <item>Water</item>
+    <item>Producing</item>
+    </string-array>
     <string name="addDeviceDialog_buttonText">Add</string>
+
     <!-- Fragment usage -->
     <string name="usage_device_dialog_title">Select Devices</string>
     <string name="pie_chart_title">Power overview</string>
