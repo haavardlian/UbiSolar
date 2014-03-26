@@ -6,6 +6,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
@@ -229,6 +231,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             callFacebookLogout(getApplicationContext());
         }
         /* User wants to log in */
+        /* Is there internet? */
+        else if(!isNetworkOn(getApplicationContext())){
+            Toast.makeText(getApplicationContext(), "Please get some interwebz", Toast.LENGTH_SHORT).show();
+        }
+        /* There is internet */
         else {
             Session session = Session.getActiveSession();
             if (session == null) {
@@ -285,8 +292,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 Log.v(LOG,"Facebook logged in.");
 
                 /* Set session data */
-                mPrefManager.setAccessToken(Session.getActiveSession().getAccessToken());
-                mPrefManager.setKeyAccessTokenExpires(Session.getActiveSession().getExpirationDate());
+                mPrefManager.setAccessToken(session.getAccessToken());
+                mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
+
+                //SessionState.
 
                 Toast.makeText(getBaseContext(), "Logged in through facebook", Toast.LENGTH_LONG).show();
                 changeNavdrawerSessionsView(true);
@@ -405,4 +414,16 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         return requestQueue;
     }
 
+    /**
+     * Helper class to check if app has internet connection.
+     * @param context
+     * @return
+     */
+    public boolean isNetworkOn(Context context) {
+        ConnectivityManager connMgr =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        return (networkInfo != null && networkInfo.isConnected());
+    }
 }
