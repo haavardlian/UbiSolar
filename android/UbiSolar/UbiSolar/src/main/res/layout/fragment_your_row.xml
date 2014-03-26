@@ -2,8 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:descendantFocusability="blocksDescendants">
+    android:layout_height="match_parent">
 
     <TextView
         android:layout_width="match_parent"
@@ -26,8 +25,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignBottom="@+id/yourTipsRowName"
-        android:enabled="false"
-        android:focusable="false" />
+        android:enabled="true"
+        android:clickable="true"/>
 
 
 </RelativeLayout>
