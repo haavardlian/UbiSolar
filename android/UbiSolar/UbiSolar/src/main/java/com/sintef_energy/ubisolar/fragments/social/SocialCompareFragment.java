@@ -68,13 +68,17 @@ public class SocialCompareFragment extends Fragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            view = inflater.inflate(R.layout.fragment_social_friends, container, false);
+            view = inflater.inflate(R.layout.fragment_social_similar, container, false);
             houseDescription = new ArrayList<Residence>();
-            SimilarAdapter similarAdapter = new SimilarAdapter(getActivity(),R.layout.fragment_social_friends_row, houseDescription);
-            ListView houseDescrList = (ListView) view.findViewById(R.id.social_list);
+            SimilarAdapter similarAdapter = new SimilarAdapter(getActivity(),R.layout.fragment_social_similar_row, houseDescription);
+            ListView houseDescrList = (ListView) view.findViewById(R.id.social_similar_list);
             houseDescrList.setAdapter(similarAdapter);
 
-            houseDescription.add(new Residence("Beate", 1, 40, 7040, 'A'));
+            houseDescription.add(new Residence("Area", 1, 40, 7040, 'A'));
+            houseDescription.add(new Residence("Number of residents", 1, 40, 7040, 'A'));
+            houseDescription.add(new Residence("Energy class", 1, 40, 7040, 'A'));
+            houseDescription.add(new Residence("Residence area", 1, 40, 7040, 'A'));
+
 
 
             similarAdapter.notifyDataSetChanged();

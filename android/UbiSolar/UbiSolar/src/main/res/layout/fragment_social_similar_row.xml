@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="80dp"
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+
+
+
+
+    <ImageView
+        android:id="@+id/social_similar_icon"
+        android:layout_width="40dp"
+        android:layout_height="60dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_horizontal"
+        android:src="@drawable/profile" >
+    </ImageView>
+
+
+    <TextView
+        android:id="@+id/social_similar_row_name"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:text="@string/social_user_name"
+        android:layout_marginTop="30dp"
+        android:layout_toRightOf="@id/social_similar_icon"
+        android:textSize="22dp" />
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_toRightOf="@id/social_similar_row_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        />
+
+
+</RelativeLayout>

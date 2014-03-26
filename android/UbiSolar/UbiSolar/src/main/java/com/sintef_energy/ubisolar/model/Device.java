@@ -9,17 +9,19 @@ public abstract class Device
     protected long user_id;
     protected String name;
     protected String description;
+    protected int category;
 
     public Device()
     {
 
     }
 
-    public Device(long device_id, String name, String description, long user_id) {
+    public Device(long device_id, String name, String description, long user_id, int category) {
         this.device_id = device_id;
         this.name = name;
         this.description = description;
         this.user_id = user_id;
+        this.category = category;
     }
 
     public long getDevice_id() {
@@ -38,10 +40,9 @@ public abstract class Device
         return user_id;
     }
 
-    public String toString()
-    {
-        return name;
-    }
+    public int getCategory() { return category; }
+
+    public String toString() { return name; }
 
     public void setDevice_id(long device_id) {
         this.device_id = device_id;
@@ -57,5 +58,8 @@ public abstract class Device
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    public void setCategory(int category) {
+        this.category = category;
     }
 }
