@@ -147,7 +147,7 @@ public class EnergyProvider extends ContentProvider{
                         sortOrder);
         else
             cursor =
-                    db.rawQuery(rawSql, null);
+                    db.rawQuery(rawSql, selectionArgs);
 
         // if we want to be notified of any changes:
         if (useAuthorityUri) {

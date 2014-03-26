@@ -248,13 +248,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         DeviceModel.DeviceEntry._ID + " ASC"
                 );
             case LOADER_USAGE:
-                String where = "";
-
-                for(int n = 0; n < graphView.getmSelectedItems().length; n++){
-                    where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
-                    if(n != graphView.getmSelectedItems().length - 1)
-                        where += " OR ";
-                }
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Energy.CONTENT_URI,
@@ -272,7 +265,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         builder.build(),
                         null,
                         sqlWhereDevices(),
-                        null,
+                        graphView.getmSelectedItems(),
                         null
                 );
             case LOADER_USAGE_WEEK:
@@ -283,8 +276,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         getActivity(),
                         builder.build(),
                         null,
-                        null,
-                        null,
+                        sqlWhereDevices(),
+                        graphView.getmSelectedItems(),
                         null
                 );
             case LOADER_USAGE_MONTH:
@@ -296,7 +289,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         builder.build(),
                         null,
                         sqlWhereDevices(),
-                        null,
+                        graphView.getmSelectedItems(),
                         null
                 );
             case LOADER_USAGE_YEAR:
@@ -308,7 +301,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         builder.build(),
                         null,
                         sqlWhereDevices(),
-                        null,
+                        graphView.getmSelectedItems(),
                         null
                 );
         }

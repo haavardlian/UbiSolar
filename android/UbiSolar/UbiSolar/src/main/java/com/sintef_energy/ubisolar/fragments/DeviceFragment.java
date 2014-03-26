@@ -52,7 +52,6 @@ public class DeviceFragment extends DefaultTabFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.add_device, menu);
-        inflater.inflate(R.menu.add_device_energy, menu);
         super.onCreateOptionsMenu(menu,inflater);
     }
     @Override
@@ -75,18 +74,15 @@ public class DeviceFragment extends DefaultTabFragment {
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
-        setupList();
-        return mRootview;
-    }
 
-    private void setupList()
-    {
         createGroupList();
-
+        
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
         final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
+
+        return mRootview;
     }
 
     private void createGroupList() {
