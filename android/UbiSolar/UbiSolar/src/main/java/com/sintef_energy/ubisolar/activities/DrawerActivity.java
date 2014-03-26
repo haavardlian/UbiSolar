@@ -23,7 +23,6 @@ import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.SocialFragment;
-import com.sintef_energy.ubisolar.fragments.deviceTestFragment;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TipPresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
@@ -145,7 +144,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 //fragment = PowerSavingFragment.newInstance(position);
                 break;
             case 3:
-                fragment = deviceTestFragment.newInstance();
+                fragment = DeviceFragment.newInstance();
                 break;
             case 4:
                 fragment = SocialFragment.newInstance(position);
