@@ -17,6 +17,7 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
+import com.sintef_energy.ubisolar.utils.RequestManager;
 
 /**
  * Created by Håvard on 24.03.2014.
@@ -74,7 +75,7 @@ public class YourDialog extends DialogFragment {
                 ratingBar.setRating(v);
                 tip.setAverageRating((int)v);
                 TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
-                ((DrawerActivity) getActivity()).getTipPresenter().createRating(getActivity(), rating);
+                RequestManager.getInstance().doRequest().createRating(rating);
             }
         });
         return builder.create();

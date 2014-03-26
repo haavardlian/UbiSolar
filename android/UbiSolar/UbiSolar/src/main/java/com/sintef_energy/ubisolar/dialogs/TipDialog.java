@@ -6,21 +6,19 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
+import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
+import com.sintef_energy.ubisolar.fragments.TipsFragment;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
-import com.sintef_energy.ubisolar.presenter.TipPresenter;
-
-import java.util.ArrayList;
+import com.sintef_energy.ubisolar.utils.RequestManager;
 
 /**
  * Created by Håvard on 24.03.2014.
@@ -29,13 +27,11 @@ public class TipDialog extends DialogFragment {
 
     private View view = null;
     private Tip tip;
-    private YourAdapter yourAdapter;
     private TextView descriptionField;
     private RatingBar ratingField;
 
-    public TipDialog(Tip tip, YourAdapter yourAdapter) {
+    public TipDialog(Tip tip) {
         this.tip = tip;
-        this.yourAdapter = yourAdapter;
     }
 
     public void onAttach(Activity activity) {
@@ -56,7 +52,7 @@ public class TipDialog extends DialogFragment {
                 .setPositiveButton("Add to your tips", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        yourAdapter.add(tip);
+                        ((EnergySavingTabFragment)getTargetFragment().getTargetFragment()).getAdapter().getYourFragment().getAdapter().add(tip);
                     }
                 })
                 .setNegativeButton("Close", new DialogInterface.OnClickListener() {
@@ -79,7 +75,8 @@ public class TipDialog extends DialogFragment {
                 ratingBar.setRating(v);
                 tip.setAverageRating((int)v);
                 TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
-                ((DrawerActivity) getActivity()).getTipPresenter().createRating(getActivity(), rating);
+                RequestManager.getInstance().doRequest().createRating(rating);
+                ((TipsFragment) getTargetFragment()).getAdapter().notifyDataSetChanged();
             }
         });
 

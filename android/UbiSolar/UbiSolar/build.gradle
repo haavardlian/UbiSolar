@@ -41,5 +41,5 @@ dependencies {
     compile project(':UbiSolar:libs:facebook')
 
     compile 'com.android.support:support-v13:+'
-
+    compile 'com.google.code.gson:gson:2.2.4'
 }
