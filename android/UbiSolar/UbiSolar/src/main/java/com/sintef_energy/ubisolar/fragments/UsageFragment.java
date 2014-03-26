@@ -151,7 +151,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new HashMap<>();
 
-        clearDatabase();
+//        clearDatabase();
 
         //Populate the database if it's empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
@@ -250,8 +250,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case LOADER_USAGE:
                 String where = "";
 
-                //TODO: BUG: How to handle when user selects no devices?
-
                 for(int n = 0; n < graphView.getSelectedItems().length; n++){
                     where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
                     if(n != graphView.getSelectedItems().length - 1)
@@ -269,6 +267,18 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case LOADER_USAGE_DAY:
                 builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
                 builder.appendPath(EnergyContract.Energy.Date.Day);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+            case LOADER_USAGE_WEEK:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Week);
 
                 return new CursorLoader(
                         getActivity(),
@@ -349,6 +359,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(data.getCount() >= 1) {
             do {
                 EnergyUsageModel model = new EnergyUsageModel(data);
+                System.out.println(model.getDatetime());
 
                 DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
 

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 
@@ -64,6 +65,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
 
     private Bundle mSavedState;
     private UsageFragment mUsageFragment;
+    private View mRootView;
 
     private String[] selectedItems;
     private boolean[] selectedDialogItems;
@@ -95,13 +97,29 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
-        return rootView;
+        mRootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
+        return mRootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(mSavedState);
+
+        Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
+        Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
+        zoomInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zoomIn();
+            }
+        });
+        zoomOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zoomOut();
+            }
+        });
+
 
         Log.v(TAG, "onActivityCreated()");
 
@@ -224,28 +242,28 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             System.out.println("Creating graph");
             LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.lineChartView);
             mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
-            mChartView.addZoomListener(new ZoomListener() {
-                @Override
-                public void zoomApplied(ZoomEvent zoomEvent) {
-                    double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
-
-
-                    if(zoom < 90)
-                    {
-                        zoomIn();
-                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
-                    }
-                    if(zoom > 300)
-                    {
-                        zoomOut();
-                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
-                    }
-                }
-
-                @Override
-                public void zoomReset() {
-                }
-            }, true, true);
+//            mChartView.addZoomListener(new ZoomListener() {
+//                @Override
+//                public void zoomApplied(ZoomEvent zoomEvent) {
+//                    double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
+//
+//
+//                    if(zoom < 90)
+//                    {
+//                        zoomIn();
+//                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
+//                    }
+//                    if(zoom > 300)
+//                    {
+//                        zoomOut();
+//                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
+//                    }
+//                }
+//
+//                @Override
+//                public void zoomReset() {
+//                }
+//            }, true, true);
             mChartView.addPanListener(new PanListener() {
                 @Override
                 public void panApplied() {
@@ -407,6 +425,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             setFormat("HH", "EEEE dd/MM");
             mActiveDateIndex *= 24;
             mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, mUsageFragment);
+
+            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
+            zoomInButton.setEnabled(false);
 //            changeResolution();
 //            populateGraph(mActiveDateIndex * 24);
         }
@@ -421,6 +442,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             setFormat("w", "MMMMM y");
             mActiveDateIndex *= 4;
             mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, mUsageFragment);
+
+            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
+            zoomOutButton.setEnabled(true);
 //            changeResolution();
 //            populateGraph(mActiveDateIndex * 4);
         }
@@ -432,6 +456,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             setFormat("dd", "MMMM");
             mActiveDateIndex /= 24;
             mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
+            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
+            zoomInButton.setEnabled(true);
 //            changeResolution();
 //            populateGraph(mActiveDateIndex / 24);
         }
@@ -447,6 +473,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             setFormat("MMMM", "y");
             mActiveDateIndex /= 4;
             mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, mUsageFragment);
+            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
+            zoomOutButton.setEnabled(false);
 
 //            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
 //                    mActiveDateIndex / 4);
