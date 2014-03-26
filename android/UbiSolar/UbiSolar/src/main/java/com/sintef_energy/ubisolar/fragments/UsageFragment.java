@@ -160,7 +160,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             createEnergyUsage();
         }
 
-
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
 
