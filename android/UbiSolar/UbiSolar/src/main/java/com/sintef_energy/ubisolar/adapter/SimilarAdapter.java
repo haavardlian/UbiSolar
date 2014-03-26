@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -63,7 +64,8 @@ public class SimilarAdapter extends ArrayAdapter<Residence> {
             row = inflater.inflate(resource, parent, false);
 
             holder = new SimilarHolder();
-            holder.name = (TextView)row.findViewById(R.id.social_user_name);
+            holder.name = (TextView)row.findViewById(R.id.social_similar_row_name);
+            holder.checkBox = (CheckBox) row.findViewById(R.id.checkBox);
 
             row.setTag(holder);
         } else {
@@ -79,6 +81,7 @@ public class SimilarAdapter extends ArrayAdapter<Residence> {
 
     static class SimilarHolder {
         TextView name;
+        CheckBox checkBox;
     }
 
 }
