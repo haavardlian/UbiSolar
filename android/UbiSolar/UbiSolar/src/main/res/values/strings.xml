@@ -13,7 +13,6 @@
         <item>Profile</item>
         <item>Logout</item>
     </string-array>
-
     <string-array name="nav_drawer_icons">
         <item>@drawable/home</item>
         <item>@drawable/usage</item>
@@ -21,7 +20,8 @@
         <item>@drawable/devices</item>
         <item>@drawable/social</item>
         <item>@drawable/profile</item>
-        <item>@drawable/heat</item> <!-- TODO: Icons for log out -->
+        <item>@drawable/heat</item>
+ <!-- TODO: Icons for log out -->
     </string-array>
 
     <!-- AddTipDialog -->
@@ -54,7 +54,7 @@
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
     <string name="add_device_button">Add Device</string>
-    <!-- Fragment social-->
+    <!-- Fragment social -->
     <string name="socialUsername">User\'s name</string>
     <string name="socialPlaceHolder">Here there will be a list of all of your Facebook friends that also have the app.\n\nYou can compare yourself with friends, area or people with similar profiles in the search field in the ActionBar</string>
     <!-- Fragment Energy saving tabs -->
@@ -62,4 +62,6 @@
     <string name="fragment_energy_saving_tab_your">Your</string>
     <!-- TAGS -->
     <string name="TAG_GRAPH_TYPE">tag_graph_type</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
