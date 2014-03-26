@@ -63,19 +63,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     /** Callback for graphs */
     private IUsageView graphView;
 
-    /* Graphs fragments */
-    private UsageGraphPieFragment usageGraphPieFragment;
-    private UsageGraphLineFragment usageGraphLineFragment;
-
     public static final int LOADER_DEVICES = 0;
     public static final int LOADER_USAGE = 1;
     public static final int LOADER_USAGE_DAY = 2;
     public static final int LOADER_USAGE_MONTH = 3;
     public static final int LOADER_USAGE_YEAR = 4;
-
-
-    /** The first fragment is added to the view. Should not be added to the backstack */
-    private boolean mFirstFragmentAdd = false;
 
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
 
@@ -128,6 +120,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.fragment_usage_tabs);
+
         tabs.setViewPager(pager);
 
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -136,12 +129,16 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             @Override
             public void onPageSelected(int position) {
-                graphView = (IUsageView)mUsageFragmentStatePageAdapter.getFragment(position);
+                graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
+
+        //BUG: onPageChangeLIstener does not set graphView the first time.
+        //This is an ugly fix
+        graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(pager, 0);
 
         return rootView;
     }
@@ -160,7 +157,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             createEnergyUsage();
         }
 
-
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
 
@@ -176,7 +172,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_usage_menu, menu);
+        inflater.inflate(R.menu.usage, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -184,14 +180,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            /* Moved to deviceTab
-            case R.id.fragment_usage_menu_add:
-                AddUsageDialog addUsageDialog = new AddUsageDialog();
-                addUsageDialog.show(getFragmentManager(), "addUsage");
-                return true;*/
             case R.id.fragment_usage_menu_action_devices:
                 SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(
-                        new ArrayList<>(mDevices.values()), graphView.getSelectedDialogItems());
+                        new ArrayList<>(mDevices.values()),
+                        graphView.getSelectedDialogItems());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getFragmentManager(), "selectDeviceDialog");
                 return true;
@@ -238,7 +230,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
         graphView.setSelectedItems(selectedItems);
         graphView.setSelectedDialogItems(itemsSelected);
-
 
         //Clear the graph if no devices are selected
         if(selectedItems.length > 0)
@@ -392,9 +383,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {}
 
     private class UsageFragmentStatePageAdapter extends FragmentStatePagerAdapter {
 
@@ -431,8 +420,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                     return null;
             }
 
-            if(fragment != null )
+            if(fragment != null ) {
                 fragmentReferenceMap.put(position, fragment);
+            }
 
             return fragment;
         }
