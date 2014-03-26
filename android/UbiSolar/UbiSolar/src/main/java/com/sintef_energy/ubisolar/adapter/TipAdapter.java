@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
@@ -64,8 +65,7 @@ public class TipAdapter extends ArrayAdapter<Tip> {
 
             holder = new TipHolder();
             holder.name = (TextView)row.findViewById(R.id.tipRowName);
-            holder.description = (TextView)row.findViewById(R.id.tipRowDescription);
-            holder.rating = (TextView)row.findViewById(R.id.tipRowRating);
+            holder.rating = (RatingBar)row.findViewById(R.id.tipRowRating);
 
             row.setTag(holder);
         } else {
@@ -75,15 +75,13 @@ public class TipAdapter extends ArrayAdapter<Tip> {
         if(!data.isEmpty()) {
             Tip tip = data.get(position);
             holder.name.setText(tip.getName());
-            holder.description.setText(tip.getDescription());
-            holder.rating.setText("Rating: " + tip.getAverageRating());
+            holder.rating.setRating(tip.getAverageRating());
         }
         return row;
     }
 
     static class TipHolder {
         TextView name;
-        TextView description;
-        TextView rating;
+        RatingBar rating;
     }
 }

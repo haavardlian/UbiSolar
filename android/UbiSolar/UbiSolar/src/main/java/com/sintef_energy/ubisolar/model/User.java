@@ -1,25 +1,42 @@
 package com.sintef_energy.ubisolar.model;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * Created by Lars Erik on 18.03.14.
  */
 public class User {
 
     private String userId;
+    private Drawable profilePic;
     private String name;
     private byte age;
     private byte zipCode;
     private Residence[] residences;
     private String country;
 
-    public User (String userId, byte zipCode, byte age, String name,
+    public User (String userId, Drawable profilePic, byte zipCode, byte age, String name,
                      Residence[] residences, String country) {
         this.userId = userId;
+        this.profilePic = profilePic;
         this.zipCode = zipCode;
         this.age = age;
         this.name = name;
         this.residences = residences;
         this.country = country;
+    }
+
+    public User(String name, Drawable profilePic) {
+        this.name = name;
+        this.profilePic = profilePic;
+    }
+
+    public Drawable getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(Drawable profilePic) {
+        this.profilePic = profilePic;
     }
 
     public String getUserId() {

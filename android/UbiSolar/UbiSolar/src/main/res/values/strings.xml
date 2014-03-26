@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">UbiSolar</string>
+    <string name="app_name">Wattitude</string>
+    <string name="APP_ID">499884913456996</string>
 
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
@@ -53,15 +54,34 @@
     <string name="add_button">Add Usage</string>
     <string name="title_activity_add_device_energy">Total usage</string>
     <string name="hello_world">Hello world!</string>
+    <string name="get_started">Log in to share your profile</string>
+    <string name="action_forgot_password">Have you forgotten your password?</string>
     <string name="add_device_button">Add Device</string>
-    <!-- Fragment social -->
-    <string name="socialUsername">User\'s name</string>
-    <string name="socialPlaceHolder">Here there will be a list of all of your Facebook friends that also have the app.\n\nYou can compare yourself with friends, area or people with similar profiles in the search field in the ActionBar</string>
+
+    <string-array name="fragment_usage_tabs">
+        <item>Line chart</item>
+        <item>Pie chart</item>
+    </string-array>
+
+    <!-- Fragment social-->
+    <string name="social_user_name">User\'s name</string>
+    <string name="social_home_tab_label">Comparison areas</string>
+    <string name="comp_header">Comparison of savings</string>
+    <string name="user_name">You</string>
+    <string name="friend_name">Your friend</string>
+    <string name="watt_lvl">Wattitude level</string>
+    <string name="user_watt_lvl">Coal miner</string>
+    <string name="friend_watt_lvl">Windmill</string>
+    <string name="friends_header_title">Friends</string>
+    <string name="similar_header_title">People with similar profiles</string>
+    <string name="area_header_title">People in your area</string>
+
     <!-- Fragment Energy saving tabs -->
     <string name="fragment_energy_saving_tab_tips">Tips</string>
     <string name="fragment_energy_saving_tab_your">Your</string>
-    <!-- TAGS -->
-    <string name="TAG_GRAPH_TYPE">tag_graph_type</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="fragment_energy_saving_tabs">
+        <item>Tips</item>
+        <item>Yours</item>
+    </string-array>
 
 </resources>

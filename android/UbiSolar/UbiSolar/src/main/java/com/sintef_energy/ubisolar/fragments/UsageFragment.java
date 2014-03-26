@@ -2,7 +2,7 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.ContentResolver;
 
@@ -12,6 +12,8 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,10 +21,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 
-import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
+import com.astuetz.PagerSlidingTabStrip;
+import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
@@ -34,6 +35,7 @@ import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
+import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,34 +52,25 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private static final String TAG = UsageFragment.class.getName();
 
-    private String[] mSelectedItems;
-    private boolean[] mSelectDeviceDialogItems;
+    private Bundle mSavedState;
 
     /** List of all devices */
     private HashMap<Long, DeviceModel> mDevices;
-
-    /** List of the seleceted devices*/
-    private ArrayList<DeviceModel> mSelectedDevices;
 
     /** List of usage from devices */
     private ArrayList<DeviceUsageList> mDeviceUsageList;
 
     /** Callback for graphs */
-    private ITotalEnergyView graphView;
+    private IUsageView graphView;
 
-    /* Graphs fragments */
-    private UsageGraphPieFragment usageGraphPieFragment;
-    private UsageGraphLineFragment usageGraphLineFragment;
+    public static final int LOADER_DEVICES = 0;
+    public static final int LOADER_USAGE = 1;
+    public static final int LOADER_USAGE_DAY = 2;
+    public static final int LOADER_USAGE_WEEK= 3;
+    public static final int LOADER_USAGE_MONTH = 4;
+    public static final int LOADER_USAGE_YEAR = 5;
 
-    private static final int LOADER_DEVICES = 0;
-    private static final int LOADER_USAGE = 1;
-    private static final int LOADER_USAGE_DAY = 2;
-    private static final int LOADER_USAGE_MONTH = 3;
-    private static final int LOADER_USAGE_YEAR = 4;
-
-
-    /** The first fragment is added to the view. Should not be added to the backstack */
-    private boolean mFirstFragmentAdd = false;
+    private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
 
 
     /**
@@ -117,6 +110,37 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_usage, container, false);
+
+        if(mUsageFragmentStatePageAdapter == null)
+            mUsageFragmentStatePageAdapter = new UsageFragmentStatePageAdapter(getFragmentManager());
+
+        // Initialize the ViewPager and set an adapter
+        ScrollViewPager pager = (ScrollViewPager) rootView.findViewById(R.id.fragment_usage_tabs_pager);
+        pager.setAdapter(mUsageFragmentStatePageAdapter);
+        pager.setSwipeable(false); //TODO: Should be enabled/ disabled on MotionEvents for LineGraph
+
+        // Bind the tabs to the ViewPager
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) rootView.findViewById(R.id.fragment_usage_tabs);
+
+        tabs.setViewPager(pager);
+
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+
+        //BUG: onPageChangeLIstener does not set graphView the first time.
+        //This is an ugly fix
+        graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(pager, 0);
+
         return rootView;
     }
 
@@ -124,55 +148,32 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mSelectDeviceDialogItems = new boolean[0];
-
         mDevices = new HashMap<>();
-        mSelectedDevices = new ArrayList<>();
-        mDeviceUsageList = new ArrayList<>();
 
-        if (savedInstanceState != null) {
-            mSelectedItems = (String[]) savedInstanceState.getSerializable("mSelectedIndexes");
-        }
-        else
-            mSelectedItems = new String[0];
+        clearDatabase();
 
-        //clearDatabase();
-
-        //prepoluate database if it is empty
+        //Populate the database if it's empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
             createDevices();
             createEnergyUsage();
         }
 
-        //testDateQuery();
+        if(savedInstanceState != null && mSavedState == null)
+            mSavedState = savedInstanceState.getBundle("mSavedState");
 
-        /* Show fragment */
-        ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
-        setLineChart(button);
-
-        /* Button listeners*/
-        ImageButton graphButton = (ImageButton)getActivity().findViewById(R.id.usage_button_swap_graph);
-        graphButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleGraph();
-            }
-        });
-
-        Button deviceButton = (Button)getActivity().findViewById(R.id.usage_button_devices);
-        deviceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                displayDeviceFilter();
-            }
-        });
-
-        getLoaderManager().initLoader(LOADER_DEVICES, null, this);
-    }
+        if (mSavedState != null) {
+            mDeviceUsageList = mSavedState.getParcelableArrayList("mDeviceUsageList");
+            getLoaderManager().restartLoader(LOADER_DEVICES, null, this);
+        }
+        else {
+            mDeviceUsageList = new ArrayList<>();
+            getLoaderManager().initLoader(LOADER_DEVICES, null, this);
+        }
+   }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_usage_menu, menu);
+        inflater.inflate(R.menu.usage, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -180,11 +181,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            /* Moved to deviceTab
-            case R.id.fragment_usage_menu_add:
-                AddUsageDialog addUsageDialog = new AddUsageDialog();
-                addUsageDialog.show(getFragmentManager(), "addUsage");
-                return true;*/
+            case R.id.fragment_usage_menu_action_devices:
+                SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(
+                        new ArrayList<>(mDevices.values()),
+                        graphView.getSelectedDialogItems());
+                dialog.setTargetFragment(this, 0);
+                dialog.show(getFragmentManager(), "selectDeviceDialog");
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -194,7 +197,22 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putStringArray("mSelectedIndexes", mSelectedItems);
+        outState.putBundle("mSavedState", mSavedState != null ? mSavedState : saveState());
+    }
+
+    private Bundle saveState(){
+        Bundle state = new Bundle();
+
+        state.putParcelableArrayList("mDeviceUsageList", mDeviceUsageList);
+
+        return state;
+    }
+
+    public void onDestroyView(){
+        super.onDestroy();
+
+        mSavedState = saveState();
+        Log.v(TAG, " onDestroyView()");
     }
 
     @Override
@@ -202,102 +220,16 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         super.onDestroy();
     }
 
-    /**
-     * Helper method for switching graph type
-     */
-    public void toggleGraph(){
-        ImageButton button = (ImageButton) getActivity().findViewById(R.id.usage_button_swap_graph);
-
-        if(button.getTag(R.string.TAG_GRAPH_TYPE).equals("pie")){
-            setPieChart(button);
-        }
-        else{
-            setLineChart(button);
-        }
-    }
-
-    /**
-     * Change the graph view to a pie chart.
-     *
-     * @param button
-     */
-    private void setPieChart(ImageButton button){
-        button.setImageResource(R.drawable.line);
-        button.setTag(R.string.TAG_GRAPH_TYPE, "line");
-
-        //If fragment have not been created.
-        if(usageGraphPieFragment == null) {
-            usageGraphPieFragment = UsageGraphPieFragment.newInstance();
-        }
-
-        graphView = usageGraphPieFragment;
-
-        addFragment(usageGraphPieFragment, "usageGraphPieFragment");
-    }
-
-    /**
-     * Set the graph view to line graph.
-     *
-     * @param button
-     */
-    private void setLineChart(ImageButton button){
-        button.setImageResource(R.drawable.pie);
-        button.setTag(R.string.TAG_GRAPH_TYPE, "pie");
-
-        Button deviceButton  = (Button) getActivity().findViewById(R.id.usage_button_devices);
-        deviceButton.setVisibility(View.VISIBLE);
-
-        //If fragment have not been created.
-        if(usageGraphLineFragment == null) {
-            usageGraphLineFragment = UsageGraphLineFragment.newInstance();
-        }
-
-        graphView = usageGraphLineFragment;
-
-        addFragment(usageGraphLineFragment, "usageGraphLineFragment");
-    }
-
-    /**
-     * Created an AlertDialog for choosing what devices to filer on.
-     *
-     */
-    public void displayDeviceFilter(){
-        SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(new ArrayList<>(mDevices.values()), mSelectDeviceDialogItems);
-        dialog.setTargetFragment(this, 0);
-        dialog.show(getFragmentManager(), "selectDeviceDialog");
-    }
-
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
         Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
-        mSelectedItems = selectedItems;
+        graphView.setSelectedItems(selectedItems);
+        graphView.setSelectedDialogItems(itemsSelected);
 
-        mSelectDeviceDialogItems = itemsSelected;
-
-        getLoaderManager().restartLoader(LOADER_USAGE, null, this);
-    }
-
-    /**
-     * Helper method for chaning the fragments.
-     *
-     * @param fragment
-     * @param tag
-     */
-    private void addFragment(Fragment fragment, String tag){
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-
-        if(fragment.isAdded())
-            ft.show(fragment);
-        else{
-            //Do not add the first time.
-            if(!mFirstFragmentAdd) {
-                ft.addToBackStack(tag);
-                mFirstFragmentAdd = true;
-            }
-
-            ft.replace(R.id.fragment_usage_tab_graph_placeholder, fragment);
-        }
-
-        ft.commit();
+        //Clear the graph if no devices are selected
+        if(selectedItems.length > 0)
+            getLoaderManager().restartLoader(LOADER_USAGE, null, this);
+        else
+            graphView.clearDevices();
     }
 
     @Override
@@ -315,22 +247,12 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         DeviceModel.DeviceEntry._ID + " ASC"
                 );
             case LOADER_USAGE:
-                String where = "";
-
-                //TODO: BUG: How to handle when user selects no devices?
-
-                for(int n = 0; n < mSelectedItems.length; n++){
-                    where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
-                    if(n != mSelectedItems.length - 1)
-                        where += " OR ";
-                }
-
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Energy.CONTENT_URI,
                         EnergyContract.Energy.PROJECTION_ALL,
-                        where,
-                        mSelectedItems,
+                        sqlWhereDevices(),
+                        graphView.getSelectedItems(),
                         EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
                 );
             case LOADER_USAGE_DAY:
@@ -341,7 +263,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         getActivity(),
                         builder.build(),
                         null,
-                        null,
+                        sqlWhereDevices(),
                         null,
                         null
                 );
@@ -353,7 +275,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         getActivity(),
                         builder.build(),
                         null,
-                        null,
+                        sqlWhereDevices(),
                         null,
                         null
                 );
@@ -365,12 +287,27 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         getActivity(),
                         builder.build(),
                         null,
-                        null,
+                        sqlWhereDevices(),
                         null,
                         null
                 );
         }
         return null;
+    }
+
+    private String sqlWhereDevices(){
+
+        String where = "";
+
+        //TODO: BUG: How to handle when user selects no devices?
+
+        for(int n = 0; n < graphView.getSelectedItems().length; n++){
+            where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
+            if(n != graphView.getSelectedItems().length - 1)
+                where += " OR ";
+        }
+
+        return where;
     }
 
     @Override
@@ -392,6 +329,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 populateDeviceUsageList(cursor);
                 break;
             case LOADER_USAGE_DAY:
+            case LOADER_USAGE_WEEK:
             case LOADER_USAGE_MONTH:
             case LOADER_USAGE_YEAR:
                 populateDeviceUsageList(cursor);
@@ -410,31 +348,23 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //Hashmap containt all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
-        /* Only run if devices is selected */
-        if(data.getCount() < 1){
-            Log.v(TAG, "No devices selected");
-            return;
-        }
-
         /* Get data from cursor and add */
         data.moveToFirst();
-        if(data.getCount() >= 1)
-            do{
-                EnergyUsageModel eum = new EnergyUsageModel(data);
+        if(data.getCount() >= 1) {
+            do {
+                EnergyUsageModel model = new EnergyUsageModel(data);
 
-                DeviceUsageList dList = devices.get(eum.getDevice_id());
+                DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
 
-                if(dList == null){
-                    dList = new DeviceUsageList(mDevices.get(eum.getDevice_id()));
-                    devices.put(Long.valueOf(dList.getDevice().getDevice_id()), dList);
+                if (deviceUsageList == null) {
+                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
+                    devices.put(Long.valueOf(deviceUsageList.getDevice().getDevice_id()), deviceUsageList);
                 }
 
-                /* Add Energy usage to device */
-                if(dList != null){
-                    dList.add(eum);
-                }
+                deviceUsageList.add(model);
             }
-            while(data.moveToNext());
+            while (data.moveToNext());
+        }
 
         graphView.clearDevices();
 
@@ -445,8 +375,64 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {}
 
+    private class UsageFragmentStatePageAdapter extends FragmentStatePagerAdapter {
+
+        private String titles[];
+
+        private HashMap<Integer, Fragment> fragmentReferenceMap;
+
+        public UsageFragmentStatePageAdapter(FragmentManager fm){
+            super(fm);
+
+            titles = getResources().getStringArray(R.array.fragment_usage_tabs);
+
+            fragmentReferenceMap = new HashMap<>();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            Fragment fragment = null;
+
+            switch (position){
+                case 0:
+                    fragment = UsageGraphLineFragment.newInstance();
+                    break;
+                case 1:
+                    fragment = UsageGraphPieFragment.newInstance();
+                    break;
+                default:
+                    return null;
+            }
+
+            if(fragment != null ) {
+                fragmentReferenceMap.put(position, fragment);
+            }
+
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return titles.length;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            super.destroyItem(container, position, object);
+            fragmentReferenceMap.remove(position);
+        }
+
+        public Fragment getFragment(int key) {
+            return fragmentReferenceMap.get(key);
+        }
     }
 
 
@@ -454,6 +440,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private void createDevices()
     {
+        addDevice("Total", "-");
         addDevice("TV", "Livingroom");
         addDevice("Radio", "Kitchen");
         addDevice("Heater", "Second floor");

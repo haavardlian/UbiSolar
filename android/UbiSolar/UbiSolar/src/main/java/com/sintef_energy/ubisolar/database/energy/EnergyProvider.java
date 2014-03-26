@@ -37,8 +37,9 @@ public class EnergyProvider extends ContentProvider{
     private static final int ENERGY_LIST = 3;
     private static final int ENERGY_ID = 4;
     private static final int ENERGY_DAY_LIST = 5;
-    private static final int ENERGY_MONTH_LIST = 6;
-    private static final int ENERGY_YEAR_LIST = 7;
+    private static final int ENERGY_WEEK_LIST = 6;
+    private static final int ENERGY_MONTH_LIST = 7;
+    private static final int ENERGY_YEAR_LIST = 8;
 
     private static final UriMatcher URI_MATCHER;
     // prepare the UriMatcher
@@ -49,6 +50,7 @@ public class EnergyProvider extends ContentProvider{
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy", ENERGY_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/#", ENERGY_ID);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Day, ENERGY_DAY_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Week, ENERGY_WEEK_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Month, ENERGY_MONTH_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Year, ENERGY_YEAR_LIST);
    }
@@ -118,13 +120,16 @@ public class EnergyProvider extends ContentProvider{
                     uri.getLastPathSegment());
                 break;
             case ENERGY_DAY_LIST:
-                rawSql = generateRawDateSql("%Y-%m-%d");
+                rawSql = generateRawDateSql("%Y-%m-%d", selection);
+                break;
+            case ENERGY_WEEK_LIST:
+                rawSql = generateRawDateSql("%Y-%w", selection);
                 break;
             case ENERGY_MONTH_LIST:
-                rawSql = generateRawDateSql("%Y-%m");
+                rawSql = generateRawDateSql("%Y-%m", selection);
                 break;
             case ENERGY_YEAR_LIST:
-                rawSql = generateRawDateSql("%Y");
+                rawSql = generateRawDateSql("%Y", selection);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -321,7 +326,6 @@ public class EnergyProvider extends ContentProvider{
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ")"
                                     +" values " + "(?,?,?,?)");
-
                     for (ContentValues value : values){
                         //bind the 1-indexed ?'s to the values specified
                         insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
@@ -388,7 +392,7 @@ public class EnergyProvider extends ContentProvider{
         throw new SQLException("Problem while inserting into uri: " + uri);
    }
 
-    private String generateRawDateSql(String date){
+    private String generateRawDateSql(String date, String where){
 
         //Time to aggregate on
         String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
@@ -401,9 +405,10 @@ public class EnergyProvider extends ContentProvider{
                         + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
                         + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
+                        + "WHERE " + where + " "
                         + "GROUP BY " + time + ", "
                             + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
-                        + "SORT BY `month` ASC";
+                        + "ORDER BY `month` ASC";
 
         return rawSql;
     }
