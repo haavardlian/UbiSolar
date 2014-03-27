@@ -4,6 +4,13 @@
     <string name="app_name">Wattitude</string>
     <string name="APP_ID">499884913456996</string>
 
+    <!-- Sync and auth -->
+    <string name="auth_account_type">com.sintef_energy.ubisolar.sync</string>
+    <string name="sync_content_authority">com.sintef_energy.ubisolar.sync.provider</string>
+    <!-- The Content Provider -->
+    <string name="provider_authority_energy">com.sintef_energy.ubisolar.provider.energy</string>
+
+
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
         <item>Home</item>
@@ -98,4 +105,6 @@
         <item>Yours</item>
     </string-array>
 
+    <!-- Toast -->
+    <string name="no_internet">Please get yo self some interwebz</string>
 </resources>
