@@ -76,7 +76,6 @@ public class SocialFragment extends DefaultTabFragment {
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
         tabs.setViewPager(pager);
 
-
         return mRoot;
     }
 
