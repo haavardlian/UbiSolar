@@ -15,6 +15,7 @@ import com.sintef_energy.ubisolar.adapter.TipAdapter;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.dialogs.TipDialog;
 import com.sintef_energy.ubisolar.model.Tip;
+import com.sintef_energy.ubisolar.utils.RequestManager;
 
 import java.util.ArrayList;
 
@@ -24,38 +25,37 @@ import java.util.ArrayList;
 public class TipsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private ListView tipsView;
-    private YourAdapter yourAdapter;
+    private TipAdapter tipAdapter;
 
-    public static TipsFragment newInstance(int position, YourAdapter yourAdapter) {
-        TipsFragment fragment = new TipsFragment(yourAdapter);
+    public static TipsFragment newInstance(int position) {
+        TipsFragment fragment = new TipsFragment();
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
         return fragment;
     }
 
-    public TipsFragment(YourAdapter yourAdapter) {
-        this.yourAdapter = yourAdapter;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tip_list, container, false);
-        final TipAdapter tipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
+        tipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
 
         tipsView = (ListView) rootView.findViewById(R.id.tipList);
         tipsView.setAdapter(tipAdapter);
         tipsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TipDialog dialog = new TipDialog(tipAdapter.getItem(i), yourAdapter);
+                TipDialog dialog = new TipDialog(tipAdapter.getItem(i));
+                dialog.setTargetFragment(TipsFragment.this, 0);
                 dialog.show(getFragmentManager(), "tipDialog");
             }
         });
 
         //Get all tips from server asynchronously
         getActivity().setProgressBarIndeterminateVisibility(true);
-        ((DrawerActivity) getActivity()).getTipPresenter().getAllTips(tipAdapter);
+        RequestManager.getInstance().doRequest().getAllTips(tipAdapter);
         return rootView;
     }
+
+    public TipAdapter getAdapter() { return this.tipAdapter; }
 }

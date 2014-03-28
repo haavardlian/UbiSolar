@@ -13,20 +13,18 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.presenter.TipPresenter;
 import com.sintef_energy.ubisolar.model.Tip;
+import com.sintef_energy.ubisolar.utils.RequestManager;
 
 /**
  * Created by Håvard on 20.03.14.
  */
 public class AddTipDialog extends DialogFragment {
     private View view = null;
-    private TipPresenter tipPresenter;
     private TextView nameField, descriptionField;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        tipPresenter = ((DrawerActivity) activity).getTipPresenter();
     }
 
     @Override
@@ -43,10 +41,9 @@ public class AddTipDialog extends DialogFragment {
                 .setPositiveButton(R.string.addTipDialog_buttonText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
                         Tip tip = new Tip(0, nameField.getText().toString(), descriptionField.getText().toString(), 0, 0);
 
-                        tipPresenter.createTip(getActivity(), tip);
+                        RequestManager.getInstance().doRequest().createTip(tip);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

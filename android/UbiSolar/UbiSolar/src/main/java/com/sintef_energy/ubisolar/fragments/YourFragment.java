@@ -26,16 +26,12 @@ public class YourFragment extends Fragment {
     private int position;
     private YourAdapter yourAdapter;
 
-    public static YourFragment newInstance(int position, YourAdapter yourAdapter) {
-        YourFragment fragment = new YourFragment(yourAdapter);
+    public static YourFragment newInstance(int position) {
+        YourFragment fragment = new YourFragment();
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
         return fragment;
-    }
-
-    public YourFragment(YourAdapter yourAdapter) {
-        this.yourAdapter = yourAdapter;
     }
 
     @Override
@@ -49,14 +45,11 @@ public class YourFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_your_list, container, false);
         ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
+        yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row, new ArrayList<Tip>(), getFragmentManager());
         yourList.setAdapter(yourAdapter);
-        yourList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                YourDialog dialog = new YourDialog(yourAdapter.getItem(i), yourAdapter);
-                dialog.show(getFragmentManager(), "yourDialog");
-            }
-        });
+
         return rootView;
     }
+
+    public YourAdapter getAdapter() { return yourAdapter; }
 }

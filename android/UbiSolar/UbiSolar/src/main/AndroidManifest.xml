@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sintef_energy.ubisolar" >
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!-- Sync permissions -->
+    <uses-permission
+        android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -25,8 +34,6 @@
             android:label="@string/app_name" >
         </activity>
 
-
-
         <provider
             android:name="com.sintef_energy.ubisolar.database.energy.EnergyProvider"
             android:authorities="com.sintef_energy.ubisolar.provider.energy"
@@ -36,6 +43,28 @@
             android:readPermission=".alarm.db.AlarmModel.READ"
             android:writePermission=".alarm.db.AlarmModel.WRITE" />
 
+        <!-- The sync adapter service-->
+        <service
+            android:name="com.sintef_energy.ubisolar.services.UsageSyncService"
+            android:exported="true"
+            android:process=":sync">
+            <intent-filter>com.sintef_energy.ubisolar.sync.provider <!--com.example.android.datasync.provider-->
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <!-- The stub authenticator service -->
+        <service
+            android:name="com.sintef_energy.ubisolar.services.AuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/APP_ID"/>
 
