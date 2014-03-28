@@ -21,10 +21,12 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
+import com.facebook.LoggingBehavior;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
+import com.facebook.Settings;
 import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
@@ -47,7 +49,7 @@ import java.util.Arrays;
 
 /**
  * The main activity.
- *
+ * Handles all the presenters, internet RequestManager, account data, authentication, and logic for the application.
  * TODO: WeakReference presenters?
  */
 public class DrawerActivity extends FragmentActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks,
@@ -89,23 +91,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       /* DEBUG with strict mode */
-        if(Global.DEVELOPER_MADE){
-            StrictMode.setThreadPolicy(
-                    new StrictMode.ThreadPolicy.Builder()
-            .detectDiskReads()
-            .detectDiskWrites()
-            .detectNetwork()
-            .penaltyLog()
-            .build());
-            StrictMode.setVmPolicy(
-                    new StrictMode.VmPolicy.Builder()
-            .detectLeakedSqlLiteObjects()
-            .detectLeakedClosableObjects()
-            .penaltyLog()
-            .penaltyDeath()
-            .build());
-        }
+
 
         super.onCreate(savedInstanceState);
         //We want to use the progress bar
@@ -151,7 +137,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         /* Session data */
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
 
-
         /* Setup preference manager */
         PreferencesManager.initializeInstance(getApplicationContext());
         mPrefManager = PreferencesManager.getInstance();
@@ -167,7 +152,20 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         //ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
 
         /* Request a sync operation */
-        ContentResolver.requestSync(mAccount, AUTHORITY, new Bundle());
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); //Do sync regardless of settings
+        //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
+        ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
+
+        // Extra logging for debug
+        if(Global.DEVELOPER_MADE)
+            Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
+
+        startFacebookLogin(savedInstanceState);
+
+        /* Start developer mode after app has been setup
+         * Lots of StrictMode violations are done in startup anyways. */
+        developerMode(Global.DEVELOPER_MADE);
 
     }
 
@@ -178,29 +176,30 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     @Override
     public void onStart(){
         super.onStart();
+        Session.getActiveSession().addCallback(mFacebookSessionStatusCallback);
 
+        //Updates the UI based on logged in state
         changeNavdrawerSessionsView(Global.loggedIn);
+    }
 
-        // start Facebook Login
-        // This will _only_ log in if the user is logged in from before.
-        // To log in, the user must choose so himself from the menu.
-        /* Check if we have an open session */
-        Session fbSession = Session.openActiveSession(this, false, mFacebookSessionStatusCallback);
 
-        /* If fbSession is null, then we can create a new session from our auth key and set it has an active session */
-        if(fbSession == null && false) {
-            Session builder = new Session.Builder(getApplicationContext())
-                    .setApplicationId(String.valueOf(R.string.APP_ID))
-                    .build();
-
-            Session.setActiveSession(builder);
-        }
+    @Override
+    public void onStop() {
+        super.onStop();
+        Session.getActiveSession().removeCallback(mFacebookSessionStatusCallback);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Session session = Session.getActiveSession();
+        Session.saveSession(session, outState);
     }
 
     @Override
@@ -243,97 +242,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
         else
             Log.e(TAG, "Error creating fragment from navigation drawer.");
-    }
-
-    private void onClickLogin() {
-        /* User wants to log out */
-        if (Global.loggedIn){
-            callFacebookLogout(getApplicationContext());
-        }
-        /* User wants to log in */
-        /* Is there internet? */
-        else if(!isNetworkOn(getApplicationContext())){
-            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
-        }
-        /* There is internet */
-        else {
-            Session session = Session.getActiveSession();
-            if (session == null) {
-                // start Facebook Login
-                // This will _only_ log in if the user is logged in from before.
-                // To log in, the user must choose so himself from the menu.
-                Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
-            }
-            else if (!session.isOpened() && !session.isClosed()) {
-                session.openForRead(new Session.OpenRequest(this)
-                        .setPermissions(Arrays.asList("basic_info"))
-                        .setCallback(mFacebookSessionStatusCallback));
-            } else {
-                Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
-            }
-        }
-    }
-
-    /**
-     * Logout From Facebook
-     */
-    private void callFacebookLogout(Context context) {
-        Session session = Session.getActiveSession();
-        if (session != null) {
-
-            if (!session.isClosed()) {
-                session.closeAndClearTokenInformation();
-                //clear your preferences if saved
-            }
-        } else {
-
-            session = new Session(context);
-            Session.setActiveSession(session);
-
-            session.closeAndClearTokenInformation();
-            //clear your preferences if saved
-
-        }
-
-        changeNavdrawerSessionsView(false);
-        mPrefManager.clearFacebookSessionData();
-    }
-    
-    
-    private class FacebookSessionStatusCallback implements Session.StatusCallback {
-        private final String TAG = FacebookSessionStatusCallback.class.getName();
-        
-        // callback when session changes state
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-            //User is logged in
-            if (session.isOpened()) {
-                Log.v(DrawerActivity.TAG,"Facebook logged in.");
-
-                /* Set session data */
-                mPrefManager.setAccessToken(session.getAccessToken());
-                mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
-
-                //SessionState.
-
-                Toast.makeText(getBaseContext(), "Logged in through facebook", Toast.LENGTH_LONG).show();
-                changeNavdrawerSessionsView(true);
-
-                Request.newMeRequest(session, new Request.GraphUserCallback() {
-                    @Override
-                    public void onCompleted(GraphUser user, Response response) {
-                        mPrefManager.setKeyFacebookUid(user.getId());
-                        Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
-                    }
-                }).executeAsync();
-           }
-            // User is logged out
-            else if (session.isClosed()) {
-                Log.v(DrawerActivity.TAG, "Facebook logged out.");
-                changeNavdrawerSessionsView(false);
-            } else
-                Log.v(DrawerActivity.TAG, "Facebook status is fishy");
-        }
     }
 
     /**
@@ -420,6 +328,128 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     @Override
     public DevicePresenter getDevicePresenter() { return devicePresenter; }
 
+    /* Login logic */
+
+    /**
+     * Handles the startup authentication.
+     *
+     * Authenticates to facebook. If no authentication data is present, then
+     * nothing happens. The user must explicitly say that he wants to login.
+     *
+     * @param savedInstanceState Saved instance data
+     */
+    private void startFacebookLogin(Bundle savedInstanceState){
+
+
+        // start Facebook Login
+        // This will _only_ log in if the user is logged in from before.
+        // To log in, the user must choose so himself from the menu.
+        Session session = Session.getActiveSession();
+        if (session == null) {
+            if (savedInstanceState != null) {
+                session = Session.restoreSession(this, null, mFacebookSessionStatusCallback, savedInstanceState);
+            }
+            if (session == null) {
+                session = new Session(this);
+            }
+            Session.setActiveSession(session);
+            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
+                session.openForRead(new Session.OpenRequest(this).setCallback(mFacebookSessionStatusCallback));
+            }
+        }
+    }
+
+    private void onClickLogin() {
+        /* User wants to log out */
+        if (Global.loggedIn){
+            callFacebookLogout(getApplicationContext());
+        }
+        /* User wants to log in */
+        /* Is there internet? */
+        else if(!isNetworkOn(getApplicationContext())){
+            Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
+        }
+        /* There is internet */
+        else {
+            Session session = Session.getActiveSession();
+            if (session == null) {
+                // start Facebook Login
+                // This will _only_ log in if the user is logged in from before.
+                // To log in, the user must choose so himself from the menu.
+                Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
+            }
+            else if (!session.isOpened() && !session.isClosed()) {
+                session.openForRead(new Session.OpenRequest(this)
+                        .setPermissions(Arrays.asList("basic_info"))
+                        .setCallback(mFacebookSessionStatusCallback));
+            } else {
+                Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
+            }
+        }
+    }
+
+    /**
+     * Logout From Facebook
+     */
+    private void callFacebookLogout(Context context) {
+        Session session = Session.getActiveSession();
+        if (session != null) {
+
+            if (!session.isClosed()) {
+                session.closeAndClearTokenInformation();
+                //clear your preferences if saved
+            }
+        } else {
+            session = new Session(context);
+            Session.setActiveSession(session);
+
+            session.closeAndClearTokenInformation();
+            //clear your preferences if saved
+        }
+
+        changeNavdrawerSessionsView(false);
+        mPrefManager.clearFacebookSessionData();
+    }
+
+
+    private class FacebookSessionStatusCallback implements Session.StatusCallback {
+        private final String TAG = FacebookSessionStatusCallback.class.getName();
+
+        // callback when session changes state
+        @Override
+        public void call(Session session, SessionState state, Exception exception) {
+            //User is logged in
+            if (session.isOpened()) {
+                Log.v(DrawerActivity.TAG,"Facebook logged in.");
+
+                /* Set session data */
+                mPrefManager.setAccessToken(session.getAccessToken());
+                mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
+
+                //SessionState.
+
+                Toast.makeText(getBaseContext(), "Logged in through facebook", Toast.LENGTH_LONG).show();
+                changeNavdrawerSessionsView(true);
+
+                Request.newMeRequest(session, new Request.GraphUserCallback() {
+                    @Override
+                    public void onCompleted(GraphUser user, Response response) {
+                        mPrefManager.setKeyFacebookUid(user.getId());
+                        Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
+                    }
+                }).executeAsync();
+           }
+            // User is logged out
+            else if (session.isClosed()) {
+                Log.v(DrawerActivity.TAG, "Facebook logged out.");
+                changeNavdrawerSessionsView(false);
+            } else
+                Log.v(DrawerActivity.TAG, "Facebook status is fishy");
+        }
+    }
+
+
+
     /**
      * Helper class to check if app has internet connection.
      * @param context
@@ -469,6 +499,29 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
 
         return newAccount;
+    }
+
+
+    /**
+     * Debug with strict mode
+     */
+    private void developerMode(boolean devMode){
+        if(devMode){
+            StrictMode.setThreadPolicy(
+                    new StrictMode.ThreadPolicy.Builder()
+            .detectDiskReads()
+            .detectDiskWrites()
+            .detectNetwork()
+            .penaltyLog()
+            .build());
+            StrictMode.setVmPolicy(
+                    new StrictMode.VmPolicy.Builder()
+            .detectLeakedSqlLiteObjects()
+            .detectLeakedClosableObjects()
+            .penaltyLog()
+            .penaltyDeath()
+            .build());
+        }
     }
 
 }
