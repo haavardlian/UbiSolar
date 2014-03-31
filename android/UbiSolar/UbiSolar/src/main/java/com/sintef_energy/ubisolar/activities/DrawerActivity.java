@@ -103,7 +103,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         /*UsagePresenter*/
 //        Calendar calendar = Calendar.getInstance();
 //        calendar.add(Calendar.MONTH, 8);
-//        mTotalEnergyPresenter = new TotalEnergyPresenter();
+        mTotalEnergyPresenter = new TotalEnergyPresenter();
         //mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
         //        0,
         //        calendar.getTimeInMillis());
@@ -287,7 +287,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         NavDrawerItem item = mNavigationDrawerFragment.getNavnDrawerItem(6);
 
-        if (Global.loggedIn)
+        if (Global.loggedIn) //TODO: if Session.GetActiveSession().isOpened?
             item.setTitle("Log out");
         else
             item.setTitle("Log in");
@@ -359,6 +359,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
     }
 
+    /**
+     * Handles login and logout from facebook, when the user clicks the login/ lgout button.
+     * What done is based on Global.isloggedIn state.
+     *
+     * Updates state, and UI accordingly.
+     *
+     */
     private void onClickLogin() {
         /* User wants to log out */
         if (Global.loggedIn){
