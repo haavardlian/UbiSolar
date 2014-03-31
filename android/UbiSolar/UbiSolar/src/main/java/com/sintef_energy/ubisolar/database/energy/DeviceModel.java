@@ -128,6 +128,7 @@ public class DeviceModel extends Device implements Parcelable{
         setName(cursor.getString(_name));
         setDescription(cursor.getString(_description));
         setCategory(_category);
+        //PROBLEM: Here category is set to four
     }
 
     public DeviceModel(long device_id, String name, String description, long user_id, int category) {

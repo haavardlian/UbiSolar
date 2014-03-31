@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,7 +56,7 @@ public class DeviceFragment extends DefaultTabFragment {
         super.onCreate(savedInstanceState);
         try {
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
-            createGroupList();
+
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
 
@@ -92,9 +93,17 @@ public class DeviceFragment extends DefaultTabFragment {
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
+         /*Checking if the list is empty*/
+        if(devicePresenter.getDeviceModels(getActivity().getContentResolver()) != null){
+            devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
+        }
+        else
+            devices = new ArrayList<DeviceModel>();
+
         final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
+        //createGroupList();
 
         return mRootview;
     }

@@ -81,11 +81,6 @@ public class SocialCompareFragment extends Fragment {
             ListView houseDescrList = (ListView) view.findViewById(R.id.social_similar_list);
             houseDescrList.setAdapter(similarAdapter);
 
-            houseDescription.add(new Residence("Area","", 1, 40, 7040, 'A'));
-            houseDescription.add(new Residence("Number of residents","", 1, 40, 7040, 'A'));
-            houseDescription.add(new Residence("Energy class","", 1, 40, 7040, 'A'));
-            houseDescription.add(new Residence("Residence area", "", 1, 40, 7040, 'A'));
-
             similarAdapter.notifyDataSetChanged();
 
             return view;
