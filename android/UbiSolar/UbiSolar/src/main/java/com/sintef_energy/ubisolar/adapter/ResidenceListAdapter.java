@@ -1,8 +1,7 @@
-package com.sintef_energy.ubisolar.utils;
+package com.sintef_energy.ubisolar.adapter;
 
 
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,25 +13,25 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.model.Residence;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class ResidenceListAdapter extends BaseExpandableListAdapter {
 
     private Activity context;
-    private List<DeviceModel> devices;
+    private List<Residence> residences;
 
-    public ExpandableListAdapter(Activity context, List<DeviceModel> devices) {
+    public ResidenceListAdapter (Activity context, List<Residence> residences) {
         this.context = context;
-        this.devices = devices;
+        this.residences = residences;
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return devices.get(groupPosition);
+        return residences.get(groupPosition);
     }
 
     public String getDescription(int groupPosition) {
-        return devices.get(groupPosition).getDescription();
+        return residences.get(groupPosition).getDescription();
     }
 
     @Override
@@ -47,63 +46,48 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
-        final DeviceModel device = (DeviceModel)getChild(groupPosition, childPosition);
+        final Residence residence = (Residence)getChild(groupPosition, childPosition);
 
         LayoutInflater inflater = context.getLayoutInflater();
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.device_child_item, null);
+            convertView = inflater.inflate(R.layout.profile_residence_expanded, null);
         }
 
         TextView descriptionView = (TextView) convertView.findViewById(R.id.deviceDescription);
         TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
 
-        descriptionView.setText("Description: " + device.getDescription());
-        idView.setText("ID: " + device.getDevice_id());
+        descriptionView.setText("Description: " + residence.getDescription());
+        idView.setText("Name: " + residence.getHouseId());
         return convertView;
     }
 
 
 
     public Object getGroup(int groupPosition) {
-        return devices.get(groupPosition);
+        return residences.get(groupPosition);
     }
 
-    public int getGroupCount() { return devices.size(); }
+    public int getGroupCount() {
+        return residences.size();
+    }
 
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
 
     public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
-        //Working with dummydata:
-        String deviceName =  getGroup(groupPosition).toString();
+        String residenceName =  getGroup(groupPosition).toString();
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.device_list_item,
+            convertView = infalInflater.inflate(R.layout.profile_recidence_item,
                     null);
         }
-        TextView item = (TextView) convertView.findViewById(R.id.device);
+        TextView item = (TextView) convertView.findViewById(R.id.residence_name);
         item.setTypeface(null, Typeface.BOLD);
-        item.setText(deviceName);
+        item.setText(residenceName);
         return convertView;
-
-        //Experimenting
-        /*
-        String category = getGroup(groupPosition).toString();
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.device_list_item,
-                    null);
-        }
-        TextView item = (TextView) convertView.findViewById(R.id.device);
-        item.setTypeface(null, Typeface.BOLD);
-        item.setText(category);
-        return convertView;
-        */
-
     }
 
     public boolean hasStableIds() {

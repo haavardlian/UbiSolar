@@ -12,9 +12,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.IView.IDeviceView;
@@ -36,12 +38,13 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
 
     private TextView nameField, descriptionField;
     private DevicePresenter devicePresenter;
+    private Spinner categorySpinner;
     private View view;
+    private ArrayAdapter<String> categoryAdapter;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
         try {
             devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
 
@@ -63,14 +66,17 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                 .setPositiveButton(R.string.addDeviceDialog_buttonText, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        /*Create new device model*/
                         DeviceModel deviceModel = new DeviceModel();
                         deviceModel.setUser_id(System.currentTimeMillis());
                         deviceModel.setDevice_id(System.currentTimeMillis());
+
                         deviceModel.setDescription(descriptionField.getText().toString());
                         deviceModel.setName(nameField.getText().toString());
-                        devicePresenter.addDevice(deviceModel, getActivity().getContentResolver());
 
+                        /*Get selected category*/
+                        //deviceModel.setCategory(categorySpinner.getSelectedItemPosition());
+                        devicePresenter.addDevice(deviceModel, getActivity().getContentResolver());
 
                     }
                 })
@@ -81,14 +87,21 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                 })
                 .setTitle(R.string.addDeviceDialog_title);
 
-
+        /*Set up views*/
         nameField = (EditText) view.findViewById(R.id.edit_name);
         descriptionField = (EditText) view.findViewById(R.id.edit_description);
-        //usageField = (EnergyUsageModel) getActivity().findViewById(R.id.edit_usage);
-        //addButton = (Button) getActivity().findViewById(R.id.add_button);
+        categorySpinner = (Spinner) view.findViewById(R.id.dialog_add_device_category_spinner);
 
-        //EnergyDataSource.deleteAll(getActivity().getContentResolver());
 
+        /*Fill spinner with categories*/
+        categoryAdapter = new ArrayAdapter<String>(
+                getActivity(),
+                android.R.layout.simple_spinner_item,
+                android.R.id.text1,
+                getResources().getStringArray(R.array.device_categories)
+                );
+
+        categorySpinner.setAdapter(categoryAdapter);
         //TODO: Remove Loadmanager?
         getLoaderManager().initLoader(0, null, this);
         AlertDialog alertDialog = builder.create();

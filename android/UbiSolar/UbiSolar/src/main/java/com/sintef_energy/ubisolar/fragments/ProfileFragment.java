@@ -1,15 +1,19 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ExpandableListView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
+import com.sintef_energy.ubisolar.model.Residence;
+
+import java.util.ArrayList;
 
 /**
  * Created by perok on 2/11/14.
@@ -17,6 +21,11 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
  * UI design based on: https://github.com/gabrielemariotti/cardslib
  */
 public class ProfileFragment extends DefaultTabFragment {
+
+    public static final String TAG = DeviceFragment.class.getName();
+    private View mRootView;
+    private ExpandableListView expListView;
+    private ArrayList<Residence> residences;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -48,10 +57,10 @@ public class ProfileFragment extends DefaultTabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         //return super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.fragment_profile_placeholder, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_profile_residence_list, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-        return rootView;
+        return mRootView;
     }
 
 
@@ -75,4 +84,41 @@ public class ProfileFragment extends DefaultTabFragment {
     public void onDestroy(){
         super.onDestroy();
     }
+
+    private void setupList()
+    {
+        createGroupList();
+
+        expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListView);
+        final ResidenceListAdapter expListAdapter = new ResidenceListAdapter(getActivity(), residences);
+        setGroupIndicatorToRight();
+        expListView.setAdapter(expListAdapter);
+    }
+
+    private void createGroupList() {
+        residences = new ArrayList<Residence>();
+        residences.add(new Residence("Huset", "Hjemme", 6, 1, 1,'A'));
+        residences.add(new Residence("Hytta", "På fjellet", 2, 1, 1,'G'));
+        residences.add(new Residence("Kontoret","NTNU", 1, 1, 1, 'B'));
+        residences.add(new Residence("Spaniahuset", "Barcelona", 3, 1, 1, 'D'));
+
+    }
+
+    private void setGroupIndicatorToRight() {
+        /* Get the screen width */
+        DisplayMetrics dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+
+        expListView.setIndicatorBounds(width - getDipsFromPixel(35), width
+                - getDipsFromPixel(5));
+    }
+
+    public int getDipsFromPixel(float pixels) {
+        // Get the screen's density scale
+        final float scale = getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+        return (int) (pixels * scale + 0.5f);
+    }
+
 }

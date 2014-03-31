@@ -11,10 +11,14 @@ import android.view.ViewGroup;
 
 import android.widget.ExpandableListView;
 
+import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
+import com.sintef_energy.ubisolar.presenter.DevicePresenter;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.ExpandableListAdapter;
 
 import java.util.ArrayList;
@@ -29,6 +33,7 @@ public class DeviceFragment extends DefaultTabFragment {
      */
     public static final String TAG = DeviceFragment.class.getName();
     private View mRootview;
+    DevicePresenter devicePresenter;
     private ExpandableListView expListView;
     private ArrayList<DeviceModel> devices;
 
@@ -41,12 +46,22 @@ public class DeviceFragment extends DefaultTabFragment {
     }
 
     public DeviceFragment() {
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        try {
+            devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
+            createGroupList();
+             /*Line so we can delete test data easily*/
+            //EnergyDataSource.deleteAll(getActivity().getContentResolver());
+
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement " + TotalEnergyPresenter.class.getName());
+        }
     }
 
     @Override
@@ -60,6 +75,7 @@ public class DeviceFragment extends DefaultTabFragment {
             case R.id.menu_add_device:
                 AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
                 addDeviceDialog.show(getFragmentManager(), "addDevice");
+
                 return true;
             case R.id.menu_add_usage:
                 AddUsageDialog addUsageDialog = new AddUsageDialog();
@@ -75,8 +91,6 @@ public class DeviceFragment extends DefaultTabFragment {
         setHasOptionsMenu(true);
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
-        createGroupList();
-        
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
         final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
@@ -86,13 +100,21 @@ public class DeviceFragment extends DefaultTabFragment {
     }
 
     private void createGroupList() {
+        /*Checking if the list is empty*/
+        if(devicePresenter.getDeviceModels(getActivity().getContentResolver()) != null)
+            devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
+        else
+            devices = new ArrayList<DeviceModel>();
+
+
+        /* Old code, should use some of this to add examples when presenting the application
         devices = new ArrayList<DeviceModel>();
         devices.add(new DeviceModel(1, "TV", "Stue 1 etg", 1, 1));
         devices.add(new DeviceModel(2, "Oven", "In kitchen", 1, 1));
         devices.add(new DeviceModel(3, "Warm water", "-", 1, 1));
         devices.add(new DeviceModel(4, "Dishwasher", "Kitchen", 1, 1));
         devices.add(new DeviceModel(5, "Heating", "Main heating 2 floor", 1, 1));
-        devices.add(new DeviceModel(6, "Radio", "Radio livingroom", 1, 1));
+        devices.add(new DeviceModel(6, "Radio", "Radio livingroom", 1, 1));*/
     }
 
     private void setGroupIndicatorToRight() {

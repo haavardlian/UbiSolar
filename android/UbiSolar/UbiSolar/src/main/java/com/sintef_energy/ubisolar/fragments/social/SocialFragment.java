@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,7 +77,6 @@ public class SocialFragment extends DefaultTabFragment {
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
         tabs.setViewPager(pager);
 
-
         return mRoot;
     }
 
@@ -86,7 +86,7 @@ public class SocialFragment extends DefaultTabFragment {
         setRetainInstance(true);
     }
 
-    public class MyPagerAdapter extends FragmentPagerAdapter {
+    public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
         private final String[] TITLES = { "Friends", "Similar profiles"};
         private FriendAdapter friendAdapter;

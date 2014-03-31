@@ -6,7 +6,11 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,6 +18,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
+import com.sintef_energy.ubisolar.dialogs.AddTipDialog;
 import com.sintef_energy.ubisolar.model.Tip;
 
 import java.util.ArrayList;
@@ -26,8 +31,6 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
     private static final String TAG = EnergySavingTabFragment.class.getName();
 
     private View mRoot;
-    private YourAdapter yourAdapter;
-
     private TipsPagerAdapter mPagerAdapter;
 
     public static EnergySavingTabFragment newInstance(int sectionNumber) {
@@ -38,6 +41,11 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         return fragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     /**
      * The first call to a created fragment
@@ -54,19 +62,40 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.fragment_energy_saving_tab, container, false);
 
-        yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row, new ArrayList<Tip>());
-
         if(mPagerAdapter == null)
-            mPagerAdapter = new TipsPagerAdapter(getFragmentManager(), yourAdapter);
+            mPagerAdapter = new TipsPagerAdapter(getFragmentManager());
 
         // Initialize the ViewPager and set an adapter
-        ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_energy_saving_pager);
+        final ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_energy_saving_pager);
         pager.setAdapter(mPagerAdapter);
 
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_energy_saving_tabs);
         tabs.setViewPager(pager);
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch(position) {
+                    case 0:
+                        ((TipsPagerAdapter)pager.getAdapter()).getTipsFragment().getAdapter().notifyDataSetChanged();
+                        break;
+                    case 1:
+                        ((TipsPagerAdapter)pager.getAdapter()).getYourFragment().getAdapter().notifyDataSetChanged();
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         return mRoot;
     }
@@ -75,20 +104,38 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setRetainInstance(true);
-
-        //mTabHost.setOnTabChangedListener(this);
-        //mTabHost.setCurrentTab(mCurrentTab);
-        // manually start loading stuff in the first tab
-        //updateTab(TAB_WORDS, R.id.fragment_energy_saving_tab_tips);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_tip, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        /* Moved to deviceTab */
+            case R.id.menu_add_tip:
+                AddTipDialog dialog = new AddTipDialog();
+                dialog.setTargetFragment(this, 0);
+                dialog.show(getFragmentManager(), "addTipDialog");
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public TipsPagerAdapter getAdapter() { return mPagerAdapter; }
 
     public class TipsPagerAdapter extends FragmentStatePagerAdapter {
 
         private String[] titles;
         private YourAdapter yourAdapter;
-        public TipsPagerAdapter(FragmentManager fm, YourAdapter yourAdapter) {
+        private TipsFragment tipsFragment;
+        private YourFragment yourFragment;
+        public TipsPagerAdapter(FragmentManager fm) {
             super(fm);
-            this.yourAdapter = yourAdapter;
 
             titles = getResources().getStringArray(R.array.fragment_energy_saving_tabs);
         }
@@ -103,13 +150,24 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
             return titles.length;
         }
 
+        public TipsFragment getTipsFragment() {
+            return tipsFragment;
+        }
+
+        public YourFragment getYourFragment() {
+            return yourFragment;
+        }
+
         @Override
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    return TipsFragment.newInstance(0, yourAdapter);
+                    tipsFragment = TipsFragment.newInstance(0);
+                    tipsFragment.setTargetFragment(EnergySavingTabFragment.this, 0);
+                    return tipsFragment;
                 case 1:
-                    return YourFragment.newInstance(1, yourAdapter);
+                    yourFragment = YourFragment.newInstance(0);
+                    return yourFragment;
                 default:
                     return null;
             }

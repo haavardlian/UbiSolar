@@ -13,6 +13,7 @@ public class PreferencesManager {
     private static final String PREF_NAME = PreferencesManager.class.getName() + ".PREFS";
     public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN";
     public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN_EXPIRES";
+    public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
 
     private static PreferencesManager sInstance;
     private final SharedPreferences mPref;
@@ -44,7 +45,13 @@ public class PreferencesManager {
     public void setKeyAccessTokenExpires(Date date){
        mPref.edit()
             .putFloat(KEY_ACCESS_TOKEN_EXPIRES, date.getTime())
-            .apply();
+                .apply();
+    }
+
+    public void setKeyFacebookUid(String uid){
+        mPref.edit()
+                .putString(KEY_FACEBOOK_UID, uid)
+                .apply();
     }
  
     public String getAccessToken()  {
@@ -53,6 +60,10 @@ public class PreferencesManager {
 
     public Date getAccessTokenExpires(){
         return new Date(mPref.getLong(KEY_ACCESS_TOKEN_EXPIRES, 0));
+    }
+
+    public String getKeyFacebookUid(){
+        return mPref.getString(KEY_FACEBOOK_UID, "");
     }
 
     public void clearFacebookSessionData(){
