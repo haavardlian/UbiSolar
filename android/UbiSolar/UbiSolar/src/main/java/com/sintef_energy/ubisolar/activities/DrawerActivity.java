@@ -32,7 +32,7 @@ import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
-import com.sintef_energy.ubisolar.fragments.social.SocialFragment;
+import com.sintef_energy.ubisolar.fragments.social.CompareFragment;
 import com.sintef_energy.ubisolar.model.NavDrawerItem;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
@@ -225,7 +225,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 fragment = DeviceFragment.newInstance(position);
                 break;
             case 4:
-                fragment = SocialFragment.newInstance(position);
+                fragment = CompareFragment.newInstance(position);
                 break;
             case 5:
                 fragment = ProfileFragment.newInstance(position);
