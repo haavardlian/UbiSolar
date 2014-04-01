@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout android:id="@+id/linearLayout2"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true" >
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="65dp"
+            android:text="Select the factors you want to compare:"
+            android:textSize="18dp"
+            android:id="@+id/select_compare"
+            android:paddingTop="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"/>
+    </LinearLayout>
+    <View
+        android:id="@+id/horizontalLine"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="40dp"
+        android:layout_weight="1"
+        android:layout_alignParentTop="true"
+        android:layout_height="1dp"
+        android:gravity="center"
+        android:background="#000"
+/>
+
+
+    <ListView
+        android:id="@+id/social_similar_list"
+        android:layout_width="fill_parent"
+        android:layout_marginTop="70dp"
+        android:layout_marginBottom="75dp"
+        android:layout_height="fill_parent"
+        android:dividerHeight="3dp"
+        />
+
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true" >
+        <Button
+            android:layout_below="@id/social_similar_list"
+            android:layout_width="fill_parent"
+            android:layout_height="75dp"
+            android:text="Save changes"/>
+    </LinearLayout>
+</RelativeLayout>
