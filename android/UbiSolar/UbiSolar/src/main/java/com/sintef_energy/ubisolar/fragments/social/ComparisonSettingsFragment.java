@@ -36,16 +36,15 @@ public class ComparisonSettingsFragment extends Fragment {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static ComparisonSettingsFragment newInstance(int position, ComparisonAdapter compAdapter) {
-            ComparisonSettingsFragment fragment = new ComparisonSettingsFragment(compAdapter);
+        public static ComparisonSettingsFragment newInstance(int position) {
+            ComparisonSettingsFragment fragment = new ComparisonSettingsFragment();
             Bundle b = new Bundle();
             b.putInt(ARG_POSITION, position);
             fragment.setArguments(b);
             return fragment;
         }
 
-        public ComparisonSettingsFragment(ComparisonAdapter compAdapter) {
-            this.compAdapter = compAdapter;
+        public ComparisonSettingsFragment() {
         }
 
         /**
