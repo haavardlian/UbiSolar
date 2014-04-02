@@ -4,6 +4,9 @@
     android:layout_height="wrap_content"
     android:padding="10dp" >
 
+<ListView
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
 
     <TextView
         android:id="@+id/deviceID"
@@ -30,4 +33,5 @@
         android:layout_below="@id/deviceDescription"
         android:paddingLeft="25dp"
         android:layout_marginTop="8dp"/>
+    </ListView>
 </RelativeLayout>
