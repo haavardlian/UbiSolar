@@ -240,7 +240,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 fragment = ProfileFragment.newInstance(position);
                 break;
             case 11:
-                //fragment = ComparisonSettingsFragment.newInstance(position);
+                fragment = ComparisonSettingsFragment.newInstance(position);
                 break;
             case 12:
                 logout = true;
