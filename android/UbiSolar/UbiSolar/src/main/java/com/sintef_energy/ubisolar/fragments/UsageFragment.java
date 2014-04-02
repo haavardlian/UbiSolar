@@ -170,7 +170,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new LinkedHashMap<>();
 
-//        clearDatabase();
+        clearDatabase();
 
         //Populate the database if it's empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
@@ -431,12 +431,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(data.getCount() >= 1) {
             do {
                 EnergyUsageModel model = new EnergyUsageModel(data);
-//                System.out.println(model.getDatetime());
-
                 DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
 
                 if (deviceUsageList == null) {
-                    System.out.println(model.getDevice_id());
                     deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
                     devices.put(Long.valueOf(deviceUsageList.getDevice().getDevice_id()), deviceUsageList);
                 }
@@ -518,21 +515,16 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     {
         if(graphView.getResolution().equals("dd")) {
             graphView.setFormat("HH", "EEEE dd/MM");
-            int index = graphView.getActiveIndex();
             graphView.setActiveIndex(graphView.getActiveIndex() * 24);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, this);
 
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(false);
-//            changeResolution();
-//            populateGraph(mActiveDateIndex * 24);
         }
         else if(graphView.getResolution().equals("w")) {
             graphView.setFormat("dd", "MMMM");
             graphView.setActiveIndex(graphView.getActiveIndex() * 7);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
-//            changeResolution();
-//            populateGraph(mActiveDateIndex * 7);
         }
         else if(graphView.getResolution().equals("MMMM")) {
             graphView.setFormat("w", "MMMMM y");
@@ -541,8 +533,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(true);
-//            changeResolution();
-//            populateGraph(mActiveDateIndex * 4);
         }
     }
 
@@ -554,26 +544,20 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(true);
-//            changeResolution();
-//            populateGraph(mActiveDateIndex / 24);
         }
         else if(graphView.getResolution().equals("dd")) {
             graphView.setFormat("w", "MMMMM y");
             graphView.setActiveIndex(graphView.getActiveIndex() / 7);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
-//            changeResolution();
-//            populateGraph(mActiveDateIndex / 7);
         }
         else if(graphView.getResolution().equals("w")) {
             graphView.setFormat("MMMM", "y");
             graphView.setActiveIndex(graphView.getActiveIndex() / 4);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
+
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(false);
-
-//            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
-//                    mActiveDateIndex / 4);
         }
     }
 
@@ -582,17 +566,17 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private void createDevices()
     {
-        addDevice("Total", "-", true);
-        addDevice("TV", "Livingroom", false);
-        addDevice("Radio", "Kitchen", false);
-        addDevice("Heater", "Second floor", false);
-        addDevice("Oven", "Kitchen", false);
+        addDevice("Total", "-", 0, true);
+        addDevice("TV", "Livingroom", 1, false);
+        addDevice("Radio", "Kitchen", 1, false);
+        addDevice("Heater", "Second floor", 1, false);
+        addDevice("Oven", "Kitchen", 2, false);
     }
 
-    private void addDevice(String name, String description, boolean isTotal)
+    private void addDevice(String name, String description, int category, boolean isTotal)
     {
         DeviceModel device = new DeviceModel(System.currentTimeMillis(),
-                name, description, System.currentTimeMillis(), -1, isTotal);
+                name, description, System.currentTimeMillis(), category, isTotal);
 
         getActivity().getContentResolver().insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
@@ -637,8 +621,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private void clearDatabase()
     {
-        //TODO table needs to be completely removed.
-
         int it = getActivity().getContentResolver().delete(EnergyContract.Devices.CONTENT_URI, null, null);
         Log.v(TAG, "EMPTY DATABASE: " + it);
 
