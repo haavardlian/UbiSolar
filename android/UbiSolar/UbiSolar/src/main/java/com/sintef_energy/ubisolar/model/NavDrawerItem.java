@@ -11,19 +11,22 @@ public class NavDrawerItem {
     private String count = "0";
     // boolean to set visiblity of the counter
     private boolean isCounterVisible = false;
+    private boolean header;
 
     public NavDrawerItem(){}
 
-    public NavDrawerItem(String title, int icon){
+    public NavDrawerItem(String title, int icon, boolean header){
         this.title = title;
         this.icon = icon;
+        this.header = header;
     }
 
-    public NavDrawerItem(String title, int icon, boolean isCounterVisible, String count){
+    public NavDrawerItem(String title, int icon, boolean isCounterVisible, String count, boolean header){
         this.title = title;
         this.icon = icon;
         this.isCounterVisible = isCounterVisible;
         this.count = count;
+        this.header = header;
     }
 
     public String getTitle(){
@@ -56,5 +59,13 @@ public class NavDrawerItem {
 
     public void setCounterVisibility(boolean isCounterVisible){
         this.isCounterVisible = isCounterVisible;
+    }
+
+    public boolean isHeader() {
+        return header;
+    }
+
+    public void setHeader(boolean header) {
+        this.header = header;
     }
 }

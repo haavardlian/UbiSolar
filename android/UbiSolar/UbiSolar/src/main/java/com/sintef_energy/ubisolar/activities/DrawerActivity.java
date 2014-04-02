@@ -28,11 +28,16 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
+import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
+import com.sintef_energy.ubisolar.drawer.DrawerItem;
+import com.sintef_energy.ubisolar.drawer.Item;
+import com.sintef_energy.ubisolar.fragments.AddUsageFragment;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.social.CompareFragment;
+import com.sintef_energy.ubisolar.fragments.social.ComparisonSettingsFragment;
 import com.sintef_energy.ubisolar.model.NavDrawerItem;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
@@ -215,22 +220,27 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             case 0:
                 fragment = HomeFragment.newInstance(position);
                 break;
-            case 1:
+            case 2:
                 fragment = UsageFragment.newInstance(position);
                 break;
-            case 2:
-                fragment = EnergySavingTabFragment.newInstance(position);
-                break;
             case 3:
-                fragment = DeviceFragment.newInstance(position);
-                break;
-            case 4:
                 fragment = CompareFragment.newInstance(position);
                 break;
             case 5:
-                fragment = ProfileFragment.newInstance(position);
+                fragment = DeviceFragment.newInstance(position);
                 break;
             case 6:
+                fragment = AddUsageFragment.newInstance(position);
+                break;
+            case 8:
+                fragment = EnergySavingTabFragment.newInstance(position);
+                break;
+            case 10:
+                fragment = ProfileFragment.newInstance(position);
+                break;
+            case 11:
+                //fragment = ComparisonSettingsFragment.newInstance(position);
+            case 12:
                 logout = true;
                 break;
         }
@@ -377,10 +387,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     private void changeNavdrawerSessionsView(boolean state){
         Global.loggedIn = state;
 
-        NavDrawerItem item = mNavigationDrawerFragment.getNavnDrawerItem(6);
+        DrawerItem item = (DrawerItem) mNavigationDrawerFragment.getNavDrawerItem(12);
 
         if (Global.loggedIn)
-            item.setTitle("Log out");
+           item.setTitle("Log out");
         else
             item.setTitle("Log in");
 
