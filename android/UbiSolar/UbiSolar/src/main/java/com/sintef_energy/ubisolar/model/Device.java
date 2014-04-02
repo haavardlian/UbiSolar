@@ -10,18 +10,32 @@ public abstract class Device
     protected String name;
     protected String description;
     protected int category;
+    protected boolean isTotal;
 
     public Device()
     {
 
     }
 
-    public Device(long device_id, String name, String description, long user_id, int category) {
+    public Device(long device_id, String name, String description, long user_id,
+                  int category) {
         this.device_id = device_id;
         this.name = name;
         this.description = description;
         this.user_id = user_id;
         this.category = category;
+        this.isTotal = false;
+    }
+
+
+    public Device(long device_id, String name, String description, long user_id,
+                  int category, boolean isTotal) {
+        this.device_id = device_id;
+        this.name = name;
+        this.description = description;
+        this.user_id = user_id;
+        this.category = category;
+        this.isTotal = isTotal;
     }
 
     public long getDevice_id() {
@@ -62,5 +76,13 @@ public abstract class Device
 
     public void setCategory(int category) {
         this.category = category;
+    }
+
+    public boolean isTotal() {
+        return isTotal;
+    }
+
+    public void setIsTotal(boolean isTotal) {
+        this.isTotal = isTotal;
     }
 }
