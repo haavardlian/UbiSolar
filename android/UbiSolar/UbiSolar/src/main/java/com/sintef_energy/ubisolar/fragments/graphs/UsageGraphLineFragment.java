@@ -9,14 +9,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
@@ -36,7 +34,7 @@ import java.util.Date;
 /**
  * Created by perok on 2/11/14.
  */
-public class UsageGraphLineFragment extends Fragment implements IUsageView {
+public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     public static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String ARG_SECTION_NUMBER = "section_number";
@@ -53,19 +51,20 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
     private ArrayList<DeviceUsageList> mBaseUsageList;
     private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
-    private String mTitleFormat;
-    private String mDataResolution;
-    private int mActiveDateIndex = 0;
     private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED,
             Color.YELLOW};
     private int mColorIndex;
 
     private Bundle mSavedState;
-    private UsageFragment mUsageFragment;
     private View mRootView;
 
+    private String mTitleFormat;
+    private String mDataResolution;
     private String[] mSelectedItems;
     private boolean[] mSelectedDialogItems;
+    private int mActiveDateIndex = 0;
+
+    private boolean mLoaded = true;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -102,22 +101,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(mSavedState);
 
-        Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
-        Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
-        zoomInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                zoomIn();
-            }
-        });
-        zoomOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                zoomOut();
-            }
-        });
-
-
         Log.v(TAG, "onActivityCreated()");
 
         /* If the Fragment was destroyed inbetween (screen rotation), we need to recover the mSavedState first */
@@ -139,7 +122,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             mBaseUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mBaseUsageList");
             mSelectedDialogItems = mSavedState.getBooleanArray("mSelectedDialogItems");
             mSelectedItems = mSavedState.getStringArray("mSelectedItems");
-            System.out.println("Loaded");
 
         }
         //Initialize new data
@@ -209,11 +191,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
         Log.v(TAG, " onDestroy()");
     }
 
-    @Override
-    public void newData(EnergyUsageModel euModel) {
-        //euModels.add(euModel);
-//        createLineGraph();
-    }
 
 
     /**
@@ -387,12 +364,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
         return usageList.size();
     }
 
-    public void setFormat(String labelFormat, String titleFormat)
-    {
-        mTitleFormat = titleFormat;
-        mDataResolution = labelFormat;
-    }
-
     private void setRange(double minY, double maxY, int newIndex)
     {
         mActiveDateIndex = newIndex;
@@ -420,68 +391,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
                 start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
         mRenderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
                 end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
-    }
-
-    private void zoomIn()
-    {
-        if(mDataResolution.equals("dd")) {
-            setFormat("HH", "EEEE dd/MM");
-            mActiveDateIndex *= 24;
-            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, mUsageFragment);
-
-            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
-            zoomInButton.setEnabled(false);
-//            changeResolution();
-//            populateGraph(mActiveDateIndex * 24);
-        }
-        else if(mDataResolution.equals("w")) {
-            setFormat("dd", "MMMM");
-            mActiveDateIndex *= 7;
-            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
-//            changeResolution();
-//            populateGraph(mActiveDateIndex * 7);
-        }
-        else if(mDataResolution.equals("MMMM")) {
-            setFormat("w", "MMMMM y");
-            mActiveDateIndex *= 4;
-            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, mUsageFragment);
-
-            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
-            zoomOutButton.setEnabled(true);
-//            changeResolution();
-//            populateGraph(mActiveDateIndex * 4);
-        }
-    }
-
-    private void zoomOut()
-    {
-        if(mDataResolution.equals("HH")) {
-            setFormat("dd", "MMMM");
-            mActiveDateIndex /= 24;
-            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, mUsageFragment);
-            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
-            zoomInButton.setEnabled(true);
-//            changeResolution();
-//            populateGraph(mActiveDateIndex / 24);
-        }
-        else if(mDataResolution.equals("dd")) {
-            setFormat("w", "MMMMM y");
-            mActiveDateIndex /= 7;
-            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, mUsageFragment);
-
-//            changeResolution();
-//            populateGraph(mActiveDateIndex / 7);
-        }
-        else if(mDataResolution.equals("w")) {
-            setFormat("MMMM", "y");
-            mActiveDateIndex /= 4;
-            mUsageFragment.getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, mUsageFragment);
-            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
-            zoomOutButton.setEnabled(false);
-
-//            populateGraph(changeResolution(mCurrentUsageList, "MMMM"), "MMMM", "y",
-//                    mActiveDateIndex / 4);
-        }
     }
 
     private void changeResolution()
@@ -527,15 +436,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
         mRenderer.setYLabelsColor(0, labelColor);
     }
 
-    private String formatDate(Date date, String format)
-    {
-        SimpleDateFormat formater = new SimpleDateFormat (format);
-        if(date != null)
-            return formater.format(date);
-        else
-            return null;
-    }
-
     private void setLabels(String label)
     {
 //        mRenderer.setXTitle("<  " + label + "  >");
@@ -568,29 +468,80 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView {
             populateGraph(getLargestListSize());
     }
 
-    public void setUsageFragment(UsageFragment usageFragment) {
-        this.mUsageFragment = usageFragment;
+//    public void setUsageFragment(UsageFragment usageFragment) {
+//        this.mUsageFragment = usageFragment;
+//    }
+
+    // On UsageGraph
+
+    private String formatDate(Date date, String format)
+    {
+        SimpleDateFormat formater = new SimpleDateFormat (format);
+        if(date != null)
+            return formater.format(date);
+        else
+            return null;
     }
 
-    public String[] getmSelectedItems() {
+    public void setFormat(String labelFormat, String titleFormat)
+    {
+        mTitleFormat = titleFormat;
+        mDataResolution = labelFormat;
+    }
+
+    public String getResolution()
+    {
+        return mDataResolution;
+    }
+
+    public String[] getSelectedItems() {
         if(mSelectedItems == null)
             return new String[0];
         else
             return mSelectedItems;
     }
 
-    public void setmSelectedItems(String[] mSelectedItems) {
+    public void setSelectedItems(String[] mSelectedItems) {
         this.mSelectedItems = mSelectedItems;
     }
 
-    public boolean[] getmSelectedDialogItems() {
+    public boolean[] getSelectedDialogItems() {
         if(mSelectedDialogItems == null)
             return new boolean[0];
         else
             return mSelectedDialogItems;
     }
 
-    public void setmSelectedDialogItems(boolean[] mSelectedDialogItems) {
+    public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
         this.mSelectedDialogItems = mSelectedDialogItems;
+    }
+
+    public void setActiveIndex(int index)
+    {
+        mActiveDateIndex = index;
+    }
+
+    public int getActiveIndex()
+    {
+        return mActiveDateIndex;
+    }
+
+    @Override
+    public void newData(EnergyUsageModel euModel) {
+
+    }
+
+    public boolean isLoaded()
+    {
+        if(!mLoaded) {
+            mLoaded = true;
+            return false;
+        }
+        return mLoaded;
+    }
+
+    @Override
+    public void setDeviceSize(int size) {
+
     }
 }

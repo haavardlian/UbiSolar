@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.LoaderManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
 import org.achartengine.ChartFactory;
@@ -26,7 +24,10 @@ import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Created by perok on 2/11/14.
@@ -46,9 +47,17 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     private ArrayList<DeviceUsageList> mDeviceUsageList;
     private Bundle mSavedState;
     private int mSelected = -1;
+    private String mTitleFormat = "MMMM";
+    private String mDataResolution = "dd";
+    private Date mSelectedDate;
 
-    private String[] selectedItems;
-    private boolean[] selectedDialogItems;
+    private String[] mSelectedItems;
+    private boolean[] mSelectedDialogItems;
+
+    private boolean mLoaded;
+    private int mDeviceSize;
+
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -95,6 +104,10 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             mRenderer = (DefaultRenderer) mSavedState.getSerializable("mRenderer");
             mSeries = (CategorySeries) mSavedState.getSerializable("mSeries");
             mSelected = mSavedState.getInt("mSelected");
+            mTitleFormat = mSavedState.getString("mTitleFormat");
+            mDataResolution = mSavedState.getString("mDataResolution");
+            mSelectedDialogItems = mSavedState.getBooleanArray("mSelectedDialogItems");
+            mSelectedItems = mSavedState.getStringArray("mSelectedItems");
         }
         else
         {
@@ -121,6 +134,10 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         state.putSerializable("mRenderer", mRenderer);
         state.putSerializable("mSeries", mSeries);
         state.putInt("mSelected", mSelected);
+        state.putString("mTitleFormat", mTitleFormat);
+        state.putString("mDataResolution", mDataResolution);
+        state.putBooleanArray("mSelectedDialogItems", mSelectedDialogItems);
+        state.putStringArray("mSelectedItems", mSelectedItems);
 
         return state;
     }
@@ -145,7 +162,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     private void setupPieGraph()
     {
-        mRenderer.setChartTitle(getString(R.string.pie_chart_title));
         mRenderer.setChartTitleTextSize(20);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
@@ -243,10 +259,23 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList)
     {
+        setSelectedDate();
         mDeviceUsageList = usageList;
         for(DeviceUsageList u : mDeviceUsageList)
-            u.calculateTotalUsage();
+            u.calculateTotalUsage(formatDate(mSelectedDate, mTitleFormat) , mTitleFormat);
         populatePieChart();
+        if(mSelectedDate != null) {
+            TextView label = (TextView) rootView.findViewById(R.id.usagePieLabel);
+            label.setText(formatDate(mSelectedDate, mDataResolution));
+        }
+    }
+
+    public void setSelectedDate()
+    {
+        if(mDeviceUsageList != null) {
+            DeviceUsageList dul = mDeviceUsageList.get(mDeviceUsageList.size() - 1);
+            mSelectedDate = dul.get(dul.size() - 1).getDatetime();
+        }
     }
 
     @Override
@@ -283,34 +312,70 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         powerUsageView.setText("");
     }
 
-    @Override
-    public String[] getmSelectedItems() {
-        if(selectedItems == null)
+    public void setFormat(String labelFormat, String titleFormat)
+    {
+        mTitleFormat = titleFormat;
+        mDataResolution = labelFormat;
+    }
+
+    public String getResolution()
+    {
+        return mDataResolution;
+    }
+
+    public String[] getSelectedItems() {
+        if(mSelectedItems == null)
             return new String[0];
         else
-            return selectedItems;
+            return mSelectedItems;
     }
 
-    @Override
-    public void setmSelectedItems(String[] selectedItems) {
-        this.selectedItems = selectedItems;
+    public void setSelectedItems(String[] mSelectedItems) {
+        this.mSelectedItems = mSelectedItems;
     }
 
-    @Override
-    public boolean[] getmSelectedDialogItems() {
-        if(selectedDialogItems == null)
-            return new boolean[0];
-        else
-            return selectedDialogItems;
+    public boolean[] getSelectedDialogItems() {
+        if(mSelectedDialogItems == null)
+        {
+            mSelectedDialogItems = new boolean[mDeviceSize];
+            Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
+        }
+        return mSelectedDialogItems;
     }
 
-    @Override
-    public void setmSelectedDialogItems(boolean[] selectedDialogItems) {
-        this.selectedDialogItems = selectedDialogItems;
+    public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
+        this.mSelectedDialogItems = mSelectedDialogItems;
     }
 
-    @Override
-    public void setUsageFragment(UsageFragment usageFragment)
+    private String formatDate(Date date, String format)
     {
+        SimpleDateFormat formater = new SimpleDateFormat (format);
+        if(date != null)
+            return formater.format(date);
+        else
+            return null;
+    }
+
+    public void setActiveIndex(int index)
+    {
+    }
+
+    public int getActiveIndex()
+    {
+        return 0;
+    }
+
+    public boolean isLoaded()
+    {
+        if(!mLoaded) {
+            mLoaded = true;
+            return false;
+        }
+        return mLoaded;
+    }
+
+    public void setDeviceSize(int size)
+    {
+        mDeviceSize = size;
     }
 }

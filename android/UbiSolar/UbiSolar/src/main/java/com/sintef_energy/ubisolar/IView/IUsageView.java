@@ -13,11 +13,19 @@ public interface IUsageView {
     public void newData(EnergyUsageModel euModel);
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList);
     public void clearDevices();
-    public void setUsageFragment(UsageFragment fragment);
 
-    public String[] getmSelectedItems();
-    public boolean[] getmSelectedDialogItems();
+    public void setFormat(String resolution, String titleFormat);
+    public String getResolution();
 
-    public void setmSelectedItems(String[] selectedItems);
-    public void setmSelectedDialogItems(boolean[] selectedDialogItems);
+    public String[] getSelectedItems();
+    public boolean[] getSelectedDialogItems();
+
+    public void setSelectedItems(String[] selectedItems);
+    public void setSelectedDialogItems(boolean[] selectedDialogItems);
+
+    public void setActiveIndex(int index);
+    public int getActiveIndex();
+
+    public boolean isLoaded();
+    public void setDeviceSize(int size);
 }
