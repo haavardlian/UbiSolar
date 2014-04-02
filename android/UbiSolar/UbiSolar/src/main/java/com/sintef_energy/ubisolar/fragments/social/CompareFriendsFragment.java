@@ -2,14 +2,19 @@ package com.sintef_energy.ubisolar.fragments.social;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
+import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
@@ -61,7 +66,7 @@ public class CompareFriendsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_social_friends, container, false);
         friends = new ArrayList<User>();
         FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
-        ListView friendsList = (ListView) view.findViewById(R.id.social_list);
+        final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
         friendsList.setAdapter(friendAdapter);
 
         friends.add(new User("Beate", getActivity().getResources().getDrawable(R.drawable.profile)));
@@ -70,6 +75,34 @@ public class CompareFriendsFragment extends Fragment {
         friends.add(new User("Peri", getActivity().getResources().getDrawable(R.drawable.profile)));
 
         friendAdapter.notifyDataSetChanged();
+
+        friendsList.setClickable(true);
+        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+
+                // ListView Clicked item index
+                int itemPosition     = position;
+
+                // ListView Clicked item value
+                User  user    = (User) friendsList.getItemAtPosition(position);
+
+                // Show Alert
+                    Log.v(TAG, "Du klikka på listeItem nummer: " + position);
+
+              //  CompareSimilarFragment compareSimilarFragment = new CompareSimilarFragment(new SimilarAdapter(getActivity(), R.layout.fragment_social_compare));
+                //FragmentManager fm = getFragmentManager();
+                //FragmentTransaction ft = fm.beginTransaction();
+               // ft.replace(R.id.fragment_social_tabs, compareSimilarFragment);
+                //ft.commit();
+
+
+
+            }
+
+        });
 
         return view;
     }
