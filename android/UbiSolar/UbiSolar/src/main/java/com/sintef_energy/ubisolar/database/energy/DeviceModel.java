@@ -94,25 +94,21 @@ public class DeviceModel extends Device implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        System.out.println("Write parcable");
         out.writeLong(getDevice_id());
         out.writeLong(getUser_id());
         out.writeString(getName());
         out.writeString(getDescription());
         out.writeInt(getCategory());
         out.writeInt((isTotal() ? 1 : 0));
-        System.out.println("Done");
     }
 
     private void readFromParcel(Parcel in) {
-        System.out.println("read Parcable");
         setDevice_id(in.readLong());
         setUser_id(in.readLong());
         setName(in.readString());
         setDescription(in.readString());
         setCategory(in.readInt());
         setIsTotal(in.readInt() != 0);
-        System.out.println("Done");
     }
 
     /**
@@ -120,7 +116,6 @@ public class DeviceModel extends Device implements Parcelable{
      * @return
      */
     public ContentValues getContentValues(){
-        System.out.println("Get content values");
         ContentValues values = new ContentValues();
         values.put(DeviceEntry._ID, getDevice_id());
         values.put(DeviceEntry.COLUMN_USER_ID, getUser_id());
@@ -128,7 +123,6 @@ public class DeviceModel extends Device implements Parcelable{
         values.put(DeviceEntry.COLUMN_DESCRIPTION, getDescription());
         values.put(DeviceEntry.COLUMN_CATEGORY, getCategory());
         values.put(DeviceEntry.COLUMN_IS_TOTAL, (isTotal() ? 1 : 0));
-        System.out.println("Done");
         return values;
     }
 
@@ -137,14 +131,12 @@ public class DeviceModel extends Device implements Parcelable{
      * @param cursor
      */
     public DeviceModel(Cursor cursor) {
-        System.out.println("Cursor stuff");
         setDevice_id(cursor.getLong(_id));
         setUser_id(cursor.getLong(_user_id));
         setName(cursor.getString(_name));
         setDescription(cursor.getString(_description));
         setCategory(cursor.getInt(_category));
         setIsTotal(cursor.getInt(_is_total) != 0);
-        System.out.println("Done");
     }
 
     public DeviceModel(long device_id, String name, String description, long user_id,

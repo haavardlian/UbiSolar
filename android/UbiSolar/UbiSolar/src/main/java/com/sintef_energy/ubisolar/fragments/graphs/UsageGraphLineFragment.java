@@ -64,7 +64,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     private boolean[] mSelectedDialogItems;
     private int mActiveDateIndex = 0;
 
-    private boolean mLoaded = true;
+    private boolean mLoaded = false;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -506,10 +506,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     }
 
     public boolean[] getSelectedDialogItems() {
-        if(mSelectedDialogItems == null)
-            return new boolean[0];
-        else
-            return mSelectedDialogItems;
+        if(mSelectedDialogItems == null) {
+            mSelectedDialogItems = new boolean[1];
+            mSelectedDialogItems[0] = true;
+        }
+        return mSelectedDialogItems;
     }
 
     public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
@@ -542,6 +543,5 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     @Override
     public void setDeviceSize(int size) {
-
     }
 }

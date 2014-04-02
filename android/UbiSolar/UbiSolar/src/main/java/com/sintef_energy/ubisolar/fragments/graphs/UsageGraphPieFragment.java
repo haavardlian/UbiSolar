@@ -263,7 +263,9 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         mDeviceUsageList = usageList;
         for(DeviceUsageList u : mDeviceUsageList)
             u.calculateTotalUsage(formatDate(mSelectedDate, mTitleFormat) , mTitleFormat);
+
         populatePieChart();
+
         if(mSelectedDate != null) {
             TextView label = (TextView) rootView.findViewById(R.id.usagePieLabel);
             label.setText(formatDate(mSelectedDate, mDataResolution));
@@ -339,6 +341,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         {
             mSelectedDialogItems = new boolean[mDeviceSize];
             Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
+            mSelectedDialogItems[0] = false;
         }
         return mSelectedDialogItems;
     }

@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Random;
 
 /**
@@ -57,7 +58,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private Bundle mSavedState;
 
     /** List of all devices */
-    private HashMap<Long, DeviceModel> mDevices;
+    private LinkedHashMap<Long, DeviceModel> mDevices;
 
     /** List of usage from devices */
     private ArrayList<DeviceUsageList> mDeviceUsageList;
@@ -133,6 +134,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             @Override
             public void onPageSelected(int position) {
                 graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
+                graphView.setDeviceSize(mDevices.size());
                 loadUsage();
             }
 
@@ -166,15 +168,15 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             }
         });
 
-        mDevices = new HashMap<>();
+        mDevices = new LinkedHashMap<>();
 
-        clearDatabase();
+//        clearDatabase();
 
         //Populate the database if it's empty
-//        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
-//            createDevices();
-//            createEnergyUsage();
-//        }
+        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
+            createDevices();
+            createEnergyUsage();
+        }
 
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
@@ -240,7 +242,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
         Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
-        graphView.setSelectedItems(selectedItems);
+
+//        graphView.setSelectedItems(selectedItems);
         graphView.setSelectedDialogItems(itemsSelected);
 
         //Clear the graph if no devices are selected
@@ -252,8 +255,27 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     public void loadUsage()
     {
-        if(!graphView.isLoaded())
+        if(!graphView.isLoaded()) {
             getLoaderManager().restartLoader(LOADER_USAGE, null, this);
+        }
+    }
+
+    private String[] getSelectedDevicesIDs()
+    {
+        boolean[] selectedItems = graphView.getSelectedDialogItems();
+        ArrayList<String> ids = new ArrayList<>();
+
+        int i = 0;
+
+        for(Device device : mDevices.values())
+        {
+            if(selectedItems.length > i) {
+                if (selectedItems[i])
+                    ids.add("" + device.getDevice_id());
+                i++;
+            }
+        }
+        return ids.toArray(new String[ids.size()]);
     }
 
     @Override
@@ -276,7 +298,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         EnergyContract.Energy.CONTENT_URI,
                         EnergyContract.Energy.PROJECTION_ALL,
                         sqlWhereDevices(),
-                        graphView.getSelectedItems(),
+                        getSelectedDevicesIDs(),
                         EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
                 );
             case LOADER_USAGE_DAY:
@@ -288,7 +310,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         builder.build(),
                         null,
                         sqlWhereDevices(),
-                        graphView.getSelectedItems(),
+                        getSelectedDevicesIDs(),
                         null
                 );
             case LOADER_USAGE_WEEK:
@@ -300,7 +322,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         builder.build(),
                         null,
                         sqlWhereDevices(),
-                        graphView.getSelectedItems(),
+                        getSelectedDevicesIDs(),
                         null
                 );
             case LOADER_USAGE_MONTH:
@@ -312,7 +334,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         builder.build(),
                         null,
                         sqlWhereDevices(),
-                        graphView.getSelectedItems(),
+                        getSelectedDevicesIDs(),
                         null
                 );
             case LOADER_USAGE_YEAR:
@@ -324,7 +346,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         builder.build(),
                         null,
                         sqlWhereDevices(),
-                        graphView.getSelectedItems(),
+                        getSelectedDevicesIDs(),
                         null
                 );
         }
@@ -337,11 +359,30 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         //TODO: BUG: How to handle when user selects no devices?
 
-        for(int n = 0; n < graphView.getSelectedItems().length; n++){
-            where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
-            if(n != graphView.getSelectedItems().length - 1)
-                where += " OR ";
+        boolean[] selectedItems = graphView.getSelectedDialogItems();
+        ArrayList<String> queries = new ArrayList<>();
+
+        for(int i = 0; i < selectedItems.length; i++)
+        {
+            if(selectedItems[i]) {
+                queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ");
+            }
         }
+
+        int i;
+
+        for(i = 0; i < queries.size() -1; i++) {
+            System.out.println(queries.get(i));
+            where += queries.get(i) + " OR ";
+        }
+
+        where += queries.get(i);
+
+//        for(int n = 0; n < graphView.getSelectedItems().length; n++){
+//            where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
+//            if(n != graphView.getSelectedItems().length - 1)
+//                where += " OR ";
+//        }
 
         return where;
     }
@@ -360,12 +401,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         mDevices.put(model.getDevice_id(), model);
                     }
                     while (cursor.moveToNext());
-                graphView.setDeviceSize(mDevices.size());
+                getLoaderManager().initLoader(LOADER_USAGE, null, this);
                 break;
             /* Load usage */
             case LOADER_USAGE:
-                populateDeviceUsageList(cursor);
-                break;
             case LOADER_USAGE_DAY:
             case LOADER_USAGE_WEEK:
             case LOADER_USAGE_MONTH:
@@ -396,6 +435,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
 
                 if (deviceUsageList == null) {
+                    System.out.println(model.getDevice_id());
                     deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
                     devices.put(Long.valueOf(deviceUsageList.getDevice().getDevice_id()), deviceUsageList);
                 }
@@ -409,7 +449,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDeviceUsageList.clear();
         mDeviceUsageList.addAll(devices.values());
-        Log.v(TAG, "TOTAL : " + mDeviceUsageList.size());
         graphView.addDeviceUsage(mDeviceUsageList);
     }
 
@@ -597,6 +636,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private void clearDatabase()
     {
+        //TODO table needs to be completely removed.
+
         int it = getActivity().getContentResolver().delete(EnergyContract.Devices.CONTENT_URI, null, null);
         Log.v(TAG, "EMPTY DATABASE: " + it);
 
