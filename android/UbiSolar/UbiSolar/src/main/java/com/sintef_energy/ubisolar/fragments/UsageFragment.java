@@ -168,13 +168,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new HashMap<>();
 
-//        clearDatabase();
+        clearDatabase();
 
         //Populate the database if it's empty
-        /*if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
-            createDevices();
-            createEnergyUsage();
-        }*/
+//        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
+//            createDevices();
+//            createEnergyUsage();
+//        }
 
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
@@ -542,17 +542,17 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private void createDevices()
     {
-        addDevice("Total", "-");
-        addDevice("TV", "Livingroom");
-        addDevice("Radio", "Kitchen");
-        addDevice("Heater", "Second floor");
-        addDevice("Oven", "Kitchen");
+        addDevice("Total", "-", true);
+        addDevice("TV", "Livingroom", false);
+        addDevice("Radio", "Kitchen", false);
+        addDevice("Heater", "Second floor", false);
+        addDevice("Oven", "Kitchen", false);
     }
 
-    private void addDevice(String name, String description)
+    private void addDevice(String name, String description, boolean isTotal)
     {
         DeviceModel device = new DeviceModel(System.currentTimeMillis(),
-                name, description, System.currentTimeMillis(), -1);
+                name, description, System.currentTimeMillis(), -1, isTotal);
 
         getActivity().getContentResolver().insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
