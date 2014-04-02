@@ -33,6 +33,7 @@ public class CompareFriendsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private View view;
     private FriendAdapter friendAdapter;
+    private SimilarAdapter similarAdapter;
 
 
 
@@ -83,30 +84,20 @@ public class CompareFriendsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                // ListView Clicked item index
-                int itemPosition     = position;
-
-                // ListView Clicked item value
-                User  user    = (User) friendsList.getItemAtPosition(position);
-
-                // Show Alert
-                    Log.v(TAG, "Du klikka på listeItem nummer: " + position);
-
-              //  CompareSimilarFragment compareSimilarFragment = new CompareSimilarFragment(new SimilarAdapter(getActivity(), R.layout.fragment_social_compare));
-                //FragmentManager fm = getFragmentManager();
-                //FragmentTransaction ft = fm.beginTransaction();
-               // ft.replace(R.id.fragment_social_tabs, compareSimilarFragment);
-                //ft.commit();
-
-
-
+                Fragment fragment = CompareSimilarFragment.newInstance(position, similarAdapter);
+                addFragment(fragment);
             }
-
         });
 
         return view;
     }
 
+    public void addFragment(Fragment fragment) {
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.replace(R.id.container, fragment);
+        ft.commit();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
