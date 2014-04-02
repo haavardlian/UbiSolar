@@ -14,12 +14,18 @@
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
         <item>Home</item>
-        <item>Usage</item>
-        <item>Energy saving</item>
-        <item>Devices</item>
-        <item>Social</item>
+        <item>Analyze</item>
+        <item>Your usage</item>
+        <item>Compare to others</item>
+        <item>Manage</item>
+        <item>Manage devices</item>
+        <item>Add usage</item>
+        <item>Socialize</item>
+        <item>Exchange tips</item>
+        <item>Settings</item>
         <item>Profile</item>
-        <item>Log out</item>
+        <item>Comparison settings</item>
+        <item>Log in</item>
     </string-array>
     <string-array name="nav_drawer_icons">
         <item>@drawable/home</item>
