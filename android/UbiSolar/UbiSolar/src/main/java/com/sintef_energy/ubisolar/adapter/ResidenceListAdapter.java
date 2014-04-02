@@ -5,7 +5,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,11 +56,18 @@ public class ResidenceListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.profile_residence_expanded, null);
         }
 
+
+
         TextView descriptionView = (TextView) convertView.findViewById(R.id.residence_description);
         TextView idView = (TextView) convertView.findViewById(R.id.residence_name);
+        TextView residentsView = (TextView) convertView.findViewById(R.id.residence_residents);
+        TextView areaView = (TextView) convertView.findViewById(R.id.residence_size);
 
         descriptionView.setText("Description: " + residence.getDescription());
         idView.setText("Name: " + residence.getHouseId());
+        areaView.setText("Area: " + residence.getArea() + " square meters");
+        residentsView.setText("Residents: " + residence.getResidents());
+
         return convertView;
     }
 

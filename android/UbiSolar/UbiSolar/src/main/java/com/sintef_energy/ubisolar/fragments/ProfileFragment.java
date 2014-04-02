@@ -7,7 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.GridLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
@@ -61,6 +65,7 @@ public class ProfileFragment extends DefaultTabFragment {
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         setupList();
+        Session.getActiveSession();
         return mRootView;
     }
 
@@ -98,10 +103,10 @@ public class ProfileFragment extends DefaultTabFragment {
 
     private void createGroupList() {
         residences = new ArrayList<Residence>();
-        residences.add(new Residence("Huset", "Hjemme", 6, 1, 1,'A'));
-        residences.add(new Residence("Hytta", "På fjellet", 2, 1, 1,'G'));
-        residences.add(new Residence("Kontoret","NTNU", 1, 1, 1, 'B'));
-        residences.add(new Residence("Spaniahuset", "Barcelona", 3, 1, 1, 'D'));
+        residences.add(new Residence("Huset", "Stadsing Dahls gate", 6, 140, 7015,'A'));
+        residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G'));
+        residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B'));
+        residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D'));
 
     }
 
