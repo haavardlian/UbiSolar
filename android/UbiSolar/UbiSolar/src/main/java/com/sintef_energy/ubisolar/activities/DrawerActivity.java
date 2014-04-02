@@ -174,6 +174,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         /* Request a sync operation */
         ContentResolver.requestSync(mAccount, AUTHORITY, new Bundle());
 
+        addFragment(HomeFragment.newInstance(0), false, false, titleNames[0]);
     }
 
     /**
