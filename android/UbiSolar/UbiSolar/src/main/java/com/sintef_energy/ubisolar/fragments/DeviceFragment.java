@@ -14,9 +14,7 @@ import android.widget.ExpandableListView;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
-import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.ExpandableListAdapter;
@@ -56,6 +54,7 @@ public class DeviceFragment extends DefaultTabFragment {
         try {
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
             createGroupList();
+
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
 
@@ -67,7 +66,7 @@ public class DeviceFragment extends DefaultTabFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.add_device, menu);
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -77,9 +76,6 @@ public class DeviceFragment extends DefaultTabFragment {
                 addDeviceDialog.show(getFragmentManager(), "addDevice");
 
                 return true;
-            case R.id.menu_add_usage:
-                AddUsageDialog addUsageDialog = new AddUsageDialog();
-                addUsageDialog.show(getFragmentManager(), "addUsage");
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -92,18 +88,20 @@ public class DeviceFragment extends DefaultTabFragment {
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
+
         final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
+        //createGroupList();
 
         return mRootview;
     }
 
     private void createGroupList() {
         /*Checking if the list is empty*/
-        if(devicePresenter.getDeviceModels(getActivity().getContentResolver()) != null)
-            devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
-        else
+        devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
+
+        if(devices == null)
             devices = new ArrayList<DeviceModel>();
 
 

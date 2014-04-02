@@ -73,6 +73,7 @@ public abstract class Device
     public void setDescription(String description) {
         this.description = description;
     }
+
     public void setCategory(int category) {
         this.category = category;
     }
