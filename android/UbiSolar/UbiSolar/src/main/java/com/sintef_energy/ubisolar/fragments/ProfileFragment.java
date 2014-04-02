@@ -57,9 +57,10 @@ public class ProfileFragment extends DefaultTabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         //return super.onCreateView(inflater, container, savedInstanceState);
-        mRootView = inflater.inflate(R.layout.fragment_profile_residence_list, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+        setupList();
         return mRootView;
     }
 

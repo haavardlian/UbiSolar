@@ -54,8 +54,8 @@ public class ResidenceListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.profile_residence_expanded, null);
         }
 
-        TextView descriptionView = (TextView) convertView.findViewById(R.id.deviceDescription);
-        TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
+        TextView descriptionView = (TextView) convertView.findViewById(R.id.residence_description);
+        TextView idView = (TextView) convertView.findViewById(R.id.residence_name);
 
         descriptionView.setText("Description: " + residence.getDescription());
         idView.setText("Name: " + residence.getHouseId());
