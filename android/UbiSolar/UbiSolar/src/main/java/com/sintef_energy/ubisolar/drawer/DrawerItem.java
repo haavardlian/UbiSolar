@@ -14,9 +14,13 @@ public class DrawerItem implements Item {
     private String         str1;
     private String         str2;
 
-    public DrawerItem(String text1, String text2) {
-        this.str1 = text1;
-        this.str2 = text2;
+    public DrawerItem(String title, String count) {
+        this.str1 = title;
+        this.str2 = count;
+    }
+
+    public DrawerItem(String title) {
+        this.str1 = title;
     }
 
     @Override
@@ -37,7 +41,10 @@ public class DrawerItem implements Item {
         TextView text1 = (TextView) view.findViewById(R.id.title);
         TextView text2 = (TextView) view.findViewById(R.id.counter);
         text1.setText(str1);
-        text2.setText(str2);
+        if(str2 != null)
+            text2.setText(str2);
+        else
+            text2.setVisibility(View.GONE);
 
         return view;
     }
