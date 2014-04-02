@@ -122,25 +122,25 @@ public class NavigationDrawerFragment extends Fragment {
         // adding nav drawer items to array
         // Home
         //navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[0], "0"));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[0]));
         // View
         //navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true));
         navDrawerItems.add(new DrawerHeader(navMenuTitles[1]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[2], "0"));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[3], "0"));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[2], "23"));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[3]));
         //Manage
         navDrawerItems.add(new DrawerHeader(navMenuTitles[4]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[5], "0"));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[6], "0"));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[5]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[6]));
 
         //Socialize
         navDrawerItems.add(new DrawerHeader(navMenuTitles[7]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[8], "0"));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[8], "5"));
         //Settings
         navDrawerItems.add(new DrawerHeader(navMenuTitles[9]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[10], "0"));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[11], "0"));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[12], "0"));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[10]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[11]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[12]));
         // Recycle the typed array
         navMenuIcons.recycle();
 
