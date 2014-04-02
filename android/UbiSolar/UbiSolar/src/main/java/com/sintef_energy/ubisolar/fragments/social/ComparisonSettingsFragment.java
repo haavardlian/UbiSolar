@@ -1,42 +1,33 @@
 package com.sintef_energy.ubisolar.fragments.social;
 
         import android.app.Activity;
-        import android.app.Fragment;
-        import android.app.LoaderManager;
-        import android.content.CursorLoader;
-        import android.content.Loader;
-        import android.database.Cursor;
-        import android.os.Bundle;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.widget.ListView;
-        import android.widget.SimpleCursorAdapter;
+import android.app.Fragment;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
-        import com.sintef_energy.ubisolar.R;
-        import com.sintef_energy.ubisolar.activities.DrawerActivity;
-        import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-        import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-        import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
-        import com.sintef_energy.ubisolar.model.Residence;
-        import com.sintef_energy.ubisolar.model.ResidenceAttributes;
-        import com.sintef_energy.ubisolar.model.User;
+import com.sintef_energy.ubisolar.R;
+        import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
+import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 
-        import java.util.ArrayList;
+import java.util.ArrayList;
 
 /**
  * Created by baier on 3/21/14.
  */
-public class SocialCompareFragment extends Fragment {
+public class ComparisonSettingsFragment extends Fragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
-    public static final String TAG = SocialCompareFragment.class.getName();
+    public static final String TAG = ComparisonSettingsFragment.class.getName();
 
     private SimpleCursorAdapter adapter;
     private View view;
-    private SimilarAdapter similarAdapter;
+    private ComparisonAdapter compAdapter;
     private ArrayList<ResidenceAttributes> houseDescription;
     private static final String ARG_POSITION = "position";
 
@@ -45,16 +36,16 @@ public class SocialCompareFragment extends Fragment {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static SocialCompareFragment newInstance(int position, SimilarAdapter similarAdapter) {
-            SocialCompareFragment fragment = new SocialCompareFragment(similarAdapter);
+        public static ComparisonSettingsFragment newInstance(int position, ComparisonAdapter compAdapter) {
+            ComparisonSettingsFragment fragment = new ComparisonSettingsFragment(compAdapter);
             Bundle b = new Bundle();
             b.putInt(ARG_POSITION, position);
             fragment.setArguments(b);
             return fragment;
         }
 
-        public SocialCompareFragment(SimilarAdapter similarAdapter) {
-            this.similarAdapter = similarAdapter;
+        public ComparisonSettingsFragment(ComparisonAdapter compAdapter) {
+            this.compAdapter = compAdapter;
         }
 
         /**
@@ -68,7 +59,7 @@ public class SocialCompareFragment extends Fragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            view = inflater.inflate(R.layout.fragment_social_similar, container, false);
+            view = inflater.inflate(R.layout.fragment_settings_comparison, container, false);
             houseDescription = new ArrayList<ResidenceAttributes>();
 
             houseDescription.add(new ResidenceAttributes("Area"));
@@ -77,11 +68,11 @@ public class SocialCompareFragment extends Fragment {
             houseDescription.add(new ResidenceAttributes("Energy class"));
 
 
-            SimilarAdapter similarAdapter = new SimilarAdapter(getActivity(),R.layout.fragment_social_similar_row, houseDescription);
+            ComparisonAdapter compAdapter= new ComparisonAdapter(getActivity(),R.layout.fragment_settings_comparison_row, houseDescription);
             ListView houseDescrList = (ListView) view.findViewById(R.id.social_similar_list);
-            houseDescrList.setAdapter(similarAdapter);
+            houseDescrList.setAdapter(compAdapter);
 
-            similarAdapter.notifyDataSetChanged();
+            compAdapter.notifyDataSetChanged();
 
             return view;
         }
@@ -100,7 +91,6 @@ public class SocialCompareFragment extends Fragment {
         @Override
         public void onSaveInstanceState(Bundle outState) {
             super.onSaveInstanceState(outState);
-            //outState.putInt("curChoice", mCurCheckPosition);
         }
 
         @Override
