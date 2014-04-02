@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,9 +14,7 @@ import android.widget.ExpandableListView;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
-import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.ExpandableListAdapter;
@@ -69,7 +66,7 @@ public class DeviceFragment extends DefaultTabFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.add_device, menu);
-        super.onCreateOptionsMenu(menu,inflater);
+        super.onCreateOptionsMenu(menu, inflater);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -79,9 +76,6 @@ public class DeviceFragment extends DefaultTabFragment {
                 addDeviceDialog.show(getFragmentManager(), "addDevice");
 
                 return true;
-            case R.id.menu_add_usage:
-                AddUsageDialog addUsageDialog = new AddUsageDialog();
-                addUsageDialog.show(getFragmentManager(), "addUsage");
             default:
                 return super.onOptionsItemSelected(item);
         }
