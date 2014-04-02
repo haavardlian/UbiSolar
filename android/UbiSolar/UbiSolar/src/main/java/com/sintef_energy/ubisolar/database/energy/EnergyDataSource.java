@@ -158,6 +158,7 @@ public class EnergyDataSource {
         );
 
         if(cursor == null){
+            cursor.close();
             return null;
         }
         else if(cursor.getCount() < 1){

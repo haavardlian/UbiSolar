@@ -56,6 +56,7 @@ public class DeviceFragment extends DefaultTabFragment {
         super.onCreate(savedInstanceState);
         try {
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
+            createGroupList();
 
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
@@ -93,12 +94,6 @@ public class DeviceFragment extends DefaultTabFragment {
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
-         /*Checking if the list is empty*/
-        if(devicePresenter.getDeviceModels(getActivity().getContentResolver()) != null){
-            devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
-        }
-        else
-            devices = new ArrayList<DeviceModel>();
 
         final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
@@ -110,9 +105,9 @@ public class DeviceFragment extends DefaultTabFragment {
 
     private void createGroupList() {
         /*Checking if the list is empty*/
-        if(devicePresenter.getDeviceModels(getActivity().getContentResolver()) != null)
-            devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
-        else
+        devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
+
+        if(devices == null)
             devices = new ArrayList<DeviceModel>();
 
 
