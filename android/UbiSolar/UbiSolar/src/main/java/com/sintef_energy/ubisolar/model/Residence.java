@@ -69,4 +69,8 @@ public class Residence {
     public void setArea(int area) {
         this.area = area;
     }
+
+    public String toString() {
+        return getHouseId();
+    }
 }

@@ -85,16 +85,21 @@ public class CompareFriendsFragment extends Fragment {
                                     int position, long id) {
 
                 Fragment fragment = CompareSimilarFragment.newInstance(position, similarAdapter);
-                addFragment(fragment);
+                addFragment(fragment, true, friends.get(position));
             }
         });
 
         return view;
     }
 
-    public void addFragment(Fragment fragment) {
+    public void addFragment(Fragment fragment, boolean addToBackStack, User user) {
         FragmentManager manager = getFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
+
+        if (addToBackStack) {
+            ft.addToBackStack(user.getName());
+        }
+
         ft.replace(R.id.container, fragment);
         ft.commit();
     }

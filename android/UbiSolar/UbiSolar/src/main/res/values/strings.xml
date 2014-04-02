@@ -88,7 +88,7 @@
     <string name="profile_location">Location</string>
     <string name="profile_postcode">Postal code</string>
     <string name="profile_anon">Anonymous</string>
-
+    <string name="superscript2"><sup><small>2</small></sup></string>
 
     <!-- Fragment social-->
     <string name="social_user_name">User\'s name</string>

@@ -111,5 +111,6 @@ public class CompareFragment extends DefaultTabFragment {
             }
         }
 
+
     }
 }
