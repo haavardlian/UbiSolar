@@ -51,7 +51,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     private String mDataResolution = "dd";
     private Date mSelectedDate;
 
-    private String[] mSelectedItems;
     private boolean[] mSelectedDialogItems;
 
     private boolean mLoaded;
@@ -107,7 +106,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             mTitleFormat = mSavedState.getString("mTitleFormat");
             mDataResolution = mSavedState.getString("mDataResolution");
             mSelectedDialogItems = mSavedState.getBooleanArray("mSelectedDialogItems");
-            mSelectedItems = mSavedState.getStringArray("mSelectedItems");
         }
         else
         {
@@ -137,7 +135,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         state.putString("mTitleFormat", mTitleFormat);
         state.putString("mDataResolution", mDataResolution);
         state.putBooleanArray("mSelectedDialogItems", mSelectedDialogItems);
-        state.putStringArray("mSelectedItems", mSelectedItems);
 
         return state;
     }
@@ -323,17 +320,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     public String getResolution()
     {
         return mDataResolution;
-    }
-
-    public String[] getSelectedItems() {
-        if(mSelectedItems == null)
-            return new String[0];
-        else
-            return mSelectedItems;
-    }
-
-    public void setSelectedItems(String[] mSelectedItems) {
-        this.mSelectedItems = mSelectedItems;
     }
 
     public boolean[] getSelectedDialogItems() {

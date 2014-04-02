@@ -401,6 +401,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         mDevices.put(model.getDevice_id(), model);
                     }
                     while (cursor.moveToNext());
+                graphView.setDeviceSize(mDevices.size());
                 getLoaderManager().initLoader(LOADER_USAGE, null, this);
                 break;
             /* Load usage */

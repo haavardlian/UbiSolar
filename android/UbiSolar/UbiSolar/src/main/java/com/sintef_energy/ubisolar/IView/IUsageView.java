@@ -17,10 +17,7 @@ public interface IUsageView {
     public void setFormat(String resolution, String titleFormat);
     public String getResolution();
 
-//    public String[] getSelectedItems();
     public boolean[] getSelectedDialogItems();
-
-//    public void setSelectedItems(String[] selectedItems);
     public void setSelectedDialogItems(boolean[] selectedDialogItems);
 
     public void setActiveIndex(int index);
