@@ -1,18 +1,16 @@
-package com.sintef_energy.ubisolar.dialogs;
+package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,6 +23,7 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.dialogs.DatePickerFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
 import java.text.SimpleDateFormat;
@@ -34,8 +33,9 @@ import java.util.Date;
 /**
  * Created by perok on 12.03.14.
  */
-public class AddUsageDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor>, IDateCallback {
-    private static final String TAG = AddUsageDialog.class.getName();
+public class AddUsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>, IDateCallback {
+
+    private static final String TAG = AddUsageFragment.class.getName();
 
     private Calendar currentMonth;
     private SimpleDateFormat formatter;
@@ -45,11 +45,20 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
     private ImageButton mButtonCalendar;
     private ImageButton mButtonKwhUp;
     private ImageButton mButtonKwhDown;
+    private Button mButtonAddUsage;
 
     private Spinner spinnerDevice;
     private SimpleCursorAdapter mDeviceAdapter;
 
     private TotalEnergyPresenter mTotalEnergyPresenter;
+
+    public static AddUsageFragment newInstance(int sectionNumber) {
+        AddUsageFragment fragment = new AddUsageFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -62,47 +71,12 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        View view = inflater.inflate(R.layout.dialog_add_usage, null);
-        builder.setView(view)
-                // Add action buttons
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        String text = mKwhField.getText().toString();
+        View view = inflater.inflate(R.layout.fragment_add_usage, null);
 
-                        Log.v(TAG, "Textfield value: " + text);
-
-                        if(text.length() > 0){
-                            Double value = Double.valueOf(text);
-
-                            int pos = spinnerDevice.getSelectedItemPosition();
-                            Cursor item = mDeviceAdapter.getCursor();
-                            item.moveToPosition(pos);
-                            pos = item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME);
-
-                            EnergyUsageModel euModel = new EnergyUsageModel();
-                            euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
-                            euModel.setDevice_id(item.getInt(pos));
-                            euModel.setPower_usage(value);
-
-                            mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
-                        }
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        AddUsageDialog.this.getDialog().cancel();
-                    }
-                })
-                .setTitle(R.string.addUsageDialog_title);
 
         //Create the dialog view
 
@@ -121,11 +95,38 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
         mButtonCalendar = (ImageButton)view.findViewById(R.id.dialog_add_usage_button_calendar);
         mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
         mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
-
+        mButtonAddUsage = (Button)view.findViewById(R.id.btnAddUsage);
         final DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.setTargetFragment(this, 0);
 
         /* Set up listeners */
+        mButtonAddUsage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String text = mKwhField.getText().toString();
+
+                Log.v(TAG, "Textfield value: " + text);
+
+                if (text.length() > 0) {
+                    Double value = Double.valueOf(text);
+
+                    int pos = spinnerDevice.getSelectedItemPosition();
+                    Cursor item = mDeviceAdapter.getCursor();
+                    item.moveToPosition(pos);
+                    pos = item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME);
+
+                    EnergyUsageModel euModel = new EnergyUsageModel();
+                    euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
+                    euModel.setDevice_id(item.getInt(pos));
+                    euModel.setPower_usage(value);
+
+                    //TODO: Make the actual adding of usage work
+                    //mTotalEnergyPresenter = ((IPresenterCallback) getActivity()).getmTotalEnergyPresenter();
+                    //mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
+                }
+            }
+        });
+
         mButtonCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,11 +187,8 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
         getLoaderManager().initLoader(0, null, this);
 
         updateDateText();
-
-        //Disable positive button until data is ready.
-        AlertDialog alertDialog = builder.create(); //TODO: Nullpointer
         //alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-        return alertDialog;
+        return view;
     }
 
 
@@ -224,11 +222,11 @@ public class AddUsageDialog extends DialogFragment implements LoaderManager.Load
         mDeviceAdapter.swapCursor(cursor);
             if(cursor.getCount() > 0) {
                 spinnerDevice.setEnabled(true);
-                ((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                //((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
             }
             else {
                 spinnerDevice.setEnabled(false);
-                ((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                //((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
             }
     }
 

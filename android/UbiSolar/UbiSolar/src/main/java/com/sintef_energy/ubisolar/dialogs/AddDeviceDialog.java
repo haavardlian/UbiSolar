@@ -41,6 +41,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
     private Spinner categorySpinner;
     private View view;
     private ArrayAdapter<String> categoryAdapter;
+    public static final String TAG = AddDeviceDialog.class.getName();
 
     @Override
     public void onAttach(Activity activity) {
@@ -75,7 +76,8 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                         deviceModel.setName(nameField.getText().toString());
 
                         /*Get selected category*/
-                        //deviceModel.setCategory(categorySpinner.getSelectedItemPosition());
+                        deviceModel.setCategory(categorySpinner.getSelectedItemPosition());
+                        Log.v(TAG, "The selected item position: " + categorySpinner.getSelectedItemPosition());
                         devicePresenter.addDevice(deviceModel, getActivity().getContentResolver());
 
                     }

@@ -5,68 +5,59 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.drawer.Item;
 import com.sintef_energy.ubisolar.model.NavDrawerItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by perok on 20.03.14.
  */
-public class NavDrawerListAdapter extends BaseAdapter {
+public class NavDrawerListAdapter extends ArrayAdapter<Item> {
+    private LayoutInflater mInflater;
+    private List<Item> items;
+    public enum RowType {
+        LIST_ITEM, HEADER_ITEM
+    }
 
-    private Context context;
-    private ArrayList<NavDrawerItem> navDrawerItems;
-
-    public NavDrawerListAdapter(Context context, ArrayList<NavDrawerItem> navDrawerItems){
-        this.context = context;
-        this.navDrawerItems = navDrawerItems;
+    public NavDrawerListAdapter(Context context, List<Item> items) {
+        super(context, 0, items);
+        this.items = items;
+        mInflater = LayoutInflater.from(context);
     }
 
     @Override
-    public int getCount() {
-        return navDrawerItems.size();
+    public int getViewTypeCount() {
+        return RowType.values().length;
     }
 
     @Override
-    public Object getItem(int position) {
-        return navDrawerItems.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
+    public int getItemViewType(int position) {
+        return getItem(position).getViewType();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            LayoutInflater mInflater = (LayoutInflater)
-                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.drawer_list_item, null);
-        }
-
-        ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
-        TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
-
-        imgIcon.setImageResource(navDrawerItems.get(position).getIcon());
-        txtTitle.setText(navDrawerItems.get(position).getTitle());
-
-        // displaying count
-        // check whether it set visible or not
-        if(navDrawerItems.get(position).getCounterVisibility()){
-            txtCount.setText(navDrawerItems.get(position).getCount());
-        }else{
-            // hide the counter view
-            txtCount.setVisibility(View.GONE);
-        }
-
-        return convertView;
+        return getItem(position).getView(mInflater, convertView);
     }
 
+    @Override
+    public Item getItem(int position) {
+        return items.get(position);
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        if(items.get(position).getViewType() == RowType.HEADER_ITEM.ordinal())
+            return false;
+        else
+            return true;
+    }
 }

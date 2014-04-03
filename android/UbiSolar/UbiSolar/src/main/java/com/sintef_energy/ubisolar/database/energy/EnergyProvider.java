@@ -74,6 +74,8 @@ public class EnergyProvider extends ContentProvider{
                 return EnergyContract.Energy.CONTENT_ITEM_TYPE;
             case ENERGY_DAY_LIST:
                 return EnergyContract.Energy.CONTENT_TYPE;
+            case ENERGY_WEEK_LIST:
+                return EnergyContract.Energy.CONTENT_TYPE;
             case ENERGY_MONTH_LIST:
                 return EnergyContract.Energy.CONTENT_TYPE;
             case ENERGY_YEAR_LIST:

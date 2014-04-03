@@ -6,7 +6,9 @@ import android.os.Parcelable;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by thb on 13.03.14.
@@ -65,11 +67,13 @@ public class DeviceUsageList implements Parcelable
         return totalUsage;
     }
 
-    public void calculateTotalUsage()
+    public void calculateTotalUsage(String date, String format)
     {
         totalUsage = 0;
-        for(DeviceUsage usage : usageList)
-            totalUsage += usage.getPower_usage();
+        for(DeviceUsage usage : usageList) {
+            if (formatDate(usage.getDatetime(), format).equals(date));
+                totalUsage += usage.getPower_usage();
+        }
     }
 
     public int getPercentage() {
@@ -107,5 +111,14 @@ public class DeviceUsageList implements Parcelable
 
         totalUsage = in.readInt();
         percentage = in.readInt();
+    }
+
+    private String formatDate(Date date, String format)
+    {
+        SimpleDateFormat formater = new SimpleDateFormat (format);
+        if(date != null)
+            return formater.format(date);
+        else
+            return null;
     }
 }

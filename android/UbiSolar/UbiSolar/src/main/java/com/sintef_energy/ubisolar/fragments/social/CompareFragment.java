@@ -1,11 +1,10 @@
 package com.sintef_energy.ubisolar.fragments.social;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
+
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -16,15 +15,11 @@ import android.widget.TabHost;
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
-import com.sintef_energy.ubisolar.fragments.social.SocialCompareFragment;
-import com.sintef_energy.ubisolar.fragments.social.SocialFriendListFragment;
-import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.model.ResidenceAttributes;
-import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
@@ -32,20 +27,16 @@ import java.util.ArrayList;
 /**
  * Created by perok on 21.03.14.
  */
-public class SocialFragment extends DefaultTabFragment {
+public class CompareFragment extends DefaultTabFragment {
 
-    private static final String TAG = SocialFragment.class.getName();
-    public static final String TAB_WORDS = "tips";
-    public static final String TAB_NUMBERS = "your";
+    private static final String TAG = CompareFragment.class.getName();
 
     private View mRoot;
-    private TabHost mTabHost;
-    private int mCurrentTab;
     private FriendAdapter friendAdapter;
     private SimilarAdapter similarAdapter;
 
-    public static SocialFragment newInstance(int sectionNumber) {
-        SocialFragment fragment = new SocialFragment();
+    public static CompareFragment newInstance(int sectionNumber) {
+        CompareFragment fragment = new CompareFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
@@ -69,7 +60,7 @@ public class SocialFragment extends DefaultTabFragment {
         mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
         //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
         friendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<User>());
-        similarAdapter = new SimilarAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<ResidenceAttributes>());
+        similarAdapter = new SimilarAdapter();
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
         pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter, similarAdapter));
@@ -112,13 +103,14 @@ public class SocialFragment extends DefaultTabFragment {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    return SocialFriendListFragment.newInstance(0, friendAdapter);
+                    return CompareFriendsFragment.newInstance(0, friendAdapter);
                 case 1:
-                    return SocialCompareFragment.newInstance(1, similarAdapter);
+                    return CompareSimilarFragment.newInstance(1, similarAdapter);
                 default:
                     return null;
             }
         }
+
 
     }
 }

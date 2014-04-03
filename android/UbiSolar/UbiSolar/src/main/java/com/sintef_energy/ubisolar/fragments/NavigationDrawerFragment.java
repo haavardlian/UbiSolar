@@ -24,6 +24,9 @@ import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
+import com.sintef_energy.ubisolar.drawer.DrawerHeader;
+import com.sintef_energy.ubisolar.drawer.DrawerItem;
+import com.sintef_energy.ubisolar.drawer.Item;
 import com.sintef_energy.ubisolar.model.NavDrawerItem;
 
 import java.util.ArrayList;
@@ -66,7 +69,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ListView mDrawerList;
     private String[] navMenuTitles;
     private TypedArray navMenuIcons;
-    private ArrayList<NavDrawerItem> navDrawerItems;
+    private ArrayList<Item> navDrawerItems;
     private NavDrawerListAdapter adapter;
 
 
@@ -118,20 +121,26 @@ public class NavigationDrawerFragment extends Fragment {
 
         // adding nav drawer items to array
         // Home
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
-        // Usage
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
-        // Power saving
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1), true, "21"));
-        // Devices
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
-        // Social
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1), true, "50+"));
-        // Profile
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[5], navMenuIcons.getResourceId(5, -1)));
-        // Log out
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[6], navMenuIcons.getResourceId(6, -1)));
+        //navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[0]));
+        // View
+        //navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true));
+        navDrawerItems.add(new DrawerHeader(navMenuTitles[1]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[2], "23"));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[3]));
+        //Manage
+        navDrawerItems.add(new DrawerHeader(navMenuTitles[4]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[5]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[6]));
 
+        //Socialize
+        navDrawerItems.add(new DrawerHeader(navMenuTitles[7]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[8], "5"));
+        //Settings
+        navDrawerItems.add(new DrawerHeader(navMenuTitles[9]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[10]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[11]));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[12]));
         // Recycle the typed array
         navMenuIcons.recycle();
 
@@ -326,7 +335,7 @@ public class NavigationDrawerFragment extends Fragment {
         void onNavigationDrawerItemSelected(int position);
     }
 
-    public NavDrawerItem getNavnDrawerItem(int position){
+    public Item getNavDrawerItem(int position){
         return navDrawerItems.get(position);
     }
 
