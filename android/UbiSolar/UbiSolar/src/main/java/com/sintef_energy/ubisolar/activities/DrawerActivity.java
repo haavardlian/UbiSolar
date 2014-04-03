@@ -520,7 +520,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         return newAccount;
     }
 
-
     /**
      * Debug with strict mode
      */
