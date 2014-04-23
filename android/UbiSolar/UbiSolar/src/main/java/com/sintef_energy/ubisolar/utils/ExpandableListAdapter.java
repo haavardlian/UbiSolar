@@ -109,7 +109,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView item = (TextView) convertView.findViewById(R.id.device);
         item.setText(categories[groupPosition]);
         item.setTypeface(null, Typeface.BOLD);
-        
+
         return convertView;
 
     }

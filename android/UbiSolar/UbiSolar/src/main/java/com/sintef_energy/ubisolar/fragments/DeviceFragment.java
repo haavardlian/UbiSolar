@@ -19,6 +19,7 @@ import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
@@ -60,7 +61,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
 
              /*Line so we can delete test data easily*/
-            //EnergyDataSource.deleteAll(getActivity().getContentResolver());
+            EnergyDataSource.deleteAll(getActivity().getContentResolver());
 
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString() + " must implement " + TotalEnergyPresenter.class.getName());
