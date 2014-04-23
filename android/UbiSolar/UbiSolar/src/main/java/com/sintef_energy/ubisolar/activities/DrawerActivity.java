@@ -171,8 +171,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         /* Start developer mode after app has been setup
          * Lots of StrictMode violations are done in startup anyways. */
         developerMode(Global.DEVELOPER_MADE);
-
-        addFragment(HomeFragment.newInstance(0), false, false, titleNames[0]);
     }
 
     /**

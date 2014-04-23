@@ -60,11 +60,12 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     private String mTitleFormat;
     private String mDataResolution;
-    private String[] mSelectedItems;
+
     private boolean[] mSelectedDialogItems;
     private int mActiveDateIndex = 0;
 
     private boolean mLoaded = false;
+    private int mDeviceSize;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -121,7 +122,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             mActiveUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mActiveUsageList");
             mBaseUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mBaseUsageList");
             mSelectedDialogItems = mSavedState.getBooleanArray("mSelectedDialogItems");
-            mSelectedItems = mSavedState.getStringArray("mSelectedItems");
 
         }
         //Initialize new data
@@ -179,7 +179,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         state.putSerializable("mActiveUsageList", mActiveUsageList);
         state.putSerializable("mBaseUsageList", mBaseUsageList);
         state.putBooleanArray("mSelectedDialogItems", mSelectedDialogItems);
-        state.putStringArray("mSelectedItems", mSelectedItems);
 
         return state;
     }
@@ -494,20 +493,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return mDataResolution;
     }
 
-    public String[] getSelectedItems() {
-        if(mSelectedItems == null)
-            return new String[0];
-        else
-            return mSelectedItems;
-    }
-
-    public void setSelectedItems(String[] mSelectedItems) {
-        this.mSelectedItems = mSelectedItems;
-    }
-
     public boolean[] getSelectedDialogItems() {
         if(mSelectedDialogItems == null) {
-            mSelectedDialogItems = new boolean[1];
+            mSelectedDialogItems = new boolean[mDeviceSize];
             mSelectedDialogItems[0] = true;
         }
         return mSelectedDialogItems;
@@ -543,5 +531,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     @Override
     public void setDeviceSize(int size) {
+        mDeviceSize = size;
     }
 }
