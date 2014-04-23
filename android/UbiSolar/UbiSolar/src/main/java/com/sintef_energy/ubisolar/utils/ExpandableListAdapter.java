@@ -25,6 +25,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private String[] categories;
     public static final String TAG = ExpandableListAdapter.class.getName();
 
+    //Denne skal ta inn cursoren i steden for lista i seg selv?
     public ExpandableListAdapter(Activity context, List<DeviceModel> devices) {
         this.context = context;
         this.devices = devices;

@@ -41,7 +41,7 @@ public class DevicePresenter {
 
     public void addDevice(DeviceModel device, ContentResolver contentResolver){
         EnergyDataSource.insertDevice(contentResolver, device);
-        this.dmModels.add(device);
+        //this.dmModels.add(device);
     }
 
     public ArrayList<DeviceModel> getDeviceModels(ContentResolver contentResolver){
