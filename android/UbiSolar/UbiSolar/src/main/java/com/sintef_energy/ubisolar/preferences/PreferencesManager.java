@@ -13,6 +13,10 @@ public class PreferencesManager {
     private static final String PREF_NAME = PreferencesManager.class.getName() + ".PREFS";
     public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN";
     public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN_EXPIRES";
+    public static final String FACEBOOK_NAME = PreferencesManager.class.getName() + ".FACEBOOK_NAME";
+    public static final String FACEBOOK_LOCATION = PreferencesManager.class.getName() + ".FACEBOOK_LOCATION";
+    public static final String FACEBOOK_AGE = PreferencesManager.class.getName() + ".FACEBOOK_AGE";
+    public static final String FACEBOOK_COUNTRY = PreferencesManager.class.getName() + ".FACEBOOK_COUNTRY";
 
     @Deprecated /** Not needed. UID auth is done in the server */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
@@ -38,6 +42,30 @@ public class PreferencesManager {
         return sInstance;
     }
 
+    public void setFacebookName(String value) {
+        mPref.edit()
+                .putString(FACEBOOK_AGE, value)
+                .apply();
+    }
+
+    public void setFacebookLocation(String value) {
+        mPref.edit()
+                .putString(FACEBOOK_LOCATION, value)
+                .apply();
+    }
+
+    public void setFacebookAge(String value) {
+        mPref.edit()
+                .putString(FACEBOOK_AGE, value)
+                .apply();
+    }
+
+    public void setFacebookCountry(String value) {
+        mPref.edit()
+                .putString(FACEBOOK_COUNTRY, value)
+                .apply();
+    }
+
     public void setAccessToken(String value) {
         mPref.edit()
             .putString(KEY_ACCESS_TOKEN, value)
@@ -55,7 +83,23 @@ public class PreferencesManager {
                 .putString(KEY_FACEBOOK_UID, uid)
                 .apply();
     }
- 
+
+    public String getFacebookName() {
+        return mPref.getString(FACEBOOK_NAME, "");
+    }
+
+    public String getFacebookLocation() {
+        return mPref.getString(FACEBOOK_LOCATION, "");
+    }
+
+    public String getFacebookAge() {
+        return mPref.getString(FACEBOOK_AGE, "");
+    }
+
+    public String getFacebookCountry() {
+        return mPref.getString(FACEBOOK_COUNTRY, "");
+    }
+
     public String getAccessToken()  {
         return mPref.getString(KEY_ACCESS_TOKEN, "");
     }
