@@ -23,6 +23,7 @@
         android:textIsSelectable="false"
         android:textSize="20sp" />
 
+
     <RatingBar
         android:id="@+id/tipRowRating"
         style="?android:attr/ratingBarStyleSmall"
@@ -32,8 +33,9 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="10dp"
+        android:layout_marginTop="17dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="17dp" />
+        android:layout_marginLeft="10dp" />
+
 
 </RelativeLayout>
