@@ -5,22 +5,19 @@ package com.sintef_energy.ubisolar.configuration;
  */
 import com.yammer.dropwizard.config.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.db.DatabaseConfiguration;
 import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import com.sintef_energy.ubisolar.configuration.DatabaseConfiguration.*;
 
 public class ServerConfiguration extends Configuration {
     @Valid
     @NotNull
     @JsonProperty
-    private DatabaseConfiguration database = new DatabaseConfiguration();
+    private DatabaseConfiguration database;
 
     public ServerConfiguration() {
-        database.setUrl("jdbc:mysql://188.226.188.11/haavarhl_it2901");
-        database.setUser("haavarhl_it2901");
-        database.setPassword("julebrus");
-        database.setDriverClass("com.mysql.jdbc.Driver");
+        database = new DatabaseConfiguration("jdbc:mysql://localhost/haavarhl_it2901", "haavarhl_it2901", "julebrus", DatabaseType.MYSQL);
     }
 
     public DatabaseConfiguration getDatabaseConfiguration() {
