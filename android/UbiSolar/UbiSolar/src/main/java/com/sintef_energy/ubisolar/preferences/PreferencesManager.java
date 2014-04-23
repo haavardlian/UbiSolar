@@ -13,6 +13,8 @@ public class PreferencesManager {
     private static final String PREF_NAME = PreferencesManager.class.getName() + ".PREFS";
     public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN";
     public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN_EXPIRES";
+
+    @Deprecated /** Not needed. UID auth is done in the server */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
 
     private static PreferencesManager sInstance;
