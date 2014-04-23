@@ -4,6 +4,8 @@ import java.util.Date;
 
 /**
  * Created by thb on 19.02.14.
+ *
+ * A replica of the model on the backend.
  */
 public abstract class DeviceUsage
 {
@@ -11,6 +13,7 @@ public abstract class DeviceUsage
     private long device_id;
     private Date datetime;
     private double power_usage;
+    private boolean isDeleted;
 
     public DeviceUsage()
     {
@@ -22,6 +25,7 @@ public abstract class DeviceUsage
         this.power_usage = power_usage;
         this.datetime = datetime;
         this.device_id = device_id;
+        this.isDeleted = false;
     }
 
 
@@ -56,5 +60,13 @@ public abstract class DeviceUsage
 
     public void setPower_usage(double power_usage) {
         this.power_usage = power_usage;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

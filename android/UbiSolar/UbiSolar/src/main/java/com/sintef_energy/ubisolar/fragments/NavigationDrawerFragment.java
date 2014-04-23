@@ -160,7 +160,7 @@ public class NavigationDrawerFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        selectItem(position); // your fragment transactions go here
+                    selectItem(position); // your fragment transactions go here
                     }
                 }, 200);
                 //selectItem(position);
