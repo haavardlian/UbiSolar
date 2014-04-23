@@ -452,13 +452,26 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 Toast.makeText(getBaseContext(), "Logged in through facebook", Toast.LENGTH_LONG).show();
                 changeNavdrawerSessionsView(true);
 
-                Request.newMeRequest(session, new Request.GraphUserCallback() {
-                    @Override
-                    public void onCompleted(GraphUser user, Response response) {
-                        mPrefManager.setKeyFacebookUid(user.getId());
-                        Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
-                    }
-                }).executeAsync();
+                /* How to do the callback?
+                 * isNetworkOn: Only request the user data when user logs in
+                 * Handle the response or user object: Can get cached data
+                 * -> Is it needed? Data should only be fetched, when the possibility for new data is there.
+                 *  Don't need to store cached data.
+                 *
+                 */
+                if(isNetworkOn(getApplicationContext()))
+                    Request.newMeRequest(session, new Request.GraphUserCallback() {
+                        @Override
+                        public void onCompleted(GraphUser user, Response response) {
+                            if(response.getConnection() != null || response.getIsFromCache() != false) {
+
+                                mPrefManager.setKeyFacebookUid(user.getId());
+                                Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
+                            } else {
+                                Log.e(TAG, "No DATA");
+                            }
+                        }
+                    }).executeAsync();
            }
             // User is logged out
             else if (session.isClosed()) {
