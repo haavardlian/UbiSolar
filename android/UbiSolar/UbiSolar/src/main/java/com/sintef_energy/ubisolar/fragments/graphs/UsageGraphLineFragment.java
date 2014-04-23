@@ -29,7 +29,9 @@ import org.achartengine.tools.PanListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by perok on 2/11/14.
@@ -306,7 +308,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
     }
 
-    private void populateGraph(int centerIndex)
+    private void populateGraph2(int centerIndex)
     {
         double max = 0;
         double min = Integer.MAX_VALUE;
@@ -338,6 +340,112 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
         if( mChartView != null)
             mChartView.repaint();
+    }
+
+    private void populateGraph(int centerIndex)
+    {
+        double max = 0;
+        double min = Integer.MAX_VALUE;
+        int y = 0;
+        int index = 0;
+
+        mRenderer.clearXTextLabels();
+
+        if( mActiveUsageList.size() <= 0)
+            return;
+
+        Date first = getFirstPoint().getDatetime();
+        Date last = getLastPoint().getDatetime();
+        int numberOfPoints = getTimeDiff(first, last);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(first);
+
+        for(int i = 0; i < numberOfPoints; i++)
+        {
+            mRenderer.addXTextLabel(y, formatDate(cal.getTime(), mDataResolution));
+            y += POINT_DISTANCE;
+            getNextPoint(cal);
+        }
+
+        for(DeviceUsageList usageList : mActiveUsageList) {
+            XYSeries series =  mDataset.getSeriesAt(index);
+            series.clear();
+            y = 0;
+            for (DeviceUsage usage : usageList.getUsage()) {
+                while(y < POINT_DISTANCE * numberOfPoints)
+                {
+                    if(formatDate(usage.getDatetime(), mDataResolution).equals(mRenderer.getXTextLabel((double) y)))
+                    {
+                        series.add(y, usage.getPower_usage());
+                        max = Math.max(max, usage.getPower_usage());
+                        min = Math.min(min, usage.getPower_usage());
+                        break;
+                    }
+                    y += POINT_DISTANCE;
+                }
+            }
+            index++;
+        }
+
+        setRange(min, max, centerIndex);
+        DeviceUsageList largestUsageList = getLargestUsageList();
+        setLabels(formatDate(largestUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat));
+
+        if( mChartView != null)
+            mChartView.repaint();
+    }
+
+    private void getNextPoint(Calendar cal)
+    {
+        if(mDataResolution == "HH")
+            cal.add(Calendar.HOUR_OF_DAY, 1);
+        else if(mDataResolution == "dd")
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        else if(mDataResolution == "w")
+            cal.add(Calendar.WEEK_OF_YEAR, 1);
+        else if(mDataResolution == "MMMM")
+            cal.add(Calendar.MONTH, 1);
+    }
+
+    private DeviceUsage getFirstPoint()
+    {
+        DeviceUsageList usage = mActiveUsageList.get(0);
+
+        for(DeviceUsageList usageList : mActiveUsageList) {
+            if(usageList.get(0).getDatetime().before(usage.get(0).getDatetime()))
+                usage = usageList;
+
+        }
+        return usage.get(0);
+    }
+
+    private DeviceUsage getLastPoint()
+    {
+        DeviceUsageList usage = mActiveUsageList.get(mActiveUsageList.size() -1);
+
+        for(DeviceUsageList usageList : mActiveUsageList) {
+            if(usageList.get(usageList.size() -1).getDatetime().before(usage.get(usage.size() -1).getDatetime()))
+                usage = usageList;
+
+        }
+        return usage.get(usage.size() -1);
+    }
+
+    private int getTimeDiff(Date start, Date end)
+    {
+        long diff = end.getTime() - start.getTime();
+
+        if(mDataResolution == "HH")
+            return (int) TimeUnit.MILLISECONDS.toHours(diff);
+        else if(mDataResolution == "dd")
+            return (int) TimeUnit.MILLISECONDS.toDays(diff);
+        else if(mDataResolution == "w")
+            return (int) TimeUnit.MILLISECONDS.toDays(diff) / 7;
+        else if(mDataResolution == "MMMM")
+            return (int) TimeUnit.MILLISECONDS.toDays(diff) / 30;
+        else
+            return -1;
     }
 
     private DeviceUsageList getLargestUsageList()
