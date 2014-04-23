@@ -91,4 +91,8 @@ public interface ServerDAO {
     @SqlQuery("SELECT id FROM user WHERE access_token = :access_token")
     int getUserId(@Bind("access_token") String access_token);
 
+    @SqlQuery("SELECT * FROM device WHERE user_id = :userID AND last_updated > :timestamp")
+    @Mapper(DeviceMapper.class)
+    List<Device> getUpdatedDevices(@Bind("userID") int userID, @Bind("timestamp") long timestamp);
+
  }
