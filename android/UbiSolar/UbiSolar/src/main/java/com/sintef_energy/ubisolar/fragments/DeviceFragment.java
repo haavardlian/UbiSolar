@@ -92,12 +92,10 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
-        //her skal det sendes med cursoren?
         devices = new ArrayList<>();
         expListAdapter = new ExpandableListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
-        //createGroupList();
 
         return mRootview;
     }
