@@ -445,6 +445,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         graphView.clearDevices();
 
+
         mDeviceUsageList.clear();
         mDeviceUsageList.addAll(devices.values());
         graphView.addDeviceUsage(mDeviceUsageList);

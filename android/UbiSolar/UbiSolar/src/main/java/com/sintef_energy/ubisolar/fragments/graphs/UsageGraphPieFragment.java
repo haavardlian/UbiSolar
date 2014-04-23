@@ -47,8 +47,9 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     private ArrayList<DeviceUsageList> mDeviceUsageList;
     private Bundle mSavedState;
     private int mSelected = -1;
-    private String mTitleFormat = "MMMM";
+    private String mTitleFormat = "EEEE dd/MM";
     private String mDataResolution = "dd";
+    private String mPreLabel = "";
     private Date mSelectedDate;
 
     private boolean[] mSelectedDialogItems;
@@ -256,8 +257,8 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList)
     {
-        setSelectedDate();
         mDeviceUsageList = usageList;
+        setSelectedDate();
         for(DeviceUsageList u : mDeviceUsageList)
             u.calculateTotalUsage(formatDate(mSelectedDate, mTitleFormat) , mTitleFormat);
 
@@ -265,15 +266,17 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
         if(mSelectedDate != null) {
             TextView label = (TextView) rootView.findViewById(R.id.usagePieLabel);
-            label.setText(formatDate(mSelectedDate, mDataResolution));
+            label.setText(mPreLabel + formatDate(mSelectedDate, mTitleFormat));
         }
     }
 
     public void setSelectedDate()
     {
-        if(mDeviceUsageList != null) {
-            DeviceUsageList dul = mDeviceUsageList.get(mDeviceUsageList.size() - 1);
-            mSelectedDate = dul.get(dul.size() - 1).getDatetime();
+        if(mSelectedDate == null) {
+            if (mDeviceUsageList != null) {
+                DeviceUsageList dul = mDeviceUsageList.get(mDeviceUsageList.size() - 1);
+                mSelectedDate = dul.get(dul.size() - 1).getDatetime();
+            }
         }
     }
 
@@ -313,8 +316,25 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     public void setFormat(String labelFormat, String titleFormat)
     {
-        mTitleFormat = titleFormat;
+//        mTitleFormat = titleFormat;
         mDataResolution = labelFormat;
+        mPreLabel = "";
+
+        if(mDataResolution == "HH") {
+            mTitleFormat = "HH EEEE dd/MM";
+            mPreLabel = "KL ";
+        }
+        else if(mDataResolution == "dd") {
+            mTitleFormat = "EEEE dd/MM";
+        }
+        else if(mDataResolution == "w") {
+            mTitleFormat = "w y";
+            mPreLabel = "Week ";
+        }
+        else if(mDataResolution == "MMMM")
+            mTitleFormat = "MMMM";
+        else
+            mTitleFormat = titleFormat;
     }
 
     public String getResolution()
@@ -367,4 +387,9 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     {
         mDeviceSize = size;
     }
+
+//    private void setSelectedDate()
+//    {
+//        mSelectedDate = mDeviceUsageList.get(mDeviceUsageList.size() -1).:
+//    }
 }
