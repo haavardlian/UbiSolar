@@ -138,6 +138,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        devices.clear();
+
         cursor.moveToFirst();
         if (cursor.getCount() != 0)
             do {
