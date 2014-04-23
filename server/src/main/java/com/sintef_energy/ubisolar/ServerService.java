@@ -33,6 +33,7 @@ public class ServerService extends Service<ServerConfiguration> {
         environment.addResource(new DevicesResource(dao));
         environment.addResource(new TotalUsageResource(dao));
         environment.addResource(new DeviceUsageResource(dao));
+        environment.addResource(new SyncResource(dao));
         environment.addResource(new TipsResource(dao));
         environment.addProvider(new OAuthProvider<User>(new Auth(), "SECRET"));
     }
