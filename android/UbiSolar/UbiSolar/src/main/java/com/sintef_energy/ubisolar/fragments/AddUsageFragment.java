@@ -46,7 +46,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     private ImageButton mButtonCalendar;
     private ImageButton mButtonKwhUp;
     private ImageButton mButtonKwhDown;
-    private Button mButtonAddUsage;
+    private ImageButton mButtonAddUsage;
 
     private Spinner spinnerDevice;
     private SimpleCursorAdapter mDeviceAdapter;
@@ -93,7 +93,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mButtonCalendar = (ImageButton)view.findViewById(R.id.dialog_add_usage_button_calendar);
         mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
         mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
-        mButtonAddUsage = (Button)view.findViewById(R.id.btnAddUsage);
+        mButtonAddUsage = (ImageButton)view.findViewById(R.id.btnAddUsage);
         final DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.setTargetFragment(this, 0);
 
