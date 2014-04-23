@@ -17,7 +17,7 @@ public class ServerConfiguration extends Configuration {
     private DatabaseConfiguration database = new DatabaseConfiguration();
 
     public ServerConfiguration() {
-        database.setUrl("jdbc:mysql://mysql.stud.ntnu.no/haavarhl_it2901");
+        database.setUrl("jdbc:mysql://188.226.188.11/haavarhl_it2901");
         database.setUser("haavarhl_it2901");
         database.setPassword("julebrus");
         database.setDriverClass("com.mysql.jdbc.Driver");
