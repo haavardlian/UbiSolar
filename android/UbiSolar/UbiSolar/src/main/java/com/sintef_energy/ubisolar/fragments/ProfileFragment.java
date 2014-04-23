@@ -11,6 +11,7 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
@@ -30,10 +31,11 @@ import java.util.ArrayList;
  */
 public class ProfileFragment extends DefaultTabFragment {
 
-    public static final String TAG = DeviceFragment.class.getName();
+    public static final String TAG = ProfileFragment.class.getName();
     private View mRootView;
     private ExpandableListView expListView;
     private ArrayList<Residence> residences;
+    private Residence selectedResidence;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -69,10 +71,12 @@ public class ProfileFragment extends DefaultTabFragment {
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         setupList();
-        TextView location = (TextView) mRootView.findViewById(R.id.profile_location);
+       /* TextView location = (TextView) mRootView.findViewById(R.id.profile_location);
         location.setText(PreferencesManager.getInstance().getFacebookLocation());
         TextView name = (TextView) mRootView.findViewById(R.id.profile_name);
         name.setText(PreferencesManager.getInstance().getFacebookName());
+        name.setText("RETARD");
+        */
         Session.getActiveSession();
         return mRootView;
     }
@@ -115,7 +119,7 @@ public class ProfileFragment extends DefaultTabFragment {
         residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G'));
         residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B'));
         residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D'));
-
+        setSelectedResidence(residences.get(0));
     }
 
     private void setGroupIndicatorToRight() {
@@ -133,6 +137,16 @@ public class ProfileFragment extends DefaultTabFragment {
         final float scale = getResources().getDisplayMetrics().density;
         // Convert the dps to pixels, based on density scale
         return (int) (pixels * scale + 0.5f);
+    }
+
+    public void setSelectedResidence(Residence residence) {
+        for(Residence r : residences) {
+           if(r.getHouseId().equals(residence.getHouseId())) {
+               selectedResidence = r;
+               r.setHouseId(r.getHouseId() + " [Selected]");
+               PreferencesManager.getInstance().setSelectedResidence(r.getHouseId());
+           }
+        }
     }
 
 }

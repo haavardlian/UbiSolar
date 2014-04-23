@@ -20,7 +20,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
+import android.util.Log;
 
+import com.facebook.HttpMethod;
 import com.facebook.LoggingBehavior;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -404,6 +406,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
+
         }
     }
 
@@ -439,6 +442,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         public void call(Session session, SessionState state, Exception exception) {
             //User is logged in
             if (session.isOpened()) {
+
                 Log.v(DrawerActivity.TAG,"Facebook logged in.");
 
                 /* Set session data */
@@ -463,8 +467,8 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
                             if(response.getConnection() != null || response.getIsFromCache() != false) {
-                                mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
-                                mPrefManager.setFacebookLocation(user.getLocation().toString());
+                                //mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
+                                //mPrefManager.setFacebookLocation(user.getLocation().toString());
                                 mPrefManager.setKeyFacebookUid(user.getId());
                                 Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
                             } else {

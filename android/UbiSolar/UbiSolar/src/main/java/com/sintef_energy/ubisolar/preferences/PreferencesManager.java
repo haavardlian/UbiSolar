@@ -19,6 +19,8 @@ public class PreferencesManager {
     public static final String FACEBOOK_AGE = PreferencesManager.class.getName() + ".FACEBOOK_AGE";
     public static final String FACEBOOK_COUNTRY = PreferencesManager.class.getName() + ".FACEBOOK_COUNTRY";
 
+    public static final String SELECTED_RESIDENCE = PreferencesManager.class.getName() + ".SELECTED_RESIDENCE";
+
     @Deprecated /** Not needed. UID auth is done in the server */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
 
@@ -41,6 +43,12 @@ public class PreferencesManager {
                 " is not initialized, call initializeInstance(..) method first.");
         }
         return sInstance;
+    }
+
+    public void setSelectedResidence(String value) {
+        mPref.edit()
+                .putString(SELECTED_RESIDENCE, value)
+                .apply();
     }
 
     public void setFacebookName(String value) {
@@ -85,12 +93,16 @@ public class PreferencesManager {
                 .apply();
     }
 
+    public String getSelectedResidence() {
+        return mPref.getString(SELECTED_RESIDENCE, "");
+    }
+
     public String getFacebookName() {
         return mPref.getString(FACEBOOK_NAME, "");
     }
 
     public String getFacebookLocation() {
-        return mPref.getString(FACEBOOK_LOCATION, "");
+        return mPref.getString(FACEBOOK_LOCATION + "VIlle", "");
     }
 
     public String getFacebookAge() {
