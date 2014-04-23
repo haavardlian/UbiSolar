@@ -1,7 +1,9 @@
 package com.sintef_energy.ubisolar.presenter;
 
+import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.sintef_energy.ubisolar.IView.IUsageView;
@@ -25,9 +27,11 @@ public class TotalEnergyPresenter {
     private static final String TAG = TotalEnergyPresenter.class.getName();
 
     /* The Models*/
+    @Deprecated
     ArrayList<EnergyUsageModel> euModels;
 
     /* The listeners */
+    @Deprecated
     ArrayList<IUsageView> listeners;
 
     public TotalEnergyPresenter(){
@@ -78,19 +82,22 @@ public class TotalEnergyPresenter {
      * Assigns and ID to the EnergyUsageModel and adds it to the database and internal list.
      * Notifies all listeners.
      * @param euModel The EnergyUsageModel to add.
+     * @return Uri to resource, or null
      */
-    public void addEnergyData(ContentResolver resolver, EnergyUsageModel euModel){
+    public Uri addEnergyData(ContentResolver resolver, EnergyUsageModel euModel){
         euModel.setId(System.currentTimeMillis());
 
         Uri uri = EnergyDataSource.addEnergyModel(resolver, euModel);
 
         Log.v(TAG, "addEnergyData: " + uri);
 
+        return uri;
+        /* TODO: Remove? All data accessed are through cursors anyway
         euModels.add(euModel);
 
         Collections.sort(euModels);
 
         for(IUsageView view : listeners)
-            view.newData(euModel);
+            view.newData(euModel);*/
     }
 }

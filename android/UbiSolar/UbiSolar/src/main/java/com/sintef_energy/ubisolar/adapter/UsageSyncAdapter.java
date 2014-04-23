@@ -6,19 +6,15 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by perok on 26.03.14.
  *
  * The sync provider for devices and usage.
+ *
+ * http://udinic.wordpress.com/2013/07/24/write-your-own-android-sync-adapter/
  *
  * Synchronization is based on the data classes having dirty bits and delete bits.
  *

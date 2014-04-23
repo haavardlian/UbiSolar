@@ -88,12 +88,13 @@
         <ImageButton
             android:layout_width="50dip"
             android:layout_height="50dip"
-            android:layout_toRightOf="@id/textUsage"
             android:scaleType="center"
             android:cropToPadding="true"
             android:id="@+id/dialog_add_usage_usage_down"
             android:background="@null"
-            android:src="@android:drawable/arrow_down_float" />
+            android:src="@android:drawable/arrow_down_float"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/textUsage" />
 
 
         <ImageButton
@@ -108,18 +109,20 @@
         <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/dialog_add_usage_usage_down"
-            android:layout_toLeftOf="@id/dialog_add_usage_usage_up"
             android:inputType="numberDecimal"
             android:ems="10"
             android:id="@+id/dialog_add_usage_edittext_kwh"
-            android:hint="kWh"/>
+            android:hint="kWh"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/dialog_add_usage_usage_down"
+            android:layout_toLeftOf="@+id/dialog_add_usage_usage_up" />
 
     </RelativeLayout>
 
-    <Button
-        android:layout_width="wrap_content"
+    <ImageButton
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_input_add"
         android:text="@string/add_button"
         android:id="@+id/btnAddUsage" />
 </LinearLayout>

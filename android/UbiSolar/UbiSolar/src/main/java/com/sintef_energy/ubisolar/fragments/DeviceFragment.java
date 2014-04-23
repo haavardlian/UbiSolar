@@ -1,5 +1,9 @@
 package com.sintef_energy.ubisolar.fragments;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -14,6 +18,7 @@ import android.widget.ExpandableListView;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
@@ -24,15 +29,16 @@ import java.util.ArrayList;
 /**
  * Created by perok on 2/11/14.
  */
-public class DeviceFragment extends DefaultTabFragment {
+public class DeviceFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = DeviceFragment.class.getName();
     private View mRootview;
-    DevicePresenter devicePresenter;
+    private DevicePresenter devicePresenter;
     private ExpandableListView expListView;
+    private ExpandableListAdapter expListAdapter;
     private ArrayList<DeviceModel> devices;
 
     public static DeviceFragment newInstance(int sectionNumber) {
@@ -49,11 +55,9 @@ public class DeviceFragment extends DefaultTabFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         try {
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
-            createGroupList();
 
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
@@ -88,31 +92,19 @@ public class DeviceFragment extends DefaultTabFragment {
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
-
-        final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(getActivity(), devices);
+        //her skal det sendes med cursoren?
+        devices = new ArrayList<>();
+        expListAdapter = new ExpandableListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
         //createGroupList();
 
         return mRootview;
     }
-
-    private void createGroupList() {
-        /*Checking if the list is empty*/
-        devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
-
-        if(devices == null)
-            devices = new ArrayList<DeviceModel>();
-
-
-        /* Old code, should use some of this to add examples when presenting the application
-        devices = new ArrayList<DeviceModel>();
-        devices.add(new DeviceModel(1, "TV", "Stue 1 etg", 1, 1));
-        devices.add(new DeviceModel(2, "Oven", "In kitchen", 1, 1));
-        devices.add(new DeviceModel(3, "Warm water", "-", 1, 1));
-        devices.add(new DeviceModel(4, "Dishwasher", "Kitchen", 1, 1));
-        devices.add(new DeviceModel(5, "Heating", "Main heating 2 floor", 1, 1));
-        devices.add(new DeviceModel(6, "Radio", "Radio livingroom", 1, 1));*/
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState){
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     private void setGroupIndicatorToRight() {
@@ -132,4 +124,34 @@ public class DeviceFragment extends DefaultTabFragment {
         return (int) (pixels * scale + 0.5f);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(
+                getActivity(),
+                EnergyContract.Devices.CONTENT_URI,
+                EnergyContract.Devices.PROJECTION_ALL,
+                null,
+                null,
+                DeviceModel.DeviceEntry._ID + " ASC"
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        devices.clear();
+
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0)
+            do {
+                DeviceModel model = new DeviceModel(cursor);
+                devices.add(model);
+            } while (cursor.moveToNext());
+
+        expListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        devices.clear();
+    }
 }

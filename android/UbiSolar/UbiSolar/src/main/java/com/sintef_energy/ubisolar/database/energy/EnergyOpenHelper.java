@@ -10,7 +10,7 @@ import android.util.Log;
  */
 public class EnergyOpenHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "energy.db";
-	private static final int DATABASE_VERSION = 7;
+	private static final int DATABASE_VERSION = 8;
 
 	public EnergyOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
 		super(context, DATABASE_NAME, factory, DATABASE_VERSION);

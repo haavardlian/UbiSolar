@@ -25,7 +25,7 @@ public class EnergyDataSource {
      *
      * @param resolver Resolver for the Context.
      * @param euModel The EnergyUsageModel to add.
-     * @return new Uri to resource.
+     * @return new Uri to resource, or Null if something went wrong.
      */
     public static Uri addEnergyModel(ContentResolver resolver, EnergyUsageModel euModel){
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();

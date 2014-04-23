@@ -22,11 +22,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Activity context;
     private List<DeviceModel> devices;
+    private String[] categories;
     public static final String TAG = ExpandableListAdapter.class.getName();
 
+    //Denne skal ta inn cursoren i steden for lista i seg selv?
     public ExpandableListAdapter(Activity context, List<DeviceModel> devices) {
         this.context = context;
         this.devices = devices;
+        this.categories = context.getResources().getStringArray(R.array.device_categories);
     }
 
     @Override
@@ -95,7 +98,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         */
         //Experimenting
 
-        String[] categories = context.getResources().getStringArray(R.array.device_categories);
+
 
 
         if (convertView == null) {

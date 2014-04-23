@@ -25,6 +25,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.DatePickerFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,7 +46,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     private ImageButton mButtonCalendar;
     private ImageButton mButtonKwhUp;
     private ImageButton mButtonKwhDown;
-    private Button mButtonAddUsage;
+    private ImageButton mButtonAddUsage;
 
     private Spinner spinnerDevice;
     private SimpleCursorAdapter mDeviceAdapter;
@@ -77,9 +78,6 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
 
         View view = inflater.inflate(R.layout.fragment_add_usage, null);
 
-
-        //Create the dialog view
-
         //Set the calendar
         currentMonth = Calendar.getInstance();
         currentMonth.set(Calendar.MINUTE, 0);
@@ -95,7 +93,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mButtonCalendar = (ImageButton)view.findViewById(R.id.dialog_add_usage_button_calendar);
         mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
         mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
-        mButtonAddUsage = (Button)view.findViewById(R.id.btnAddUsage);
+        mButtonAddUsage = (ImageButton)view.findViewById(R.id.btnAddUsage);
         final DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.setTargetFragment(this, 0);
 
@@ -104,8 +102,6 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             @Override
             public void onClick(View view) {
                 String text = mKwhField.getText().toString();
-
-                Log.v(TAG, "Textfield value: " + text);
 
                 if (text.length() > 0) {
                     Double value = Double.valueOf(text);
@@ -121,8 +117,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                     euModel.setPower_usage(value);
 
                     //TODO: Make the actual adding of usage work
-                    //mTotalEnergyPresenter = ((IPresenterCallback) getActivity()).getmTotalEnergyPresenter();
-                    //mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel);
+                    if(mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
+                        Utils.makeShortToast(getActivity().getApplicationContext(), "Usage added");
                 }
             }
         });
