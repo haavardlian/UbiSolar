@@ -72,8 +72,9 @@ public class NavigationDrawerFragment extends Fragment {
     private ArrayList<Item> navDrawerItems;
     private NavDrawerListAdapter adapter;
 
+    /** The fault startup tab */
+    private int mCurrentSelectedPosition = 0;
 
-    private int mCurrentSelectedPosition = 1;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
