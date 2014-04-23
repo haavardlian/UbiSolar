@@ -95,4 +95,6 @@ public interface ServerDAO {
     @Mapper(DeviceMapper.class)
     List<Device> getUpdatedDevices(@Bind("userID") int userID, @Bind("timestamp") long timestamp);
 
+    
+
  }
