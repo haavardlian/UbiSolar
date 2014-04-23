@@ -20,6 +20,7 @@ public class ServerConfiguration extends Configuration {
         database = new DatabaseConfiguration("jdbc:mysql://188.226.188.11/haavarhl_it2901", "haavarhl_it2901", "julebrus", DatabaseType.MYSQL);
     }
 
+    
     public DatabaseConfiguration getDatabaseConfiguration() {
         return database;
     }
