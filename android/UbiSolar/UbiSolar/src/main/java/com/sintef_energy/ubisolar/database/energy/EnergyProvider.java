@@ -41,18 +41,28 @@ public class EnergyProvider extends ContentProvider{
     private static final int ENERGY_MONTH_LIST = 7;
     private static final int ENERGY_YEAR_LIST = 8;
 
+    private static final int DEVICES_LIST_DELETE = 9;
+    private static final int ENERGY_LIST_DELETE = 10;
+
+    private static ContentValues deleteValues;
+
     private static final UriMatcher URI_MATCHER;
     // prepare the UriMatcher
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "device", DEVICES_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "device/#", DEVICES_ID);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "device/" + EnergyContract.DELETE, DEVICES_LIST_DELETE);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy", ENERGY_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/#", ENERGY_ID);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Day, ENERGY_DAY_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Week, ENERGY_WEEK_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Month, ENERGY_MONTH_LIST);
         URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.Energy.Date.Year, ENERGY_YEAR_LIST);
+        URI_MATCHER.addURI(EnergyContract.AUTHORITY, "energy/" + EnergyContract.DELETE, ENERGY_LIST_DELETE);
+
+        deleteValues = new ContentValues();
+        deleteValues.put(DeviceModel.DeviceEntry.COLUMN_IS_DELETED, true);
    }
 
     @Override
@@ -102,6 +112,7 @@ public class EnergyProvider extends ContentProvider{
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = EnergyContract.Devices.SORT_ORDER_DEFAULT;
                 }
+
                 break;
             case DEVICES_ID:
                 builder.setTables(DeviceModel.DeviceEntry.TABLE_NAME);
@@ -136,6 +147,12 @@ public class EnergyProvider extends ContentProvider{
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
+
+        if(selection == null)
+            selection = selectionAvoidDeleteBit;
+        else
+            selection += " AND " + selectionAvoidDeleteBit;
+
         //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
         if(rawSql == null)
             cursor =
@@ -150,6 +167,8 @@ public class EnergyProvider extends ContentProvider{
         else
             cursor =
                     db.rawQuery(rawSql, selectionArgs);
+
+
 
         // if we want to be notified of any changes:
         if (useAuthorityUri) {
@@ -201,9 +220,24 @@ public class EnergyProvider extends ContentProvider{
         String idStr = null;
         String where = null;
         switch (URI_MATCHER.match(uri)) {
-            case DEVICES_LIST:
+            /* ONLY DELETE ON THESE TWO */
+            case DEVICES_LIST_DELETE:
                 delCount = db.delete(
                         DeviceModel.DeviceEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
+            case ENERGY_LIST_DELETE:
+                delCount = db.delete(
+                        EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
+            /* Sets deletebit in these*/
+            case DEVICES_LIST:
+                delCount = db.update(
+                        DeviceModel.DeviceEntry.TABLE_NAME,
+                        deleteValues,
                         selection,
                         selectionArgs);
                 break;
@@ -213,14 +247,17 @@ public class EnergyProvider extends ContentProvider{
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
-                delCount = db.delete(
+
+                delCount = db.update(
                         DeviceModel.DeviceEntry.TABLE_NAME,
+                        deleteValues,
                         where,
                         selectionArgs);
                 break;
             case ENERGY_LIST:
-                delCount = db.delete(
+                delCount = db.update(
                         EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
+                        deleteValues,
                         selection,
                         selectionArgs);
                 break;
@@ -230,8 +267,9 @@ public class EnergyProvider extends ContentProvider{
                 if (!TextUtils.isEmpty(selection)) {
                     where += " AND " + selection;
                 }
-                delCount = db.delete(
+                delCount = db.update(
                         EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
+                        deleteValues,
                         where,
                         selectionArgs);
                 break;
@@ -326,14 +364,16 @@ public class EnergyProvider extends ContentProvider{
                                     + "(" + EnergyUsageModel.EnergyUsageEntry._ID + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
-                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ")"
-                                    +" values " + "(?,?,?,?)");
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED + ")"
+                                    +" values " + "(?,?,?,?, ?)");
                     for (ContentValues value : values){
                         //bind the 1-indexed ?'s to the values specified
                         insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
                         insert.bindLong(2, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID));
                         insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME));
                         insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
+                        insert.bindLong(5, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED));
                         insert.execute();
                     }
                     db.setTransactionSuccessful();
@@ -394,6 +434,9 @@ public class EnergyProvider extends ContentProvider{
         throw new SQLException("Problem while inserting into uri: " + uri);
    }
 
+
+    private static final String selectionAvoidDeleteBit =  DeviceModel.DeviceEntry.COLUMN_IS_DELETED + "<>1 ";
+
     private String generateRawDateSql(String date, String where){
 
         //Time to aggregate on
@@ -407,7 +450,7 @@ public class EnergyProvider extends ContentProvider{
                         + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
                         + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
-                        + "WHERE " + where + " "
+                        + "WHERE " + where + " AND " + selectionAvoidDeleteBit
                         + "GROUP BY " + time + ", "
                             + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
                         + "ORDER BY `month` ASC";
