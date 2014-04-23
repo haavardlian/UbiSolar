@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.widget.CheckBox;
 
 import java.util.Date;
 
@@ -49,11 +50,12 @@ public class PreferencesManager {
         mPref.edit()
                 .putString(SELECTED_RESIDENCE, value)
                 .apply();
+
     }
 
     public void setFacebookName(String value) {
         mPref.edit()
-                .putString(FACEBOOK_AGE, value)
+                .putString(FACEBOOK_NAME, value)
                 .apply();
     }
 

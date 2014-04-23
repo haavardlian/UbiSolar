@@ -65,18 +65,18 @@ public class ProfileFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        PreferencesManager.getInstance().setFacebookName("Lars Erik Græsdal-Knutrud");
 
         //return super.onCreateView(inflater, container, savedInstanceState);
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         setupList();
-       /* TextView location = (TextView) mRootView.findViewById(R.id.profile_location);
+        TextView location = (TextView) mRootView.findViewById(R.id.profile_location);
         location.setText(PreferencesManager.getInstance().getFacebookLocation());
         TextView name = (TextView) mRootView.findViewById(R.id.profile_name);
         name.setText(PreferencesManager.getInstance().getFacebookName());
-        name.setText("RETARD");
-        */
+
         Session.getActiveSession();
         return mRootView;
     }
@@ -113,13 +113,14 @@ public class ProfileFragment extends DefaultTabFragment {
         expListView.setAdapter(expListAdapter);
     }
 
+
     private void createGroupList() {
         residences = new ArrayList<Residence>();
         residences.add(new Residence("Huset", "Stadsing Dahls gate", 6, 140, 7015,'A'));
         residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G'));
         residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B'));
         residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D'));
-        setSelectedResidence(residences.get(0));
+        setSelectedResidence(residences.get(2));
     }
 
     private void setGroupIndicatorToRight() {
