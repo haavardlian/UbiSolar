@@ -13,6 +13,7 @@ public class PreferencesManager {
     private static final String PREF_NAME = PreferencesManager.class.getName() + ".PREFS";
     public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN";
     public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN_EXPIRES";
+
     public static final String FACEBOOK_NAME = PreferencesManager.class.getName() + ".FACEBOOK_NAME";
     public static final String FACEBOOK_LOCATION = PreferencesManager.class.getName() + ".FACEBOOK_LOCATION";
     public static final String FACEBOOK_AGE = PreferencesManager.class.getName() + ".FACEBOOK_AGE";

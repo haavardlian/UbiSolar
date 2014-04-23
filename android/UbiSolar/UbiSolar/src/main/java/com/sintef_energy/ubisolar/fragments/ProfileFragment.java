@@ -10,12 +10,16 @@ import android.widget.ExpandableListView;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
 import com.sintef_energy.ubisolar.model.Residence;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -65,6 +69,10 @@ public class ProfileFragment extends DefaultTabFragment {
         //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         setupList();
+        TextView location = (TextView) mRootView.findViewById(R.id.profile_location);
+        location.setText(PreferencesManager.getInstance().getFacebookLocation());
+        TextView name = (TextView) mRootView.findViewById(R.id.profile_name);
+        name.setText(PreferencesManager.getInstance().getFacebookName());
         Session.getActiveSession();
         return mRootView;
     }

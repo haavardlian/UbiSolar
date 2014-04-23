@@ -446,6 +446,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 /* Set session data */
                 mPrefManager.setAccessToken(session.getAccessToken());
                 mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
+                mPrefManager.setFacebookName(session.getApplicationId());
 
                 //SessionState.
 
@@ -464,7 +465,8 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
                             if(response.getConnection() != null || response.getIsFromCache() != false) {
-
+                                mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
+                                mPrefManager.setFacebookLocation(user.getLocation().toString());
                                 mPrefManager.setKeyFacebookUid(user.getId());
                                 Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
                             } else {
