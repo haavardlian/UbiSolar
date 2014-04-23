@@ -36,9 +36,9 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
      */
     public static final String TAG = DeviceFragment.class.getName();
     private View mRootview;
-    DevicePresenter devicePresenter;
+    private DevicePresenter devicePresenter;
     private ExpandableListView expListView;
-    ExpandableListAdapter expListAdapter;
+    private ExpandableListAdapter expListAdapter;
     private ArrayList<DeviceModel> devices;
 
     public static DeviceFragment newInstance(int sectionNumber) {
@@ -55,11 +55,9 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         try {
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
-            createGroupList();
 
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
@@ -95,6 +93,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
         //her skal det sendes med cursoren?
+        devices = new ArrayList<>();
         expListAdapter = new ExpandableListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
@@ -106,24 +105,6 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(0, null, this);
-    }
-
-    private void createGroupList() {
-        /*Checking if the list is empty*/
-        devices = devicePresenter.getDeviceModels(getActivity().getContentResolver());
-
-        if(devices == null)
-            devices = new ArrayList<DeviceModel>();
-
-
-        /* Old code, should use some of this to add examples when presenting the application
-        devices = new ArrayList<DeviceModel>();
-        devices.add(new DeviceModel(1, "TV", "Stue 1 etg", 1, 1));
-        devices.add(new DeviceModel(2, "Oven", "In kitchen", 1, 1));
-        devices.add(new DeviceModel(3, "Warm water", "-", 1, 1));
-        devices.add(new DeviceModel(4, "Dishwasher", "Kitchen", 1, 1));
-        devices.add(new DeviceModel(5, "Heating", "Main heating 2 floor", 1, 1));
-        devices.add(new DeviceModel(6, "Radio", "Radio livingroom", 1, 1));*/
     }
 
     private void setGroupIndicatorToRight() {
@@ -157,22 +138,18 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        devices.clear();
         cursor.moveToFirst();
         if (cursor.getCount() != 0)
             do {
                 DeviceModel model = new DeviceModel(cursor);
                 devices.add(model);
+            } while (cursor.moveToNext());
 
-            }
-
-            while (cursor.moveToNext());
-
-
+        expListAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        devices.clear();
     }
 }
