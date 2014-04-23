@@ -76,12 +76,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.device_child_item, null);
         }
 
+        TextView nameView = (TextView) convertView.findViewById(R.id.deviceName);
+        nameView.setText(device.getName());
+        //TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
 
-        TextView descriptionView = (TextView) convertView.findViewById(R.id.deviceDescription);
-        TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
+        //Only show description if the device actually got it
+        if (device.getDescription().length() > 1){
+            TextView descriptionView = (TextView) convertView.findViewById(R.id.deviceDescription);
+            descriptionView.setText("Description: " + device.getDescription());
+        }
 
-        descriptionView.setText("Description: " + device.getDescription());
-        idView.setText("ID: " + device.getDevice_id());
+        //idView.setText("ID: " + device.getDevice_id());
         return convertView;
     }
 

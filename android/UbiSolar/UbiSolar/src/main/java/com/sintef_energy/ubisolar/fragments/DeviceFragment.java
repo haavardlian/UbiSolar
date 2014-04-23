@@ -61,7 +61,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
 
              /*Line so we can delete test data easily*/
-            EnergyDataSource.deleteAll(getActivity().getContentResolver());
+            //EnergyDataSource.deleteAll(getActivity().getContentResolver());
 
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString() + " must implement " + TotalEnergyPresenter.class.getName());
