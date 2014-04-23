@@ -25,7 +25,7 @@ public class DeviceModel extends Device implements Parcelable{
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_CATEGORY = "category";
         public static final String COLUMN_IS_TOTAL = "is_total";
-        public static final String COLUMN_IS_DELETED = "is_deteled";
+        public static final String COLUMN_IS_DELETED = "is_deleted";
     }
 
     public static final String[] projection = new String[]{

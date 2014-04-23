@@ -143,12 +143,12 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
      * Create CalendarEventModel from cursor
      * @param cursor
      */
-    public EnergyUsageModel(Cursor cursor) {
+    public EnergyUsageModel(Cursor cursor, boolean isShortData) {
         setId(cursor.getLong(_id));
         setDevice_id(cursor.getLong(_deviceId));
         setDatetime(new Date(cursor.getLong(_dateTime) * 1000));
         setPower_usage(cursor.getDouble(_power));
-        setDeleted(cursor.getInt(_is_deleted) != 0);
+        if(!isShortData) setDeleted(cursor.getInt(_is_deleted) != 0);
     }
 
     public EnergyUsageModel(long id, long device_id, Date datetime, double power_usage) {
