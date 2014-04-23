@@ -16,16 +16,27 @@ public class Device {
     private String description;
     @JsonProperty
     private long userId;
+    @JsonProperty
+    private long lastUpdated;
 
     public Device() {
 
     }
 
-    public Device(long id, long userId, String name, String description) {
+    public Device(long id, long userId, String name, String description, long lastUpdated) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.description = description;
+        this.lastUpdated = lastUpdated;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     public long getId() {
