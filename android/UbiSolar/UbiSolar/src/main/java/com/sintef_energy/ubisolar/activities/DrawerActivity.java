@@ -251,7 +251,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         if(fragment != null) //todo: Add to backstack? Or add null?
             addFragment(fragment, false, true, titleNames[position]);
             //fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
-        else if(logout){
+        else if(logout) {
             onClickLogin();
         }
         else
