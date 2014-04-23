@@ -5,7 +5,6 @@ import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.dropwizard.jersey.params.LongParam;
-
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -66,7 +65,6 @@ public class SyncResource {
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedDevices).build();
     }
 
-
     @GET
     @Path("/usage/newest")
     public long getLastEditedUsageTime(@PathParam("user") IntParam user) {
@@ -84,6 +82,7 @@ public class SyncResource {
         else
             throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
+
 
     @PUT
     @Path("/usage/")
