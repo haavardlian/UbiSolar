@@ -24,8 +24,8 @@ public class SyncResource {
     }
 
     @GET
-    @Path("/device/frontend")
-    public List<Device> getNewDevices(@QueryParam("timestamp") LongParam timestamp, @QueryParam("userID") IntParam userID) {
+    @Path("/device/frontend/{timestamp}")
+    public List<Device> getNewDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
         List<Device> devices = db.getUpdatedDevices(userID.get(), timestamp.get());
         if(devices != null && !devices.isEmpty())
             return devices;
