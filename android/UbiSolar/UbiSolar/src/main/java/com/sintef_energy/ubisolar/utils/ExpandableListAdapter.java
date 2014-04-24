@@ -22,6 +22,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Activity context;
     private List<DeviceModel> devices;
+    //Changing categories from string[] to a list - or create help method to add all the categories to devices?
     private String[] categories;
     public static final String TAG = ExpandableListAdapter.class.getName();
 
@@ -34,7 +35,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return devices.get(groupPosition);
+        //TODO fix this
+        //Trying to create a list of all children in this group and picking the right one
+        ArrayList<DeviceModel> children = new ArrayList<DeviceModel>();
+        for (DeviceModel deviceModel : devices){
+            if (deviceModel.getCategory() == groupPosition)
+                children.add(deviceModel);
+        }
+        return children.get(childPosition);
     }
 
     public String getDescription(int groupPosition) {
@@ -43,7 +51,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return 1;
+        int count = 0;
+        for (DeviceModel deviceModel : devices){
+            if (deviceModel.getCategory() == groupPosition){
+                count++;
+            }
+        }
+        return count;
+
     }
 
     @Override
@@ -61,45 +76,34 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.device_child_item, null);
         }
 
-        TextView descriptionView = (TextView) convertView.findViewById(R.id.deviceDescription);
-        TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
+        TextView nameView = (TextView) convertView.findViewById(R.id.deviceName);
+        nameView.setText(device.getName());
+        //TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
 
-        descriptionView.setText("Description: " + device.getDescription());
-        idView.setText("ID: " + device.getDevice_id());
+        //Only show description if the device actually got it
+        if (device.getDescription().length() > 1){
+            TextView descriptionView = (TextView) convertView.findViewById(R.id.deviceDescription);
+            descriptionView.setText("Description: " + device.getDescription());
+        }
+
+        //idView.setText("ID: " + device.getDevice_id());
         return convertView;
     }
 
 
 
     public Object getGroup(int groupPosition) {
+        //TODO fix this
         return devices.get(groupPosition);
     }
 
-    public int getGroupCount() { return devices.size(); }
+    public int getGroupCount() { return categories.length; }
 
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
 
     public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
-        //Working with dummydata:
-        /*
-        String deviceName =  getGroup(groupPosition).toString();
-        if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.device_list_item,
-                    null);
-        }
-        TextView item = (TextView) convertView.findViewById(R.id.device);
-        item.setTypeface(null, Typeface.BOLD);
-        item.setText(deviceName);
-        return convertView;
-        */
-        //Experimenting
-
-
-
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) context
@@ -108,28 +112,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     null);
         }
         TextView item = (TextView) convertView.findViewById(R.id.device);
-        int category = devices.get(groupPosition).getCategory();
-        Log.v(TAG, "The group position returned: " + groupPosition);
-        Log.v(TAG, "The category returned: " + devices.get(groupPosition).getCategory());
+        item.setText(categories[groupPosition]);
         item.setTypeface(null, Typeface.BOLD);
-
-        switch (category){
-            case(0):
-                item.setText(categories[0]);
-                break;
-            case(1):
-                item.setText(categories[1]);
-                break;
-            case(2):
-                item.setText(categories[2]);
-                break;
-            case(3):
-                item.setText(categories[3]);
-                break;
-            default:
-                item.setText("Could not get category");
-                break;
-        }
 
         return convertView;
 

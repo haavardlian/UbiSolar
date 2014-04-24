@@ -10,6 +10,9 @@ import com.sintef_energy.ubisolar.model.Device;
 
 /**
  * Created by perok on 2/11/14.
+ *
+ * Based on the backend Device model, this class gives it all of Androids
+ * powerful functionality; parcelable, ContentProvider and constructor helper methods.
  */
 public class DeviceModel extends Device implements Parcelable{
     private static final String TAG = DeviceModel.class.getName();
@@ -22,6 +25,7 @@ public class DeviceModel extends Device implements Parcelable{
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_CATEGORY = "category";
         public static final String COLUMN_IS_TOTAL = "is_total";
+        public static final String COLUMN_IS_DELETED = "is_deleted";
     }
 
     public static final String[] projection = new String[]{
@@ -30,7 +34,8 @@ public class DeviceModel extends Device implements Parcelable{
             DeviceEntry.COLUMN_NAME,
             DeviceEntry.COLUMN_DESCRIPTION,
             DeviceEntry.COLUMN_CATEGORY,
-            DeviceEntry.COLUMN_IS_TOTAL
+            DeviceEntry.COLUMN_IS_TOTAL,
+            DeviceEntry.COLUMN_IS_DELETED
     };
 
     /* SQL Statements*/
@@ -44,7 +49,8 @@ public class DeviceModel extends Device implements Parcelable{
                     DeviceEntry.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_CATEGORY + INTEGER_TYPE + COMMA_SEP +
-                    DeviceEntry.COLUMN_IS_TOTAL + INTEGER_TYPE +
+                    DeviceEntry.COLUMN_IS_TOTAL + INTEGER_TYPE + COMMA_SEP +
+                    DeviceEntry.COLUMN_IS_DELETED + INTEGER_TYPE +
                     " )";
 
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DeviceEntry.TABLE_NAME;
@@ -56,6 +62,7 @@ public class DeviceModel extends Device implements Parcelable{
     private int _description = 3;
     private int _category = 4;
     private int _is_total = 5;
+    private int _is_deleted = 6;
 
 
     /**
@@ -68,6 +75,7 @@ public class DeviceModel extends Device implements Parcelable{
         setDescription("");
         setCategory(-1);
         setIsTotal(false);
+        setDeleted(false);
     }
 
     /* Parcable */
@@ -100,6 +108,7 @@ public class DeviceModel extends Device implements Parcelable{
         out.writeString(getDescription());
         out.writeInt(getCategory());
         out.writeInt((isTotal() ? 1 : 0));
+        out.writeInt((isDeleted() ? 1 : 0));
     }
 
     private void readFromParcel(Parcel in) {
@@ -109,6 +118,7 @@ public class DeviceModel extends Device implements Parcelable{
         setDescription(in.readString());
         setCategory(in.readInt());
         setIsTotal(in.readInt() != 0);
+        setDeleted(in.readInt() != 0);
     }
 
     /**
@@ -123,6 +133,7 @@ public class DeviceModel extends Device implements Parcelable{
         values.put(DeviceEntry.COLUMN_DESCRIPTION, getDescription());
         values.put(DeviceEntry.COLUMN_CATEGORY, getCategory());
         values.put(DeviceEntry.COLUMN_IS_TOTAL, (isTotal() ? 1 : 0));
+        values.put(DeviceEntry.COLUMN_IS_DELETED, (isDeleted() ? 1 : 0));
         return values;
     }
 
@@ -137,6 +148,7 @@ public class DeviceModel extends Device implements Parcelable{
         setDescription(cursor.getString(_description));
         setCategory(cursor.getInt(_category));
         setIsTotal(cursor.getInt(_is_total) != 0);
+        setDeleted(cursor.getInt(_is_deleted) != 0);
     }
 
     public DeviceModel(long device_id, String name, String description, long user_id,

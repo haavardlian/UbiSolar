@@ -86,10 +86,10 @@ public class EnergyDataSource {
         }
 
         cursor.moveToFirst();
-        euModels.add(new EnergyUsageModel(cursor));
+        euModels.add(new EnergyUsageModel(cursor, false));
 
         while (cursor.moveToNext())
-            euModels.add(new EnergyUsageModel(cursor));
+            euModels.add(new EnergyUsageModel(cursor, false));
 
         cursor.close();
 

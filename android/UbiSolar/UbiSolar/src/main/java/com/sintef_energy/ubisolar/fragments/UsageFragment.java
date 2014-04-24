@@ -171,12 +171,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         mDevices = new LinkedHashMap<>();
 
 //        clearDatabase();
-//        Populate the database if it's empty
-
+        //Populate the database if it's empty
 //        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
+//            Log.v(TAG, "Database empty. Populating it.");
 //            createDevices();
 //            createEnergyUsage();
 //        }
+
 
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
@@ -399,8 +400,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                     do {
                         DeviceModel model = new DeviceModel(cursor);
                         mDevices.put(model.getDevice_id(), model);
-                    }
-                    while (cursor.moveToNext());
+                    } while (cursor.moveToNext());
+                //TODO BUG when mDevice is 0, the next steps will fail for usage
                 graphView.setDeviceSize(mDevices.size());
                 if(mDevices.size() > 0)
                     getLoaderManager().initLoader(LOADER_USAGE, null, this);
@@ -433,7 +434,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         data.moveToFirst();
         if(data.getCount() >= 1) {
             do {
-                EnergyUsageModel model = new EnergyUsageModel(data);
+                EnergyUsageModel model = new EnergyUsageModel(data, true);
                 DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
 
                 if (deviceUsageList == null) {
@@ -627,10 +628,16 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private void clearDatabase()
     {
-        int it = getActivity().getContentResolver().delete(EnergyContract.Devices.CONTENT_URI, null, null);
+
+
+        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.DELETE);
+        int it = getActivity().getContentResolver().delete(builder.build(), null, null);
         Log.v(TAG, "EMPTY DATABASE: " + it);
 
-        it = getActivity().getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
+        builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.DELETE);
+        it = getActivity().getContentResolver().delete(builder.build(), null, null);
         Log.v(TAG, "EMPTY DATABASE: " + it);
     }
 
