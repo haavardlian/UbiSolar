@@ -6,6 +6,7 @@ package com.sintef_energy.ubisolar.model;
 public class Residence {
     private String houseId;
     private String description;
+    private String status;
     private int area;
     private int residents;
     private int zipCode;
@@ -19,7 +20,7 @@ public class Residence {
         this.area = area;
         this.zipCode = zipCode;
         this.energyClass = energyClass;
-
+        this.status = houseId;
     }
 
     public String getHouseId() {
@@ -73,4 +74,8 @@ public class Residence {
     public String toString() {
         return getHouseId();
     }
+
+    public void setStatus(String status) {this.status = status;}
+
+    public String getStatus() {return status;}
 }

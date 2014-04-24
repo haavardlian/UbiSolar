@@ -114,5 +114,5 @@
     </string-array>
 
     <!-- Toast -->
-    <string name="no_internet">Please get yo self some interwebz</string>
+    <string name="no_internet">Internet connection required to log in</string>
 </resources>
