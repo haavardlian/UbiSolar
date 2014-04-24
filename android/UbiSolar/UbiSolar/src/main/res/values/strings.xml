@@ -92,16 +92,15 @@
 
     <!-- Fragment social-->
     <string name="social_user_name">User\'s name</string>
-    <string name="social_home_tab_label">Comparison areas</string>
-    <string name="comp_header">Comparison of savings</string>
     <string name="user_name">You</string>
     <string name="friend_name">Your friend</string>
-    <string name="watt_lvl">Wattitude level</string>
-    <string name="user_watt_lvl">Coal miner</string>
-    <string name="friend_watt_lvl">Windmill</string>
     <string name="friends_header_title">Friends</string>
-    <string name="similar_header_title">People with similar profiles</string>
-    <string name="area_header_title">People in your area</string>
+
+    <!-- Comparison settings-->
+    <string name="comp_header">Comparison of savings</string>
+    <string name="comp_setting_header">Select what you want to compare:</string>
+    <string name="comparison_setting">Comparison setting</string>
+
 
     <!-- Fragment Energy saving tabs -->
     <string name="fragment_energy_saving_tab_tips">Tips</string>

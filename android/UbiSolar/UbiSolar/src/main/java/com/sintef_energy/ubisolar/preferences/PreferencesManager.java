@@ -14,6 +14,12 @@ public class PreferencesManager {
     public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN";
     public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN_EXPIRES";
 
+    public static final String COMPARISON_AREA_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_AREA_CHECKED";
+    public static final String COMPARISON_RESIDENTS_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_RESIDENTS_CHECKED";
+    public static final String COMPARISON_SIZE_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_SIZE_CHECKED";
+    public static final String COMPARISON_ENERGY_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_ENERGY_CHECKED";
+
+
     @Deprecated /** Not needed. UID auth is done in the server */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
 
@@ -55,9 +61,50 @@ public class PreferencesManager {
                 .putString(KEY_FACEBOOK_UID, uid)
                 .apply();
     }
- 
+
+    public void setComparisonAreaChecked(boolean value) {
+        mPref.edit()
+                .putBoolean(COMPARISON_AREA_CHECKED, value)
+                .apply();
+    }
+
+    public void setComparisonSizeChecked(boolean value) {
+        mPref.edit()
+                .putBoolean(COMPARISON_SIZE_CHECKED, value)
+                .apply();
+    }
+
+    public void setComparisonResidentsChecked(boolean value) {
+        mPref.edit()
+                .putBoolean(COMPARISON_RESIDENTS_CHECKED, value)
+                .apply();
+    }
+
+    public void setComparisonEnergyChecked(boolean value) {
+        mPref.edit()
+                .putBoolean(COMPARISON_ENERGY_CHECKED, value)
+                .apply();
+    }
+
+
     public String getAccessToken()  {
         return mPref.getString(KEY_ACCESS_TOKEN, "");
+    }
+
+    public boolean getComparisonAreaChecked(){
+        return mPref.getBoolean(COMPARISON_AREA_CHECKED, false);
+    }
+
+    public boolean getComparisonSizeChecked(){
+        return mPref.getBoolean(COMPARISON_SIZE_CHECKED, false);
+    }
+
+    public boolean getComparisonResidentsChecked(){
+        return mPref.getBoolean(COMPARISON_RESIDENTS_CHECKED, false);
+    }
+
+    public boolean getComparisonEnergyChecked(){
+        return mPref.getBoolean(COMPARISON_ENERGY_CHECKED, false);
     }
 
     public Date getAccessTokenExpires(){
