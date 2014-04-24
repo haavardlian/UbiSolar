@@ -171,11 +171,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         mDevices = new LinkedHashMap<>();
 
         clearDatabase();
-//        Populate the database if it's empty
-        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
-            createDevices();
-            createEnergyUsage();
-        }
+        //Populate the database if it's empty
+//        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
+//            createDevices();
+//            createEnergyUsage();
+//        }
 
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
