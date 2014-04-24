@@ -5,30 +5,30 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.text.Html;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.Residence;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
-public class ResidenceListAdapter extends BaseExpandableListAdapter {
+public class ResidenceListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener{
 
     private Activity context;
     private List<Residence> residences;
+    private Residence selectedResidence;
+    private int selectedIndex;
 
     public ResidenceListAdapter (Activity context, List<Residence> residences) {
         this.context = context;
         this.residences = residences;
+        restoreSelctedResidence();
     }
 
     @Override
@@ -67,8 +67,8 @@ public class ResidenceListAdapter extends BaseExpandableListAdapter {
         TextView residentsView = (TextView) convertView.findViewById(R.id.residence_residents);
         TextView areaView = (TextView) convertView.findViewById(R.id.residence_size);
 
+        idView.setText("Name: " + residence.getStatus());
         descriptionView.setText("Description: " + residence.getDescription());
-        idView.setText("Name: " + residence.getHouseId());
         areaView.setText("Area: " + residence.getArea() + " square meters");
         residentsView.setText("Residents: " + residence.getResidents());
 
@@ -90,7 +90,8 @@ public class ResidenceListAdapter extends BaseExpandableListAdapter {
     }
 
     public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
-        String residenceName =  getGroup(groupPosition).toString();
+        Residence res = (Residence) getGroup(groupPosition);
+        String residenceName =  res.getStatus();
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -111,5 +112,42 @@ public class ResidenceListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
+                                int childPosition, long id) {
+        Residence a = (Residence) getChild(groupPosition,childPosition);
+        setSelectedResidence(a);
+        return true;
+    }
+
+    public void setSelectedResidence(Residence residence) {
+        for(Residence r : residences) {
+            if(r.getHouseId().equals(residence.getHouseId())) {
+
+                if(selectedResidence != null) {
+                    residences.get(selectedIndex).setStatus(residences.get(selectedIndex).getHouseId());
+                    r.setStatus(r.getHouseId() + " [Selected]");
+                    selectedIndex = residences.indexOf(r);
+                    PreferencesManager.getInstance().setSelectedResidence(r.getHouseId());
+                }
+                else {
+                    r.setStatus(r.getHouseId() + " [Selected]");
+                    selectedResidence = r;
+                    selectedIndex = residences.indexOf(r);
+                }
+            }
+        }
+    }
+
+    private void restoreSelctedResidence() {
+        for(Residence r : residences) {
+            if(r.getHouseId().equals(PreferencesManager.getInstance().getSelectedResidence())) {
+                setSelectedResidence(r);
+                selectedIndex = residences.indexOf(r);
+            }
+        }
+
+
+    }
 }
 

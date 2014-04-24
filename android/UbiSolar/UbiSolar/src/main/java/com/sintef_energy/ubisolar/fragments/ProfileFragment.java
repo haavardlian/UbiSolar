@@ -29,13 +29,13 @@ import java.util.ArrayList;
  *
  * UI design based on: https://github.com/gabrielemariotti/cardslib
  */
-public class ProfileFragment extends DefaultTabFragment {
+public class ProfileFragment extends DefaultTabFragment  {
 
     public static final String TAG = ProfileFragment.class.getName();
     private View mRootView;
     private ExpandableListView expListView;
     private ArrayList<Residence> residences;
-    private Residence selectedResidence;
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -67,11 +67,9 @@ public class ProfileFragment extends DefaultTabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         PreferencesManager.getInstance().setFacebookName("Lars Erik Græsdal-Knutrud");
 
-        //return super.onCreateView(inflater, container, savedInstanceState);
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         setupList();
+
         TextView location = (TextView) mRootView.findViewById(R.id.profile_location);
         location.setText(PreferencesManager.getInstance().getFacebookLocation());
         TextView name = (TextView) mRootView.findViewById(R.id.profile_name);
@@ -111,6 +109,7 @@ public class ProfileFragment extends DefaultTabFragment {
         final ResidenceListAdapter expListAdapter = new ResidenceListAdapter(getActivity(), residences);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
+        expListView.setOnChildClickListener(expListAdapter);
     }
 
 
@@ -120,7 +119,6 @@ public class ProfileFragment extends DefaultTabFragment {
         residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G'));
         residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B'));
         residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D'));
-        setSelectedResidence(residences.get(2));
     }
 
     private void setGroupIndicatorToRight() {
@@ -140,14 +138,7 @@ public class ProfileFragment extends DefaultTabFragment {
         return (int) (pixels * scale + 0.5f);
     }
 
-    public void setSelectedResidence(Residence residence) {
-        for(Residence r : residences) {
-           if(r.getHouseId().equals(residence.getHouseId())) {
-               selectedResidence = r;
-               r.setHouseId(r.getHouseId() + " [Selected]");
-               PreferencesManager.getInstance().setSelectedResidence(r.getHouseId());
-           }
-        }
-    }
+
+
 
 }
