@@ -291,6 +291,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         XYSeries series = new XYSeries(seriesName);
         mDataset.addSeries(series);
 
+        System.out.println(series.getTitle() + " added");
+
         XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
         seriesRenderer.setLineWidth(3);
         seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
@@ -604,7 +606,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     public boolean[] getSelectedDialogItems() {
         if(mSelectedDialogItems == null) {
             mSelectedDialogItems = new boolean[mDeviceSize];
-            mSelectedDialogItems[0] = true;
+            if(mDeviceSize > 0)
+                mSelectedDialogItems[0] = true;
         }
         return mSelectedDialogItems;
     }

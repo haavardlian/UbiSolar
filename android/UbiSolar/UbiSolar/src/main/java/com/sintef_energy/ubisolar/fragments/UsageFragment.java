@@ -170,8 +170,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new LinkedHashMap<>();
 
-        clearDatabase();
-        //Populate the database if it's empty
+//        clearDatabase();
+//        Populate the database if it's empty
+
 //        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
 //            createDevices();
 //            createEnergyUsage();
@@ -401,7 +402,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                     }
                     while (cursor.moveToNext());
                 graphView.setDeviceSize(mDevices.size());
-                getLoaderManager().initLoader(LOADER_USAGE, null, this);
+                if(mDevices.size() > 0)
+                    getLoaderManager().initLoader(LOADER_USAGE, null, this);
                 break;
             /* Load usage */
             case LOADER_USAGE:
@@ -422,8 +424,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
      * @param data
      */
     private void populateDeviceUsageList(Cursor data){
-        //Hashmap containt all DevicesUsage
+        //Hashmap containing all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
+
+        System.out.println(data.getCount());
 
         /* Get data from cursor and add */
         data.moveToFirst();
@@ -447,7 +451,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDeviceUsageList.clear();
         mDeviceUsageList.addAll(devices.values());
-        graphView.addDeviceUsage(mDeviceUsageList);
+
+        if(mDeviceUsageList.size() > 0)
+            graphView.addDeviceUsage(mDeviceUsageList);
     }
 
     @Override
