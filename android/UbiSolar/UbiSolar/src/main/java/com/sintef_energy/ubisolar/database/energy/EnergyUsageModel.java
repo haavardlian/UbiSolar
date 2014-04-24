@@ -35,14 +35,15 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
         public static final String COLUMN_DEVICE_ID = "fkdeviceid";
         public static final String COLUMN_DATETIME = "datetime";
         public static final String COLUMN_POWER = "power";
+        public static final String COLUMN_IS_DELETED = "is_deleted";
     }
 
     public static final String[] projection = new String[]{
             EnergyUsageEntry._ID,
             EnergyUsageEntry.COLUMN_DEVICE_ID,
             EnergyUsageEntry.COLUMN_DATETIME,
-            EnergyUsageEntry.COLUMN_POWER
-
+            EnergyUsageEntry.COLUMN_POWER,
+            EnergyUsageEntry.COLUMN_IS_DELETED
     };
 
     /* SQL Statements*/
@@ -56,6 +57,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
                     EnergyUsageEntry.COLUMN_DEVICE_ID + INTEGER_TYPE + COMMA_SEP +
                     EnergyUsageEntry.COLUMN_DATETIME + " DATE" + COMMA_SEP +
                     EnergyUsageEntry.COLUMN_POWER + REAL_TYPE + COMMA_SEP +
+                    EnergyUsageEntry.COLUMN_IS_DELETED + INTEGER_TYPE + COMMA_SEP +
                     "FOREIGN KEY(" + EnergyUsageEntry.COLUMN_DEVICE_ID +
                         ") REFERENCES " + DeviceModel.DeviceEntry.TABLE_NAME +
                             "(" + DeviceModel.DeviceEntry._ID + ")" +
@@ -70,6 +72,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
     private int _deviceId = 1;
     private int _dateTime = 2;
     private int _power = 3;
+    private int _is_deleted = 4;
 
 
     /**
@@ -80,6 +83,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
         setDevice_id(-1);
         setDatetime(new Date(-1));
         setPower_usage(-1);
+        setDeleted(false);
     }
 
     /* Parcable */
@@ -110,6 +114,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
         out.writeLong(getDevice_id());
         out.writeFloat(getDatetime().getTime());
         out.writeDouble(getPower_usage());
+        out.writeInt((isDeleted() ? 1 : 0));
     }
 
     private void readFromParcel(Parcel in) {
@@ -117,6 +122,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
         setDevice_id(in.readLong());
         setDatetime(new Date(in.readLong()));
         setPower_usage(in.readFloat());
+        setDeleted(in.readInt() != 0);
     }
 
     /**
@@ -129,6 +135,7 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
         values.put(EnergyUsageEntry.COLUMN_DEVICE_ID, getDevice_id());
         values.put(EnergyUsageEntry.COLUMN_DATETIME, getDatetime().getTime() / 1000L);
         values.put(EnergyUsageEntry.COLUMN_POWER, getPower_usage());
+        values.put(EnergyUsageEntry.COLUMN_IS_DELETED, (isDeleted() ? 1 : 0));
         return values;
     }
 
@@ -136,11 +143,12 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
      * Create CalendarEventModel from cursor
      * @param cursor
      */
-    public EnergyUsageModel(Cursor cursor) {
+    public EnergyUsageModel(Cursor cursor, boolean isShortData) {
         setId(cursor.getLong(_id));
         setDevice_id(cursor.getLong(_deviceId));
         setDatetime(new Date(cursor.getLong(_dateTime) * 1000));
         setPower_usage(cursor.getDouble(_power));
+        if(!isShortData) setDeleted(cursor.getInt(_is_deleted) != 0);
     }
 
     public EnergyUsageModel(long id, long device_id, Date datetime, double power_usage) {

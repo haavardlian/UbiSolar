@@ -9,21 +9,25 @@
     android:layout_width="match_parent">
 
     </ListView>
-    
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/deviceName"
+        android:enabled="false"/>
+
+    <!--<TextView
         android:id="@+id/deviceID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="id"
         android:paddingLeft="25dp"
-        android:enabled="false"/>
+        android:enabled="false"/>-->
 
     <TextView
         android:id="@+id/deviceDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="description"
-        android:layout_below="@id/deviceID"
+        android:layout_below="@id/deviceName"
         android:paddingLeft="25dp"
         android:layout_marginTop="8dp"/>
 
