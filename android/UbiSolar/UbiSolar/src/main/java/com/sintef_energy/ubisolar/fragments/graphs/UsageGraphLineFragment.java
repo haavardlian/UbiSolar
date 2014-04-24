@@ -21,6 +21,8 @@ import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.chart.PointStyle;
+import org.achartengine.chart.TimeChart;
+import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
@@ -220,9 +222,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     private void createLineGraph()
     {
         if (mChartView == null) {
-            System.out.println("Creating graph");
             LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.lineChartView);
-            mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
+            mChartView = ChartFactory.getTimeChartView(getActivity(), mDataset, mRenderer, mDataResolution);
+
 //            mChartView.addZoomListener(new ZoomListener() {
 //                @Override
 //                public void zoomApplied(ZoomEvent zoomEvent) {
@@ -288,7 +290,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
      */
     private void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues)
     {
-        XYSeries series = new XYSeries(seriesName);
+        TimeSeries series = new TimeSeries(seriesName);
         mDataset.addSeries(series);
 
         XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
@@ -342,7 +344,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             mChartView.repaint();
     }
 
-    private void populateGraph(int centerIndex)
+    private void populateGraph3(int centerIndex)
     {
         double max = 0;
         double min = Integer.MAX_VALUE;
@@ -369,23 +371,21 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
 
         for(DeviceUsageList usageList : mActiveUsageList) {
-            XYSeries series =  mDataset.getSeriesAt(index);
+            TimeSeries series = (TimeSeries) mDataset.getSeriesAt(index);
             series.clear();
             y = 0;
             for (DeviceUsage usage : usageList.getUsage()) {
-                while(y < POINT_DISTANCE * numberOfPoints)
-                {
-                    if(formatDate(usage.getDatetime(), mDataResolution).equals(mRenderer.getXTextLabel((double) y)))
-                    {
-                        series.add(y, usage.getPower_usage());
+                while (y < POINT_DISTANCE * numberOfPoints) {
+                    if (formatDate(usage.getDatetime(), mDataResolution).equals(mRenderer.getXTextLabel((double) y))) {
+                        series.add(usage.getDatetime(), usage.getPower_usage());
                         max = Math.max(max, usage.getPower_usage());
                         min = Math.min(min, usage.getPower_usage());
                         break;
                     }
                     y += POINT_DISTANCE;
                 }
+                index++;
             }
-            index++;
         }
 
         setRange(min, max, centerIndex);
@@ -395,6 +395,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         if( mChartView != null)
             mChartView.repaint();
     }
+
+    private void populateGraph()
+
 
     private void getNextPoint(Calendar cal)
     {
