@@ -257,7 +257,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void loadUsage()
     {
         if(!graphView.isLoaded()) {
-            getLoaderManager().restartLoader(LOADER_USAGE, null, this);
+            if(mDevices.size() > 0)
+                getLoaderManager().restartLoader(LOADER_USAGE, null, this);
         }
     }
 

@@ -345,9 +345,11 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     public boolean[] getSelectedDialogItems() {
         if(mSelectedDialogItems == null)
         {
-            mSelectedDialogItems = new boolean[mDeviceSize];
-            Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
-            mSelectedDialogItems[0] = false;
+            if(mDeviceSize > 0) {
+                mSelectedDialogItems = new boolean[mDeviceSize];
+                Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
+                mSelectedDialogItems[0] = false;
+            }
         }
         return mSelectedDialogItems;
     }
