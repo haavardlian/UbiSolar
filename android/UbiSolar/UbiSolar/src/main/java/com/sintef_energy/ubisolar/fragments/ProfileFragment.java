@@ -10,12 +10,17 @@ import android.widget.ExpandableListView;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
 import com.sintef_energy.ubisolar.model.Residence;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -24,12 +29,13 @@ import java.util.ArrayList;
  *
  * UI design based on: https://github.com/gabrielemariotti/cardslib
  */
-public class ProfileFragment extends DefaultTabFragment {
+public class ProfileFragment extends DefaultTabFragment  {
 
-    public static final String TAG = DeviceFragment.class.getName();
+    public static final String TAG = ProfileFragment.class.getName();
     private View mRootView;
     private ExpandableListView expListView;
     private ArrayList<Residence> residences;
+
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -59,12 +65,16 @@ public class ProfileFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        PreferencesManager.getInstance().setFacebookName("Lars Erik Græsdal-Knutrud");
 
-        //return super.onCreateView(inflater, container, savedInstanceState);
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
         setupList();
+
+        TextView location = (TextView) mRootView.findViewById(R.id.profile_location);
+        location.setText(PreferencesManager.getInstance().getFacebookLocation());
+        TextView name = (TextView) mRootView.findViewById(R.id.profile_name);
+        name.setText(PreferencesManager.getInstance().getFacebookName());
+
         Session.getActiveSession();
         return mRootView;
     }
@@ -99,7 +109,9 @@ public class ProfileFragment extends DefaultTabFragment {
         final ResidenceListAdapter expListAdapter = new ResidenceListAdapter(getActivity(), residences);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
+        expListView.setOnChildClickListener(expListAdapter);
     }
+
 
     private void createGroupList() {
         residences = new ArrayList<Residence>();
@@ -107,7 +119,6 @@ public class ProfileFragment extends DefaultTabFragment {
         residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G'));
         residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B'));
         residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D'));
-
     }
 
     private void setGroupIndicatorToRight() {
@@ -126,5 +137,8 @@ public class ProfileFragment extends DefaultTabFragment {
         // Convert the dps to pixels, based on density scale
         return (int) (pixels * scale + 0.5f);
     }
+
+
+
 
 }
