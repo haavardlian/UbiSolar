@@ -95,7 +95,7 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
                 public void onClick(View v) {
                     CheckBox cb = (CheckBox) v;
 
-                    setTextSetting((String)v.getTag(R.id.checkBox), cb.isSelected());
+                    setTextSetting((String)v.getTag(R.id.checkBox), cb.isChecked());
                 }
             });
 
@@ -106,7 +106,6 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
         }
 
         loadPreferences(holder.checkBox, (String) holder.name.getText());
-
 
         return row;
     }
@@ -119,23 +118,21 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
 
     private void setTextSetting(String text, boolean state){
 
-        Log.v(TAG, text);
+        Log.v(TAG, text + "  " + state);
 
         PreferencesManager pref = PreferencesManager.getInstance();
 
-        switch(text) {
-            case AREA:
-                pref.setComparisonAreaChecked(state);
-                break;
-            case SIZE:
-                pref.setComparisonSizeChecked(state);
-                break;
-            case ENERGY:
-                pref.setComparisonEnergyChecked(state);
-                break;
-            case RES:
-                pref.setComparisonResidentsChecked(state);
-                break;
+        if(AREA.equals(text)) {
+            pref.setComparisonAreaChecked(state);
+        }
+        else if(SIZE.equals(text)) {
+            pref.setComparisonSizeChecked(state);
+        }
+        else if(ENERGY.equals(text)) {
+            pref.setComparisonEnergyChecked(state);
+        }
+        else if(RES.equals(text)) {
+            pref.setComparisonResidentsChecked(state);
         }
     }
 
@@ -144,11 +141,22 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
 
         Log.v(TAG, "CHECKING " + text);
 
-        switch(text) {
-            case AREA: cb.setSelected(pref.getComparisonAreaChecked()); break;
-            case SIZE: cb.setSelected(pref.getComparisonSizeChecked()); break;
-            case ENERGY: cb.setSelected(pref.getComparisonEnergyChecked()); break;
-            case RES: cb.setSelected(pref.getComparisonResidentsChecked()); break;
+        boolean value = false;
+
+        if(AREA.equals(text)) {
+            value = pref.getComparisonAreaChecked();
         }
+        else if(SIZE.equals(text)) {
+            value = pref.getComparisonSizeChecked();
+        }
+        else if(ENERGY.equals(text)) {
+            value = pref.getComparisonEnergyChecked();
+        }
+        else if(RES.equals(text)) {
+            value = pref.getComparisonResidentsChecked();
+        }
+
+        cb.setChecked(value);
     }
+
 }

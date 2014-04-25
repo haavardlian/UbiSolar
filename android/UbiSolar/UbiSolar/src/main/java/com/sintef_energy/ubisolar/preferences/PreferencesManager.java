@@ -79,9 +79,9 @@ public class PreferencesManager {
                 .putBoolean(COMPARISON_RESIDENTS_CHECKED, value)
                 .apply();
     }
-
     public void setComparisonEnergyChecked(boolean value) {
         mPref.edit()
+
                 .putBoolean(COMPARISON_ENERGY_CHECKED, value)
                 .apply();
     }
