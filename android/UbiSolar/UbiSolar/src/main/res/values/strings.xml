@@ -47,9 +47,11 @@
     <!-- AddDeviceDialog -->
     <string name="addDeviceDialog_title">Add device</string>
     <string-array name="device_categories">
-    <item>Kitchen</item>
+    <item>Appliances</item>
     <item>Heat</item>
-    <item>Water</item>
+    <item>Home Entertainment</item>
+    <item>Lighting</item>
+    <item>Other</item>
     <item>Producing</item>
     </string-array>
     <string name="addDeviceDialog_buttonText">Add</string>
@@ -111,5 +113,5 @@
     </string-array>
 
     <!-- Toast -->
-    <string name="no_internet">Please get yo self some interwebz</string>
+    <string name="no_internet">Internet connection required to log in</string>
 </resources>

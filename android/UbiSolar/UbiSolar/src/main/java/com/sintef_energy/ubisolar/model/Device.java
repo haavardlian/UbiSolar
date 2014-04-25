@@ -2,6 +2,8 @@ package com.sintef_energy.ubisolar.model;
 
 /**
  * Created by thb on 19.02.14.
+ *
+ * A replica of the model on the backend.
  */
 public abstract class Device
 {
@@ -11,6 +13,7 @@ public abstract class Device
     protected String description;
     protected int category;
     protected boolean isTotal;
+    protected boolean isDeleted;
 
     public Device()
     {
@@ -25,6 +28,7 @@ public abstract class Device
         this.user_id = user_id;
         this.category = category;
         this.isTotal = false;
+        this.isDeleted = false;
     }
 
 
@@ -36,6 +40,7 @@ public abstract class Device
         this.user_id = user_id;
         this.category = category;
         this.isTotal = isTotal;
+        this.isDeleted = false;
     }
 
     public long getDevice_id() {
@@ -84,5 +89,13 @@ public abstract class Device
 
     public void setIsTotal(boolean isTotal) {
         this.isTotal = isTotal;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }
