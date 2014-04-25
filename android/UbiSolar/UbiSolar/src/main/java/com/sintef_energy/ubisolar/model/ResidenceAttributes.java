@@ -7,6 +7,7 @@ public class ResidenceAttributes {
 
     private String residenceAttributeLabel;
     private int value;
+    boolean selected = false;
 
     public ResidenceAttributes(String residenceAttributeLabel) {
         this.residenceAttributeLabel = residenceAttributeLabel;
@@ -26,5 +27,9 @@ public class ResidenceAttributes {
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 }
