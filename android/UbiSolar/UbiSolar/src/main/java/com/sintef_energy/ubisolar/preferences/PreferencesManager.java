@@ -133,7 +133,7 @@ public class PreferencesManager {
     }
 
     public String getFacebookLocation() {
-        return mPref.getString(FACEBOOK_LOCATION + "VIlle", "");
+        return mPref.getString(FACEBOOK_LOCATION, "");
     }
 
     public String getFacebookAge() {

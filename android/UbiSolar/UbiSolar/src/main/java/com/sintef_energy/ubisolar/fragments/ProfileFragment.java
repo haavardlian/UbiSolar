@@ -7,13 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.Session;
+import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
@@ -35,8 +32,10 @@ public class ProfileFragment extends DefaultTabFragment  {
     private View mRootView;
     private ExpandableListView expListView;
     private ArrayList<Residence> residences;
+    PreferencesManager prefs;
 
-
+    private TextView name, location, age, country;
+    private ProfilePictureView profilePicture;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -65,15 +64,25 @@ public class ProfileFragment extends DefaultTabFragment  {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        PreferencesManager.getInstance().setFacebookName("Lars Erik Græsdal-Knutrud");
+        prefs = PreferencesManager.getInstance();
+
+        //Dummy creation to be replaced when facebook login is 100%
+        setDummyPrefs();
 
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
         setupList();
 
-        TextView location = (TextView) mRootView.findViewById(R.id.profile_location);
-        location.setText(PreferencesManager.getInstance().getFacebookLocation());
-        TextView name = (TextView) mRootView.findViewById(R.id.profile_name);
-        name.setText(PreferencesManager.getInstance().getFacebookName());
+        name = (TextView) mRootView.findViewById(R.id.profile_name);
+        name.setText(prefs.getFacebookName());
+        location = (TextView) mRootView.findViewById(R.id.profile_location);
+        location.setText(prefs.getFacebookLocation());
+        age = (TextView) mRootView.findViewById(R.id.profile_age);
+        age.setText(prefs.getFacebookAge());
+        country = (TextView) mRootView.findViewById(R.id.profile_country);
+        country.setText(prefs.getFacebookCountry());
+        profilePicture = (ProfilePictureView) mRootView.findViewById(R.id.profile_profile_picture);
+        profilePicture.setProfileId(prefs.getKeyFacebookUid());
+        profilePicture.setPresetSize(ProfilePictureView.LARGE);
 
         Session.getActiveSession();
         return mRootView;
@@ -138,7 +147,13 @@ public class ProfileFragment extends DefaultTabFragment  {
         return (int) (pixels * scale + 0.5f);
     }
 
-
+    private void setDummyPrefs() {
+        prefs.setFacebookName("Lars Erik Græsdal-Knutrud");
+        prefs.setFacebookLocation("Trondheim");
+        prefs.setFacebookAge("09/01/1991");
+        prefs.setFacebookCountry("Norway");
+        prefs.setKeyFacebookUid("736583709");
+    }
 
 
 }
