@@ -18,7 +18,7 @@
                 android:id="@+id/editText"
                 android:textSize="18dp"
                 android:textColorHint="#d8d8d8"
-                android:padding="15dp"
+                android:padding="20dp"
                 android:text="Comparison based on:"
                 android:layout_alignParentTop="true"
                 android:layout_weight="70"
@@ -27,13 +27,14 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="15dp"
+                android:layout_margin="20dp"
                 android:layout_marginRight="120dp"
                 android:id="@+id/myTextView"
                 android:gravity="right"
                 android:linksClickable="true"
                 android:layout_toRightOf="@id/editText"
-                android:text="Change this?"/>
+                android:text="Change this?"
+                android:onClick="changeToCompSettings"/>
 
 
             <CheckedTextView
@@ -45,7 +46,7 @@
                 android:checkMark="?android:attr/listChoiceIndicatorMultiple"
                 android:checked="true"
                 android:textSize="20dp"
-                android:layout_marginTop="45dp"
+                android:layout_marginTop="60dp"
                 android:paddingLeft="25dp"
                 android:paddingRight="20dp"
                 android:paddingTop="10dp"
@@ -82,7 +83,7 @@
                 android:checked="true"
                 android:textSize="20dp"
                 android:gravity="center_vertical"
-                android:layout_marginTop="165dp"
+                android:layout_marginTop="150dp"
                 android:paddingLeft="25dp"
                 android:paddingRight="20dp"
                 android:paddingTop="10dp"
@@ -95,9 +96,9 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-                android:checked="true"
+                android:checked="false"
                 android:textSize="20dp"
-                android:layout_marginTop="225dp"
+                android:layout_marginTop="195dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="25dp"
                 android:paddingRight="20dp"

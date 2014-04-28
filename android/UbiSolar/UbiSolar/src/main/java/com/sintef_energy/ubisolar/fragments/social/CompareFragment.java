@@ -10,16 +10,13 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TabHost;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
-import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
