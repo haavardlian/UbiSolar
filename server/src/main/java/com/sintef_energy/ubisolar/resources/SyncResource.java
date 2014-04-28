@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.resources;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sun.prism.Texture;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.dropwizard.jersey.params.LongParam;
 
@@ -25,10 +26,20 @@ public class SyncResource {
 
     @GET
     @Path("/device/frontend/{timestamp}")
-    public List<Device> getNewDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
+    public List<Device> getUpdatedDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
         List<Device> devices = db.getUpdatedDevices(userID.get(), timestamp.get());
         if(devices != null && !devices.isEmpty())
             return devices;
+        else
+            throw new WebApplicationException(Response.Status.NOT_MODIFIED);
+    }
+
+    @GET
+    @Path("/usage/frontend/{timestamp}")
+    public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
+        List<DeviceUsage> usage = db.getUpdatedUsage(userID.get(), timestamp.get());
+        if(usage != null && !usage.isEmpty())
+            return usage;
         else
             throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }

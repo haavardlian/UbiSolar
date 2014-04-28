@@ -95,6 +95,14 @@ public interface ServerDAO {
     @Mapper(DeviceMapper.class)
     List<Device> getUpdatedDevices(@Bind("userID") int userID, @Bind("timestamp") long timestamp);
 
+    @SqlQuery("SELECT * FROM device_power_usage WHERE user_id = :userID AND timestamp > :timestamp")
+    @Mapper(DeviceUsageMapper.class)
+    List<DeviceUsage> getUpdatedUsage(@Bind("userID") int userID, @Bind("timestamp") long timestamp);
 
+    @SqlQuery("SELECT MAX(last_updated) AS last_updated FROM device WHERE user_id = :user LIMTI 1")
+    long getLastUpdatedTimeDevice(@Bind("user") long user);
 
- }
+    @SqlQuery("SELECT MAX(timestamp) AS last_updated FROM device_power_usage where user_id = :user LIMIT 1")
+    long getLastUpdatedTimeUsage(@Bind("user") long user);
+
+}
