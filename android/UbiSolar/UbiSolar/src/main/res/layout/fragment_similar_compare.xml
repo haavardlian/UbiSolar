@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="2"
+    android:orientation="vertical">
+
+
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editText"
+                android:textSize="18dp"
+                android:textColorHint="#d8d8d8"
+                android:padding="15dp"
+                android:text="Comparison based on:"
+                android:layout_alignParentTop="true"
+                android:layout_weight="70"
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:layout_marginRight="120dp"
+                android:id="@+id/myTextView"
+                android:gravity="right"
+                android:linksClickable="true"
+                android:layout_toRightOf="@id/editText"
+                android:text="Change this?"/>
+
+
+            <CheckedTextView
+                android:id="@+id/checkedTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:checked="true"
+                android:textSize="20dp"
+                android:layout_marginTop="45dp"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="15dp"
+                android:gravity="center_vertical"
+                android:text="Area" />
+
+            <CheckedTextView
+
+                android:text="Number of residents"
+                android:id="@+id/checkedTextView2"
+                android:layout_below="@id/checkedTextView"
+                android:layout_marginTop="105dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:checked="true"
+                android:textSize="20dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="15dp"/>
+
+            <CheckedTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Residence size"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:checked="true"
+                android:textSize="20dp"
+                android:gravity="center_vertical"
+                android:layout_marginTop="165dp"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="15dp"/>
+
+            <CheckedTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Energy class"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+                android:checked="true"
+                android:textSize="20dp"
+                android:layout_marginTop="225dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="25dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="15dp"/>
+            </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/compFriendChart"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="270dp"
+
+                android:src="@drawable/graph" />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

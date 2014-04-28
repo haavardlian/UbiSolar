@@ -105,16 +105,15 @@ android:paddingLeft="0dp" >
                 android:id="@+id/compFriendChart"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_marginTop="200dp"
+                android:layout_marginTop="250dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="100dp"
                 android:src="@drawable/graph" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="200dp"
+                android:layout_marginTop="250dp"
                 android:layout_gravity="center_horizontal|top"
                 android:padding="12dp"
                 android:textStyle="bold"
