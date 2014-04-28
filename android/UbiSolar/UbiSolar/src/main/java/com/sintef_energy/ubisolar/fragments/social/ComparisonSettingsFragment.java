@@ -2,11 +2,14 @@ package com.sintef_energy.ubisolar.fragments.social;
 
         import android.app.Activity;
 import android.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
+        import android.content.SharedPreferences;
+        import android.os.Bundle;
+        import android.util.Log;
+        import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+        import android.widget.CheckBox;
+        import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.sintef_energy.ubisolar.R;
@@ -14,8 +17,9 @@ import com.sintef_energy.ubisolar.R;
         import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
         import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
         import com.sintef_energy.ubisolar.model.ResidenceAttributes;
+        import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
-import java.util.ArrayList;
+        import java.util.ArrayList;
 
 /**
  * Created by baier on 3/21/14.
@@ -32,6 +36,10 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
     private ComparisonAdapter compAdapter;
     private ArrayList<ResidenceAttributes> houseDescription;
     private static final String ARG_POSITION = "position";
+    boolean selected = false;
+
+    private CheckBox area, size, residents, energy;
+
 
 
         /**
@@ -72,14 +80,15 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
 
 
             ComparisonAdapter compAdapter= new ComparisonAdapter(getActivity(),R.layout.fragment_settings_comparison_row, houseDescription);
-            ListView houseDescrList = (ListView) view.findViewById(R.id.social_similar_list);
+            ListView houseDescrList = (ListView) view.findViewById(R.id.comp_settings_list);
             houseDescrList.setAdapter(compAdapter);
 
             compAdapter.notifyDataSetChanged();
 
+
+
             return view;
         }
-
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
@@ -90,9 +99,9 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
             }
         }
 
-        /*End lifecycle*/
         @Override
         public void onSaveInstanceState(Bundle outState) {
+
             super.onSaveInstanceState(outState);
         }
 
@@ -100,6 +109,13 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
         public void onDestroy(){
             super.onDestroy();
         }
+
+
+    public void updateCheckbox() {
+
+    }
+
+
 
     }
 
