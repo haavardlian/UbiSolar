@@ -13,7 +13,7 @@ public class DeviceUsage {
     @JsonProperty
     private long id;
     @JsonProperty
-    private Date datetime;
+    private long timestamp;
     @JsonProperty
     private double powerUsage;
     @JsonProperty
@@ -21,11 +21,11 @@ public class DeviceUsage {
 
     public DeviceUsage() {}
 
-    public DeviceUsage(long id, long deviceId, Date datetime, double powerUsage) {
+    public DeviceUsage(long id, long deviceId, long timestamp, double powerUsage) {
         this.id = id;
         this.powerUsage = powerUsage;
         this.deviceId = deviceId;
-        this.datetime = datetime;
+        this.timestamp = timestamp;
     }
 
     public long getId() {
@@ -36,12 +36,12 @@ public class DeviceUsage {
         this.id = id;
     }
 
-    public Date getDatetime() {
-        return datetime;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setDatetime(Date datetime) {
-        this.datetime = datetime;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public double getPowerUsage() {
