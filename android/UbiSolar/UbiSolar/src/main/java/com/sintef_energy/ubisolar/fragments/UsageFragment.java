@@ -367,6 +367,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(int i = 0; i < selectedItems.length; i++)
         {
             if(selectedItems[i]) {
+                System.out.println(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID);
                 queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ");
             }
         }
