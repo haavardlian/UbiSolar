@@ -106,15 +106,29 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 if (text.length() > 0) {
                     Double value = Double.valueOf(text);
 
+                    // ER DETTE SOM FAILER MISERABELT
                     int pos = spinnerDevice.getSelectedItemPosition();
+
+
+                    //spinnerDevice.getAdapter().get
+
+                    //TOR HÅKON: Du må finne ut hvordan du får hentet device ID fra spinneren
+
                     Cursor item = mDeviceAdapter.getCursor();
                     item.moveToPosition(pos);
-                    pos = item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME);
+                    pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
+
+                    Log.v(TAG, "Pos: " + pos + " data:" + item.getInt(pos));
+
+                    ///TIL HER
+
+
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
                     euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
-                    euModel.setDevice_id(item.getInt(pos));
+                    euModel.setDevice_id(item.getInt(pos)); //KANSKJE NOE DRITT HER OG
                     euModel.setPower_usage(value);
+                    euModel.setDeleted(false);
 
                     //TODO: Make the actual adding of usage work
                     if(mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)

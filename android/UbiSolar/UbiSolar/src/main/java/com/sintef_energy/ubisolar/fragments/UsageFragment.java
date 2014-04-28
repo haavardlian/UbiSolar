@@ -190,7 +190,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             mDeviceUsageList = new ArrayList<>();
             getLoaderManager().initLoader(LOADER_DEVICES, null, this);
         }
-   }
+
+
+        Log.v(TAG, "EnergyModel data sie in DB: " + EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()));
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -264,6 +267,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private String[] getSelectedDevicesIDs()
     {
+
+        Log.v(TAG, "getelectedDeieID() -> ");
         boolean[] selectedItems = graphView.getSelectedDialogItems();
         ArrayList<String> ids = new ArrayList<>();
 
@@ -274,6 +279,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             if(selectedItems.length > i) {
                 if (selectedItems[i])
                     ids.add("" + device.getDevice_id());
+                Log.v(TAG, "getelectedDeieID() -> " + device.getDevice_id());
                 i++;
             }
         }
@@ -295,6 +301,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         DeviceModel.DeviceEntry._ID + " ASC"
                 );
             case LOADER_USAGE:
+                Log.v(TAG, "onCreateLoader: LOADER_USAGE: SQL WHERE: " + sqlWhereDevices());
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Energy.CONTENT_URI,
@@ -368,7 +375,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         {
             if(selectedItems[i]) {
                 System.out.println(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID);
-                queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ");
+                queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
             }
         }
 
@@ -393,6 +400,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
+        Log.v(TAG, "onLoadFinished: SWITCH ON #: " + cursorLoader.getId());
+
         switch (cursorLoader.getId()) {
             /* Fetch all device data. Is used to show list of devices and choose which to see. */
             case LOADER_DEVICES:
@@ -405,6 +414,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                     } while (cursor.moveToNext());
                 //TODO BUG when mDevice is 0, the next steps will fail for usage
                 graphView.setDeviceSize(mDevices.size());
+                Log.v(TAG, "onLoadFinished: LOADER_DEVICE # from DB: " + mDevices.size());
                 if(mDevices.size() > 0)
                     getLoaderManager().initLoader(LOADER_USAGE, null, this);
                 break;
@@ -430,7 +440,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //Hashmap containing all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
-        System.out.println(data.getCount());
+        Log.v(TAG, "Populating device usage list with # of data: " + data.getCount());
 
         /* Get data from cursor and add */
         data.moveToFirst();
