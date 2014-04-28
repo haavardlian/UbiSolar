@@ -29,6 +29,7 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.Settings;
+import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
@@ -469,13 +470,33 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         public void onCompleted(GraphUser user, Response response) {
                             if(response.getConnection() != null || response.getIsFromCache() != false) {
 
-                                mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
-                                mPrefManager.setFacebookLocation(user.getLocation().toString());
-                                mPrefManager.setFacebookAge(user.getBirthday());
+                                if(null != user.getFirstName())
+                                    mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
+                                else
+                                    mPrefManager.setFacebookName("Could not find Facebook name");
+
+                                if(null != user.getLocation().getCity())
+                                    mPrefManager.setFacebookLocation(user.getLocation().getCity());
+                                else
+                                    mPrefManager.setFacebookLocation("Could not find Facebook location");
+
+                                if(null != user.getLocation().getCountry())
+                                    mPrefManager.setFacebookCountry(user.getLocation().getCountry());
+                                else
+                                    mPrefManager.setFacebookCountry("Could not find Facebook country");
+
+                                if(null != user.getBirthday())
+                                    mPrefManager.setFacebookAge(user.getBirthday());
+                                else
+                                    mPrefManager.setFacebookAge("Could not find Facebook age");
+
                                 mPrefManager.setKeyFacebookUid(user.getId());
 
                                 Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
-                                Log.d("FACEBOOKNAME", user.getFirstName()+user.getLastName());
+                                Log.d("FACEBOOKNAME", user.getFirstName()+" "+user.getLastName());
+                                Log.d("FACEBOOKLOCATION", user.getLocation().getCity()+" ");
+                                Log.d("FACEBOOKAGE", user.getBirthday()+" ");
+                                Log.d("FACEBOOKCOUNTRY", user.getLocation().getCountry()+" ");
                             } else {
                                 Log.e(TAG, "No DATA");
                             }

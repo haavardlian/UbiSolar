@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
@@ -110,10 +110,6 @@
         android:layout_row="3"
         android:layout_column="0"
         />
-
-
-
-
 
 
     </GridLayout>
