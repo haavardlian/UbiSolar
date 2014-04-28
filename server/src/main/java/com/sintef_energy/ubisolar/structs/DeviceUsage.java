@@ -12,14 +12,17 @@ import java.util.Date;
 public class DeviceUsage {
     private long id;
     private long deviceId;
-    private long timestamp;
     private Date datetime;
+    @JsonProperty
+    private long timestamp;
+    @JsonProperty
     private double powerUsage;
     private boolean deleted;
     private long lastUpdated;
 
 
     public DeviceUsage() {}
+
 
     public DeviceUsage(long id, long deviceId, long timestamp, double powerUsage, boolean deleted, long lastUpdated) {
         this.id = id;
@@ -69,7 +72,6 @@ public class DeviceUsage {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
-
     }
 
     public double getPowerUsage() {

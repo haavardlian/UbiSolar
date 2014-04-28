@@ -127,5 +127,3 @@ public interface ServerDAO {
     int createFacebookUser(@BindBean("user") FacebookUser user);
 
 }
-
-
