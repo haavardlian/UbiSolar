@@ -353,9 +353,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         String where = "";
 
-        //TODO: BUG: How to handle when user selects no devices?
-
         boolean[] selectedItems = graphView.getSelectedDialogItems();
+
+
         ArrayList<String> queries = new ArrayList<>();
 
         for(int i = 0; i < selectedItems.length; i++)
@@ -422,8 +422,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private void populateDeviceUsageList(Cursor data){
         //Hashmap containing all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
-
-        Log.v(TAG, "populateDeviceUsageList: # of data: " + data.getCount());
 
         /* Get data from cursor and add */
         data.moveToFirst();

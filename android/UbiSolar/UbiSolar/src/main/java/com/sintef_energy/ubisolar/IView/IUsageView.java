@@ -9,8 +9,6 @@ import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import java.util.ArrayList;
 
 public interface IUsageView {
-    @Deprecated
-    public void newData(EnergyUsageModel euModel);
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList);
     public void clearDevices();
 

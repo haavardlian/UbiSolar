@@ -153,11 +153,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         Log.v(TAG, " onDestroyView()");
     }
 
-    @Override
-    public void newData(EnergyUsageModel euModel) {
-
-    }
-
     private void setupPieGraph()
     {
         mRenderer.setChartTitleTextSize(20);
