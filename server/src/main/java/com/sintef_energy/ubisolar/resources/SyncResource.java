@@ -48,9 +48,8 @@ public class SyncResource {
     @Path("/device/")
     public Response syncDevices(@Valid ArrayList<Device> devices) {
         Date date = new Date();
-        int updated = db.createDevices(devices.iterator(), date.getTime());
+        db.createDevices(devices.iterator(), date.getTime()/1000L);
 
-        if(updated > 0) throw new WebApplicationException(Response.Status.CREATED);
-        else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
+        throw new WebApplicationException(Response.Status.CREATED);
     }
 }
