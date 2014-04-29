@@ -2,13 +2,14 @@ package com.sintef_energy.ubisolar.resources;
 
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.dropwizard.jersey.params.LongParam;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,15 @@ public class SyncResource {
     }
 
     @GET
-    @Path("/device/backend/{timestamp}")
+    @Path("/device/newest")
+    public long getLastEditedDeviceTime() {
+        long latest = db.getLastEditedDeviceTime();
+
+        return latest;
+    }
+
+    @GET
+    @Path("/device/{timestamp}")
     public List<Device> getNewDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
         List<Device> devices = db.getUpdatedDevices(userID.get(), timestamp.get());
         if(devices != null && !devices.isEmpty())
@@ -33,4 +42,12 @@ public class SyncResource {
             throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
+    @PUT
+    @Path("/device/")
+    public Response syncDevices(@Valid ArrayList<Device> devices) {
+        int updated = db.createDevices(devices.iterator());
+
+        if(updated > 0) throw new WebApplicationException(Response.Status.CREATED);
+        else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
+    }
 }
