@@ -54,7 +54,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private static final String TAG = UsageFragment.class.getName();
 
-    View mRootView;
+    private View mRootView;
     private Bundle mSavedState;
 
     /** List of all devices */
@@ -74,7 +74,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public static final int LOADER_USAGE_YEAR = 5;
 
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
-
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -170,13 +169,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new LinkedHashMap<>();
 
-//        clearDatabase();
-        //Populate the database if it's empty
-//        if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
-//            Log.v(TAG, "Database empty. Populating it.");
-//            createDevices();
-//            createEnergyUsage();
-//        }
 
 
         if(savedInstanceState != null && mSavedState == null)
@@ -207,7 +199,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         switch (item.getItemId()) {
             case R.id.fragment_usage_menu_action_devices:
                 SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(
-                        new ArrayList<>(mDevices.values()),
+                        new ArrayList<DeviceModel>(mDevices.values()),
                         graphView.getSelectedDialogItems());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getFragmentManager(), "selectDeviceDialog");
@@ -245,8 +237,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     }
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
-        Log.v(TAG, "# SELECTED ITEMS: " + selectedItems.length);
-
 //        graphView.setSelectedItems(selectedItems);
         graphView.setSelectedDialogItems(itemsSelected);
 
@@ -267,8 +257,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private String[] getSelectedDevicesIDs()
     {
-
-        Log.v(TAG, "getelectedDeieID() -> ");
         boolean[] selectedItems = graphView.getSelectedDialogItems();
         ArrayList<String> ids = new ArrayList<>();
 
@@ -277,9 +265,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(Device device : mDevices.values())
         {
             if(selectedItems.length > i) {
-                if (selectedItems[i])
+                if (selectedItems[i]) {
                     ids.add("" + device.getDevice_id());
-                Log.v(TAG, "getelectedDeieID() -> " + device.getDevice_id());
+                }
                 i++;
             }
         }
@@ -301,7 +289,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         DeviceModel.DeviceEntry._ID + " ASC"
                 );
             case LOADER_USAGE:
-                Log.v(TAG, "onCreateLoader: LOADER_USAGE: SQL WHERE: " + sqlWhereDevices());
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Energy.CONTENT_URI,
@@ -400,8 +387,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
-        Log.v(TAG, "onLoadFinished: SWITCH ON #: " + cursorLoader.getId());
-
         switch (cursorLoader.getId()) {
             /* Fetch all device data. Is used to show list of devices and choose which to see. */
             case LOADER_DEVICES:
@@ -414,7 +399,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                     } while (cursor.moveToNext());
                 //TODO BUG when mDevice is 0, the next steps will fail for usage
                 graphView.setDeviceSize(mDevices.size());
-                Log.v(TAG, "onLoadFinished: LOADER_DEVICE # from DB: " + mDevices.size());
                 if(mDevices.size() > 0)
                     getLoaderManager().initLoader(LOADER_USAGE, null, this);
                 break;
@@ -440,7 +424,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //Hashmap containing all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
-        Log.v(TAG, "Populating device usage list with # of data: " + data.getCount());
+        Log.v(TAG, "populateDeviceUsageList: # of data: " + data.getCount());
 
         /* Get data from cursor and add */
         data.moveToFirst();
@@ -578,93 +562,5 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(false);
         }
-    }
-
-
-    /* HELPER DATA GENERATION!!! Avoid. */
-
-    private void createDevices()
-    {
-        addDevice("Total", "-", 0, true);
-        addDevice("TV", "Livingroom", 1, false);
-        addDevice("Radio", "Kitchen", 1, false);
-        addDevice("Heater", "Second floor", 1, false);
-        addDevice("Oven", "Kitchen", 2, false);
-    }
-
-    private void addDevice(String name, String description, int category, boolean isTotal)
-    {
-        DeviceModel device = new DeviceModel(System.currentTimeMillis(),
-                name, description, System.currentTimeMillis(), category, isTotal);
-
-        getActivity().getContentResolver().insert(
-                EnergyContract.Devices.CONTENT_URI, device.getContentValues());
-
-        mDevices.put(device.getDevice_id(), device);
-        Log.v(TAG, "Created device: " + device.getName());
-    }
-
-    private void createEnergyUsage()
-    {
-        ContentResolver cr = getActivity().getContentResolver();
-        EnergyUsageModel usageModel;
-        int n = 1000;
-        int nDevices = mDevices.size();
-        ContentValues[] values = new ContentValues[n * nDevices];
-
-        Calendar cal = Calendar.getInstance();
-        Random random = new Random();
-        Date date = new Date();
-        int idCount = 1337;
-        int y = 0;
-        for(Device device : mDevices.values()) {
-            cal.setTime(date);
-            Log.v(TAG, "Creating data for: " + device.getName());
-            for (int i = 0; i < n; i++) {
-                cal.add(Calendar.HOUR_OF_DAY, 1);
-
-                usageModel = new EnergyUsageModel(
-                        idCount++,
-                        device.getDevice_id(),
-                        cal.getTime(),
-                        random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
-                values[i + (y * n)] = usageModel.getContentValues();
-                //EnergyDataSource.addEnergyModel(cr, usageModel);
-            }
-            y++;
-        }
-        Log.v(TAG, "Starting to add data to DB.");
-        EnergyDataSource.addBatchEnergyModel(cr, values);
-        Log.v(TAG, "Done adding data to DB");
-    }
-
-    private void clearDatabase()
-    {
-
-
-        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
-        builder.appendPath(EnergyContract.DELETE);
-        int it = getActivity().getContentResolver().delete(builder.build(), null, null);
-        Log.v(TAG, "EMPTY DATABASE: " + it);
-
-        builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-        builder.appendPath(EnergyContract.DELETE);
-        it = getActivity().getContentResolver().delete(builder.build(), null, null);
-        Log.v(TAG, "EMPTY DATABASE: " + it);
-    }
-
-    private void testDateQuery(){
-        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-        builder.appendPath(EnergyContract.Energy.Date.Month);
-        Cursor c = getActivity().getContentResolver().query(builder.build(), null, null, null, null);
-
-        Log.v(TAG, "TESTQUERY: " + c.getCount());
-        c.moveToFirst();
-        int i = 0;
-        do{
-            Log.v(TAG, "TABLE: " + i++ + " -> " + c.getLong(0) + " " + c.getLong(1) + " " + c.getLong(2) + " " + c.getLong(3));
-        } while(c.moveToNext());
-
-        c.close();
     }
 }

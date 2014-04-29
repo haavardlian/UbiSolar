@@ -33,6 +33,7 @@ import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
 import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.drawer.DrawerItem;
 import com.sintef_energy.ubisolar.drawer.Item;
 import com.sintef_energy.ubisolar.fragments.AddUsageFragment;
@@ -51,6 +52,7 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.utils.RequestManager;
+import com.sintef_energy.ubisolar.utils.TestdataHelper;
 
 import java.util.Arrays;
 
@@ -172,7 +174,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         /* Start developer mode after app has been setup
          * Lots of StrictMode violations are done in startup anyways. */
-        developerMode(Global.DEVELOPER_MADE);
+        developerMode(Global.DEVELOPER_MADE, true);
     }
 
     /**
@@ -545,22 +547,32 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     /**
      * Debug with strict mode
      */
-    private void developerMode(boolean devMode){
+    private void developerMode(boolean devMode, boolean testData){
+        if(testData) {
+            TestdataHelper.clearDatabase(getContentResolver());
+            //Populate the database if it's empty
+            if (EnergyDataSource.getEnergyModelSize(getContentResolver()) == 0) {
+                Log.v(TAG, "Developer mode: Database empty. Populating it.");
+                TestdataHelper.createDevices(getContentResolver());
+                //            createEnergyUsage();
+            }
+        }
+
         if(devMode){
             StrictMode.setThreadPolicy(
-                    new StrictMode.ThreadPolicy.Builder()
-            .detectDiskReads()
-            .detectDiskWrites()
-            .detectNetwork()
-            .penaltyLog()
-            .build());
-            StrictMode.setVmPolicy(
-                    new StrictMode.VmPolicy.Builder()
-            .detectLeakedSqlLiteObjects()
-            .detectLeakedClosableObjects()
-            .penaltyLog()
-            .penaltyDeath()
-            .build());
+                new StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork()
+                .penaltyLog()
+                .build());
+                StrictMode.setVmPolicy(
+                        new StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
         }
     }
 

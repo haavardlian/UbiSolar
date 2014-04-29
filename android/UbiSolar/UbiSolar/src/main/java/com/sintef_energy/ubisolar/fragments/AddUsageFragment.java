@@ -106,32 +106,20 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 if (text.length() > 0) {
                     Double value = Double.valueOf(text);
 
-                    // ER DETTE SOM FAILER MISERABELT
                     int pos = spinnerDevice.getSelectedItemPosition();
-
-
-                    //spinnerDevice.getAdapter().get
-
-                    //TOR HÅKON: Du må finne ut hvordan du får hentet device ID fra spinneren
 
                     Cursor item = mDeviceAdapter.getCursor();
                     item.moveToPosition(pos);
                     pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
 
-                    Log.v(TAG, "Pos: " + pos + " data:" + item.getInt(pos));
-
-                    ///TIL HER
-
-
-
                     EnergyUsageModel euModel = new EnergyUsageModel();
                     euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
-                    euModel.setDevice_id(item.getInt(pos)); //KANSKJE NOE DRITT HER OG
+                    euModel.setDevice_id(item.getLong(pos));
                     euModel.setPower_usage(value);
                     euModel.setDeleted(false);
 
-                    //TODO: Make the actual adding of usage work
                     if(mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
+                        Log.v(TAG, "Added object to database:\n" + euModel);
                         Utils.makeShortToast(getActivity().getApplicationContext(), "Usage added");
                 }
             }
@@ -194,6 +182,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         spinnerDevice.setEnabled(false);
         spinnerDevice.setAdapter(mDeviceAdapter);
 
+        mButtonAddUsage.setEnabled(false);
+
         getLoaderManager().initLoader(0, null, this);
 
         updateDateText();
@@ -230,14 +220,16 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mDeviceAdapter.swapCursor(cursor);
-            if(cursor.getCount() > 0) {
-                spinnerDevice.setEnabled(true);
-                //((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-            }
-            else {
-                spinnerDevice.setEnabled(false);
-                //((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-            }
+
+        // Only enable adding of data if we have devices to add data to.
+
+        boolean enableAdding = false;
+
+        if(cursor.getCount() > 0)
+            enableAdding = true;
+
+        spinnerDevice.setEnabled(enableAdding);
+        mButtonAddUsage.setEnabled(enableAdding);
     }
 
     @Override
