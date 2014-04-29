@@ -84,6 +84,7 @@ public class SyncResource {
             throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
+    
 
     @PUT
     @Path("/usage/")
