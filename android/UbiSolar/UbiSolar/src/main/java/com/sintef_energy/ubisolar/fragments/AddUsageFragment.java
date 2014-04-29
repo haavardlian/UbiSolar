@@ -27,6 +27,7 @@ import com.sintef_energy.ubisolar.dialogs.DatePickerFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -112,16 +113,26 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                     item.moveToPosition(pos);
                     pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
 
-                    EnergyUsageModel euModel = new EnergyUsageModel();
-                    euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
-                    euModel.setDevice_id(item.getLong(pos));
-                    euModel.setPower_usage(value);
-                    euModel.setDeleted(false);
+                    try {
 
-                    if(mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
-                        Log.v(TAG, "Added object to database:\n" + euModel);
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
+
+                        EnergyUsageModel euModel = new EnergyUsageModel();
+                        euModel.setDatetime(formatter.parse(mDateField.getText().toString()));
+                        euModel.setDevice_id(item.getLong(pos));
+                        euModel.setPower_usage(value);
+                        euModel.setDeleted(false);
+
+                        if (mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
+                            Log.v(TAG, "Added object to database:\n" + euModel);
                         Utils.makeShortToast(getActivity().getApplicationContext(), "Usage added");
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        Utils.makeShortToast(getActivity().getApplicationContext(), "Unable to parse the date");
+                    }
                 }
+
             }
         });
 
