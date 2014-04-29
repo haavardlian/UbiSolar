@@ -17,7 +17,7 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO device (id, user_id, name, description) VALUES (:device.id, :device.userId, :device.name, :device.description)")
     int createDevice(@BindBean("device") Device device);
 
-    @SqlBatch("INSERT INTO device (id, user_id, name, description, last_updated) VALUES (:d.id, :d.userId, :d.name, :d.description, :d.time)")
+    @SqlBatch("INSERT INTO device (id, user_id, name, description, last_updated) VALUES (:d.id, :d.userId, :d.name, :d.description, :time)")
     int createDevices(@BindBean("d") Iterator<Device> device, @Bind("time") long time);
 
     @SqlQuery("SELECT device_power_usage.id, device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
