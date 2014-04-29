@@ -24,13 +24,13 @@ public class SyncResource {
     }
 
     @GET
-    @Path("/device/frontend/{timestamp}")
+    @Path("/device/backend/{timestamp}")
     public List<Device> getNewDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
         List<Device> devices = db.getUpdatedDevices(userID.get(), timestamp.get());
         if(devices != null && !devices.isEmpty())
             return devices;
         else
-            throw new WebApplicationException(Response.Status.NOT_MODIFIED);
+            throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
 }
