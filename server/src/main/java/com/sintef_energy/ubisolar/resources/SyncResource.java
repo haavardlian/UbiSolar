@@ -11,6 +11,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,7 +47,8 @@ public class SyncResource {
     @PUT
     @Path("/device/")
     public Response syncDevices(@Valid ArrayList<Device> devices) {
-        int updated = db.createDevices(devices.iterator());
+        Date date = new Date();
+        int updated = db.createDevices(devices.iterator(), date.getTime() / 1000l);
 
         if(updated > 0) throw new WebApplicationException(Response.Status.CREATED);
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
