@@ -413,7 +413,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                 for (EnergyUsageModel usage : usageList.getUsage()) {
                     if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
                         date = formatDate(usage.getDatetime(), mDataResolution);
-                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getDevice_id(), oldDate, powerUsage));
+                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getId(), oldDate, powerUsage));
                         powerUsage = 0;
                     } else {
                         oldDate = usage.getDatetime();

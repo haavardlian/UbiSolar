@@ -12,8 +12,8 @@ import java.util.Date;
 public class PreferencesManager {
  
     private static final String PREF_NAME = PreferencesManager.class.getName() + ".PREFS";
-    public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN";
-    public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_ACCESS_TOKEN_EXPIRES";
+    public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_BACKEND_DEVICE_SYNC_TIMESTAMP";
+    public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP";
 
     public static final String COMPARISON_AREA_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_AREA_CHECKED";
     public static final String COMPARISON_RESIDENTS_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_RESIDENTS_CHECKED";
@@ -27,7 +27,7 @@ public class PreferencesManager {
 
     public static final String SELECTED_RESIDENCE = PreferencesManager.class.getName() + ".SELECTED_RESIDENCE";
 
-    @Deprecated /** Not needed. UID auth is done in the server */
+    /** Not needed. UID auth is done in the server */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
 
     private static PreferencesManager sInstance;
@@ -37,10 +37,12 @@ public class PreferencesManager {
         mPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    public static synchronized void initializeInstance(Context context) {
+    public static synchronized PreferencesManager initializeInstance(Context context) {
         if (sInstance == null) {
             sInstance = new PreferencesManager(context);
         }
+
+        return sInstance;
     }
  
     public static synchronized PreferencesManager getInstance() {
@@ -48,6 +50,7 @@ public class PreferencesManager {
             throw new IllegalStateException(PreferencesManager.class.getSimpleName() +
                 " is not initialized, call initializeInstance(..) method first.");
         }
+
         return sInstance;
     }
 
@@ -90,7 +93,7 @@ public class PreferencesManager {
 
     public void setKeyAccessTokenExpires(Date date){
        mPref.edit()
-            .putFloat(KEY_ACCESS_TOKEN_EXPIRES, date.getTime())
+            .putLong(KEY_ACCESS_TOKEN_EXPIRES, date.getTime())
                 .apply();
     }
 

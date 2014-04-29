@@ -271,7 +271,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         {
             if(selectedItems.length > i) {
                 if (selectedItems[i])
-                    ids.add("" + device.getDevice_id());
+                    ids.add("" + device.getId());
                 i++;
             }
         }
@@ -398,7 +398,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 if (cursor.getCount() != 0)
                     do {
                         DeviceModel model = new DeviceModel(cursor);
-                        mDevices.put(model.getDevice_id(), model);
+                        mDevices.put(model.getId(), model);
                     } while (cursor.moveToNext());
                 //TODO BUG when mDevice is 0, the next steps will fail for usage
                 graphView.setDeviceSize(mDevices.size());
@@ -435,7 +435,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
                 if (deviceUsageList == null) {
                     deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getDevice_id()), deviceUsageList);
+                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);
@@ -582,7 +582,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         getActivity().getContentResolver().insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
 
-        mDevices.put(device.getDevice_id(), device);
+        mDevices.put(device.getId(), device);
         Log.v(TAG, "Created device: " + device.getName());
     }
 
@@ -607,7 +607,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
                 usageModel = new EnergyUsageModel(
                         idCount++,
-                        device.getDevice_id(),
+                        device.getId(),
                         cal.getTime(),
                         random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
                 values[i + (y * n)] = usageModel.getContentValues();

@@ -86,7 +86,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             descriptionView.setText("Description: " + device.getDescription());
         }
 
-        //idView.setText("ID: " + device.getDevice_id());
+        //idView.setText("ID: " + device.getId());
         return convertView;
     }
 

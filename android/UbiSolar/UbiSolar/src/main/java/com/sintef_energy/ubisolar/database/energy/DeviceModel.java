@@ -20,7 +20,7 @@ public class DeviceModel extends Device implements Parcelable{
     /* Column definitions*/
     public static interface DeviceEntry extends BaseColumns {
         public static final String TABLE_NAME = "device";
-        public static final String COLUMN_USER_ID = "user_id";
+        public static final String COLUMN_USER_ID = "userId";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_CATEGORY = "category";
@@ -69,8 +69,8 @@ public class DeviceModel extends Device implements Parcelable{
      * Create CalendarEventModel with default values. All relation ID's are '-1'
      */
     public DeviceModel() {
-        setDevice_id(-1);
-        setUser_id(-1);
+        setId(-1);
+        setUserId(-1);
         setName("");
         setDescription("");
         setCategory(-1);
@@ -102,8 +102,8 @@ public class DeviceModel extends Device implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeLong(getDevice_id());
-        out.writeLong(getUser_id());
+        out.writeLong(getId());
+        out.writeLong(getUserId());
         out.writeString(getName());
         out.writeString(getDescription());
         out.writeInt(getCategory());
@@ -112,8 +112,8 @@ public class DeviceModel extends Device implements Parcelable{
     }
 
     private void readFromParcel(Parcel in) {
-        setDevice_id(in.readLong());
-        setUser_id(in.readLong());
+        setId(in.readLong());
+        setUserId(in.readLong());
         setName(in.readString());
         setDescription(in.readString());
         setCategory(in.readInt());
@@ -127,8 +127,8 @@ public class DeviceModel extends Device implements Parcelable{
      */
     public ContentValues getContentValues(){
         ContentValues values = new ContentValues();
-        values.put(DeviceEntry._ID, getDevice_id());
-        values.put(DeviceEntry.COLUMN_USER_ID, getUser_id());
+        values.put(DeviceEntry._ID, getId());
+        values.put(DeviceEntry.COLUMN_USER_ID, getUserId());
         values.put(DeviceEntry.COLUMN_NAME, getName());
         values.put(DeviceEntry.COLUMN_DESCRIPTION, getDescription());
         values.put(DeviceEntry.COLUMN_CATEGORY, getCategory());
@@ -142,8 +142,8 @@ public class DeviceModel extends Device implements Parcelable{
      * @param cursor
      */
     public DeviceModel(Cursor cursor) {
-        setDevice_id(cursor.getLong(_id));
-        setUser_id(cursor.getLong(_user_id));
+        setId(cursor.getLong(_id));
+        setUserId(cursor.getLong(_user_id));
         setName(cursor.getString(_name));
         setDescription(cursor.getString(_description));
         setCategory(cursor.getInt(_category));
@@ -154,5 +154,18 @@ public class DeviceModel extends Device implements Parcelable{
     public DeviceModel(long device_id, String name, String description, long user_id,
                        int category, boolean isTotal) {
         super(device_id, name, description, user_id, category, isTotal);
+    }
+
+    @Override
+    public String toString(){
+        String info = "DeviceModel:";
+        info += "\n\tID: " + getId();
+        info += "\n\tUser ID: " + getUserId();
+        info += "\n\tName: " + getName();
+        info += "\n\tDescription: " + getDescription();
+        info += "\n\tCategory: " + getCategory();
+        info += "\n\tisTotal: " + isTotal();
+        info += "\n\tisDeleted: " + isDeleted();
+        return info;
     }
 }

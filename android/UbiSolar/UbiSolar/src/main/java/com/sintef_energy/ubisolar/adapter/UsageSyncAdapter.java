@@ -6,8 +6,16 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
+import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
+
+import java.util.ArrayList;
 
 /**
  * Created by perok on 26.03.14.
@@ -52,15 +60,62 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
         Log.d(TAG, "onPerformSync for account[" + account.name + "]");
         try {
             Log.v(TAG, "Starting sync operation");
+
+            PreferencesManager preferencesManager;
+            PreferencesManagerSync prefManagerSyn;
+            RequestManager requestManager;
+
+            try{
+                preferencesManager = PreferencesManager.getInstance();
+            } catch (IllegalStateException ex){
+                preferencesManager = PreferencesManager.initializeInstance(getContext());
+            }
+
+            try{
+                prefManagerSyn = PreferencesManagerSync.getInstance();
+            } catch (IllegalStateException ex){
+                prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext());
+            }
+
+            try{
+                requestManager = RequestManager.getInstance();
+            } catch (IllegalStateException ex){
+                requestManager = RequestManager.getInstance(getContext());
+            }
+
+            /* DEVICE get backend */
+            long lastTimestamServerDevice = prefManagerSyn.getBackendDeviceSyncTimestamp();
+            long newTimestampServerDevice = System.currentTimeMillis() / 1000L;
+            long uid = Long.valueOf(preferencesManager.getKeyFacebookUid());
+
+            Log.v(TAG, "Time is: " + newTimestampServerDevice + ". Syncing for date: " + lastTimestamServerDevice + ". For UID: " + uid);
+
+            ArrayList<DeviceModel> deviceModels = requestManager.doSyncRequest().getBackendSync(uid, lastTimestamServerDevice);
+            //TODO MÅ LEGGE TIL LASTMODIFIED TIL DATABASE
+            if(deviceModels != null){
+                if(deviceModels.size() > 0) {
+
+                    //TODO Insert new data into DB
+                    Log.v(TAG, "Device id's on the server: " + deviceModels.size());
+                    //prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestampServerDevice);
+
+                    for(DeviceModel dm : deviceModels){
+                        Log.e(TAG, ""+dm);
+                    }
+                }
+            }
+            else
+                Log.e(TAG, "Device sync failed");
+
+            /* TODO DEVICE send frontend */
+            /* TODO USAGE */
+
             //TODO:Get the auth token for the current account
             //String authToken = mAccountManager.blockingGetAuthToken(account, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS, true);
 
             //TODO: Setup Presenter
             //ParseComServerAccessor parseComService = new ParseComServerAccessor();
 
-            //TODO: Sync server
-
-            //TODO: Sync local
 
             // Get shows from the remote server
             //List remoteTvShows = parseComService.getShows(authToken);
@@ -74,13 +129,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                 }
                 curTvShows.close();
             }*/
-            // TODO See what Local shows are missing on Remote
-
-            // TODO See what Remote shows are missing on Local
-
-            // TODO Updating remote tv shows
-
-            // TODO Updating local tv shows
 
         } catch (Exception e) {
             e.printStackTrace();
