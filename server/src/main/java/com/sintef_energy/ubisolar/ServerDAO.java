@@ -14,11 +14,11 @@ import java.util.List;
  */
 @RegisterMapper(TotalUsageMapper.class)
 public interface ServerDAO {
-    @SqlUpdate("INSERT INTO device (id, user_id, name, description) VALUES (:device.deviceId, :device.userId, :device.name, :device.description)")
+    @SqlUpdate("INSERT INTO device (id, user_id, name, description) VALUES (:device.id, :device.userId, :device.name, :device.description)")
     int createDevice(@BindBean("device") Device device);
 
-    @SqlBatch("INSERT INTO device (id, user_id, name, description) VALUES (:device.deviceId, :device.userId, :device.name, :device.description)")
-    int createDevices(@BindBean("device") Iterator<Device> device);
+    @SqlBatch("INSERT INTO device (id, user_id, name, description) VALUES (:id, :userId, :name, :description)")
+    int createDevices(@BindBean() Iterator<Device> device);
 
     @SqlQuery("SELECT device_power_usage.id, device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
               "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
