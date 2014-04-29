@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
@@ -132,6 +133,9 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                         Utils.makeShortToast(getActivity().getApplicationContext(), "Unable to parse the date");
                     }
                 }
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                        getActivity().getApplicationContext().INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mKwhField.getWindowToken(), 0);
 
             }
         });

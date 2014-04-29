@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,12 +63,15 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     private String mTitleFormat;
     private String mDataResolution;
+    private String mDateComparisonFormat;
 
     private boolean[] mSelectedDialogItems;
     private int mActiveDateIndex = 0;
 
     private boolean mLoaded = false;
     private int mDeviceSize;
+
+    private ArrayList<Date> mDates = new ArrayList<>();
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -134,6 +138,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             mBaseUsageList = new ArrayList<>();
             mTitleFormat = "EEEE dd/MM";
             mDataResolution = "HH";
+            mDateComparisonFormat = "yyyyDDHH";
 //            mSelectedDialogItems = {false, true};
         }
         createLineGraph();
@@ -310,40 +315,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
     }
 
-    private void populateGraph2(int centerIndex)
-    {
-        double max = 0;
-        double min = Integer.MAX_VALUE;
-        int y;
-        int index = 0;
-
-        mRenderer.clearXTextLabels();
-
-        if( mActiveUsageList.size() <= 0)
-            return;
-
-        for(DeviceUsageList usageList : mActiveUsageList) {
-            y = 0;
-            XYSeries series =  mDataset.getSeriesAt(index);
-            series.clear();
-            for (DeviceUsage usage : usageList.getUsage()) {
-                mRenderer.addXTextLabel(y, formatDate(usage.getDatetime(), mDataResolution));
-                series.add(y, usage.getPower_usage());
-                y += POINT_DISTANCE;
-                max = Math.max(max, usage.getPower_usage());
-                min = Math.min(min, usage.getPower_usage());
-            }
-            index++;
-        }
-
-        setRange(min, max, centerIndex);
-        DeviceUsageList largestUsageList = getLargestUsageList();
-        setLabels(formatDate(largestUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat));
-
-        if( mChartView != null)
-            mChartView.repaint();
-    }
-
     private void populateGraph(int centerIndex)
     {
         double max = 0;
@@ -352,6 +323,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         int index = 0;
 
         mRenderer.clearXTextLabels();
+        mDates.clear();
 
         if( mActiveUsageList.size() <= 0)
             return;
@@ -363,8 +335,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         Calendar cal = Calendar.getInstance();
         cal.setTime(first);
 
+        System.out.println("Points: " + numberOfPoints);
+
         for(int i = 0; i < numberOfPoints; i++)
         {
+            mDates.add(cal.getTime());
             mRenderer.addXTextLabel(y, formatDate(cal.getTime(), mDataResolution));
             y += POINT_DISTANCE;
             getNextPoint(cal);
@@ -374,28 +349,35 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             XYSeries series =  mDataset.getSeriesAt(index);
             series.clear();
             y = 0;
+            System.out.println("Processing: " + series.getTitle());
             for (DeviceUsage usage : usageList.getUsage()) {
-                while(y < POINT_DISTANCE * numberOfPoints)
+
+                while(y < mDates.size())
                 {
-                    if(formatDate(usage.getDatetime(), mDataResolution).equals(mRenderer.getXTextLabel((double) y)))
+                    if(compareDates(usage.getDatetime(), mDates.get(y)))
                     {
-                        series.add(y, usage.getPower_usage());
+                        series.add(y * POINT_DISTANCE, usage.getPower_usage());
                         max = Math.max(max, usage.getPower_usage());
                         min = Math.min(min, usage.getPower_usage());
                         break;
                     }
-                    y += POINT_DISTANCE;
+                    y++;
                 }
             }
             index++;
         }
 
-        setRange(min, max, centerIndex);
+        setRange(min, max, mDates.size(), centerIndex);
         DeviceUsageList largestUsageList = getLargestUsageList();
         setLabels(formatDate(largestUsageList.get(mActiveDateIndex).getDatetime(), mTitleFormat));
 
         if( mChartView != null)
             mChartView.repaint();
+    }
+
+    private boolean compareDates(Date date1, Date date2)
+    {
+        return formatDate(date1, mDateComparisonFormat).equals(formatDate(date2, mDateComparisonFormat));
     }
 
     private void getNextPoint(Calendar cal)
@@ -441,11 +423,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         if(mDataResolution == "HH")
             return (int) TimeUnit.MILLISECONDS.toHours(diff);
         else if(mDataResolution == "dd")
-            return (int) TimeUnit.MILLISECONDS.toDays(diff);
+            return (int) TimeUnit.MILLISECONDS.toDays(diff) + 1;
         else if(mDataResolution == "w")
-            return (int) TimeUnit.MILLISECONDS.toDays(diff) / 7;
+            return (int) TimeUnit.MILLISECONDS.toDays(diff) / 7 + 1;
         else if(mDataResolution == "MMMM")
-            return (int) TimeUnit.MILLISECONDS.toDays(diff) / 30;
+            return (int) TimeUnit.MILLISECONDS.toDays(diff) / 30 + 1;
         else
             return -1;
     }
@@ -473,22 +455,22 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return usageList.size();
     }
 
-    private void setRange(double minY, double maxY, int newIndex)
+    private void setRange(double minY, double maxY, int points,  int newIndex)
     {
         mActiveDateIndex = newIndex;
-        int largestSeriesSize= getLargestListSize();
-        int end = largestSeriesSize * POINT_DISTANCE;
+
+        int end = points * POINT_DISTANCE;
         int start;
         int pointsToShow;
 
-        if(NUMBER_OF_POINTS > largestSeriesSize)
-            pointsToShow = largestSeriesSize;
+        if(NUMBER_OF_POINTS > points)
+            pointsToShow = points;
         else
             pointsToShow = NUMBER_OF_POINTS;
 
         //IF the active index is close to or the last element, find a new center index.
-        if(largestSeriesSize - mActiveDateIndex < pointsToShow )
-            mActiveDateIndex = largestSeriesSize - pointsToShow / 2;
+        if(points - mActiveDateIndex < pointsToShow )
+            mActiveDateIndex = points - pointsToShow / 2;
 
         int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
         start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
@@ -592,10 +574,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             return null;
     }
 
-    public void setFormat(String labelFormat, String titleFormat)
+    public void setFormat(String labelFormat, String titleFormat, String compareFormat)
     {
         mTitleFormat = titleFormat;
         mDataResolution = labelFormat;
+        mDateComparisonFormat = compareFormat;
     }
 
     public String getResolution()

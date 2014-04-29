@@ -314,7 +314,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         powerUsageView.setText("");
     }
 
-    public void setFormat(String labelFormat, String titleFormat)
+    public void setFormat(String labelFormat, String titleFormat, String compareFormat)
     {
 //        mTitleFormat = titleFormat;
         mDataResolution = labelFormat;

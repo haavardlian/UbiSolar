@@ -549,13 +549,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     private void developerMode(boolean devMode, boolean testData){
         if(testData) {
-            TestdataHelper.clearDatabase(getContentResolver());
-            //Populate the database if it's empty
-            if (EnergyDataSource.getEnergyModelSize(getContentResolver()) == 0) {
-                Log.v(TAG, "Developer mode: Database empty. Populating it.");
-                TestdataHelper.createDevices(getContentResolver());
-                //            createEnergyUsage();
-            }
+//            TestdataHelper.clearDatabase(getContentResolver());
+//            //Populate the database if it's empty
+//            if (EnergyDataSource.getEnergyModelSize(getContentResolver()) == 0) {
+//                Log.v(TAG, "Developer mode: Database empty. Populating it.");
+//                TestdataHelper.createDevices(getContentResolver());
+//                //            createEnergyUsage();
+//            }
         }
 
         if(devMode){
