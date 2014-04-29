@@ -133,10 +133,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             setupLineGraph();
 
             mActiveUsageList = new ArrayList<>();
-            mTitleFormat = "EEEE dd/MM";
-            mDataResolution = "HH";
-            mDateComparisonFormat = "yyyyDDHH";
-//            mSelectedDialogItems = {false, true};
+            mTitleFormat = "MMMM";
+            mDataResolution = "dd";
+            mDateComparisonFormat = "yyyyDD";
         }
         createLineGraph();
         populateGraph();
@@ -271,18 +270,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
     }
 
-    private Date getActiveDate()
-    {
-        //Todo FIX
-        if(mActiveUsageList.size() <= 0)
-            return null;
-
-        if(mActiveUsageList.get(0).size() <= 0)
-            return null;
-
-        return mActiveUsageList.get(0).get(mActiveDateIndex).getDatetime();
-    }
-
     /**
      * Define the series renderer
      * @param seriesName The name of the series
@@ -328,16 +315,10 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         Date last = getLastPoint().getDatetime();
         int numberOfPoints = getTimeDiff(first, last);
 
-        System.out.println(first.toString());
-        System.out.println(last.toString());
-
         Calendar cal = Calendar.getInstance();
         cal.setTime(first);
 
-        System.out.println("Points: " + numberOfPoints);
-
-        for(int i = 0; i < numberOfPoints; i++)
-        {
+        for(int i = 0; i < numberOfPoints; i++){
             mDates.add(cal.getTime());
             mRenderer.addXTextLabel(y, formatDate(cal.getTime(), mDataResolution));
             y += POINT_DISTANCE;
@@ -348,13 +329,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             XYSeries series =  mDataset.getSeriesAt(index);
             series.clear();
             y = 0;
-            System.out.println("Processing: " + series.getTitle());
             for (DeviceUsage usage : usageList.getUsage()) {
-
-                while(y < mDates.size())
-                {
-                    if(compareDates(usage.getDatetime(), mDates.get(y)))
-                    {
+                while(y < mDates.size()){
+                    if(compareDates(usage.getDatetime(), mDates.get(y))){
                         series.add(y * POINT_DISTANCE, usage.getPower_usage());
                         max = Math.max(max, usage.getPower_usage());
                         min = Math.min(min, usage.getPower_usage());
