@@ -22,6 +22,12 @@ import java.util.ArrayList;
 
 /**
  * Created by perok on 2/11/14.
+ *
+ * TODO
+ * ContentProvder is not thread sage. SQLiteDatabase is thread safe.
+ * Should the providers CRUD method be implemented with synchronized? Will give a overhead, but
+ * will possibly avoid bugs.
+ *
  */
 public class EnergyProvider extends ContentProvider{
 
@@ -373,6 +379,8 @@ public class EnergyProvider extends ContentProvider{
                         insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
                         insert.bindLong(5, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED));
                         insert.execute();
+
+                        db.yieldIfContendedSafely();
                     }
                     db.setTransactionSuccessful();
                     insert.close();

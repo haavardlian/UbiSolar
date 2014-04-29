@@ -478,7 +478,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         @Override
         public Fragment getItem(int position) {
 
-            Fragment fragment = null;;
+            Fragment fragment = null;
 
             switch (position){
                 case 0:
