@@ -3,7 +3,6 @@ package com.sintef_energy.ubisolar.resources;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
-import com.sun.prism.Texture;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.dropwizard.jersey.params.LongParam;
 import javax.validation.Valid;
@@ -30,12 +29,14 @@ public class SyncResource {
     public long getLastEditedDeviceTime(@PathParam("user") LongParam user) {
         long latest = db.getLastUpdatedTimeDevice(user.get());
 
+
         return latest;
     }
 
     @GET
     @Path("/device/{timestamp}")
     public List<Device> getNewDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") LongParam userID) {
+
         List<Device> devices = db.getUpdatedDevices(userID.get(), timestamp.get());
         if(devices != null && !devices.isEmpty())
             return devices;
