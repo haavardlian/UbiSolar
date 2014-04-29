@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
@@ -76,7 +77,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = inflater.inflate(R.layout.device_child_item, null);
         }
 
-        TextView nameView = (TextView) convertView.findViewById(R.id.deviceName);
+        EditText nameView = (EditText) convertView.findViewById(R.id.deviceName);
         nameView.setText(device.getName());
         //TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
 

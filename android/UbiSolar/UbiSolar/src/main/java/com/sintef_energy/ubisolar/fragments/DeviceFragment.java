@@ -59,7 +59,6 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         super.onCreate(savedInstanceState);
         try {
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
-
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
 

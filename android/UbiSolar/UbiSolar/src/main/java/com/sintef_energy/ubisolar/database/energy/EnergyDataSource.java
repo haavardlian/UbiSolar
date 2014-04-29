@@ -194,4 +194,8 @@ public class EnergyDataSource {
         return n;
     }
 
+    public static void editDeviceName(ContentResolver contentResolver, DeviceModel dm){
+        //contentResolver.
+    }
+
 }

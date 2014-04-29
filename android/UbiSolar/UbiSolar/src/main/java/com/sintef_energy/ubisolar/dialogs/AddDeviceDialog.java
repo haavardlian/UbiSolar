@@ -47,7 +47,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
+            //devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
 
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement " + TotalEnergyPresenter.class.getName());

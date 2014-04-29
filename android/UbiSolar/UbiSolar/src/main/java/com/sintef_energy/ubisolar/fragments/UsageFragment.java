@@ -170,7 +170,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new LinkedHashMap<>();
 
-        clearDatabase();
+        //clearDatabase();
         //Populate the database if it's empty
         if(EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()) == 0) {
             Log.v(TAG, "Database empty. Populating it.");
