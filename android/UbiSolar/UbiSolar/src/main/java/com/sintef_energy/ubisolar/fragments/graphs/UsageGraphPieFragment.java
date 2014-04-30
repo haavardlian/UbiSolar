@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -334,6 +335,10 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 //    }
 
     public Bitmap createImage(){
-        return null;
+        Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        mChartView.draw(canvas);
+
+        return bitmap;
     }
 }
