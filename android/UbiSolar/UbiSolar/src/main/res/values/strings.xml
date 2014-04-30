@@ -63,8 +63,10 @@
     <string name="editDeviceDialog_buttonText">Save</string>
 
     <!-- Fragment usage -->
-    <string name="usage_device_dialog_title">Select Devices</string>
-    <string name="pie_chart_title">Power overview</string>
+    <string name="usage_select_devices">Select Devices</string>
+    <string name="usage_share">Share</string>
+    <string name="usage_line_graph_title">Power overview</string>
+    <string name="usage_pie_graph_title">Distribution</string>
 
     <string-array name="fragment_usage_tabs">
         <item>Line chart</item>
