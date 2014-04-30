@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ import com.sintef_energy.ubisolar.dialogs.DatePickerFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -107,19 +109,34 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                     Double value = Double.valueOf(text);
 
                     int pos = spinnerDevice.getSelectedItemPosition();
+
                     Cursor item = mDeviceAdapter.getCursor();
                     item.moveToPosition(pos);
-                    pos = item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME);
+                    pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
 
-                    EnergyUsageModel euModel = new EnergyUsageModel();
-                    euModel.setDatetime(new Date(currentMonth.getTimeInMillis()));
-                    euModel.setDevice_id(item.getInt(pos));
-                    euModel.setPower_usage(value);
+                    try {
 
-                    //TODO: Make the actual adding of usage work
-                    if(mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
+                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
+
+                        EnergyUsageModel euModel = new EnergyUsageModel();
+                        euModel.setDatetime(formatter.parse(mDateField.getText().toString()));
+                        euModel.setDevice_id(item.getLong(pos));
+                        euModel.setPower_usage(value);
+                        euModel.setDeleted(false);
+
+                        if (mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
+                            Log.v(TAG, "Added object to database:\n" + euModel);
                         Utils.makeShortToast(getActivity().getApplicationContext(), "Usage added");
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        Utils.makeShortToast(getActivity().getApplicationContext(), "Unable to parse the date");
+                    }
                 }
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                        getActivity().getApplicationContext().INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mKwhField.getWindowToken(), 0);
+
             }
         });
 
@@ -180,6 +197,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         spinnerDevice.setEnabled(false);
         spinnerDevice.setAdapter(mDeviceAdapter);
 
+        mButtonAddUsage.setEnabled(false);
+
         getLoaderManager().initLoader(0, null, this);
 
         updateDateText();
@@ -216,14 +235,16 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mDeviceAdapter.swapCursor(cursor);
-            if(cursor.getCount() > 0) {
-                spinnerDevice.setEnabled(true);
-                //((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-            }
-            else {
-                spinnerDevice.setEnabled(false);
-                //((AlertDialog)AddUsageDialog.this.getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-            }
+
+        // Only enable adding of data if we have devices to add data to.
+
+        boolean enableAdding = false;
+
+        if(cursor.getCount() > 0)
+            enableAdding = true;
+
+        spinnerDevice.setEnabled(enableAdding);
+        mButtonAddUsage.setEnabled(enableAdding);
     }
 
     @Override

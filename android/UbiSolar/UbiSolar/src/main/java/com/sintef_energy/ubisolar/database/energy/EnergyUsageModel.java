@@ -154,4 +154,16 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
     public EnergyUsageModel(long id, long device_id, Date datetime, double power_usage) {
         super(id, device_id, datetime, power_usage);
     }
+
+    @Override
+    public String toString(){
+        String info = "EnergyUsageModel:";
+        info += "\n\t-> Id: " + getId();
+        info += "\n\t-> Device id: " + getDevice_id();
+        info += "\n\t-> Datetime: " + getDatetime();
+        info += "\n\t-> Power usage: " + getPower_usage();
+        info += "\n\t-> isDeleted: " + isDeleted();
+
+        return info;
+    }
 }
