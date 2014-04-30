@@ -2,12 +2,16 @@ package com.sintef_energy.ubisolar.fragments.social;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.adapter.ComparisonSettingsAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 
 /**
@@ -22,6 +26,7 @@ public class CompareSimilarFragment extends Fragment{
 
     private static final String ARG_POSITION = "position";
     private View view;
+    private ComparisonSettingsAdapter comparisonSettingsAdapter;
 
 
     private SimilarAdapter similarAdapter;
@@ -57,11 +62,25 @@ public class CompareSimilarFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
 
-
+        TextView t = (TextView)view.findViewById(R.id.changeToCompSettings);
+        t.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Fragment fragment = ComparisonSettingsFragment.newInstance(0, comparisonSettingsAdapter);
+                addFragment(fragment);
+            }
+        });
 
         return view;
     }
 
+    public void addFragment(Fragment fragment) {
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+
+        ft.replace(R.id.container, fragment);
+        ft.commit();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

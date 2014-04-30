@@ -42,16 +42,29 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static ComparisonSettingsFragment newInstance(int position) {
-            ComparisonSettingsFragment fragment = new ComparisonSettingsFragment();
+        public static ComparisonSettingsFragment newInstance(int position, ComparisonSettingsAdapter compAdapter) {
+            ComparisonSettingsFragment fragment = new ComparisonSettingsFragment(compAdapter);
             Bundle b = new Bundle();
             b.putInt(ARG_SECTION_NUMBER, position);
             fragment.setArguments(b);
             return fragment;
         }
 
-        public ComparisonSettingsFragment() {
+    public static ComparisonSettingsFragment newInstance(int position) {
+        ComparisonSettingsFragment fragment = new ComparisonSettingsFragment();
+        Bundle b = new Bundle();
+        b.putInt(ARG_SECTION_NUMBER, position);
+        fragment.setArguments(b);
+        return fragment;
+    }
+
+        public ComparisonSettingsFragment(ComparisonSettingsAdapter compAdapter) {
+            this.compAdapter = compAdapter;
         }
+
+    public ComparisonSettingsFragment() {
+
+    }
 
         /**
          * The first call to a created fragment
@@ -105,13 +118,5 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
         public void onDestroy(){
             super.onDestroy();
         }
-
-
-    public void updateCheckbox() {
-
-    }
-
-
-
     }
 
