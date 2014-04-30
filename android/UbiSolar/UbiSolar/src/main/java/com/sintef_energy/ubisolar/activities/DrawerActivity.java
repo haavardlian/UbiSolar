@@ -32,7 +32,6 @@ import com.facebook.Settings;
 import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
-import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.drawer.DrawerItem;
 import com.sintef_energy.ubisolar.drawer.Item;
