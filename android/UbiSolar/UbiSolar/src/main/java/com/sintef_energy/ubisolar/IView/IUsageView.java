@@ -12,8 +12,8 @@ public interface IUsageView {
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList);
     public void clearDevices();
 
-    public void setFormat(String resolution, String titleFormat, String compareFormat);
-    public String getResolution();
+    public void setFormat(int mode);
+    public int getResolution();
 
     public boolean[] getSelectedDialogItems();
     public void setSelectedDialogItems(boolean[] selectedDialogItems);

@@ -36,6 +36,7 @@ import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
+import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
 import java.util.ArrayList;
@@ -513,21 +514,21 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private void zoomIn()
     {
-        if(graphView.getResolution().equals("dd")) {
-            graphView.setFormat("HH", "EEEE dd/MM", "yyyyDDHH");
+        if(graphView.getResolution() == Resolution.DAYS) {
+            graphView.setFormat(Resolution.HOURS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 24);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, this);
 
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(false);
         }
-        else if(graphView.getResolution().equals("w")) {
-            graphView.setFormat("dd", "MMMM", "yyyyDD");
+        else if(graphView.getResolution() == Resolution.WEEKS) {
+            graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 7);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
         }
-        else if(graphView.getResolution().equals("MMMM")) {
-            graphView.setFormat("w", "MMMMM y", "yyyyw");
+        else if(graphView.getResolution() == Resolution.MONTHS) {
+            graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 4);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
@@ -538,21 +539,21 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private void zoomOut()
     {
-        if(graphView.getResolution().equals("HH")) {
-            graphView.setFormat("dd", "MMMM", "yyyyDD");
+        if(graphView.getResolution() == Resolution.HOURS) {
+            graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 24);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(true);
         }
-        else if(graphView.getResolution().equals("dd")) {
-            graphView.setFormat("w", "MMMMM y", "yyyyw");
+        else if(graphView.getResolution() == Resolution.DAYS) {
+            graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 7);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
         }
-        else if(graphView.getResolution().equals("w")) {
-            graphView.setFormat("MMMM", "y", "yyyyMM");
+        else if(graphView.getResolution() == Resolution.WEEKS) {
+            graphView.setFormat(Resolution.MONTHS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 4);
             getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
 

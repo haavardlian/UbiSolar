@@ -16,6 +16,7 @@ import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
+import com.sintef_energy.ubisolar.utils.Resolution;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -47,6 +48,9 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     private ArrayList<DeviceUsageList> mDeviceUsageList;
     private Bundle mSavedState;
     private int mSelected = -1;
+
+    private Resolution resolution;
+
     private String mTitleFormat = "EEEE dd/MM";
     private String mDataResolution = "dd";
     private String mPreLabel = "";
@@ -113,6 +117,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             setupPieGraph();
         }
 
+        resolution = new Resolution(1);
         createPieGraph();
         updateDetails();
 //        ArrayList<ArrayList<DeviceUsage>> usageList = createDeviceUsage(mDevices);
@@ -309,10 +314,10 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         powerUsageView.setText("");
     }
 
-    public void setFormat(String labelFormat, String titleFormat, String compareFormat)
+    public void setFormat(int mode)
     {
 //        mTitleFormat = titleFormat;
-        mDataResolution = labelFormat;
+//        mDataResolution = titleFormat;
         mPreLabel = "";
 
         if(mDataResolution == "HH") {
@@ -328,13 +333,13 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         }
         else if(mDataResolution == "MMMM")
             mTitleFormat = "MMMM";
-        else
-            mTitleFormat = titleFormat;
+        else;
+//            mTitleFormat = titleFormat;
     }
 
-    public String getResolution()
+    public int getResolution()
     {
-        return mDataResolution;
+        return resolution.getMode();
     }
 
     public boolean[] getSelectedDialogItems() {
