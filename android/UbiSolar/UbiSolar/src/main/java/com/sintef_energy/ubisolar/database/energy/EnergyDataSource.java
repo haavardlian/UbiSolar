@@ -285,6 +285,7 @@ public class EnergyDataSource {
 
         Log.v(TAG, "getAllSyncDevices: # of models: " + cursor.getCount());
 
+        deviceModels.add(new DeviceModel(cursor));
         while (cursor.moveToNext())
             deviceModels.add(new DeviceModel(cursor));
 
@@ -317,6 +318,8 @@ public class EnergyDataSource {
         else {}
 
         cursor.moveToFirst();
+
+        deviceModels.add(new EnergyUsageModel(cursor, false));
 
         Log.v(TAG, "getAllSyncDevices: # of models: " + cursor.getCount());
 

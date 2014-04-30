@@ -230,6 +230,9 @@ public class EnergyProvider extends ContentProvider{
         int delCount = 0;
         String idStr = null;
         String where = null;
+
+        deleteValues.put(DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED, System.currentTimeMillis() / 1000L);
+
         switch (URI_MATCHER.match(uri)) {
             /* ONLY DELETE ON THESE TWO */
             case DEVICES_LIST_DELETE:

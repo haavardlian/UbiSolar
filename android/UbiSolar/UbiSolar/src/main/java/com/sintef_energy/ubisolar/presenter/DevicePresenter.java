@@ -38,12 +38,14 @@ public class DevicePresenter {
     }
 
     public void addDevice(DeviceModel device, ContentResolver contentResolver){
+        device.updateLastUpdate();
         EnergyDataSource.insertDevice(contentResolver, device);
         //this.dmModels.add(device);
     }
 
     public void editDevice(ContentResolver contentResolver, DeviceModel dm) {
         //TODO: Add support for actually checking that the update went fine.
+        dm.updateLastUpdate();
         EnergyDataSource.editDevice(contentResolver, dm);
     };
 

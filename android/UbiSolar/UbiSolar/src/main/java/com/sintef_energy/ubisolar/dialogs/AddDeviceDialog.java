@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
@@ -39,7 +40,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            //devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
+            devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
 
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement " + TotalEnergyPresenter.class.getName());
@@ -53,6 +54,8 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
+        final long uid = Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid());
+
         view = inflater.inflate(R.layout.dialog_add_device, null);
         builder.setView(view)
                 // Add action buttons
@@ -61,7 +64,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                     public void onClick(DialogInterface dialog, int id) {
                         /*Create new device model*/
                         DeviceModel deviceModel = new DeviceModel();
-                        deviceModel.setUserId(System.currentTimeMillis()); //TODO: BUG: Must set correct username, or maybe -1 if no username?
+                        deviceModel.setUserId(uid);
                         deviceModel.setId(System.currentTimeMillis());
 
                         deviceModel.setDescription(descriptionField.getText().toString());

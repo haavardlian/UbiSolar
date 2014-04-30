@@ -29,7 +29,7 @@ public class DeviceUsage
         this.deleted = false;
     }
 
-    protected void updateLastUpdated(){
+    public void updateLastUpdated(){
         setLastUpdated(System.currentTimeMillis() / 1000L);
     }
 
@@ -53,22 +53,18 @@ public class DeviceUsage
 
     public void setId(long id) {
         this.id = id;
-        updateLastUpdated();
     }
 
     public void setDeviceId(long deviceId) {
         this.deviceId = deviceId;
-        updateLastUpdated();
     }
 
     public void setDatetime(Date datetime) {
         this.datetime = datetime;
-        updateLastUpdated();
     }
 
     public void setPowerUsage(double powerUsage) {
         this.powerUsage = powerUsage;
-        updateLastUpdated();
     }
 
     public boolean isDeleted() {
@@ -77,7 +73,6 @@ public class DeviceUsage
 
     public void setDeleted(boolean isDeleted){
         this.deleted = isDeleted;
-        updateLastUpdated();
     }
 
     public long getLastUpdated() {

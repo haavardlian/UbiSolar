@@ -57,27 +57,22 @@ public class Device
 
     public void setId(long id) {
         this.id = id;
-        updateLastUpdate();
     }
 
     public void setUserId(long userId) {
         this.userId = userId;
-        updateLastUpdate();
     }
 
     public void setName(String name) {
         this.name = name;
-        updateLastUpdate();
     }
 
     public void setDescription(String description) {
         this.description = description;
-        updateLastUpdate();
     }
 
     public void setCategory(int category) {
         this.category = category;
-        updateLastUpdate();
     }
 
     public boolean isDeleted() {
@@ -86,7 +81,6 @@ public class Device
 
     public void setDeleted(boolean isDeleted) {
         this.deleted = isDeleted;
-        updateLastUpdate();
     }
 
     public long getLastUpdated() {
