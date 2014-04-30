@@ -77,4 +77,27 @@ public class SyncResource {
         else
             throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
+
+    @PUT
+    @Path("/device/")
+    public Response syncUsage(@Valid ArrayList<DeviceUsage> usage) {
+        int result[] = db.addUsageForDevices(usage.iterator());
+        boolean success = true;
+
+        ArrayList<DeviceUsage> failedUsages = new ArrayList<DeviceUsage>();
+
+        if(result.length != usage.size()) success = false;
+        else {
+            for(int i = 0; i < result.length; i++) {
+                if(result[i] == 0) {
+                    success = false;
+                    failedUsages.add(usage.get(i));
+                }
+            }
+        }
+        if(success)
+            throw new WebApplicationException(Response.Status.CREATED);
+        else
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedUsages).build();
+    }
 }
