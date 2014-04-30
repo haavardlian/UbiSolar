@@ -335,11 +335,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         mDeviceSize = size;
     }
 
-//    private void setSelectedDate()
-//    {
-//        mSelectedDate = mDeviceUsageList.get(mDeviceUsageList.size() -1).:
-//    }
-
     public Bitmap createImage(){
         Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
