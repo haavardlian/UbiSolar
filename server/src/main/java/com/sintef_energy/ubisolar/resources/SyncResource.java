@@ -29,8 +29,8 @@ public class SyncResource {
 
     @GET
     @Path("/device/newest")
-    public long getLastEditedDeviceTime() {
-        long latest = db.getLastEditedDeviceTime();
+    public long getLastEditedDeviceTime(@PathParam("user") LongParam user) {
+        long latest = db.getLastUpdatedTimeDevice(user.get());
 
         return latest;
     }
@@ -66,6 +66,15 @@ public class SyncResource {
             throw new WebApplicationException(Response.Status.CREATED);
         else
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedDevices).build();
+    }
+
+
+    @GET
+    @Path("/usage/newest")
+    public long getLastEditedUsageTime(@PathParam("user") IntParam user) {
+        long latest = db.getLastUpdatedTimeUsage(user.get());
+
+        return latest;
     }
 
     @GET
