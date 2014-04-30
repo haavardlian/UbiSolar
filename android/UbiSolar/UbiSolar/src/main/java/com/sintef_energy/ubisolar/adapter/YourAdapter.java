@@ -32,7 +32,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     List<Tip> data = null;
     SharedPreferences sharedPreferences;
     List<String> list;
-    SharedPreferences.Editor editor;
 
     public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data, FragmentManager fragmentManager) {
         super(context, layoutResourceId);
@@ -41,7 +40,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
         this.data = data;
         this.fragmentManager = fragmentManager;
         this.sharedPreferences = context.getSharedPreferences("com.sintef_energy.ubisolar", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
     }
 
     public Activity getActivity() {

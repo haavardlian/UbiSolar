@@ -67,7 +67,7 @@ public class ProfileFragment extends DefaultTabFragment  {
         prefs = PreferencesManager.getInstance();
 
         //Dummy creation to be replaced when facebook login is 100%
-        setDummyPrefs();
+        //setDummyPrefs();
 
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
         setupList();

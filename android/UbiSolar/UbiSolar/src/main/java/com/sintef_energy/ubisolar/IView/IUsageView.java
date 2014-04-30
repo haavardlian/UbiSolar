@@ -1,6 +1,7 @@
 package com.sintef_energy.ubisolar.IView;
 
 import android.app.LoaderManager;
+import android.graphics.Bitmap;
 
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
@@ -24,5 +25,5 @@ public interface IUsageView {
     public boolean isLoaded();
     public void setDeviceSize(int size);
 
-    public void createImage();
+    public Bitmap createImage();
 }
