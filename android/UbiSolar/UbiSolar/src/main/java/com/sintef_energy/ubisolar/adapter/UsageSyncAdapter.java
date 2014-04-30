@@ -15,6 +15,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
+import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,7 @@ import java.util.ArrayList;
  * Synchronization is based on delete bits and timestamp.
  *
  * Step 1: Init files
- * TODO: Check for network. END if no net.
+ * Check for network. END if no net.
  *
  * Step 2: get time and uid
  * Get last frontend sync timestamp
@@ -45,7 +46,6 @@ import java.util.ArrayList;
  * Step 6: Insert all new data. Delete all delete data for good.
  *
  * Step 7: Update timestamps
- *
  *
  */
 public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
@@ -66,9 +66,15 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
         try {
             //TODO:Get the auth token for the current account
             //String authToken = mAccountManager.blockingGetAuthToken(account, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS, true);
-            Log.v(TAG, "Starting sync operation");
 
             /* STEP 1: SETUP FILES */
+            Log.v(TAG, "Starting sync operation");
+
+            if(Utils.isNetworkOn(getContext())){
+                Log.v(TAG, "Sync aborted. No network connection.");
+                return;
+            }
+
             PreferencesManager preferencesManager;
             PreferencesManagerSync prefManagerSyn;
             RequestManager requestManager;
@@ -76,7 +82,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             ArrayList<DeviceModel> serverDeviceModelsError;
             ArrayList<DeviceModel> localDeviceModels;
             ArrayList<EnergyUsageModel> serverUsageModels;
-            ArrayList<EnergyUsageModel> serverusageModelsError;
+            ArrayList<EnergyUsageModel> serverUsageModelsError;
             ArrayList<EnergyUsageModel> localUsageModels;
 
             try {
@@ -132,9 +138,9 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                 Log.e(TAG, "Local usage query error.");
             else if (localUsageModels.size() > 0) {
                 Log.v(TAG, "Sending # EnergyUsageModels to server: " + localUsageModels.size());
-                serverusageModelsError = requestManager.doSyncRequest().putFrontendUsageSync(uid, localUsageModels);
-                if (serverusageModelsError.size() > 0)
-                    Log.e(TAG, "Frontend sync with usage to server failed with # of models: " + serverusageModelsError.size());
+                serverUsageModelsError = requestManager.doSyncRequest().putFrontendUsageSync(uid, localUsageModels);
+                if (serverUsageModelsError.size() > 0)
+                    Log.e(TAG, "Frontend sync with usage to server failed with # of models: " + serverUsageModelsError.size());
             }
 
             /* STEP 6: Insert and delete */

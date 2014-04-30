@@ -9,8 +9,6 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
@@ -46,6 +44,7 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.utils.TestdataHelper;
+import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.Arrays;
 
@@ -381,7 +380,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
         /* User wants to log in */
         /* Is there internet? */
-        else if(!isNetworkOn(getApplicationContext())){
+        else if(!Utils.isNetworkOn(getApplicationContext())){
             Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
         /* There is internet */
@@ -459,7 +458,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                  *  Don't need to store cached data.
                  *
                  */
-                if(isNetworkOn(getApplicationContext()))
+                if(Utils.isNetworkOn(getApplicationContext()))
                     Request.newMeRequest(session, new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
@@ -485,19 +484,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             } else
                 Log.v(DrawerActivity.TAG, "Facebook status is fishy");
         }
-    }
-
-    /**
-     * Helper class to check if app has internet connection.
-     * @param context
-     * @return
-     */
-    public boolean isNetworkOn(Context context) {
-        ConnectivityManager connMgr =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        return (networkInfo != null && networkInfo.isConnected());
     }
 
 
