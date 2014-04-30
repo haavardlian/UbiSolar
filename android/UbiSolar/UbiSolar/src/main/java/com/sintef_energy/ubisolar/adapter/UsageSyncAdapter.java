@@ -135,7 +135,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                     //prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestampServerDevice);
 
                     for (DeviceModel dm : serverDeviceModels) {
-                        Log.v(TAG, "" + dm);
                         if (dm.isDeleted()) {
                             deleteDeviceModels.add(dm);
                             serverDeviceModels.remove(dm);
@@ -158,8 +157,8 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             if(deleteDeviceModels.size() > 0)
                 deleteSuccess = EnergyDataSource.batchDeleteDeviceSyncOp(getContext().getContentResolver(), deleteDeviceModels);
 
-            /* STEP 7 */
-           // prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestampServerDevice);
+            /* STEP Update time */
+            prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestampServerDevice);
 
             Log.v(TAG, "Synchronization complete."
                     + "\nAdded DevicesModels to local DB: " + nDevice

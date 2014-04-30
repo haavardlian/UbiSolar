@@ -152,9 +152,19 @@ public class DeviceModel extends Device implements Parcelable{
         setLastUpdated(cursor.getLong(_lastUpdated));
     }
 
-    public DeviceModel(long device_id, String name, String description, long user_id,
-                       int category) {
-        super(device_id, name, description, user_id, category);
+    public DeviceModel(long id, long user_id, String name, String description, int category) {
+        super(id, user_id, name, description, category, false, -1);
+    }
+    public DeviceModel(long id, long user_id, String name, String description, int category, boolean deleted, long last) {
+        super(id, user_id, name, description, category, deleted, last);
+    }
+
+    /**
+     * An ugly hack do allow jackson to serialize DeviceModel.
+     * @return
+     */
+    public Device getSerializeableDevice(){
+        return new Device(getId(), getUserId(), getName(), getDescription(), getCategory(), isDeleted(), getLastUpdated());
     }
 
     @Override

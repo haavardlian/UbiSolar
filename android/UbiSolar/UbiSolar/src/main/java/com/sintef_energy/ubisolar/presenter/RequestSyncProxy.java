@@ -11,7 +11,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,16 +20,17 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.utils.Global;
+import com.sintef_energy.ubisolar.utils.JsonArrayRequestTweaked;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Per Øyvind Kanestrøm on 29.04.14.
@@ -75,7 +75,7 @@ public class RequestSyncProxy {
 
         Log.v(TAG, "Request to URL: " + url);
         // Perform request
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(url, future, future);
+        JsonArrayRequestTweaked jsonRequest = new JsonArrayRequestTweaked(JsonRequest.Method.GET, url, null, future, future);
 
         requestQueue.add(jsonRequest);
 
@@ -85,9 +85,8 @@ public class RequestSyncProxy {
 
             Log.v(TAG, "Response: " + response);
 
-            for (int i = 0; i < response.length(); i++) {
+            for (int i = 0; i < response.length(); i++)
                     dModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
-            }
 
             return dModels;
         }catch (IOException | JSONException e) {
@@ -118,7 +117,6 @@ public class RequestSyncProxy {
     /**
      *
      *
-     *
      * @param userId
      * @param deviceModels
      * @return ArrayList<DeviceModel> Success if size = 0
@@ -141,29 +139,37 @@ public class RequestSyncProxy {
         JSONArray data = new JSONArray();
 
         try {
-            for(DeviceModel dModel : deviceModels) {
-                data.put(mapper.writeValueAsString(dModel));
-            }
+            for(DeviceModel dModel : deviceModels)
+                data.put(new JSONObject(mapper.writeValueAsString(dModel.getSerializeableDevice())));
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
+        Log.v(TAG, "LOL " + data.toString());
+
+        JsonArrayRequestTweaked request = new JsonArrayRequestTweaked(JsonRequest.Method.PUT, url, data.toString(), future, future);
+        /*
         JsonRequest<JSONArray> request = new JsonRequest<JSONArray>(JsonRequest.Method.PUT, url, data.toString(), future, future) {
             @Override
             protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
                 try {
-                    String jsonString =
-                            new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-                    return Response.success(new JSONArray(jsonString),
-                            HttpHeaderParser.parseCacheHeaders(response));
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+
+                    if(jsonString.length() > 0)
+                        return Response.success(new JSONArray(jsonString), HttpHeaderParser.parseCacheHeaders(response));
+                    else
+                        return Response.success(new JSONArray(), HttpHeaderParser.parseCacheHeaders(response));
                 } catch (UnsupportedEncodingException e) {
                     return Response.error(new ParseError(e));
                 } catch (JSONException je) {
                     return Response.error(new ParseError(je));
                 }
             }
-        };
+        };*/
 
         requestQueue.add(request);
 
@@ -174,7 +180,7 @@ public class RequestSyncProxy {
             Log.v(TAG, "Response: " + response);
 
             for (int i = 0; i < response.length(); i++) {
-                    errorModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
+                errorModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
             }
 
             return errorModels;
@@ -187,15 +193,12 @@ public class RequestSyncProxy {
             e.printStackTrace();
         }
         catch (ExecutionException e) {
-
             Log.e(TAG, "ExecutionException:\n" + e.getMessage());
 
             e.printStackTrace();
             return errorModels;
         }
 
-        //Toast.makeText(context, "Could not get data from server",
-        //Toast.LENGTH_LONG).show();
         Log.e(TAG, "Error from server!!");
 
         return null;

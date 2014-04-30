@@ -41,7 +41,7 @@ public class PreferencesManagerSync {
 
     public void setBackendDeviceSyncTimestamp(long value) {
         mPref.edit()
-            .putFloat(KEY_BACKEND_DEVICE_SYNC_TIMESTAMP, value)
+            .putLong(KEY_BACKEND_DEVICE_SYNC_TIMESTAMP, value)
             .apply();
     }
 

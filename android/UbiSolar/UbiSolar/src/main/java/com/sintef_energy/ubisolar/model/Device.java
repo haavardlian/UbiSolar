@@ -5,7 +5,7 @@ package com.sintef_energy.ubisolar.model;
  *
  * A replica of the model on the backend.
  */
-public abstract class Device
+public class Device
 {
     protected long id;
     protected long userId;
@@ -20,14 +20,14 @@ public abstract class Device
 
     }
 
-    public Device(long id, String name, String description, long userId,
-                  int category) {
+    public Device(long id, long userId, String name, String description, int category, boolean deleted, long lastUpdated) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.userId = userId;
         this.category = category;
-        this.deleted = false;
+        this.deleted = deleted;
+        this.lastUpdated = lastUpdated;
     }
 
 

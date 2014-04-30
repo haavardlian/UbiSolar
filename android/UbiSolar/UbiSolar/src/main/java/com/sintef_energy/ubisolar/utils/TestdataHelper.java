@@ -27,21 +27,23 @@ public class TestdataHelper {
 
     public static void createDevices(ContentResolver cr)
     {
-        addDevice(cr, "Total", "-", 0, true);
-        addDevice(cr, "TV", "Livingroom", 1, false);
-        addDevice(cr, "Radio", "Kitchen", 1, false);
-        addDevice(cr, "Heater", "Second floor", 1, false);
-        addDevice(cr, "Oven", "Kitchen", 2, false);
+        addDevice(cr, "Total", "-", 0);
+        addDevice(cr, "TV", "Livingroom", 1);
+        addDevice(cr, "Radio", "Kitchen", 1);
+        addDevice(cr, "Heater", "Second floor", 1);
+        addDevice(cr, "Oven", "Kitchen", 2);
     }
 
-    private static void addDevice(ContentResolver cr, String name, String description, int category, boolean isTotal) {
+    private static void addDevice(ContentResolver cr, String name, String description, int category) {
         PreferencesManager preferencesManager = PreferencesManager.getInstance();
         DeviceModel device = new DeviceModel(
                 System.currentTimeMillis(),
+                Long.valueOf(preferencesManager.getKeyFacebookUid()),
                 name,
                 description,
-                Long.valueOf(preferencesManager.getKeyFacebookUid()),
-                category);
+                category,
+                false,
+                System.currentTimeMillis() / 1000L);
 
         cr.insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());

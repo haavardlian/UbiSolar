@@ -141,8 +141,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
 
         /* Setup preference manager */
-        PreferencesManager.initializeInstance(getApplicationContext());
-        mPrefManager = PreferencesManager.getInstance();
+        try {
+            mPrefManager = PreferencesManager.getInstance();
+        } catch (IllegalStateException ex) {
+            mPrefManager = PreferencesManager.initializeInstance(getApplicationContext());
+        }
 
         /* Setup dummy account */
         AUTHORITY = getResources().getString(R.string.provider_authority_energy);
@@ -168,7 +171,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         /* Start developer mode after app has been setup
          * Lots of StrictMode violations are done in startup anyways. */
-        developerMode(Global.DEVELOPER_MADE, true);
+        developerMode(Global.DEVELOPER_MADE, false);
     }
 
     /**
@@ -183,7 +186,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         //Updates the UI based on logged in state
         changeNavdrawerSessionsView(Global.loggedIn);
     }
-
 
     @Override
     public void onStop() {
@@ -543,11 +545,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     private void developerMode(boolean devMode, boolean testData){
         if(testData) {
-//            TestdataHelper.clearDatabase(getContentResolver());
+            TestdataHelper.clearDatabase(getContentResolver());
 //            //Populate the database if it's empty
 //            if (EnergyDataSource.getEnergyModelSize(getContentResolver()) == 0) {
 //                Log.v(TAG, "Developer mode: Database empty. Populating it.");
-//                TestdataHelper.createDevices(getContentResolver());
+                TestdataHelper.createDevices(getContentResolver());
 //                //            createEnergyUsage();
 //            }
         }
