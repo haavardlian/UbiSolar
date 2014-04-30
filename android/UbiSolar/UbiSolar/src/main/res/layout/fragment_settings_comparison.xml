@@ -5,11 +5,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <LinearLayout android:id="@+id/linearLayout2"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_alignParentTop="true" >
+        android:layout_alignParentTop="true">
+
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="65dp"
@@ -18,7 +20,7 @@
             android:id="@+id/select_compare"
             android:paddingTop="20dp"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"/>
+            android:paddingRight="20dp" />
     </LinearLayout>
 
     <View
@@ -30,8 +32,7 @@
         android:layout_alignParentTop="true"
         android:layout_height="1dp"
         android:gravity="center"
-        android:background="#000"
-/>
+        android:background="#000" />
 
 
     <ListView
@@ -40,7 +41,6 @@
         android:layout_marginTop="70dp"
         android:layout_marginBottom="75dp"
         android:layout_height="fill_parent"
-        android:dividerHeight="3dp"
-        />
+        android:dividerHeight="3dp" />
 
 </RelativeLayout>

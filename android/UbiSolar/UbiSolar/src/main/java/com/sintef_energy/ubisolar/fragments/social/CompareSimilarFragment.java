@@ -17,7 +17,7 @@ import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 /**
  * Created by baier on 4/1/14.
  */
-public class CompareSimilarFragment extends Fragment{
+public class CompareSimilarFragment extends Fragment {
 
     /* The fragment argument representing the section number for this
      * fragment.
@@ -51,6 +51,7 @@ public class CompareSimilarFragment extends Fragment{
 
     /**
      * The first call to a created fragment
+     *
      * @param activity
      */
     @Override
@@ -62,7 +63,7 @@ public class CompareSimilarFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
 
-        TextView t = (TextView)view.findViewById(R.id.changeToCompSettings);
+        TextView t = (TextView) view.findViewById(R.id.changeToCompSettings);
         t.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,7 +100,7 @@ public class CompareSimilarFragment extends Fragment{
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
     }
 

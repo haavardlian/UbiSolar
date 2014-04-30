@@ -8,7 +8,6 @@
     android:paddingRight="20dp">
 
 
-
     <TextView
         android:id="@+id/comparison_setting_label"
         android:layout_width="240dp"
@@ -24,8 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:focusable="false"
-    />
+        android:focusable="false" />
 
 
 </RelativeLayout>

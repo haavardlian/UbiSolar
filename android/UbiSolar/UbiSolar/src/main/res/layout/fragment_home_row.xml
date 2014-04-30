@@ -8,7 +8,6 @@
     android:paddingRight="20dp">
 
 
-
     <TextView
         android:id="@+id/comparison_setting_label"
         android:layout_width="fill_parent"
@@ -17,8 +16,6 @@
         android:text="Pia har også begynt å bruke Wattitude!"
         android:padding="20dp"
         android:textSize="16dp" />
-
-
 
 
 </RelativeLayout>
