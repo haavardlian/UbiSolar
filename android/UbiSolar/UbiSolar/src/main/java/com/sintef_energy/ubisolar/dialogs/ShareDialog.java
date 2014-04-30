@@ -25,6 +25,7 @@ import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.utils.RequestManager;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 /**
  * Created by Håvard on 30.04.14.
@@ -57,6 +58,8 @@ public class ShareDialog extends DialogFragment {
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         Bundle param = new Bundle();
                         Request r;
+
+                        Session.getActiveSession().requestNewPublishPermissions(new Session.NewPermissionsRequest(getActivity(), Arrays.asList("publish_actions")));
 
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                         param.putString("message", caption.getText().toString());
