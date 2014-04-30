@@ -1,10 +1,7 @@
 package com.sintef_energy.ubisolar.fragments.social;
 
         import android.app.Activity;
-import android.app.Fragment;
-        import android.content.SharedPreferences;
         import android.os.Bundle;
-        import android.util.Log;
         import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +11,9 @@ import android.widget.SimpleCursorAdapter;
 
 import com.sintef_energy.ubisolar.R;
         import com.sintef_energy.ubisolar.activities.DrawerActivity;
-        import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
+        import com.sintef_energy.ubisolar.adapter.ComparisonSettingsAdapter;
         import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
         import com.sintef_energy.ubisolar.model.ResidenceAttributes;
-        import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
         import java.util.ArrayList;
 
@@ -33,7 +29,7 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
 
     private SimpleCursorAdapter adapter;
     private View view;
-    private ComparisonAdapter compAdapter;
+    private ComparisonSettingsAdapter compAdapter;
     private ArrayList<ResidenceAttributes> houseDescription;
     private static final String ARG_POSITION = "position";
     boolean selected = false;
@@ -46,16 +42,29 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static ComparisonSettingsFragment newInstance(int position) {
-            ComparisonSettingsFragment fragment = new ComparisonSettingsFragment();
+        public static ComparisonSettingsFragment newInstance(int position, ComparisonSettingsAdapter compAdapter) {
+            ComparisonSettingsFragment fragment = new ComparisonSettingsFragment(compAdapter);
             Bundle b = new Bundle();
             b.putInt(ARG_SECTION_NUMBER, position);
             fragment.setArguments(b);
             return fragment;
         }
 
-        public ComparisonSettingsFragment() {
+    public static ComparisonSettingsFragment newInstance(int position) {
+        ComparisonSettingsFragment fragment = new ComparisonSettingsFragment();
+        Bundle b = new Bundle();
+        b.putInt(ARG_SECTION_NUMBER, position);
+        fragment.setArguments(b);
+        return fragment;
+    }
+
+        public ComparisonSettingsFragment(ComparisonSettingsAdapter compAdapter) {
+            this.compAdapter = compAdapter;
         }
+
+    public ComparisonSettingsFragment() {
+
+    }
 
         /**
          * The first call to a created fragment
@@ -79,7 +88,7 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
             houseDescription.add(new ResidenceAttributes("Energy class"));
 
 
-            ComparisonAdapter compAdapter= new ComparisonAdapter(getActivity(),R.layout.fragment_settings_comparison_row, houseDescription);
+            ComparisonSettingsAdapter compAdapter= new ComparisonSettingsAdapter(getActivity(),R.layout.fragment_settings_comparison_row, houseDescription);
             ListView houseDescrList = (ListView) view.findViewById(R.id.comp_settings_list);
             houseDescrList.setAdapter(compAdapter);
 
@@ -109,13 +118,5 @@ public class ComparisonSettingsFragment extends DefaultTabFragment {
         public void onDestroy(){
             super.onDestroy();
         }
-
-
-    public void updateCheckbox() {
-
-    }
-
-
-
     }
 

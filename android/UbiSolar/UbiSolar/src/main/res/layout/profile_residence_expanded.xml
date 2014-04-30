@@ -2,7 +2,7 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp" >
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/residence_icon"
@@ -18,36 +18,36 @@
         android:layout_row="1"
         android:layout_column="1">
 
-    <TextView
-        android:id="@+id/residence_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name"
-        android:paddingLeft="25dp"
-        android:layout_row="0"
-        android:layout_column="1"
-        android:enabled="false"/>
+        <TextView
+            android:id="@+id/residence_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:paddingLeft="25dp"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:enabled="false" />
 
-    <TextView
-        android:id="@+id/residence_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="description"
-        android:layout_below="@id/residence_name"
-        android:paddingLeft="25dp"
-        android:layout_row="1"
-        android:layout_column="1"
-        android:layout_marginTop="8dp"/>
+        <TextView
+            android:id="@+id/residence_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="description"
+            android:layout_below="@id/residence_name"
+            android:paddingLeft="25dp"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_marginTop="8dp" />
 
-    <TextView
-        android:id="@+id/residence_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="area"
-        android:paddingLeft="25dp"
-        android:layout_row="2"
-        android:layout_column="1"
-        android:layout_marginTop="8dp"/>
+        <TextView
+            android:id="@+id/residence_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="area"
+            android:paddingLeft="25dp"
+            android:layout_row="2"
+            android:layout_column="1"
+            android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/residence_residents"
@@ -57,7 +57,7 @@
             android:paddingLeft="25dp"
             android:layout_row="3"
             android:layout_column="1"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp" />
 
     </GridLayout>
 </GridLayout>
