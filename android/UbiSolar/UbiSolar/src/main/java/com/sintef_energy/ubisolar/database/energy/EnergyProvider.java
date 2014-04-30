@@ -22,6 +22,12 @@ import java.util.ArrayList;
 
 /**
  * Created by perok on 2/11/14.
+ *
+ * TODO
+ * ContentProvder is not thread sage. SQLiteDatabase is thread safe.
+ * Should the providers CRUD method be implemented with synchronized? Will give a overhead, but
+ * will possibly avoid bugs.
+ *
  */
 public class EnergyProvider extends ContentProvider{
 
@@ -112,7 +118,6 @@ public class EnergyProvider extends ContentProvider{
                 if (TextUtils.isEmpty(sortOrder)) {
                     sortOrder = EnergyContract.Devices.SORT_ORDER_DEFAULT;
                 }
-
                 break;
             case DEVICES_ID:
                 builder.setTables(DeviceModel.DeviceEntry.TABLE_NAME);
@@ -151,8 +156,9 @@ public class EnergyProvider extends ContentProvider{
         if(selection == null)
             selection = selectionAvoidDeleteBit;
         else
-            selection += " AND " + selectionAvoidDeleteBit;
+            selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
 
+        Log.v(TAG, "query selection: " + selection);
         //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
         if(rawSql == null)
             cursor =
@@ -191,8 +197,6 @@ public class EnergyProvider extends ContentProvider{
         /*if (!(URI_MATCHER.match(uri) == DEVICES_LIST ||
                 URI_MATCHER.match(uri) == ENERGY_LIST))
                 throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);*/
-
-
         SQLiteDatabase db = mHelper.getWritableDatabase();
 
         long id = -1;
@@ -375,6 +379,8 @@ public class EnergyProvider extends ContentProvider{
                         insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
                         insert.bindLong(5, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED));
                         insert.execute();
+
+                        db.yieldIfContendedSafely();
                     }
                     db.setTransactionSuccessful();
                     insert.close();
