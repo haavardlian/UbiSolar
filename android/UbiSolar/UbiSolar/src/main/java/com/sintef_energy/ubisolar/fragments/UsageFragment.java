@@ -170,8 +170,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new LinkedHashMap<>();
 
-
-
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
 
@@ -204,6 +202,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         graphView.getSelectedDialogItems());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getFragmentManager(), "selectDeviceDialog");
+                return true;
+            case R.id.share_usage:
+                graphView.createImage();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -238,7 +239,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     }
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
-//        graphView.setSelectedItems(selectedItems);
         graphView.setSelectedDialogItems(itemsSelected);
 
         //Clear the graph if no devices are selected
@@ -409,8 +409,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case LOADER_USAGE_MONTH:
             case LOADER_USAGE_YEAR:
                 populateDeviceUsageList(cursor);
-                //TODO: Implement logic to handle this correctly.
-                //Maybe populate.. can take in format argument?
                 break;
         }
     }
@@ -517,7 +515,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(graphView.getResolution() == Resolution.DAYS) {
             graphView.setFormat(Resolution.HOURS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 24);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE, null, this);
 
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(false);
@@ -525,12 +523,12 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         else if(graphView.getResolution() == Resolution.WEEKS) {
             graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 7);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
         }
         else if(graphView.getResolution() == Resolution.MONTHS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 4);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(true);
@@ -542,20 +540,20 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(graphView.getResolution() == Resolution.HOURS) {
             graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 24);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(true);
         }
         else if(graphView.getResolution() == Resolution.DAYS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 7);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
             graphView.setFormat(Resolution.MONTHS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 4);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(false);
