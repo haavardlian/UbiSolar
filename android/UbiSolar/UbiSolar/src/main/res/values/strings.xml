@@ -56,6 +56,10 @@
     </string-array>
     <string name="addDeviceDialog_buttonText">Add</string>
 
+    <!-- EditDeviceDialog -->
+    <string name="editDeviceDialog_title">Edit device</string>
+    <string name="editDeviceDialog_buttonText">Saves</string>
+
     <!-- Fragment usage -->
     <string name="usage_device_dialog_title">Select Devices</string>
     <string name="pie_chart_title">Power overview</string>
