@@ -59,8 +59,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
         mAccountManager = AccountManager.get(context);
     }
 
-
-
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(TAG, "onPerformSync for account[" + account.name + "]");
@@ -77,64 +75,68 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             ArrayList<DeviceModel> serverDeviceModelsError;
             ArrayList<DeviceModel> localDeviceModels;
 
-            try{
+            try {
                 preferencesManager = PreferencesManager.getInstance();
-            } catch (IllegalStateException ex){
+            } catch (IllegalStateException ex) {
                 preferencesManager = PreferencesManager.initializeInstance(getContext());
             }
 
-            try{
+            try {
                 prefManagerSyn = PreferencesManagerSync.getInstance();
-            } catch (IllegalStateException ex){
+            } catch (IllegalStateException ex) {
                 prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext());
             }
 
-            try{
+            try {
                 requestManager = RequestManager.getInstance();
-            } catch (IllegalStateException ex){
+            } catch (IllegalStateException ex) {
                 requestManager = RequestManager.getInstance(getContext());
             }
 
             /* STEP 2: Init */
-            long lastTimestamServerDevice = prefManagerSyn.getBackendDeviceSyncTimestamp();
+            long lastTimestampServerDevice = prefManagerSyn.getBackendDeviceSyncTimestamp();
             long newTimestampServerDevice = System.currentTimeMillis() / 1000L;
             long uid = Long.valueOf(preferencesManager.getKeyFacebookUid());
 
             //If user is not authorized with an id, end.
-            if(uid < 0) {
+            if (uid < 0) {
                 Log.v(TAG, "No user id. Sync aborted");
                 return;
             }
 
             /* STEP 3: Get new data from local db */
-            localDeviceModels = EnergyDataSource.getAllSyncDevicec(getContext().getContentResolver(), lastTimestamServerDevice);
+            localDeviceModels = EnergyDataSource.getAllSyncDevices(getContext().getContentResolver(), lastTimestampServerDevice);
             // TODO: Energy
 
             /* STEP 4: DEVICE get backend */
-            Log.v(TAG, "Time is: " + newTimestampServerDevice + ". Syncing for date: " + lastTimestamServerDevice + ". For UID: " + uid);
+            Log.v(TAG, "Time is: " + newTimestampServerDevice + ". Syncing for date: " + lastTimestampServerDevice + ". For UID: " + uid);
 
-            serverDeviceModels = requestManager.doSyncRequest().getBackendDeviceSync(uid, lastTimestamServerDevice);
+            serverDeviceModels = requestManager.doSyncRequest().getBackendDeviceSync(uid, lastTimestampServerDevice);
             //TODO ENERGY
 
             /* STEP 5: Send all local to server */
-            serverDeviceModelsError = requestManager.doSyncRequest().putFrontendDeviceSync(uid, localDeviceModels);
-            if(serverDeviceModelsError.size() > 0)
-                Log.e(TAG, "Frontend sync to server failed with # of models: " + serverDeviceModelsError.size());
+            if(localDeviceModels == null)
+                Log.e(TAG, "Local DeviceModels query error.");
+            else if (localDeviceModels.size() > 0) {
+                Log.v(TAG, "Sending # DeviceModels to server: " + localDeviceModels.size());
+                serverDeviceModelsError = requestManager.doSyncRequest().putFrontendDeviceSync(uid, localDeviceModels);
+                if (serverDeviceModelsError.size() > 0)
+                    Log.e(TAG, "Frontend sync to server failed with # of models: " + serverDeviceModelsError.size());
+            }
             //TODO ENERGY
 
             /* STEP 6: Insert and delete */
             ArrayList<DeviceModel> deleteDeviceModels = new ArrayList<>();
 
-            // Find deleted
-            if(serverDeviceModels != null){
-                if(serverDeviceModels.size() > 0) {
-
+            // SIDESTEP Find deleted
+            if (serverDeviceModels != null){
+                if (serverDeviceModels.size() > 0) {
                     Log.v(TAG, "Device id's on the server: " + serverDeviceModels.size());
                     //prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestampServerDevice);
 
-                    for(DeviceModel dm : serverDeviceModels){
-                        Log.v(TAG, ""+dm);
-                        if(dm.isDeleted()){
+                    for (DeviceModel dm : serverDeviceModels) {
+                        Log.v(TAG, "" + dm);
+                        if (dm.isDeleted()) {
                             deleteDeviceModels.add(dm);
                             serverDeviceModels.remove(dm);
                         }
@@ -142,7 +144,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                 }
             }
             else
-                Log.e(TAG, "Device sync failed");
+                Log.e(TAG, "Device server get sync failed");
 
             for(DeviceModel dm : localDeviceModels)
                 if(dm.isDeleted())
@@ -151,12 +153,17 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             /* TODO USAGE */
 
             int nDevice = EnergyDataSource.addBatchDeviceModel(getContext().getContentResolver(), serverDeviceModels);
-            boolean deleteSuccess = EnergyDataSource.batchDeleteDeviceSyncOp(getContext().getContentResolver(), deleteDeviceModels);
+
+            boolean deleteSuccess = true;
+            if(deleteDeviceModels.size() > 0)
+                deleteSuccess = EnergyDataSource.batchDeleteDeviceSyncOp(getContext().getContentResolver(), deleteDeviceModels);
 
             /* STEP 7 */
-            prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestampServerDevice);
+           // prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestampServerDevice);
 
-            Log.v(TAG, "Synchronization complete.");
+            Log.v(TAG, "Synchronization complete."
+                    + "\nAdded DevicesModels to local DB: " + nDevice
+                    + "\nDeviceModels deletion state: " + deleteSuccess);
         } catch (Exception e) {
             e.printStackTrace();
         }

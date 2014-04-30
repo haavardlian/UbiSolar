@@ -11,6 +11,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -34,8 +35,13 @@ public class TestdataHelper {
     }
 
     private static void addDevice(ContentResolver cr, String name, String description, int category, boolean isTotal) {
-        DeviceModel device = new DeviceModel(System.currentTimeMillis(),
-                name, description, System.currentTimeMillis(), category, isTotal);
+        PreferencesManager preferencesManager = PreferencesManager.getInstance();
+        DeviceModel device = new DeviceModel(
+                System.currentTimeMillis(),
+                name,
+                description,
+                Long.valueOf(preferencesManager.getKeyFacebookUid()),
+                category);
 
         cr.insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());

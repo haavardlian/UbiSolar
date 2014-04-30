@@ -172,7 +172,7 @@ public class PreferencesManager {
     }
 
     public String getKeyFacebookUid(){
-        return mPref.getString(KEY_FACEBOOK_UID, "");
+        return mPref.getString(KEY_FACEBOOK_UID, "-1");
     }
 
     public void clearFacebookSessionData(){

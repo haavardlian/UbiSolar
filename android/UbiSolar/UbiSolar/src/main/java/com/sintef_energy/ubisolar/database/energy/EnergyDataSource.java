@@ -232,14 +232,14 @@ public class EnergyDataSource {
      * @param timestamp
      * @return
      */
-    public static ArrayList<DeviceModel> getAllSyncDevicec(ContentResolver resolver, long timestamp){
+    public static ArrayList<DeviceModel> getAllSyncDevices(ContentResolver resolver, long timestamp){
         ArrayList<DeviceModel> deviceModels = new ArrayList<>();
 
         Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
         builder.appendPath(EnergyContract.DELETE); //Get deleted data aswell
 
         Cursor cursor = resolver.query(
-                EnergyContract.Devices.CONTENT_URI,
+                builder.build(),
                 EnergyContract.Devices.PROJECTION_ALL,
                 DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED + " >= ?",
                 new String[]{""+timestamp},
@@ -252,13 +252,15 @@ public class EnergyDataSource {
         }
         else if(cursor.getCount() < 1){
             cursor.close();
-            return null;
+            return deviceModels;
         }
         else {}
 
         cursor.moveToFirst();
 
-        while (!cursor.isAfterLast())
+        Log.v(TAG, "getAllSyncDevices: # of models: " + cursor.getCount());
+
+        while (cursor.moveToNext())
             deviceModels.add(new DeviceModel(cursor));
 
         cursor.close();

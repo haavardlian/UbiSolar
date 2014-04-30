@@ -166,7 +166,6 @@ public class EnergyProvider extends ContentProvider{
         else
             selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
 
-        Log.v(TAG, "query selection: " + selection);
         //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
         if(rawSql == null)
             cursor =
@@ -410,7 +409,7 @@ public class EnergyProvider extends ContentProvider{
                 try {
                     //standard SQL insert statement, that can be reused
                     SQLiteStatement insert =
-                            db.compileStatement("insert into " + DeviceModel.DeviceEntry.TABLE_NAME
+                            db.compileStatement("INSERT OR REPLACE INTO " + DeviceModel.DeviceEntry.TABLE_NAME
                                     + "(" + DeviceModel.DeviceEntry._ID + ","
                                     + DeviceModel.DeviceEntry.COLUMN_USER_ID + ","
                                     + DeviceModel.DeviceEntry.COLUMN_NAME + ","
@@ -418,7 +417,7 @@ public class EnergyProvider extends ContentProvider{
                                     + DeviceModel.DeviceEntry.COLUMN_CATEGORY + ","
                                     + DeviceModel.DeviceEntry.COLUMN_IS_DELETED + ","
                                     + DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED + ")"
-                                    +" values " + "(?,?,?,?,?,?,?)");
+                                    +" VALUES " + "(?,?,?,?,?,?,?)");
                     for (ContentValues value : values){
                         //bind the 1-indexed ?'s to the values specified
                         insert.bindLong(1, value.getAsLong(DeviceModel.DeviceEntry._ID));
