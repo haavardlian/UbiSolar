@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.resources;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.dropwizard.jersey.params.LongParam;
 
@@ -28,8 +29,8 @@ public class SyncResource {
 
     @GET
     @Path("/device/newest")
-    public long getLastEditedDeviceTime() {
-        long latest = db.getLastEditedDeviceTime();
+    public long getLastEditedDeviceTime(@PathParam("user") LongParam user) {
+        long latest = db.getLastUpdatedTimeDevice(user.get());
 
         return latest;
     }
@@ -47,9 +48,33 @@ public class SyncResource {
     @PUT
     @Path("/device/")
     public Response syncDevices(@Valid ArrayList<Device> devices) {
-        Date date = new Date();
-        db.createDevices(devices.iterator(), date.getTime()/1000L);
+        int result[] = db.createDevices(devices.iterator());
+        boolean success = true;
 
-        throw new WebApplicationException(Response.Status.CREATED);
+        ArrayList<Device> failedDevices = new ArrayList<Device>();
+
+        if(result.length != devices.size()) success = false;
+        else {
+            for(int i = 0; i < result.length; i++) {
+                if(result[i] == 0) {
+                    success = false;
+                    failedDevices.add(devices.get(i));
+                }
+            }
+        }
+        if(success)
+            throw new WebApplicationException(Response.Status.CREATED);
+        else
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedDevices).build();
+    }
+
+    @GET
+    @Path("/usage/{timestamp}")
+    public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
+        List<DeviceUsage> usage = db.getUpdatedUsage(userID.get(), timestamp.get());
+        if(usage != null && !usage.isEmpty())
+            return usage;
+        else
+            throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 }
