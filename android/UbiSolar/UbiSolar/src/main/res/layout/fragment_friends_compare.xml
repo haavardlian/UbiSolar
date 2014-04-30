@@ -112,7 +112,7 @@
                 android:layout_gravity="center_horizontal|top"
                 android:padding="12dp"
                 android:textStyle="bold"
-                android:text="@string/comp_header" />
+                />
 
 
         </FrameLayout>

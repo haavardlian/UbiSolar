@@ -41,7 +41,6 @@ import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.social.CompareFragment;
-import com.sintef_energy.ubisolar.fragments.social.ComparisonSettingsFragment;
 import com.sintef_energy.ubisolar.model.NavDrawerItem;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
@@ -240,9 +239,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 fragment = ProfileFragment.newInstance(position);
                 break;
             case 11:
-                fragment = ComparisonSettingsFragment.newInstance(position);
-                break;
-            case 12:
                 logout = true;
                 break;
             default:
@@ -300,7 +296,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     private void changeNavdrawerSessionsView(boolean state){
         Global.loggedIn = state;
 
-        DrawerItem item = (DrawerItem)mNavigationDrawerFragment.getNavDrawerItem(12);
+        DrawerItem item = (DrawerItem)mNavigationDrawerFragment.getNavDrawerItem(11);
 
         if (Global.loggedIn) //TODO: if Session.GetActiveSession().isOpened?
             item.setTitle("Log out");

@@ -16,93 +16,24 @@
             android:layout_height="wrap_content"
             android:textSize="18dp"
             android:textColorHint="#d8d8d8"
-            android:padding="20dp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:layout_alignParentTop="true"
             android:layout_weight="70"
             android:text="Comparison based on:"
             android:id="@+id/compBasedOn" />
 
-        <TextView
+        <ListView
+            android:id="@+id/comp_settings_list"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:layout_marginRight="120dp"
-            android:gravity="right"
-            android:linksClickable="true"
-            android:clickable="true"
-            android:layout_toRightOf="@id/compBasedOn"
-            android:onClick="onClick"
-            android:text="Change this?"
-            android:id="@+id/changeToCompSettings" />
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="200dp"
+            android:layout_height="fill_parent"
+            android:dividerHeight="3dp" />
 
 
-        <CheckedTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
-            android:paddingLeft="25dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="15dp"
-            android:gravity="center_vertical"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:checked="true"
-            android:textSize="20dp"
-            android:text="Area"
-            android:id="@+id/areaCheckedTextView" />
-
-        <CheckedTextView
-            android:layout_marginTop="105dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:paddingLeft="25dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="15dp"
-            android:gravity="center_vertical"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:checked="true"
-            android:textSize="20dp"
-            android:text="Number of residents"
-            android:id="@+id/resCheckedTextView" />
-
-        <CheckedTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="150dp"
-            android:paddingLeft="25dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="15dp"
-            android:gravity="center_vertical"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:checked="true"
-            android:textSize="20dp"
-            android:text="Residence size"
-            android:id="@+id/sizeCheckedTextView" />
-
-        <CheckedTextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="195dp"
-            android:paddingLeft="25dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="15dp"
-            android:gravity="center_vertical"
-            android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-            android:checked="false"
-            android:textSize="20dp"
-            android:text="Energy class"
-            android:id="@+id/energyCheckedTextView" />
     </RelativeLayout>
 
 

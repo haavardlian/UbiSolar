@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.adapter.ComparisonSettingsAdapter;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
@@ -33,7 +34,7 @@ public class CompareFriendsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private View view;
     private FriendAdapter friendAdapter;
-    private SimilarAdapter similarAdapter;
+    private ComparisonSettingsAdapter compAdapter;
 
 
 
@@ -84,7 +85,7 @@ public class CompareFriendsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Fragment fragment = CompareSimilarFragment.newInstance(position, similarAdapter);
+                Fragment fragment = CompareSimilarFragment.newInstance(position, compAdapter);
                 addFragment(fragment, true, friends.get(position));
             }
         });
