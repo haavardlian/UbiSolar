@@ -31,7 +31,6 @@ public class SyncResource {
     public long getLastEditedDeviceTime(@PathParam("user") LongParam user) {
         long latest = db.getLastUpdatedTimeDevice(user.get());
 
-
         return latest;
     }
 
@@ -68,6 +67,7 @@ public class SyncResource {
         else
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedDevices).build();
     }
+
 
     @GET
     @Path("/usage/newest")
