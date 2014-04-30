@@ -1,11 +1,11 @@
-package com.sintef_energy.ubisolar.fragments.social;
+package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.ComparisonSettingsAdapter;
+import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
+import com.sintef_energy.ubisolar.fragments.social.CompareSimilarFragment;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class CompareFriendsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private View view;
     private FriendAdapter friendAdapter;
-    private ComparisonSettingsAdapter compAdapter;
+    private ComparisonAdapter compAdapter;
 
 
 
@@ -91,6 +91,43 @@ public class CompareFriendsFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public class MyPagerAdapter extends FragmentStatePagerAdapter {
+
+        private final String[] TITLES = { "Friends", "Similar profiles"};
+        private FriendAdapter friendAdapter;
+        private ComparisonAdapter compAdapter;
+        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, ComparisonAdapter compAdapter) {
+            super(fm);
+            this.friendAdapter = friendAdapter;
+            this.compAdapter = compAdapter;
+        }
+
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TITLES[position];
+        }
+
+        @Override
+        public int getCount() {
+            return TITLES.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch(position) {
+                case 0:
+                    return CompareFriendsFragment.newInstance(0, friendAdapter);
+                case 1:
+                    return CompareSimilarFragment.newInstance(1, compAdapter);
+                default:
+                    return null;
+            }
+        }
+
+
     }
 
     public void addFragment(Fragment fragment, boolean addToBackStack, User user) {

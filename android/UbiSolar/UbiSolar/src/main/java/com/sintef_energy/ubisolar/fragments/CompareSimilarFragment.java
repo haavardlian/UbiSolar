@@ -1,15 +1,18 @@
-package com.sintef_energy.ubisolar.fragments.social;
+package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.ComparisonSettingsAdapter;
+import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 
 import java.util.ArrayList;
@@ -24,14 +27,14 @@ public class CompareSimilarFragment extends Fragment {
      */
     public static final String TAG = CompareSimilarFragment.class.getName();
 
-    private ComparisonSettingsAdapter compAdapter;
+    private ComparisonAdapter compAdapter;
 
     private View view;
     private ArrayList<ResidenceAttributes> houseDescription;
     private static final String ARG_POSITION = "position";
 
 
-    public CompareSimilarFragment(ComparisonSettingsAdapter compAdapter) {
+    public CompareSimilarFragment(ComparisonAdapter compAdapter) {
         this.compAdapter = compAdapter;
     }
 
@@ -44,7 +47,7 @@ public class CompareSimilarFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareSimilarFragment newInstance(int position, ComparisonSettingsAdapter compAdapter) {
+    public static CompareSimilarFragment newInstance(int position, ComparisonAdapter compAdapter) {
         CompareSimilarFragment fragment = new CompareSimilarFragment(compAdapter);
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
@@ -60,6 +63,12 @@ public class CompareSimilarFragment extends Fragment {
         return fragment;
     }
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     /**
      * The first call to a created fragment
@@ -82,7 +91,7 @@ public class CompareSimilarFragment extends Fragment {
         houseDescription.add(new ResidenceAttributes("Resident size"));
         houseDescription.add(new ResidenceAttributes("Energy class"));
 
-        ComparisonSettingsAdapter compAdapter= new ComparisonSettingsAdapter(getActivity(),R.layout.fragment_similar_compare_row, houseDescription);
+        ComparisonAdapter compAdapter= new ComparisonAdapter(getActivity(),R.layout.fragment_similar_compare_row, houseDescription);
         ListView houseDescrList = (ListView) view.findViewById(R.id.comp_settings_list);
         houseDescrList.setAdapter(compAdapter);
 
@@ -91,7 +100,24 @@ public class CompareSimilarFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Auto-generated method stub
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.askexperts_menu, menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // do s.th.
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);

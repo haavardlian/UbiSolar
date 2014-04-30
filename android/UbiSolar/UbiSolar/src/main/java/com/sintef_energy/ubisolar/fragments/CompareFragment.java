@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar.fragments.social;
+package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -14,9 +14,10 @@ import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.ComparisonSettingsAdapter;
+import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
+import com.sintef_energy.ubisolar.fragments.social.CompareFriendsFragment;
+import com.sintef_energy.ubisolar.fragments.social.CompareSimilarFragment;
 import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 import com.sintef_energy.ubisolar.model.User;
 
@@ -31,7 +32,7 @@ public class CompareFragment extends DefaultTabFragment {
 
     private View mRoot;
     private FriendAdapter friendAdapter;
-    private ComparisonSettingsAdapter compAdapter;
+    private ComparisonAdapter compAdapter;
 
     public static CompareFragment newInstance(int sectionNumber) {
         CompareFragment fragment = new CompareFragment();
@@ -58,7 +59,7 @@ public class CompareFragment extends DefaultTabFragment {
         mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
         //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
         friendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<User>());
-        compAdapter = new ComparisonSettingsAdapter(getActivity(), R.layout.fragment_similar_compare_row, new ArrayList<ResidenceAttributes>());
+        compAdapter = new ComparisonAdapter(getActivity(), R.layout.fragment_similar_compare_row, new ArrayList<ResidenceAttributes>());
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
         pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter, compAdapter));
@@ -79,8 +80,8 @@ public class CompareFragment extends DefaultTabFragment {
 
         private final String[] TITLES = { "Friends", "Similar profiles"};
         private FriendAdapter friendAdapter;
-        private ComparisonSettingsAdapter compAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, ComparisonSettingsAdapter compAdapter) {
+        private ComparisonAdapter compAdapter;
+        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, ComparisonAdapter compAdapter) {
             super(fm);
             this.friendAdapter = friendAdapter;
             this.compAdapter = compAdapter;
