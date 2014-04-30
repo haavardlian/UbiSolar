@@ -12,13 +12,11 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.TipsFragment;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
-import com.sintef_energy.ubisolar.utils.RequestManager;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 /**
  * Created by Håvard on 24.03.2014.
@@ -75,7 +73,7 @@ public class TipDialog extends DialogFragment {
                 ratingBar.setRating(v);
                 tip.setAverageRating((int)v);
                 TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
-                RequestManager.getInstance().doRequest().createRating(rating);
+                RequestManager.getInstance().doTipRequest().createRating(rating);
                 ((TipsFragment) getTargetFragment()).getAdapter().notifyDataSetChanged();
             }
         });

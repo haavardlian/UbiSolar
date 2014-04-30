@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -32,6 +30,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
+import com.sintef_energy.ubisolar.dialogs.ShareDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
@@ -40,17 +39,9 @@ import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Random;
 
-/**
- * Created by perok on 2/11/14.
- *
- * BUG: Backstack for usage behaves weired.
- */
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = UsageFragment.class.getName();
@@ -120,7 +111,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         // Initialize the ViewPager and set an adapter
         ScrollViewPager pager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
         pager.setAdapter(mUsageFragmentStatePageAdapter);
-        pager.setSwipeable(false); //TODO: Should be enabled/ disabled on MotionEvents for LineGraph
+        pager.setSwipeable(false);
 
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRootView.findViewById(R.id.fragment_usage_tabs);
@@ -204,7 +195,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 dialog.show(getFragmentManager(), "selectDeviceDialog");
                 return true;
             case R.id.share_usage:
-                graphView.createImage();
+                ShareDialog d = new ShareDialog(graphView.createImage());
+                d.setTargetFragment(UsageFragment.this, 0);
+                d.show(getFragmentManager(), "shareDialog");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -266,10 +259,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(Device device : mDevices.values())
         {
             if(selectedItems.length > i) {
-                if (selectedItems[i]) {
-                    ids.add("" + device.getDevice_id());
-                }
-                i++;
+                if (selectedItems[i])
+                    ids.add("" + device.getId());
+               i++;
             }
         }
         return ids.toArray(new String[ids.size()]);
@@ -362,7 +354,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(int i = 0; i < selectedItems.length; i++)
         {
             if(selectedItems[i]) {
-                System.out.println(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID);
                 queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
             }
         }
@@ -370,7 +361,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         int i;
 
         for(i = 0; i < queries.size() -1; i++) {
-            System.out.println(queries.get(i));
             where += queries.get(i) + " OR ";
         }
 
@@ -396,7 +386,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 if (cursor.getCount() != 0)
                     do {
                         DeviceModel model = new DeviceModel(cursor);
-                        mDevices.put(model.getDevice_id(), model);
+                        mDevices.put(model.getId(), model);
                     } while (cursor.moveToNext());
                 graphView.setDeviceSize(mDevices.size());
                 if(mDevices.size() > 0)
@@ -427,11 +417,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(data.getCount() >= 1) {
             do {
                 EnergyUsageModel model = new EnergyUsageModel(data, true);
-                DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
+                DeviceUsageList deviceUsageList = devices.get(model.getDeviceId());
 
                 if (deviceUsageList == null) {
-                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getDevice_id()), deviceUsageList);
+                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
+                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);

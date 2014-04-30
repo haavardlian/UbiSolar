@@ -9,8 +9,6 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
@@ -20,9 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
-import android.util.Log;
 
-import com.facebook.HttpMethod;
 import com.facebook.LoggingBehavior;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -32,25 +28,23 @@ import com.facebook.Settings;
 import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.drawer.DrawerItem;
-import com.sintef_energy.ubisolar.drawer.Item;
 import com.sintef_energy.ubisolar.fragments.AddUsageFragment;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.social.CompareFragment;
-import com.sintef_energy.ubisolar.model.NavDrawerItem;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
-import com.sintef_energy.ubisolar.utils.RequestManager;
 import com.sintef_energy.ubisolar.utils.TestdataHelper;
+import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.Arrays;
 
@@ -145,8 +139,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
 
         /* Setup preference manager */
-        PreferencesManager.initializeInstance(getApplicationContext());
-        mPrefManager = PreferencesManager.getInstance();
+        try {
+            mPrefManager = PreferencesManager.getInstance();
+        } catch (IllegalStateException ex) {
+            mPrefManager = PreferencesManager.initializeInstance(getApplicationContext());
+        }
 
         /* Setup dummy account */
         AUTHORITY = getResources().getString(R.string.provider_authority_energy);
@@ -161,7 +158,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         /* Request a sync operation */
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); //Do sync regardless of settings
-        //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
         ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
 
         // Extra logging for debug
@@ -172,7 +169,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         /* Start developer mode after app has been setup
          * Lots of StrictMode violations are done in startup anyways. */
-        developerMode(Global.DEVELOPER_MADE, true);
+        developerMode(Global.DEVELOPER_MADE, false);
     }
 
     /**
@@ -187,7 +184,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         //Updates the UI based on logged in state
         changeNavdrawerSessionsView(Global.loggedIn);
     }
-
 
     @Override
     public void onStop() {
@@ -384,7 +380,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
         /* User wants to log in */
         /* Is there internet? */
-        else if(!isNetworkOn(getApplicationContext())){
+        else if(!Utils.isNetworkOn(getApplicationContext())){
             Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
         /* There is internet */
@@ -400,6 +396,8 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 session.openForRead(new Session.OpenRequest(this)
                         .setPermissions(Arrays.asList("basic_info"))
                         .setCallback(mFacebookSessionStatusCallback));
+
+                session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
@@ -446,7 +444,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 mPrefManager.setAccessToken(session.getAccessToken());
                 mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
                 //What is this and what is its purpose?
-                mPrefManager.setFacebookName(session.getApplicationId());
+                mPrefManager.setFacebookName(session.getApplicationId()); //TODO Is appId userId? In that case, set UID here.
 
                 //SessionState.
 
@@ -460,15 +458,15 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                  *  Don't need to store cached data.
                  *
                  */
-                if(isNetworkOn(getApplicationContext()))
+                if(Utils.isNetworkOn(getApplicationContext()))
                     Request.newMeRequest(session, new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
                             if(response.getConnection() != null || response.getIsFromCache() != false) {
 
                                 mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
-                                mPrefManager.setFacebookLocation(user.getLocation().toString());
-                                mPrefManager.setFacebookAge(user.getBirthday());
+                                //mPrefManager.setFacebookLocation(user.getLocation().toString());
+                                //mPrefManager.setFacebookAge(user.getBirthday());
                                 mPrefManager.setKeyFacebookUid(user.getId());
 
                                 Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
@@ -486,19 +484,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             } else
                 Log.v(DrawerActivity.TAG, "Facebook status is fishy");
         }
-    }
-
-    /**
-     * Helper class to check if app has internet connection.
-     * @param context
-     * @return
-     */
-    public boolean isNetworkOn(Context context) {
-        ConnectivityManager connMgr =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        return (networkInfo != null && networkInfo.isConnected());
     }
 
 
@@ -544,11 +529,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     private void developerMode(boolean devMode, boolean testData){
         if(testData) {
-//            TestdataHelper.clearDatabase(getContentResolver());
+            TestdataHelper.clearDatabase(getContentResolver());
 //            //Populate the database if it's empty
 //            if (EnergyDataSource.getEnergyModelSize(getContentResolver()) == 0) {
 //                Log.v(TAG, "Developer mode: Database empty. Populating it.");
-//                TestdataHelper.createDevices(getContentResolver());
+                TestdataHelper.createDevices(getContentResolver());
 //                //            createEnergyUsage();
 //            }
         }
