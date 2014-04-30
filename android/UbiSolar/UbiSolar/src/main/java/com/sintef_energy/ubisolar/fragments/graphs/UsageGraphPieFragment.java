@@ -204,20 +204,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
                     }
                 }
             });
-
-//            mChartView.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-//                    if (seriesSelection == null) {
-//                        Toast.makeText(PieActivity.this,"No chart element was long pressed", Toast.LENGTH_SHORT);
-//                        return false;
-//                    } else {
-//                        Toast.makeText(PieActivity.this,"Chart element data point index "+ seriesSelection.getPointIndex()+ " was long pressed",Toast.LENGTH_SHORT);
-//                        return true;
-//                    }
-//                }
-//            });
             layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }
         else {
@@ -277,6 +263,8 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     public void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
+        TextView label = (TextView) rootView.findViewById(R.id.usagePieLabel);
+        label.setText("");
         mChartView.repaint();
 
     }
@@ -318,13 +306,12 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     public boolean[] getSelectedDialogItems() {
-        if(mSelectedDialogItems == null)
-        {
-            if(mDeviceSize > 0) {
-                mSelectedDialogItems = new boolean[mDeviceSize];
-                Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
-                mSelectedDialogItems[0] = false;
-            }
+        if(mSelectedDialogItems == null) {
+            mSelectedDialogItems = new boolean[mDeviceSize];
+            if (mDeviceSize > 0)
+                if (mDeviceSize > 0)
+                    Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
+
         }
         return mSelectedDialogItems;
     }

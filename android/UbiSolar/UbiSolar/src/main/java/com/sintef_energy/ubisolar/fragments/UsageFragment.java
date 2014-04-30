@@ -241,7 +241,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     }
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
-//        graphView.setSelectedItems(selectedItems);
         graphView.setSelectedDialogItems(itemsSelected);
 
         //Clear the graph if no devices are selected
@@ -412,8 +411,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case LOADER_USAGE_MONTH:
             case LOADER_USAGE_YEAR:
                 populateDeviceUsageList(cursor);
-                //TODO: Implement logic to handle this correctly.
-                //Maybe populate.. can take in format argument?
                 break;
         }
     }

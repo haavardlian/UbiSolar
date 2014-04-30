@@ -258,6 +258,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                     if(mTitleLabel == null || mDates.size() < 1)
                         return;
 
+                    if(mDates.size() == 1)
+                        return;
+
                     if (!mTitleLabel.equals(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()))) {
                         mTitleLabel = formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat());
                         setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
