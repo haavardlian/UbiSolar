@@ -18,17 +18,28 @@ public class Device {
     private long userId;
     @JsonProperty
     private long lastUpdated;
+    @JsonProperty
+    private boolean deleted;
 
     public Device() {
 
     }
 
-    public Device(long id, long userId, String name, String description, long lastUpdated) {
+    public Device(long id, long userId, String name, String description, long lastUpdated, boolean deleted) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.description = description;
         this.lastUpdated = lastUpdated;
+        this.deleted = deleted;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public long getLastUpdated() {
