@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.resources;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.dropwizard.jersey.params.LongParam;
 import javax.validation.Valid;
@@ -86,6 +87,7 @@ public class SyncResource {
             throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
+
     @PUT
     @Path("/usage/")
     public Response syncUsage(@Valid ArrayList<DeviceUsage> usage) {
@@ -108,4 +110,5 @@ public class SyncResource {
         else
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedUsages).build();
     }
+
 }
