@@ -51,9 +51,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     private Resolution resolution;
 
-    private String mTitleFormat = "EEEE dd/MM";
-    private String mDataResolution = "dd";
-    private String mPreLabel = "";
     private Date mSelectedDate;
 
     private boolean[] mSelectedDialogItems;
@@ -108,8 +105,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             mRenderer = (DefaultRenderer) mSavedState.getSerializable("mRenderer");
             mSeries = (CategorySeries) mSavedState.getSerializable("mSeries");
             mSelected = mSavedState.getInt("mSelected");
-            mTitleFormat = mSavedState.getString("mTitleFormat");
-            mDataResolution = mSavedState.getString("mDataResolution");
             mSelectedDialogItems = mSavedState.getBooleanArray("mSelectedDialogItems");
         }
         else
@@ -117,7 +112,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             setupPieGraph();
         }
 
-        resolution = new Resolution(1);
+        resolution = new Resolution(Resolution.DAYS);
         createPieGraph();
         updateDetails();
 //        ArrayList<ArrayList<DeviceUsage>> usageList = createDeviceUsage(mDevices);
@@ -138,8 +133,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         state.putSerializable("mRenderer", mRenderer);
         state.putSerializable("mSeries", mSeries);
         state.putInt("mSelected", mSelected);
-        state.putString("mTitleFormat", mTitleFormat);
-        state.putString("mDataResolution", mDataResolution);
         state.putBooleanArray("mSelectedDialogItems", mSelectedDialogItems);
 
         return state;
@@ -260,13 +253,13 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         mDeviceUsageList = usageList;
         setSelectedDate();
         for(DeviceUsageList u : mDeviceUsageList)
-            u.calculateTotalUsage(formatDate(mSelectedDate, mTitleFormat) , mTitleFormat);
+            u.calculateTotalUsage(formatDate(mSelectedDate, resolution.getPieFormat()) , resolution.getPieFormat());
 
         populatePieChart();
 
         if(mSelectedDate != null) {
             TextView label = (TextView) rootView.findViewById(R.id.usagePieLabel);
-            label.setText(mPreLabel + formatDate(mSelectedDate, mTitleFormat));
+            label.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
         }
     }
 
@@ -316,25 +309,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     public void setFormat(int mode)
     {
-//        mTitleFormat = titleFormat;
-//        mDataResolution = titleFormat;
-        mPreLabel = "";
-
-        if(mDataResolution == "HH") {
-            mTitleFormat = "HH EEEE dd/MM";
-            mPreLabel = "KL ";
-        }
-        else if(mDataResolution == "dd") {
-            mTitleFormat = "EEEE dd/MM";
-        }
-        else if(mDataResolution == "w") {
-            mTitleFormat = "w y";
-            mPreLabel = "Week ";
-        }
-        else if(mDataResolution == "MMMM")
-            mTitleFormat = "MMMM";
-        else;
-//            mTitleFormat = titleFormat;
+      resolution.setFormat(mode);
     }
 
     public int getResolution()

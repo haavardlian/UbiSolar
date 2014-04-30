@@ -16,9 +16,14 @@ public class Resolution {
 
     private int mode;
 
+    //Line graph formats
     private String resolutionFormat;
     private String titleFormat;
     private String compareFormat;
+
+    //Pie graph formats
+    private String preLabel;
+    private String pieFormat;
 
     public Resolution(int mode){
         this.mode = mode;
@@ -34,21 +39,33 @@ public class Resolution {
                 resolutionFormat = "HH";
                 titleFormat = "EEEE dd/MM";
                 compareFormat = "yyyyDDHH";
+
+                preLabel = "KL ";
+                pieFormat = "HH EEEE dd/MM";
                 break;
             case DAYS:
                 resolutionFormat = "dd";
                 titleFormat = "MMMM";
                 compareFormat = "yyyyDD";
+
+                preLabel = "";
+                pieFormat = "EEEE dd/MM";
                 break;
             case WEEKS:
                 resolutionFormat = "w";
                 titleFormat = "MMMMM y";
                 compareFormat = "yyyyw";
+
+                preLabel = "Week ";
+                pieFormat = "w y";
                 break;
             case MONTHS:
                 resolutionFormat = "MMMM";
                 titleFormat = "y";
                 compareFormat = "yyyyMM";
+
+                preLabel = "";
+                pieFormat = "MMMM";
                 break;
         }
     }
@@ -64,6 +81,15 @@ public class Resolution {
     public String getCompareFormat() {
         return compareFormat;
     }
+
+    public String getPreLabel(){
+        return preLabel;
+    }
+
+    public String getPieFormat(){
+        return pieFormat;
+    }
+
 
     public void getNextPoint(Calendar cal){
         if(mode == HOURS)

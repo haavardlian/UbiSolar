@@ -371,20 +371,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return usage.get(usage.size() -1);
     }
 
-    private DeviceUsageList getLargestUsageList()
-    {
-        DeviceUsageList largestList = new DeviceUsageList();
-
-        for(DeviceUsageList usageList : mActiveUsageList)
-            if( largestList.size() < usageList.size())
-                largestList = usageList;
-
-        if(largestList.size() == 0)
-            return null;
-
-        return largestList;
-    }
-
     private void setRange(double minY, double maxY, int points)
     {
         int end = points * POINT_DISTANCE;
