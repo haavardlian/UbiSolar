@@ -1,11 +1,14 @@
 package com.sintef_energy.ubisolar.database.energy;
 
 import android.content.AsyncQueryHandler;
+import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -194,4 +197,105 @@ public class EnergyDataSource {
         return n;
     }
 
+    public static int addBatchDeviceModel(ContentResolver resolver, ArrayList<DeviceModel> deviceModels){
+        //AsyncQueryHandler handler = new AsyncQueryHandler(resolver) {};
+
+        if(deviceModels.size() < 1)
+            return 0;
+
+        ContentValues[] values = new ContentValues[deviceModels.size()];
+        int i = 0;
+        for(DeviceModel dm : deviceModels) {
+            values[i] = dm.getContentValues();
+            i++;
+        }
+
+        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
+        int n = resolver.bulkInsert(
+                builder.build(),
+                values
+            );
+
+        if(n != values.length)
+            Log.e(TAG, "addBatchDeviceModel: Tried adding: " +values.length + ". Total added was: " + n);
+
+        return n;
+    }
+
+    /* SYNC OPERATIONS */
+
+    /**
+     *
+     * Retrieves all device models (included deleted ones) with lastUpdated >= timestamp.
+     *
+     * @param resolver
+     * @param timestamp
+     * @return
+     */
+    public static ArrayList<DeviceModel> getAllSyncDevicec(ContentResolver resolver, long timestamp){
+        ArrayList<DeviceModel> deviceModels = new ArrayList<>();
+
+        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.DELETE); //Get deleted data aswell
+
+        Cursor cursor = resolver.query(
+                EnergyContract.Devices.CONTENT_URI,
+                EnergyContract.Devices.PROJECTION_ALL,
+                DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED + " >= ?",
+                new String[]{""+timestamp},
+                null
+        );
+
+        if(cursor == null){
+            cursor.close();
+            return null;
+        }
+        else if(cursor.getCount() < 1){
+            cursor.close();
+            return null;
+        }
+        else {}
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast())
+            deviceModels.add(new DeviceModel(cursor));
+
+        cursor.close();
+        return deviceModels;
+     }
+
+    /**
+     * Batch deletes the given DeviceModels. Only for use in sync cases.
+     *
+     * @param contentResolver
+     * @param deviceModels
+     * @return success/ failure
+     */
+    public static boolean batchDeleteDeviceSyncOp(ContentResolver contentResolver, ArrayList<DeviceModel> deviceModels){
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        ContentProviderOperation operation;
+
+        for (DeviceModel item : deviceModels) {
+
+            operation = ContentProviderOperation
+                    .newDelete(EnergyContract.Devices.CONTENT_URI)
+                    .withSelection(DeviceModel.DeviceEntry._ID + " = ?", new String[]{"" + item.getId()})
+                    .build();
+
+            operations.add(operation);
+        }
+
+        try {
+            contentResolver.applyBatch(EnergyContract.AUTHORITY, operations);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return false;
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
 }

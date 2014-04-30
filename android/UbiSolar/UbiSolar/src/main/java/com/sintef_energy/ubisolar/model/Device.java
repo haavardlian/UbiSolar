@@ -12,7 +12,6 @@ public abstract class Device
     protected String name;
     protected String description;
     protected int category;
-    protected boolean isTotal;
     protected boolean deleted;
     protected long lastUpdated;
 
@@ -28,19 +27,6 @@ public abstract class Device
         this.description = description;
         this.userId = userId;
         this.category = category;
-        this.isTotal = false;
-        this.deleted = false;
-    }
-
-
-    public Device(long id, String name, String description, long userId,
-                  int category, boolean isTotal) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.userId = userId;
-        this.category = category;
-        this.isTotal = isTotal;
         this.deleted = false;
     }
 
@@ -91,15 +77,6 @@ public abstract class Device
 
     public void setCategory(int category) {
         this.category = category;
-        updateLastUpdate();
-    }
-
-    public boolean isTotal() {
-        return isTotal;
-    }
-
-    public void setIsTotal(boolean isTotal) {
-        this.isTotal = isTotal;
         updateLastUpdate();
     }
 

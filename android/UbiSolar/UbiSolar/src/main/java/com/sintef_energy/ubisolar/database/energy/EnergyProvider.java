@@ -38,8 +38,10 @@ public class EnergyProvider extends ContentProvider{
     private final ThreadLocal<Boolean> mIsInBatchMode = new ThreadLocal<Boolean>();
 
     // helper constants for use with the UriMatcher
+    private static final int DEVICES_LIST_DELETE = 9;
     private static final int DEVICES_LIST = 1;
     private static final int DEVICES_ID = 2;
+    private static final int ENERGY_LIST_DELETE = 10;
     private static final int ENERGY_LIST = 3;
     private static final int ENERGY_ID = 4;
     private static final int ENERGY_DAY_LIST = 5;
@@ -47,8 +49,6 @@ public class EnergyProvider extends ContentProvider{
     private static final int ENERGY_MONTH_LIST = 7;
     private static final int ENERGY_YEAR_LIST = 8;
 
-    private static final int DEVICES_LIST_DELETE = 9;
-    private static final int ENERGY_LIST_DELETE = 10;
 
     private static ContentValues deleteValues;
 
@@ -112,7 +112,12 @@ public class EnergyProvider extends ContentProvider{
         //Used by day, month, year
         String rawSql = null;
 
+        boolean deleteData = false;
+
         switch (URI_MATCHER.match(uri)) {
+            // We want the deleted data aswell
+            case DEVICES_LIST_DELETE:
+                deleteData = true;
             case DEVICES_LIST:
                 builder.setTables(DeviceModel.DeviceEntry.TABLE_NAME);
                 if (TextUtils.isEmpty(sortOrder)) {
@@ -125,6 +130,8 @@ public class EnergyProvider extends ContentProvider{
                 builder.appendWhere(EnergyContract.Devices._ID + " = " +
                     uri.getLastPathSegment());
                 break;
+            case ENERGY_LIST_DELETE:
+                deleteData = true;
             case ENERGY_LIST:
                 builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
                 if (TextUtils.isEmpty(sortOrder)) {
@@ -154,7 +161,8 @@ public class EnergyProvider extends ContentProvider{
         }
 
         if(selection == null)
-            selection = selectionAvoidDeleteBit;
+            if(!deleteData)
+                selection = selectionAvoidDeleteBit;
         else
             selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
 
@@ -356,10 +364,11 @@ public class EnergyProvider extends ContentProvider{
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mHelper.getWritableDatabase();
         final int match = URI_MATCHER.match(uri);
+        int numInserted = 0;
         switch(match){
             case ENERGY_LIST:
                 mIsInBatchMode.set(true);
-                int numInserted= 0;
+                numInserted= 0;
                 db.beginTransaction();
                 try {
                     //standard SQL insert statement, that can be reused
@@ -369,8 +378,9 @@ public class EnergyProvider extends ContentProvider{
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ","
-                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED + ")"
-                                    +" values " + "(?,?,?,?, ?)");
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED + ")"
+                                    +" values " + "(?,?,?,?,?,?)");
                     for (ContentValues value : values){
                         //bind the 1-indexed ?'s to the values specified
                         insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
@@ -378,6 +388,7 @@ public class EnergyProvider extends ContentProvider{
                         insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME));
                         insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
                         insert.bindLong(5, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED));
+                        insert.bindLong(6, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED));
                         insert.execute();
 
                         db.yieldIfContendedSafely();
@@ -392,7 +403,45 @@ public class EnergyProvider extends ContentProvider{
                     getContext().getContentResolver().notifyChange(EnergyContract.CONTENT_URI, null);
                 }
                 return numInserted;
-            //....
+            case DEVICES_LIST:
+                mIsInBatchMode.set(true);
+                numInserted= 0;
+                db.beginTransaction();
+                try {
+                    //standard SQL insert statement, that can be reused
+                    SQLiteStatement insert =
+                            db.compileStatement("insert into " + DeviceModel.DeviceEntry.TABLE_NAME
+                                    + "(" + DeviceModel.DeviceEntry._ID + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_USER_ID + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_NAME + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_DESCRIPTION + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_CATEGORY + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_IS_DELETED + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED + ")"
+                                    +" values " + "(?,?,?,?,?,?,?)");
+                    for (ContentValues value : values){
+                        //bind the 1-indexed ?'s to the values specified
+                        insert.bindLong(1, value.getAsLong(DeviceModel.DeviceEntry._ID));
+                        insert.bindLong(2, value.getAsLong(DeviceModel.DeviceEntry.COLUMN_USER_ID));
+                        insert.bindString(3, value.getAsString(DeviceModel.DeviceEntry.COLUMN_NAME));
+                        insert.bindString(4, value.getAsString(DeviceModel.DeviceEntry.COLUMN_DESCRIPTION));
+                        insert.bindLong(5, value.getAsInteger(DeviceModel.DeviceEntry.COLUMN_CATEGORY));
+                        insert.bindLong(6, value.getAsInteger(DeviceModel.DeviceEntry.COLUMN_IS_DELETED));
+                        insert.bindLong(7, value.getAsInteger(DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED));
+                        insert.execute();
+
+                        db.yieldIfContendedSafely();
+                    }
+                    db.setTransactionSuccessful();
+                    insert.close();
+                    numInserted = values.length;
+                } finally {
+                    mIsInBatchMode.remove();
+
+                    db.endTransaction();
+                    getContext().getContentResolver().notifyChange(EnergyContract.CONTENT_URI, null);
+                }
+                return numInserted;
             default:
                 throw new UnsupportedOperationException("unsupported uri: " + uri);
         }
