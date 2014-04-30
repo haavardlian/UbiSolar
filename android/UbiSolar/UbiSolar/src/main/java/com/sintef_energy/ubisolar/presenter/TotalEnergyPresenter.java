@@ -64,8 +64,8 @@ public class TotalEnergyPresenter {
         else
             euModels = new ArrayList<>();
 
-        for(IUsageView view : listeners)
-            view.newData(null); //todo: handle correctly...
+//        for(IUsageView view : listeners)
+//            view.newData(null); //todo: handle correctly...
     }
 
     /**
