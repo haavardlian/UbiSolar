@@ -59,8 +59,6 @@ public class ShareDialog extends DialogFragment {
                         Bundle param = new Bundle();
                         Request r;
 
-                        Session.getActiveSession().requestNewPublishPermissions(new Session.NewPermissionsRequest(getActivity(), Arrays.asList("publish_actions")));
-
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                         param.putString("message", caption.getText().toString());
                         param.putByteArray("picture", baos.toByteArray());

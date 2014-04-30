@@ -71,8 +71,10 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
-    private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED,
-            Color.YELLOW};
+    private int[] colors;
+
+
+
     private int mColorIndex;
 
     private Bundle mSavedState;
@@ -96,10 +98,13 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         UsageGraphLineFragment fragment = new UsageGraphLineFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
+
+
         return fragment;
     }
 
     public UsageGraphLineFragment() {
+
     }
 
     /**
@@ -109,6 +114,13 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
+        this.colors = new int[colorStringArray.length];
+
+        for(int i = 0; i < colorStringArray.length; i++) {
+            this.colors[i] = Color.parseColor(colorStringArray[i]);
+        }
     }
 
     @Override

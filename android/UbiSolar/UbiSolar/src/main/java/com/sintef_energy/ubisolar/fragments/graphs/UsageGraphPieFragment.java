@@ -37,8 +37,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     private View rootView;
 
-    private static int[] COLORS = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN,
-            Color.RED, Color.YELLOW};
+    private static int[] colors;
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
@@ -73,6 +72,13 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
+        this.colors = new int[colorStringArray.length];
+
+        for(int i = 0; i < colorStringArray.length; i++) {
+            this.colors[i] = Color.parseColor(colorStringArray[i]);
+        }
     }
 
     @Override
@@ -213,7 +219,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             mSeries.add(deviceUsageList.getDevice().getName() + " - " + percentage + "%",
                     deviceUsageList.getTotalUsage());
             SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-            renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
+            renderer.setColor(colors[(mSeries.getItemCount() - 1) % colors.length]);
             mRenderer.addSeriesRenderer(renderer);
         }
         mChartView.repaint();
