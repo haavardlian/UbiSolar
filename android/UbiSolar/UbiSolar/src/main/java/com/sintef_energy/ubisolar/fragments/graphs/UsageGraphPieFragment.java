@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -327,6 +328,12 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         mDeviceSize = size;
     }
 
-    public void createImage(){
+//    private void setSelectedDate()
+//    {
+//        mSelectedDate = mDeviceUsageList.get(mDeviceUsageList.size() -1).:
+//    }
+
+    public Bitmap createImage(){
+        return null;
     }
 }

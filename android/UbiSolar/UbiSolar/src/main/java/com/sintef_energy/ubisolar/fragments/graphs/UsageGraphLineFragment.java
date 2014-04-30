@@ -18,6 +18,16 @@ import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
 
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.Facebook;
+import com.facebook.model.GraphObject;
+import com.facebook.model.OpenGraphAction;
+import com.facebook.model.OpenGraphObject;
+import com.facebook.widget.FacebookDialog;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.DeviceUsage;
@@ -487,12 +497,12 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return resolution.getMode();
     }
 
-    public void createImage(){
+    public Bitmap createImage(){
         Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         mChartView.draw(canvas);
 
-        writeImage(bitmap);
+        return bitmap;
     }
 
     private void writeImage(Bitmap bitmap){
