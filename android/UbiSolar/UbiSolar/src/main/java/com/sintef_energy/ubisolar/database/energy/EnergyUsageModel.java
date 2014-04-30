@@ -84,9 +84,9 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
      */
     public EnergyUsageModel() {
         setId(-1);
-        setDevice_id(-1);
+        setDeviceId(-1);
         setDatetime(new Date(-1));
-        setPower_usage(-1);
+        setPowerUsage(-1);
         setDeleted(false);
         setLastUpdated(-1);
     }
@@ -116,18 +116,18 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(getId());
-        out.writeLong(getDevice_id());
+        out.writeLong(getDeviceId());
         out.writeFloat(getDatetime().getTime());
-        out.writeDouble(getPower_usage());
+        out.writeDouble(getPowerUsage());
         out.writeInt((isDeleted() ? 1 : 0));
         out.writeLong(getLastUpdated());
     }
 
     private void readFromParcel(Parcel in) {
         setId(in.readLong());
-        setDevice_id(in.readLong());
+        setDeviceId(in.readLong());
         setDatetime(new Date(in.readLong()));
-        setPower_usage(in.readFloat());
+        setPowerUsage(in.readFloat());
         setDeleted(in.readInt() != 0);
         setLastUpdated(in.readLong());
     }
@@ -139,9 +139,9 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
     public ContentValues getContentValues(){
         ContentValues values = new ContentValues();
         values.put(EnergyUsageEntry._ID, getId());
-        values.put(EnergyUsageEntry.COLUMN_DEVICE_ID, getDevice_id());
+        values.put(EnergyUsageEntry.COLUMN_DEVICE_ID, getDeviceId());
         values.put(EnergyUsageEntry.COLUMN_DATETIME, getDatetime().getTime() / 1000L);
-        values.put(EnergyUsageEntry.COLUMN_POWER, getPower_usage());
+        values.put(EnergyUsageEntry.COLUMN_POWER, getPowerUsage());
         values.put(EnergyUsageEntry.COLUMN_IS_DELETED, (isDeleted() ? 1 : 0));
         values.put(EnergyUsageEntry.COLUMN_LAST_UPDATED, getLastUpdated());
         return values;
@@ -155,9 +155,9 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
      */
     public EnergyUsageModel(Cursor cursor, boolean isShortData) {
         setId(cursor.getLong(_id));
-        setDevice_id(cursor.getLong(_deviceId));
+        setDeviceId(cursor.getLong(_deviceId));
         setDatetime(new Date(cursor.getLong(_dateTime) * 1000));
-        setPower_usage(cursor.getDouble(_power));
+        setPowerUsage(cursor.getDouble(_power));
         if(!isShortData){
             setDeleted(cursor.getInt(_is_deleted) != 0);
             setLastUpdated(cursor.getLong(_lastUpdated));
@@ -168,13 +168,17 @@ public class EnergyUsageModel extends DeviceUsage implements Parcelable, Compara
         super(id, device_id, datetime, power_usage);
     }
 
+    public DeviceUsage getSerializeableDevice(){
+        return new DeviceUsage(getId(), getDeviceId(), getDatetime(), getPowerUsage());
+    }
+
     @Override
     public String toString(){
         String info = "EnergyUsageModel:";
         info += "\n\t-> Id: " + getId();
-        info += "\n\t-> Device id: " + getDevice_id();
+        info += "\n\t-> Device id: " + getDeviceId();
         info += "\n\t-> Datetime: " + getDatetime();
-        info += "\n\t-> Power usage: " + getPower_usage();
+        info += "\n\t-> Power usage: " + getPowerUsage();
         info += "\n\t-> isDeleted: " + isDeleted();
 
         return info;

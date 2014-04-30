@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.view.ViewGroup.LayoutParams;
 
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.utils.Resolution;
@@ -33,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by perok on 2/11/14.
@@ -325,9 +322,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             for (DeviceUsage usage : usageList.getUsage()) {
                 while(y < mDates.size()){
                     if(compareDates(usage.getDatetime(), mDates.get(y))){
-                        series.add(y * POINT_DISTANCE, usage.getPower_usage());
-                        max = Math.max(max, usage.getPower_usage());
-                        min = Math.min(min, usage.getPower_usage());
+                        series.add(y * POINT_DISTANCE, usage.getPowerUsage());
+                        max = Math.max(max, usage.getPowerUsage());
+                        min = Math.min(min, usage.getPowerUsage());
                         break;
                     }
                     y++;
@@ -419,11 +416,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 //                for (EnergyUsageModel usage : usageList.getUsage()) {
 //                    if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
 //                        date = formatDate(usage.getDatetime(), mDataResolution);
-//                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getDevice_id(), oldDate, powerUsage));
+//                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getDeviceId(), oldDate, powerUsage));
 //                        powerUsage = 0;
 //                    } else {
 //                        oldDate = usage.getDatetime();
-//                        powerUsage += usage.getPower_usage();
+//                        powerUsage += usage.getPowerUsage();
 //                    }
 //                }
 //                mActiveUsageList.add(compactList);

@@ -7,12 +7,12 @@ import java.util.Date;
  *
  * A replica of the model on the backend.
  */
-public abstract class DeviceUsage
+public class DeviceUsage
 {
     private long id;
-    private long device_id;
+    private long deviceId;
     private Date datetime;
-    private double power_usage;
+    private double powerUsage;
     private boolean deleted;
     protected long lastUpdated;
 
@@ -21,11 +21,11 @@ public abstract class DeviceUsage
 
     }
 
-    public DeviceUsage(long id, long device_id, Date datetime, double power_usage) {
+    public DeviceUsage(long id, long deviceId, Date datetime, double powerUsage) {
         this.id = id;
-        this.power_usage = power_usage;
+        this.powerUsage = powerUsage;
         this.datetime = datetime;
-        this.device_id = device_id;
+        this.deviceId = deviceId;
         this.deleted = false;
     }
 
@@ -34,17 +34,17 @@ public abstract class DeviceUsage
     }
 
 
-    public double getPower_usage() {
-        return power_usage;
+    public double getPowerUsage() {
+        return powerUsage;
     }
 
     public Date getDatetime() {
         return datetime;
     }
 
-    public long getDevice_id() {
+    public long getDeviceId() {
 
-        return device_id;
+        return deviceId;
     }
 
     public long getId() {
@@ -56,8 +56,8 @@ public abstract class DeviceUsage
         updateLastUpdated();
     }
 
-    public void setDevice_id(long device_id) {
-        this.device_id = device_id;
+    public void setDeviceId(long deviceId) {
+        this.deviceId = deviceId;
         updateLastUpdated();
     }
 
@@ -66,8 +66,8 @@ public abstract class DeviceUsage
         updateLastUpdated();
     }
 
-    public void setPower_usage(double power_usage) {
-        this.power_usage = power_usage;
+    public void setPowerUsage(double powerUsage) {
+        this.powerUsage = powerUsage;
         updateLastUpdated();
     }
 

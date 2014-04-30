@@ -1,5 +1,7 @@
 package com.sintef_energy.ubisolar.utils;
 
+import android.util.Log;
+
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
@@ -17,6 +19,8 @@ import java.io.UnsupportedEncodingException;
  * Correctly handles no return data.
  */
 public class JsonArrayRequestTweaked extends JsonRequest<JSONArray>{
+
+    private static final String TAG = JsonArrayRequestTweaked.class.getName();
 
     public JsonArrayRequestTweaked(int method, String url, String requestBody, Response.Listener<JSONArray> listener, Response.ErrorListener errorListener) {
         super(method, url, requestBody, listener, errorListener);

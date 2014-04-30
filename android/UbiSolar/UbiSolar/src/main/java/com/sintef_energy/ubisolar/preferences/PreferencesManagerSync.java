@@ -3,15 +3,14 @@ package com.sintef_energy.ubisolar.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.Date;
-
 /**
  * Based on http://yakivmospan.wordpress.com/2014/03/11/best-practice-sharedpreferences/?utm_source=Android+Weekly&utm_campaign=60136c0692-Android_Weekly_94&utm_medium=email&utm_term=0_4eb677ad19-60136c0692-337821861
  */
 public class PreferencesManagerSync {
 
     private static final String PREF_NAME = PreferencesManagerSync.class.getName() + ".PREFS";
-    public static final String KEY_BACKEND_DEVICE_SYNC_TIMESTAMP = PreferencesManagerSync.class.getName() + ".KEY_BACKEND_DEVICE_SYNC_TIMESTAMP";
+    public static final String KEY_SYNC_TIMESTAMP = PreferencesManagerSync.class.getName() + ".KEY_SYNC_TIMESTAMP";
+    @Deprecated
     public static final String KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP = PreferencesManagerSync.class.getName() + ".KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP";
 
     private static PreferencesManagerSync sInstance;
@@ -41,10 +40,11 @@ public class PreferencesManagerSync {
 
     public void setBackendDeviceSyncTimestamp(long value) {
         mPref.edit()
-            .putLong(KEY_BACKEND_DEVICE_SYNC_TIMESTAMP, value)
+            .putLong(KEY_SYNC_TIMESTAMP, value)
             .apply();
     }
 
+    @Deprecated
     public void setFrontendDeviceSyncTimestamp(long value){
        mPref.edit()
             .putLong(KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP, value)
@@ -52,11 +52,11 @@ public class PreferencesManagerSync {
     }
 
 
-    public long getBackendDeviceSyncTimestamp()  {
-        return mPref.getLong(KEY_BACKEND_DEVICE_SYNC_TIMESTAMP, 0);
+    public long getSyncTimestamp()  {
+        return mPref.getLong(KEY_SYNC_TIMESTAMP, 0);
     }
 
-
+    @Deprecated
     public long getFrontendDeviceSyncTimestamp(){
         return mPref.getLong(KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP, 0);
     }

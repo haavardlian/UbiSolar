@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -40,11 +38,8 @@ import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Random;
 
 /**
  * Created by perok on 2/11/14.
@@ -428,10 +423,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(data.getCount() >= 1) {
             do {
                 EnergyUsageModel model = new EnergyUsageModel(data, true);
-                DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
+                DeviceUsageList deviceUsageList = devices.get(model.getDeviceId());
 
                 if (deviceUsageList == null) {
-                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
+                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
                     devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
                 }
 

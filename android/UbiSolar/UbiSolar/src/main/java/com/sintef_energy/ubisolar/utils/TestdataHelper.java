@@ -48,7 +48,7 @@ public class TestdataHelper {
         cr.insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
 
-        //mDevices.put(device.getDevice_id(), device);
+        //mDevices.put(device.getDeviceId(), device);
         Log.v(TAG, "Created device: " + device.getName());
     }
 
@@ -73,7 +73,7 @@ public class TestdataHelper {
 
                 usageModel = new EnergyUsageModel(
                         idCount++,
-                        device.getDevice_id(),
+                        device.getDeviceId(),
                         cal.getTime(),
                         random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
                 values[i + (y * n)] = usageModel.getContentValues();

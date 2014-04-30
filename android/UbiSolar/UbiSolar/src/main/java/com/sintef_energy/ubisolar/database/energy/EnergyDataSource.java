@@ -182,8 +182,19 @@ public class EnergyDataSource {
         return deviceModels;
      }
 
-    public static int addBatchEnergyModel(ContentResolver resolver, ContentValues[] values){
+    public static int addBatchEnergyModel(ContentResolver resolver, ArrayList<EnergyUsageModel> usageModels){
         //AsyncQueryHandler handler = new AsyncQueryHandler(resolver) {};
+
+
+        if(usageModels.size() < 1)
+            return 0;
+
+        ContentValues[] values = new ContentValues[usageModels.size()];
+        int i = 0;
+        for(EnergyUsageModel dm : usageModels) {
+            values[i] = dm.getContentValues();
+            i++;
+        }
 
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
         int n = resolver.bulkInsert(
@@ -267,6 +278,40 @@ public class EnergyDataSource {
         return deviceModels;
      }
 
+    public static ArrayList<EnergyUsageModel> getAllSyncUsage(ContentResolver resolver, long timestamp){
+        ArrayList<EnergyUsageModel> deviceModels = new ArrayList<>();
+
+        Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.DELETE); //Get deleted data aswell
+
+        Cursor cursor = resolver.query(
+                builder.build(),
+                EnergyContract.Energy.PROJECTION_ALL,
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED + " >= ?",
+                new String[]{""+timestamp},
+                null
+        );
+
+        if(cursor == null){
+            cursor.close();
+            return null;
+        }
+        else if(cursor.getCount() < 1){
+            cursor.close();
+            return deviceModels;
+        }
+        else {}
+
+        cursor.moveToFirst();
+
+        Log.v(TAG, "getAllSyncDevices: # of models: " + cursor.getCount());
+
+        while (cursor.moveToNext())
+            deviceModels.add(new EnergyUsageModel(cursor, false));
+
+        cursor.close();
+        return deviceModels;
+     }
     /**
      * Batch deletes the given DeviceModels. Only for use in sync cases.
      *
@@ -283,6 +328,34 @@ public class EnergyDataSource {
             operation = ContentProviderOperation
                     .newDelete(EnergyContract.Devices.CONTENT_URI)
                     .withSelection(DeviceModel.DeviceEntry._ID + " = ?", new String[]{"" + item.getId()})
+                    .build();
+
+            operations.add(operation);
+        }
+
+        try {
+            contentResolver.applyBatch(EnergyContract.AUTHORITY, operations);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            return false;
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public static boolean batchDeleteUsageSyncOp(ContentResolver contentResolver, ArrayList<EnergyUsageModel> deviceModels){
+        ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        ContentProviderOperation operation;
+
+        for (EnergyUsageModel item : deviceModels) {
+
+            operation = ContentProviderOperation
+                    .newDelete(EnergyContract.Energy.CONTENT_URI)
+                    .withSelection(EnergyUsageModel.EnergyUsageEntry._ID + " = ?", new String[]{"" + item.getId()})
                     .build();
 
             operations.add(operation);

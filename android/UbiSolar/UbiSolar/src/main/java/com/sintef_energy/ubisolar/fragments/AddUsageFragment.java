@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -31,7 +30,6 @@ import com.sintef_energy.ubisolar.utils.Utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by perok on 12.03.14.
@@ -120,8 +118,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
 
                         EnergyUsageModel euModel = new EnergyUsageModel();
                         euModel.setDatetime(formatter.parse(mDateField.getText().toString()));
-                        euModel.setDevice_id(item.getLong(pos));
-                        euModel.setPower_usage(value);
+                        euModel.setDeviceId(item.getLong(pos));
+                        euModel.setPowerUsage(value);
                         euModel.setDeleted(false);
 
                         if (mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)

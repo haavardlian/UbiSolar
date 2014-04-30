@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.JsonArrayRequestTweaked;
@@ -101,9 +102,7 @@ public class RequestSyncProxy {
 
             Log.e(TAG, "ExecutionException:\n" + e.getMessage());
 
-            //TODO: Handle no data error correctly..
             e.printStackTrace();
-            return dModels;
         }
 
         //Toast.makeText(context, "Could not get data from server",
@@ -149,27 +148,7 @@ public class RequestSyncProxy {
             e.printStackTrace();
         }
 
-        Log.v(TAG, "LOL " + data.toString());
-
         JsonArrayRequestTweaked request = new JsonArrayRequestTweaked(JsonRequest.Method.PUT, url, data.toString(), future, future);
-        /*
-        JsonRequest<JSONArray> request = new JsonRequest<JSONArray>(JsonRequest.Method.PUT, url, data.toString(), future, future) {
-            @Override
-            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-
-                    if(jsonString.length() > 0)
-                        return Response.success(new JSONArray(jsonString), HttpHeaderParser.parseCacheHeaders(response));
-                    else
-                        return Response.success(new JSONArray(), HttpHeaderParser.parseCacheHeaders(response));
-                } catch (UnsupportedEncodingException e) {
-                    return Response.error(new ParseError(e));
-                } catch (JSONException je) {
-                    return Response.error(new ParseError(je));
-                }
-            }
-        };*/
 
         requestQueue.add(request);
 
@@ -196,7 +175,129 @@ public class RequestSyncProxy {
             Log.e(TAG, "ExecutionException:\n" + e.getMessage());
 
             e.printStackTrace();
+        }
+
+        Log.e(TAG, "Error from server!!");
+
+        return null;
+    }
+
+
+
+    public ArrayList<EnergyUsageModel> getBackendUsageSync(long userId, long timestamp) {
+
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+
+        ArrayList<EnergyUsageModel> dModels = new ArrayList<>();
+
+        Uri.Builder builder = new Uri.Builder();
+
+        builder.scheme("http").encodedAuthority(Global.URL)
+                .appendPath("user").appendPath(""+userId)
+                .appendPath("sync").appendPath("usage")
+                .appendPath("" + timestamp);
+
+        String url = builder.build().toString();
+
+        Log.v(TAG, "Request to URL: " + url);
+        // Perform request
+        JsonArrayRequestTweaked jsonRequest = new JsonArrayRequestTweaked(JsonRequest.Method.GET, url, null, future, future);
+
+        requestQueue.add(jsonRequest);
+
+        // Handle response synchronous.
+        try {
+            JSONArray response = future.get(); // this will block
+
+            Log.v(TAG, "Response: " + response);
+
+            for (int i = 0; i < response.length(); i++)
+                    dModels.add(mapper.readValue(response.get(i).toString(), EnergyUsageModel.class));
+
+            return dModels;
+        }catch (IOException | JSONException e) {
+            Log.e(TAG, "Error in JSON Mapping:");
+            Log.e(TAG, e.toString());
+        }
+        catch (InterruptedException e) {
+            Log.e(TAG, "InterruptedException:\n" + e.getMessage());
+            e.printStackTrace();
+        }
+        catch (ExecutionException e) {
+
+            Log.e(TAG, "ExecutionException:\n" + e.getMessage());
+
+            return dModels;
+        }
+
+        Log.e(TAG, "Error from server!!");
+
+        return null;
+    }
+
+
+    /**
+     *
+     *
+     * @param userId
+     * @param deviceModels
+     * @return ArrayList<DeviceModel> Success if size = 0
+     */
+    public ArrayList<EnergyUsageModel> putFrontendUsageSync(long userId, ArrayList<EnergyUsageModel> deviceModels) {
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+
+        ArrayList<EnergyUsageModel> errorModels = new ArrayList<>();
+
+        Uri.Builder builder = new Uri.Builder();
+
+        builder.scheme("http").encodedAuthority(Global.URL)
+                .appendPath("user").appendPath("" + userId)
+                .appendPath("sync").appendPath("usage");
+
+        String url = builder.build().toString();
+
+        Log.v(TAG, "Request to URL: " + url);
+
+        JSONArray data = new JSONArray();
+
+        try {
+            for(EnergyUsageModel dModel : deviceModels)
+                data.put(new JSONObject(mapper.writeValueAsString(dModel.getSerializeableDevice())));
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonArrayRequestTweaked request = new JsonArrayRequestTweaked(JsonRequest.Method.PUT, url, data.toString(), future, future);
+
+        requestQueue.add(request);
+
+        // Handle response synchronous.
+        try {
+            JSONArray response = future.get(); // this will block
+
+            Log.v(TAG, "Response: " + response);
+
+            for (int i = 0; i < response.length(); i++) {
+                errorModels.add(mapper.readValue(response.get(i).toString(), EnergyUsageModel.class));
+            }
+
             return errorModels;
+        }catch (IOException | JSONException e) {
+            Log.e(TAG, "Error in JSON Mapping:");
+            Log.e(TAG, e.toString());
+        }
+        catch (InterruptedException e) {
+            Log.e(TAG, "InterruptedException:\n" + e.getMessage());
+            e.printStackTrace();
+        }
+        catch (ExecutionException e) {
+            Log.e(TAG, "ExecutionException:\n" + e.getMessage());
+
+            e.printStackTrace();
         }
 
         Log.e(TAG, "Error from server!!");

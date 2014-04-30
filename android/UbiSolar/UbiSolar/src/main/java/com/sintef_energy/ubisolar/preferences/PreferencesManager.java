@@ -12,7 +12,7 @@ import java.util.Date;
 public class PreferencesManager {
  
     private static final String PREF_NAME = PreferencesManager.class.getName() + ".PREFS";
-    public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_BACKEND_DEVICE_SYNC_TIMESTAMP";
+    public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_SYNC_TIMESTAMP";
     public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP";
 
     public static final String COMPARISON_AREA_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_AREA_CHECKED";
