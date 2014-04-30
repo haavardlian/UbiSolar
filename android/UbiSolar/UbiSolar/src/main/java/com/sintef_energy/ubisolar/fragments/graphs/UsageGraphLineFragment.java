@@ -258,6 +258,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                     if(mTitleLabel == null || mDates.size() < 1)
                         return;
 
+                    if(mDates.size() == 1)
+                        return;
+
                     if (!mTitleLabel.equals(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()))) {
                         mTitleLabel = formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat());
                         setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
@@ -352,7 +355,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     }
 
     private boolean compareDates(Date date1, Date date2){
-        return formatDate(date1, resolution.getCompareFormat()).equals(formatDate(date2, resolution.getCompareFormat()));
+        return formatDate(date1, resolution.getCompareFormat())
+                .equals(formatDate(date2, resolution.getCompareFormat()));
     }
 
     private DeviceUsage getFirstPoint()
@@ -516,6 +520,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     public int getActiveIndex()
     {
+        if(mActiveDateIndex == 0)
+            return mDates.size();
         return mActiveDateIndex;
     }
 

@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
@@ -57,8 +58,8 @@ public class SelectDevicesDialog extends DialogFragment {
         //Get the data
         mDevices = this.getArguments().getParcelableArrayList(ARG_DEVICES);
         mSelectedItems = this.getArguments().getBooleanArray(ARG_SELECTED);
+
         if(mSelectedItems.length != mDevices.size()) {
-            //TODO: Apply correct fields as selected?
             mSelectedItems = new boolean[mDevices.size()];
         }
 
