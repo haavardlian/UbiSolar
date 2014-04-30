@@ -68,6 +68,15 @@ public class SyncResource {
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedDevices).build();
     }
 
+
+    @GET
+    @Path("/usage/newest")
+    public long getLastEditedUsageTime(@PathParam("user") IntParam user) {
+        long latest = db.getLastUpdatedTimeUsage(user.get());
+
+        return latest;
+    }
+
     @GET
     @Path("/usage/{timestamp}")
     public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
