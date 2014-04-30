@@ -34,7 +34,7 @@ import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
-import com.sintef_energy.ubisolar.fragments.social.CompareFragment;
+import com.sintef_energy.ubisolar.fragments.CompareFragment;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
