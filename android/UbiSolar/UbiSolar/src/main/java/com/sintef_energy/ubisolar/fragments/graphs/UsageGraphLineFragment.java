@@ -1,17 +1,28 @@
 package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Toast;
 
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
@@ -29,6 +40,12 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.achartengine.tools.PanListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -529,4 +546,45 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return resolution.getMode();
     }
 
+    public void createImage(){
+        Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        mChartView.draw(canvas);
+
+        writeImage(bitmap);
+    }
+
+    private void writeImage(Bitmap bitmap){
+        StrictMode.ThreadPolicy old = StrictMode.getThreadPolicy();
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder(old)
+                .permitAll()
+                .build());
+        StrictMode.setThreadPolicy(old);
+
+        File imagesFolder = new File(Environment.getExternalStorageDirectory(), "Wattitude");
+        imagesFolder.mkdirs();
+        String fileName = "graph.jpg";
+        File output = new File(imagesFolder, fileName);
+        Uri uriSavedImage = Uri.fromFile(output);
+
+
+        OutputStream imageFileOS;
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 40, bytes);
+            imageFileOS = getActivity().getContentResolver().openOutputStream(uriSavedImage);
+            imageFileOS.write(bytes.toByteArray());
+            imageFileOS.flush();
+            imageFileOS.close();
+
+            Toast.makeText(getActivity(),
+                    "Image saved: ",
+                    Toast.LENGTH_LONG).show();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

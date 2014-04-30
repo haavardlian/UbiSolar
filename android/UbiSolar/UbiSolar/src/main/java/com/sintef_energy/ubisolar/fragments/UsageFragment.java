@@ -205,6 +205,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 dialog.setTargetFragment(this, 0);
                 dialog.show(getFragmentManager(), "selectDeviceDialog");
                 return true;
+            case R.id.share_usage:
+                graphView.createImage();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
