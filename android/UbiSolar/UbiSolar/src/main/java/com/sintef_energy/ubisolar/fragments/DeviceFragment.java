@@ -92,8 +92,10 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
+
         devices = new ArrayList<>();
         expListAdapter = new ExpandableListAdapter(getActivity(), devices);
+        expListView.setOnChildClickListener(expListAdapter);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
 

@@ -73,7 +73,6 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                         deviceModel.setDevice_id(System.currentTimeMillis());
 
                         deviceModel.setDescription(descriptionField.getText().toString());
-                        Log.v(TAG, "Description settes til : " + descriptionField.getText().toString());
                         deviceModel.setName(nameField.getText().toString());
 
                         /*Get selected category*/

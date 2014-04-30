@@ -194,8 +194,16 @@ public class EnergyDataSource {
         return n;
     }
 
-    public static void editDeviceName(ContentResolver contentResolver, DeviceModel dm){
-        //contentResolver.
+    public static void editDevice(ContentResolver contentResolver, DeviceModel dm){
+        int i = contentResolver.update(EnergyContract.Devices.CONTENT_URI, dm.getContentValues(),
+                DeviceModel.DeviceEntry._ID + "=?",new String[]{"" + dm.getDevice_id()});
+    }
+    public static void getDevice(ContentResolver contentResolver, DeviceModel dm){
+        contentResolver.query(EnergyContract.Devices.CONTENT_URI,
+                EnergyContract.Devices.PROJECTION_ALL,
+                DeviceModel.DeviceEntry._ID + "=",
+                new String[]{""+dm.getDevice_id()},
+                null);
     }
 
 }

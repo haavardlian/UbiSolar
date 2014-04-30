@@ -16,8 +16,6 @@ import java.util.ArrayList;
  */
 public class DevicePresenter {
 
-    //TODO arrange the data to be sent to the view, react to changes in the view
-
     private static final String TAG = DevicePresenter.class.getName();
 
     /* The Models*/
@@ -44,8 +42,9 @@ public class DevicePresenter {
         //this.dmModels.add(device);
     }
 
-    public boolean editDevice(IDeviceView view, ContentResolver contentResolver) {
-        return false;
+    public void editDevice(ContentResolver contentResolver, DeviceModel dm) {
+        //TODO: Add support for actually checking that the update went fine.
+        EnergyDataSource.editDevice(contentResolver, dm);
     };
 
     public ArrayList<DeviceModel> getDeviceModels(ContentResolver contentResolver){
