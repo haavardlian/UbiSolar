@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.resources;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.dropwizard.jersey.params.LongParam;
 
@@ -44,6 +45,29 @@ public class SyncResource {
             throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
+    @PUT
+    @Path("/device/")
+    public Response syncDevices(@Valid ArrayList<Device> devices) {
+        int result[] = db.createDevices(devices.iterator());
+        boolean success = true;
+
+        ArrayList<Device> failedDevices = new ArrayList<Device>();
+
+        if(result.length != devices.size()) success = false;
+        else {
+            for(int i = 0; i < result.length; i++) {
+                if(result[i] == 0) {
+                    success = false;
+                    failedDevices.add(devices.get(i));
+                }
+            }
+        }
+        if(success)
+            throw new WebApplicationException(Response.Status.CREATED);
+        else
+            return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedDevices).build();
+    }
+
     @GET
     @Path("/usage/{timestamp}")
     public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
@@ -52,16 +76,5 @@ public class SyncResource {
             return usage;
         else
             throw new WebApplicationException(Response.Status.NOT_MODIFIED);
-    }
-    @PUT
-    @Path("/device/")
-    public Response syncDevices(@Valid ArrayList<Device> devices) {
-        int result[] = db.createDevices(devices.iterator());
-
-        for(int i : result) {
-            System.out.println("Result: " + i);
-        }
-
-        throw new WebApplicationException(Response.Status.CREATED);
     }
 }
