@@ -25,6 +25,7 @@
         <item>Exchange tips</item>
         <item>Settings</item>
         <item>Profile</item>
+        <item>Comparison settings</item>
         <item>Log in</item>
     </string-array>
     <string-array name="nav_drawer_icons">
@@ -62,14 +63,14 @@
     <string name="editDeviceDialog_buttonText">Save</string>
 
     <!-- Fragment usage -->
-    <string name="usage_select_devices">Select Devices</string>
-    <string name="usage_share">Share</string>
-    <string name="usage_line_graph_title">Power overview</string>
-    <string name="usage_pie_graph_title">Distribution</string>
+    <string name="usage_select_devices">Velg enheter</string>
+    <string name="usage_share">Del</string>
+    <string name="usage_line_graph_title">Strøm forbruk</string>
+    <string name="usage_pie_graph_title">Fordeling</string>
 
     <string-array name="fragment_usage_tabs">
-        <item>Line chart</item>
-        <item>Pie chart</item>
+        <item>Graf</item>
+        <item>Diagram</item>
     </string-array>
 
 
@@ -97,6 +98,8 @@
     <string name="friends_header_title">Friends</string>
 
     <!-- Comparison settings-->
+    <string name="comp_header">Comparison of savings</string>
+    <string name="comp_setting_header">Select what you want to compare:</string>
     <string name="comparison_setting">Comparison setting</string>
 
 
@@ -110,7 +113,4 @@
 
     <!-- Toast -->
     <string name="no_internet">Internet connection required to log in</string>
-
-
-
 </resources>

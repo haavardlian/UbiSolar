@@ -66,7 +66,7 @@ public class SelectDevicesDialog extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setTitle(R.string.usage_device_dialog_title);
+        builder.setTitle(R.string.usage_select_devices);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ArrayList<Long> selectedDeviceIDs = new ArrayList<>();

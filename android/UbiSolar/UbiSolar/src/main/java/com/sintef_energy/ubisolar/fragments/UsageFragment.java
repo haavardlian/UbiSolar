@@ -30,6 +30,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
+import com.sintef_energy.ubisolar.dialogs.ShareDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
@@ -41,11 +42,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-/**
- * Created by perok on 2/11/14.
- *
- * BUG: Backstack for usage behaves weired.
- */
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = UsageFragment.class.getName();
@@ -115,7 +111,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         // Initialize the ViewPager and set an adapter
         ScrollViewPager pager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
         pager.setAdapter(mUsageFragmentStatePageAdapter);
-        pager.setSwipeable(false); //TODO: Should be enabled/ disabled on MotionEvents for LineGraph
+        pager.setSwipeable(false);
 
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRootView.findViewById(R.id.fragment_usage_tabs);
@@ -199,7 +195,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 dialog.show(getFragmentManager(), "selectDeviceDialog");
                 return true;
             case R.id.share_usage:
-                graphView.createImage();
+                ShareDialog d = new ShareDialog(graphView.createImage());
+                d.setTargetFragment(UsageFragment.this, 0);
+                d.show(getFragmentManager(), "shareDialog");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -356,7 +354,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(int i = 0; i < selectedItems.length; i++)
         {
             if(selectedItems[i]) {
-                System.out.println(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID);
                 queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
             }
         }
@@ -364,7 +361,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         int i;
 
         for(i = 0; i < queries.size() -1; i++) {
-            System.out.println(queries.get(i));
             where += queries.get(i) + " OR ";
         }
 

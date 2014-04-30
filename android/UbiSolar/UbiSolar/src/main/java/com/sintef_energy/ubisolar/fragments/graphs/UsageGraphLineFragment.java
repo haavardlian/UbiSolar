@@ -18,6 +18,16 @@ import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
 
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.Facebook;
+import com.facebook.model.GraphObject;
+import com.facebook.model.OpenGraphAction;
+import com.facebook.model.OpenGraphObject;
+import com.facebook.widget.FacebookDialog;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.DeviceUsage;
@@ -49,7 +59,6 @@ import java.util.Date;
 public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     public static final String TAG = UsageGraphLineFragment.class.getName();
-    private static final String ARG_SECTION_NUMBER = "section_number";
     private static final String STATE_euModels = "STATE_euModels";
 
     private static final int POINT_DISTANCE = 15;
@@ -62,8 +71,10 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
-    private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED,
-            Color.YELLOW};
+    private int[] colors;
+
+
+
     private int mColorIndex;
 
     private Bundle mSavedState;
@@ -86,12 +97,14 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     public static UsageGraphLineFragment newInstance() {
         UsageGraphLineFragment fragment = new UsageGraphLineFragment();
         Bundle args = new Bundle();
-        //args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
+
+
         return fragment;
     }
 
     public UsageGraphLineFragment() {
+
     }
 
     /**
@@ -101,6 +114,13 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
+        this.colors = new int[colorStringArray.length];
+
+        for(int i = 0; i < colorStringArray.length; i++) {
+            this.colors[i] = Color.parseColor(colorStringArray[i]);
+        }
     }
 
     @Override
@@ -116,8 +136,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
         Log.v(TAG, "onActivityCreated()");
 
-        /* If the Fragment was destroyed inbetween (screen rotation), we need to recover the mSavedState first */
-        /* However, if it was not, it stays in the instance from the last onDestroyView() and we don't want to overwrite it */
+        /* If the Fragment was destroyed inbetween (screen rotation),
+            we need to recover the mSavedState first
+            However, if it was not, it stays in the instance from the last onDestroyView()
+            and we don't want to overwrite it
+        */
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
 
@@ -150,8 +173,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        System.out.println("Saved");
-
         /* If onDestroyView() is called first, we can use the previously mSavedState but we can't call saveState() anymore */
         /* If onSaveInstanceState() is called first, we don't have mSavedState, so we need to call saveState() */
         /* => (?:) operator inevitable! */
@@ -166,7 +187,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         super.onDestroy();
 
         mSavedState = saveState();
-        Log.v(TAG, " onDestroyView()");
     }
 
 
@@ -189,17 +209,15 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     @Override
     public void onDestroy(){
         super.onDestroy();
-
-        Log.v(TAG, " onDestroy()");
     }
 
 
 
     /**
-     * Sets up XYMultipleSeriesRenderer mRenderer.
+     * Configure Graph
      */
     private void setupLineGraph(){
-        mRenderer.setChartTitle("Power usage");
+        mRenderer.setChartTitle(getResources().getString(R.string.usage_line_graph_title));
 //        mRenderer.setYTitle("KWh");
 
         mRenderer.setAxisTitleTextSize(25);
@@ -215,13 +233,20 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         setColors(Color.WHITE, Color.BLACK);
     }
 
+    private void setColors(int backgroundColor, int labelColor){
+        mRenderer.setApplyBackgroundColor(true);
+        mRenderer.setBackgroundColor(backgroundColor);
+        mRenderer.setMarginsColor(backgroundColor);
+        mRenderer.setLabelsColor(labelColor);
+        mRenderer.setXLabelsColor(labelColor);
+        mRenderer.setYLabelsColor(0, labelColor);
+    }
+
     /**
      * Set up the ChartView and add listeners.
      */
-    private void createLineGraph()
-    {
+    private void createLineGraph(){
         if (mChartView == null) {
-            System.out.println("Creating graph");
             LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.lineChartView);
             mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
 //            mChartView.addZoomListener(new ZoomListener() {
@@ -278,12 +303,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
      * Define the series renderer
      * @param seriesName The name of the series
      */
-    private void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues)
-    {
+    private void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues){
         XYSeries series = new XYSeries(seriesName);
         mDataset.addSeries(series);
-
-        System.out.println(series.getTitle() + " added");
 
         XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
         seriesRenderer.setLineWidth(3);
@@ -302,8 +324,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
     }
 
-    private void populateGraph()
-    {
+    private void populateGraph(){
         double max = 0;
         double min = Integer.MAX_VALUE;
         int y = 0;
@@ -359,8 +380,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                 .equals(formatDate(date2, resolution.getCompareFormat()));
     }
 
-    private DeviceUsage getFirstPoint()
-    {
+    private DeviceUsage getFirstPoint(){
         DeviceUsageList usage = mActiveUsageList.get(0);
 
         for(DeviceUsageList usageList : mActiveUsageList) {
@@ -371,8 +391,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return usage.get(0);
     }
 
-    private DeviceUsage getLastPoint()
-    {
+    private DeviceUsage getLastPoint(){
         DeviceUsageList usage = mActiveUsageList.get(mActiveUsageList.size() -1);
 
         for(DeviceUsageList usageList : mActiveUsageList) {
@@ -383,8 +402,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return usage.get(usage.size() -1);
     }
 
-    private void setRange(double minY, double maxY, int points)
-    {
+    private void setRange(double minY, double maxY, int points){
         int end = points * POINT_DISTANCE;
         int start;
         int pointsToShow;
@@ -410,52 +428,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                 end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
     }
 
-//    private void changeResolution()
-//    {
-//        mActiveUsageList.clear();
-//        DeviceUsageList compactList;
-//
-//
-//        for(DeviceUsageList usageList : mBaseUsageList) {
-//
-//            if(mDataResolution.equals("HH"))
-//                mActiveUsageList.add(usageList);
-//
-//            else {
-//
-//                compactList = new DeviceUsageList();
-//                String date = formatDate(usageList.get(0).getDatetime(), mDataResolution);
-//                double powerUsage = 0;
-//                Date oldDate = new Date();
-//
-//                for (EnergyUsageModel usage : usageList.getUsage()) {
-//                    if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
-//                        date = formatDate(usage.getDatetime(), mDataResolution);
-//                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getDeviceId(), oldDate, powerUsage));
-//                        powerUsage = 0;
-//                    } else {
-//                        oldDate = usage.getDatetime();
-//                        powerUsage += usage.getPowerUsage();
-//                    }
-//                }
-//                mActiveUsageList.add(compactList);
-//            }
-//        }
-//    }
-
-    private void setColors(int backgroundColor, int labelColor)
-    {
-        mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setBackgroundColor(backgroundColor);
-        mRenderer.setMarginsColor(backgroundColor);
-        mRenderer.setLabelsColor(labelColor);
-        mRenderer.setXLabelsColor(labelColor);
-        mRenderer.setYLabelsColor(0, labelColor);
-    }
-
     private void setLabels(String label)
     {
-//        mRenderer.setXTitle("<  " + label + "  >");
         mRenderer.setXTitle(label);
         mTitleLabel = label;
     }
@@ -471,8 +445,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
-        for(DeviceUsageList usage : usageList)
-        {
+        for(DeviceUsageList usage : usageList){
             mActiveUsageList.add(usage);
             addSeries(usage.getDevice().getName(), true, false);
         }
@@ -480,14 +453,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         populateGraph();
     }
 
-//    public void setUsageFragment(UsageFragment usageFragment) {
-//        this.mUsageFragment = usageFragment;
-//    }
-
-    // On UsageGraph
-
-    private String formatDate(Date date, String format)
-    {
+    private String formatDate(Date date, String format){
         SimpleDateFormat formater = new SimpleDateFormat (format);
         if(date != null)
             return formater.format(date);
@@ -495,6 +461,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             return null;
     }
 
+    @Override
     public void setFormat(int mode)
     {
         resolution.setFormat(mode);
@@ -513,20 +480,19 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         this.mSelectedDialogItems = mSelectedDialogItems;
     }
 
-    public void setActiveIndex(int index)
-    {
+    @Override
+    public void setActiveIndex(int index){
         mActiveDateIndex = index;
     }
 
-    public int getActiveIndex()
-    {
+    @Override
+    public int getActiveIndex(){
         if(mActiveDateIndex == 0)
             return mDates.size();
         return mActiveDateIndex;
     }
 
-    public boolean isLoaded()
-    {
+    public boolean isLoaded(){
         if(!mLoaded) {
             mLoaded = true;
             return false;
@@ -543,12 +509,12 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return resolution.getMode();
     }
 
-    public void createImage(){
+    public Bitmap createImage(){
         Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         mChartView.draw(canvas);
 
-        writeImage(bitmap);
+        return bitmap;
     }
 
     private void writeImage(Bitmap bitmap){
@@ -584,4 +550,37 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             e.printStackTrace();
         }
     }
+
+    //    private void changeResolution()
+//    {
+//        mActiveUsageList.clear();
+//        DeviceUsageList compactList;
+//
+//
+//        for(DeviceUsageList usageList : mBaseUsageList) {
+//
+//            if(mDataResolution.equals("HH"))
+//                mActiveUsageList.add(usageList);
+//
+//            else {
+//
+//                compactList = new DeviceUsageList();
+//                String date = formatDate(usageList.get(0).getDatetime(), mDataResolution);
+//                double powerUsage = 0;
+//                Date oldDate = new Date();
+//
+//                for (EnergyUsageModel usage : usageList.getUsage()) {
+//                    if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
+//                        date = formatDate(usage.getDatetime(), mDataResolution);
+//                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getDevice_id(), oldDate, powerUsage));
+//                        powerUsage = 0;
+//                    } else {
+//                        oldDate = usage.getDatetime();
+//                        powerUsage += usage.getPower_usage();
+//                    }
+//                }
+//                mActiveUsageList.add(compactList);
+//            }
+//        }
+//    }
 }
