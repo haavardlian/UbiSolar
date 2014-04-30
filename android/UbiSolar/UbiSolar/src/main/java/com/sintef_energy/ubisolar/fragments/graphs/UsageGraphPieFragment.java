@@ -213,6 +213,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     private void populatePieChart()
     {
+        clearDetails();
         double totalPowerUsage = 0;
 
         for(DeviceUsageList deviceUsageList : mDeviceUsageList)
@@ -229,7 +230,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
             mRenderer.addSeriesRenderer(renderer);
         }
-
         mChartView.repaint();
     }
 
