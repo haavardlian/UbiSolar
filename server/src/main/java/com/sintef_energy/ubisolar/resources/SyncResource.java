@@ -87,7 +87,6 @@ public class SyncResource {
             throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
-
     @PUT
     @Path("/usage/")
     public Response syncUsage(@Valid ArrayList<DeviceUsage> usage) {
@@ -110,5 +109,4 @@ public class SyncResource {
         else
             return Response.status(Response.Status.NOT_ACCEPTABLE).entity(failedUsages).build();
     }
-
 }

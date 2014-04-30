@@ -126,4 +126,5 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO facebook_user (user_id, name) VALUES (:user.id, :user.name)")
     int createFacebookUser(@BindBean("user") FacebookUser user);
 
+    
 }
