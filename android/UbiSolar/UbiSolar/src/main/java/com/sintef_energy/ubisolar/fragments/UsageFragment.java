@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -40,17 +38,9 @@ import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Random;
 
-/**
- * Created by perok on 2/11/14.
- *
- * BUG: Backstack for usage behaves weired.
- */
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = UsageFragment.class.getName();
@@ -120,7 +110,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         // Initialize the ViewPager and set an adapter
         ScrollViewPager pager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
         pager.setAdapter(mUsageFragmentStatePageAdapter);
-        pager.setSwipeable(false); //TODO: Should be enabled/ disabled on MotionEvents for LineGraph
+        pager.setSwipeable(false);
 
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRootView.findViewById(R.id.fragment_usage_tabs);

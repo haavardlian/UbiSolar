@@ -63,12 +63,12 @@
     <string name="editDeviceDialog_buttonText">Save</string>
 
     <!-- Fragment usage -->
-    <string name="usage_device_dialog_title">Select Devices</string>
-    <string name="pie_chart_title">Power overview</string>
+    <string name="usage_device_dialog_title">Velg enheter</string>
+    <!--<string name="pie_chart_title">Power overview</string>-->
 
     <string-array name="fragment_usage_tabs">
-        <item>Line chart</item>
-        <item>Pie chart</item>
+        <item>Linje</item>
+        <item>Pie</item>
     </string-array>
 
 
