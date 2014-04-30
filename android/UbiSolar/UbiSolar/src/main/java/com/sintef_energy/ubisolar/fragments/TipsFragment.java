@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +9,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.TipAdapter;
-import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.dialogs.TipDialog;
 import com.sintef_energy.ubisolar.model.Tip;
-import com.sintef_energy.ubisolar.utils.RequestManager;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
 
@@ -53,7 +50,7 @@ public class TipsFragment extends Fragment {
 
         //Get all tips from server asynchronously
         getActivity().setProgressBarIndeterminateVisibility(true);
-        RequestManager.getInstance().doRequest().getAllTips(tipAdapter);
+        RequestManager.getInstance().doTipRequest().getAllTips(tipAdapter, this);
         return rootView;
     }
 

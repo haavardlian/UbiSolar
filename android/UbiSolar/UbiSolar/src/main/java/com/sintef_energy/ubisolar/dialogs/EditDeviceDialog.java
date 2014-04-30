@@ -68,7 +68,7 @@ public class EditDeviceDialog extends DialogFragment implements LoaderManager.Lo
         categorySpinner = (Spinner) view.findViewById(R.id.dialog_edit_device_category_spinner);
 
         //Get the existing data for the model
-        dm.getDevice_id();
+        dm.getId();
         name.setText(dm.getName());
         description.setText(dm.getDescription());
         categorySpinner.setSelection(dm.getCategory());

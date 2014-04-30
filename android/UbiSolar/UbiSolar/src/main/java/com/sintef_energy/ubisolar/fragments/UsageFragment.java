@@ -259,10 +259,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(Device device : mDevices.values())
         {
             if(selectedItems.length > i) {
-                if (selectedItems[i]) {
-                    ids.add("" + device.getDevice_id());
-                }
-                i++;
+                if (selectedItems[i])
+                    ids.add("" + device.getId());
+               i++;
             }
         }
         return ids.toArray(new String[ids.size()]);
@@ -355,7 +354,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(int i = 0; i < selectedItems.length; i++)
         {
             if(selectedItems[i]) {
-                System.out.println(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID);
                 queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
             }
         }
@@ -363,7 +361,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         int i;
 
         for(i = 0; i < queries.size() -1; i++) {
-            System.out.println(queries.get(i));
             where += queries.get(i) + " OR ";
         }
 
@@ -389,7 +386,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 if (cursor.getCount() != 0)
                     do {
                         DeviceModel model = new DeviceModel(cursor);
-                        mDevices.put(model.getDevice_id(), model);
+                        mDevices.put(model.getId(), model);
                     } while (cursor.moveToNext());
                 graphView.setDeviceSize(mDevices.size());
                 if(mDevices.size() > 0)
@@ -420,11 +417,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(data.getCount() >= 1) {
             do {
                 EnergyUsageModel model = new EnergyUsageModel(data, true);
-                DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
+                DeviceUsageList deviceUsageList = devices.get(model.getDeviceId());
 
                 if (deviceUsageList == null) {
-                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getDevice_id()), deviceUsageList);
+                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
+                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);

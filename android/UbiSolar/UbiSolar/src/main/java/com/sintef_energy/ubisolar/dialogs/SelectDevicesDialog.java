@@ -73,7 +73,7 @@ public class SelectDevicesDialog extends DialogFragment {
 
                 for (int i = 0; i < mSelectedItems.length; i++) {
                     if (mSelectedItems[i]) {
-                        selectedDeviceIDs.add(mDevices.get(i).getDevice_id());
+                        selectedDeviceIDs.add(mDevices.get(i).getId());
                     }
                 }
 

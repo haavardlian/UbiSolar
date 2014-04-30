@@ -11,21 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
 
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
-import com.sintef_energy.ubisolar.fragments.TipsFragment;
-import com.sintef_energy.ubisolar.model.TipRating;
-import com.sintef_energy.ubisolar.utils.RequestManager;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 
 /**
  * Created by Håvard on 30.04.14.

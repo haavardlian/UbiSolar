@@ -357,9 +357,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             for (DeviceUsage usage : usageList.getUsage()) {
                 while(y < mDates.size()){
                     if(compareDates(usage.getDatetime(), mDates.get(y))){
-                        series.add(y * POINT_DISTANCE, usage.getPower_usage());
-                        max = Math.max(max, usage.getPower_usage());
-                        min = Math.min(min, usage.getPower_usage());
+                        series.add(y * POINT_DISTANCE, usage.getPowerUsage());
+                        max = Math.max(max, usage.getPowerUsage());
+                        min = Math.min(min, usage.getPowerUsage());
                         break;
                     }
                     y++;
