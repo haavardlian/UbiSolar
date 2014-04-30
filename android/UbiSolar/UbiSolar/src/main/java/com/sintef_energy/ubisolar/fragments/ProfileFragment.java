@@ -61,6 +61,7 @@ public class ProfileFragment extends DefaultTabFragment  {
         super.onAttach(activity);
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+        ((DrawerActivity) activity).publishStory();
     }
 
     @Override

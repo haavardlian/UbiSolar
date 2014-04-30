@@ -20,40 +20,44 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
-import android.util.Log;
 
+import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
 import com.facebook.LoggingBehavior;
 import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.Settings;
-import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
-
-import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.drawer.DrawerItem;
-import com.sintef_energy.ubisolar.drawer.Item;
 import com.sintef_energy.ubisolar.fragments.AddUsageFragment;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
+import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
+import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.fragments.social.CompareFragment;
 import com.sintef_energy.ubisolar.fragments.social.ComparisonSettingsFragment;
-import com.sintef_energy.ubisolar.model.NavDrawerItem;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
-import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
-import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.utils.RequestManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * The main activity.
@@ -95,11 +99,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     public static String ACCOUNT;
     // Instance fields
     private Account mAccount;
+    //Facebook permissions
+    public static List<String> FACEBOOK_PERMISSIONS;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        setFacebookPermissions();
 
         super.onCreate(savedInstanceState);
         //We want to use the progress bar
@@ -401,8 +407,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
             else if (!session.isOpened() && !session.isClosed()) {
+
+
                 session.openForRead(new Session.OpenRequest(this)
-                        .setPermissions(Arrays.asList("basic_info"))
+                        .setPermissions(FACEBOOK_PERMISSIONS)
                         .setCallback(mFacebookSessionStatusCallback));
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
@@ -583,6 +591,94 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             .penaltyDeath()
             .build());
         }
+    }
+
+    public void publishStory() {
+        Session session = Session.getActiveSession();
+
+        if (session != null){
+
+            // Check for publish permissions
+            List<String> permissions = session.getPermissions();
+            Log.d(TAG,"Session permissions" + session.getPermissions().toString());
+            Log.d(TAG,"Stored permissions" + FACEBOOK_PERMISSIONS.toString());
+            if (!isSubsetOf(FACEBOOK_PERMISSIONS, permissions)) {
+               // pendingPublishReauthorization = true;
+                Session.NewPermissionsRequest newPermissionsRequest = new Session
+                        .NewPermissionsRequest(this, FACEBOOK_PERMISSIONS);
+                session.requestNewPublishPermissions(newPermissionsRequest);
+                return;
+            }
+
+            Bundle postParams = new Bundle();
+            postParams.putString("name", "Facebook SDK for Android");
+            postParams.putString("caption", "Build great social apps and get more installs.");
+            postParams.putString("description", "The Facebook SDK for Android makes it easier and faster to develop Facebook integrated Android apps.");
+            postParams.putString("link", "https://developers.facebook.com/android");
+            postParams.putString("picture", "https://raw.github.com/fbsamples/ios-3.x-howtos/master/Images/iossdk_logo.png");
+
+            Request.Callback callback= new Request.Callback() {
+                public void onCompleted(Response response) {
+                    JSONObject graphResponse = response
+                            .getGraphObject()
+                            .getInnerJSONObject();
+                    String postId = null;
+                    try {
+                        postId = graphResponse.getString("id");
+                    } catch (JSONException e) {
+                        Log.i(TAG,
+                                "JSON error "+ e.getMessage());
+                    }
+                    FacebookRequestError error = response.getError();
+                    if (error != null) {
+                        Toast.makeText(getApplicationContext(),
+                                error.getErrorMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                postId,
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            };
+
+            Request request = new Request(session, "me/feed", postParams,
+                    HttpMethod.POST, callback);
+
+            RequestAsyncTask task = new RequestAsyncTask(request);
+            task.execute();
+            Log.d(TAG,"POSTEDFACEBOOK");
+        }
+    }
+
+
+    private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
+        for (String string : subset) {
+            if (!superset.contains(string)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void setFacebookPermissions() {
+        FACEBOOK_PERMISSIONS=new ArrayList<String>();
+        FACEBOOK_PERMISSIONS.add("user_birthday");
+        FACEBOOK_PERMISSIONS.add("user_likes");
+        FACEBOOK_PERMISSIONS.add("user_questions");
+        FACEBOOK_PERMISSIONS.add("user_interests");
+        FACEBOOK_PERMISSIONS.add("user_relationships");
+        FACEBOOK_PERMISSIONS.add("user_groups");
+        FACEBOOK_PERMISSIONS.add("user_religion_politics");
+        FACEBOOK_PERMISSIONS.add("friends_birthday");
+        FACEBOOK_PERMISSIONS.add("user_location");
+        FACEBOOK_PERMISSIONS.add("friends_likes");
+        FACEBOOK_PERMISSIONS.add("friends_groups");
+        FACEBOOK_PERMISSIONS.add("user_education_history");
+        FACEBOOK_PERMISSIONS.add("friends_relationships");
+        FACEBOOK_PERMISSIONS.add("email");
+        FACEBOOK_PERMISSIONS.add("publish_actions");
+
     }
 
 }
