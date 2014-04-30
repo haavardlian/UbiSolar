@@ -108,9 +108,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(mUsageFragmentStatePageAdapter == null)
             mUsageFragmentStatePageAdapter = new UsageFragmentStatePageAdapter(getFragmentManager());
 
-        // Initialize the ViewPager and set an adapter
+        // Initialize the ViewPager and set the adapter
         ScrollViewPager pager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
         pager.setAdapter(mUsageFragmentStatePageAdapter);
+        // Makes the tabs non-swipeable. Having the tabs swipeable causes weird behavior because the
+        // graphs are also swipeable.
         pager.setSwipeable(false);
 
         // Bind the tabs to the ViewPager
@@ -249,8 +251,102 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         }
     }
 
-    private String[] getSelectedDevicesIDs()
-    {
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Uri.Builder builder;
+
+        switch (i){
+            case LOADER_DEVICES:
+                return new CursorLoader(
+                        getActivity(),
+                        EnergyContract.Devices.CONTENT_URI,
+                        EnergyContract.Devices.PROJECTION_ALL,
+                        null,
+                        null,
+                        DeviceModel.DeviceEntry._ID + " ASC");
+            case LOADER_USAGE:
+                return new CursorLoader(
+                        getActivity(),
+                        EnergyContract.Energy.CONTENT_URI,
+                        EnergyContract.Energy.PROJECTION_ALL,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC");
+            case LOADER_USAGE_DAY:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Day);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+            case LOADER_USAGE_WEEK:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Week);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+            case LOADER_USAGE_MONTH:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Month);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+            case LOADER_USAGE_YEAR:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Year);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+        }
+        return null;
+    }
+
+    /**
+     * Creates a 'where' sql statement based on the currently selected items.
+     *
+     * @return sql 'where' statement
+     */
+    private String sqlWhereDevices(){
+        String where = "";
+
+        boolean[] selectedItems = graphView.getSelectedDialogItems();
+
+        ArrayList<String> queries = new ArrayList<>();
+
+        for(boolean selectedItem : selectedItems)
+            if(selectedItem)
+                queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
+
+        // The last part of the query shall not be succeeded by an OR.
+        int i;
+        for(i = 0; i < queries.size() - 1; i++)
+            where += queries.get(i) + " OR ";
+        where += queries.get(i);
+
+        return where;
+    }
+
+
+    private String[] getSelectedDevicesIDs() {
         boolean[] selectedItems = graphView.getSelectedDialogItems();
         ArrayList<String> ids = new ArrayList<>();
 
@@ -264,118 +360,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                i++;
             }
         }
+
         return ids.toArray(new String[ids.size()]);
     }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri.Builder builder;
-
-        switch (i){
-            case LOADER_DEVICES:
-                return new CursorLoader(
-                        getActivity(),
-                        EnergyContract.Devices.CONTENT_URI,
-                        EnergyContract.Devices.PROJECTION_ALL,
-                        null,
-                        null,
-                        DeviceModel.DeviceEntry._ID + " ASC"
-                );
-            case LOADER_USAGE:
-                return new CursorLoader(
-                        getActivity(),
-                        EnergyContract.Energy.CONTENT_URI,
-                        EnergyContract.Energy.PROJECTION_ALL,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
-                );
-            case LOADER_USAGE_DAY:
-                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-                builder.appendPath(EnergyContract.Energy.Date.Day);
-
-                return new CursorLoader(
-                        getActivity(),
-                        builder.build(),
-                        null,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        null
-                );
-            case LOADER_USAGE_WEEK:
-                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-                builder.appendPath(EnergyContract.Energy.Date.Week);
-
-                return new CursorLoader(
-                        getActivity(),
-                        builder.build(),
-                        null,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        null
-                );
-            case LOADER_USAGE_MONTH:
-                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-                builder.appendPath(EnergyContract.Energy.Date.Month);
-
-                return new CursorLoader(
-                        getActivity(),
-                        builder.build(),
-                        null,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        null
-                );
-            case LOADER_USAGE_YEAR:
-                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-                builder.appendPath(EnergyContract.Energy.Date.Year);
-
-                return new CursorLoader(
-                        getActivity(),
-                        builder.build(),
-                        null,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        null
-                );
-        }
-        return null;
-    }
-
-    private String sqlWhereDevices(){
-
-        String where = "";
-
-        boolean[] selectedItems = graphView.getSelectedDialogItems();
-
-
-        ArrayList<String> queries = new ArrayList<>();
-
-        for(int i = 0; i < selectedItems.length; i++)
-        {
-            if(selectedItems[i]) {
-                queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
-            }
-        }
-
-        int i;
-
-        for(i = 0; i < queries.size() -1; i++) {
-            where += queries.get(i) + " OR ";
-        }
-
-        where += queries.get(i);
-
-//        for(int n = 0; n < graphView.getSelectedItems().length; n++){
-//            where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
-//            if(n != graphView.getSelectedItems().length - 1)
-//                where += " OR ";
-//        }
-
-        return where;
-    }
-
-
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
         switch (cursorLoader.getId()) {

@@ -10,8 +10,6 @@ public class PreferencesManagerSync {
 
     private static final String PREF_NAME = PreferencesManagerSync.class.getName() + ".PREFS";
     public static final String KEY_SYNC_TIMESTAMP = PreferencesManagerSync.class.getName() + ".KEY_SYNC_TIMESTAMP";
-    @Deprecated
-    public static final String KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP = PreferencesManagerSync.class.getName() + ".KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP";
 
     private static PreferencesManagerSync sInstance;
     private final SharedPreferences mPref;
@@ -44,21 +42,8 @@ public class PreferencesManagerSync {
             .apply();
     }
 
-    @Deprecated
-    public void setFrontendDeviceSyncTimestamp(long value){
-       mPref.edit()
-            .putLong(KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP, value)
-            .apply();
-    }
-
-
     public long getSyncTimestamp()  {
         return mPref.getLong(KEY_SYNC_TIMESTAMP, 0);
-    }
-
-    @Deprecated
-    public long getFrontendDeviceSyncTimestamp(){
-        return mPref.getLong(KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP, 0);
     }
 
     /**

@@ -32,7 +32,7 @@ public class RequestManager {
     private RequestManager(Context context) {
         mRequestQueue = newRequestQueue(context);
         mRequestTipProxy = new RequestTipProxy(context, mRequestQueue);
-        mRequestSyncProxy = new RequestSyncProxy(context, mRequestQueue);
+        mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
     }
     public RequestTipProxy doTipRequest() {
         return mRequestTipProxy;

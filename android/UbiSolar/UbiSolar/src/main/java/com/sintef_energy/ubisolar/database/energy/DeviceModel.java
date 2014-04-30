@@ -64,7 +64,6 @@ public class DeviceModel extends Device implements Parcelable{
     private int _is_deleted = 5;
     private int _lastUpdated = 6;
 
-
     /**
      * Create CalendarEventModel with default values. All relation ID's are '-1'
      */
@@ -161,7 +160,7 @@ public class DeviceModel extends Device implements Parcelable{
 
     /**
      * An ugly hack do allow jackson to serialize DeviceModel.
-     * @return
+     * @return new Device
      */
     public Device getSerializeableDevice(){
         return new Device(getId(), getUserId(), getName(), getDescription(), getCategory(), isDeleted(), getLastUpdated());

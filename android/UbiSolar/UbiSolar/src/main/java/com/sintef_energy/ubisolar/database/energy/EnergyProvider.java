@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * Created by perok on 2/11/14.
  *
  * TODO
- * ContentProvder is not thread sage. SQLiteDatabase is thread safe.
+ * ContentProvder is not thread safee. SQLiteDatabase is thread safe.
  * Should the providers CRUD method be implemented with synchronized? Will give a overhead, but
  * will possibly avoid bugs.
  *
@@ -105,9 +105,11 @@ public class EnergyProvider extends ContentProvider{
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mHelper.getReadableDatabase();
 
+        if(db == null) return null;
+
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         boolean useAuthorityUri = false; //TODO: Automatic notification of changes to LoadManager?
-        Cursor cursor = null;
+        Cursor cursor;
 
         //Used by day, month, year
         String rawSql = null;
@@ -115,7 +117,7 @@ public class EnergyProvider extends ContentProvider{
         boolean deleteData = false;
 
         switch (URI_MATCHER.match(uri)) {
-            // We want the deleted data aswell
+            // We want the deleted data also
             case DEVICES_LIST_DELETE:
                 deleteData = true;
             case DEVICES_LIST:
@@ -160,9 +162,10 @@ public class EnergyProvider extends ContentProvider{
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
-        if(selection == null)
-            if(!deleteData)
+        if(selection == null) {
+            if (!deleteData)
                 selection = selectionAvoidDeleteBit;
+        }
         else
             selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
 
@@ -178,10 +181,7 @@ public class EnergyProvider extends ContentProvider{
                         null,
                         sortOrder);
         else
-            cursor =
-                    db.rawQuery(rawSql, selectionArgs);
-
-
+            cursor = db.rawQuery(rawSql, selectionArgs);
 
         // if we want to be notified of any changes:
         if (useAuthorityUri) {
@@ -194,6 +194,7 @@ public class EnergyProvider extends ContentProvider{
                     getContext().getContentResolver(),
                     uri);
         }
+
         return cursor;
     }
 
@@ -201,10 +202,11 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public Uri insert(Uri uri, ContentValues values) {
 
-        /*if (!(URI_MATCHER.match(uri) == DEVICES_LIST ||
+        /*TODO add: if (!(URI_MATCHER.match(uri) == DEVICES_LIST ||
                 URI_MATCHER.match(uri) == ENERGY_LIST))
                 throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);*/
         SQLiteDatabase db = mHelper.getWritableDatabase();
+        if(db == null) return null;
 
         long id = -1;
 
@@ -227,9 +229,11 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        int delCount = 0;
-        String idStr = null;
-        String where = null;
+        if(db == null) return -1;
+
+        int delCount;
+        String idStr;
+        String where;
 
         deleteValues.put(DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED, System.currentTimeMillis() / 1000L);
 
@@ -302,9 +306,11 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        int updateCount = 0;
-        String idStr = null;
-        String where = null;
+        if(db == null) return -1;
+
+        int updateCount;
+        String idStr;
+        String where;
 
         switch (URI_MATCHER.match(uri)) {
             case DEVICES_LIST:
@@ -365,12 +371,13 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mHelper.getWritableDatabase();
+        if(db == null) return -1;
+
         final int match = URI_MATCHER.match(uri);
         int numInserted = 0;
         switch(match){
             case ENERGY_LIST:
                 mIsInBatchMode.set(true);
-                numInserted= 0;
                 db.beginTransaction();
                 try {
                     //standard SQL insert statement, that can be reused
@@ -407,7 +414,6 @@ public class EnergyProvider extends ContentProvider{
                 return numInserted;
             case DEVICES_LIST:
                 mIsInBatchMode.set(true);
-                numInserted= 0;
                 db.beginTransaction();
                 try {
                     //standard SQL insert statement, that can be reused
@@ -454,6 +460,8 @@ public class EnergyProvider extends ContentProvider{
             ArrayList<ContentProviderOperation> operations)
             throws OperationApplicationException {
         SQLiteDatabase db = mHelper.getWritableDatabase();
+        if(db == null) return null;
+
         mIsInBatchMode.set(true);
         // the next line works because SQLiteDatabase
         // uses a thread local SQLiteSession object for
@@ -502,7 +510,7 @@ public class EnergyProvider extends ContentProvider{
         //Unixtime
         String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
 
-        String rawSql = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
+        return "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
                         + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
                         + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
@@ -511,7 +519,5 @@ public class EnergyProvider extends ContentProvider{
                         + "GROUP BY " + time + ", "
                             + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
                         + "ORDER BY `month` ASC";
-
-        return rawSql;
     }
 }

@@ -48,14 +48,11 @@ public class RequestSyncProxy {
     private RequestQueue requestQueue;
     private ObjectMapper mapper;
 
-    private Context context;
-
     // package access constructor
-    RequestSyncProxy(Context context, RequestQueue requestQueue) {
+    RequestSyncProxy(RequestQueue requestQueue) {
         this.mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-        this.context = context;
         this.requestQueue = requestQueue;
     }
 

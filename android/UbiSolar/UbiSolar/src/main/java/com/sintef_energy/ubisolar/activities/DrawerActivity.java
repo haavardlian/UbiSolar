@@ -92,8 +92,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         super.onCreate(savedInstanceState);
         //We want to use the progress bar
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         //Create RequestManager instance
-        RequestManager.getInstance(this);
+        try {
+            RequestManager.getInstance();
+        } catch(IllegalStateException e) {
+            RequestManager.getInstance(this);
+        }
 
         /* Set up the presenters */
         mTotalEnergyPresenter = new TotalEnergyPresenter();
@@ -145,7 +150,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); //Do sync regardless of settings
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
         ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
-
+        
         // Extra logging for debug
         if(Global.DEVELOPER_MADE)
             Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
@@ -384,7 +389,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
-
         }
     }
 
@@ -394,7 +398,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     private void callFacebookLogout(Context context) {
         Session session = Session.getActiveSession();
         if (session != null) {
-
             if (!session.isClosed()) {
                 session.closeAndClearTokenInformation();
                 //clear your preferences if saved
@@ -421,15 +424,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             //User is logged in
             if (session.isOpened()) {
 
-                Log.v(DrawerActivity.TAG,"Facebook logged in.");
+                Log.v(DrawerActivity.TAG, "Facebook logged in.");
 
                 /* Set session data */
                 mPrefManager.setAccessToken(session.getAccessToken());
                 mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
-                //What is this and what is its purpose?
-                mPrefManager.setFacebookName(session.getApplicationId()); //TODO Is appId userId? In that case, set UID here.
-                Log.v(TAG, "APPID:" + session.getApplicationId());
-                //SessionState.
 
                 Toast.makeText(getBaseContext(), "Logged in through facebook", Toast.LENGTH_LONG).show();
                 changeNavdrawerSessionsView(true);
@@ -445,17 +444,17 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     Request.newMeRequest(session, new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
-                            if(response.getConnection() != null || response.getIsFromCache() != false) {
+                            if(response.getConnection() != null || response.getIsFromCache()) {
 
                                 mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
                                 //mPrefManager.setFacebookLocation(user.getLocation().toString());
                                 //mPrefManager.setFacebookAge(user.getBirthday());
                                 mPrefManager.setKeyFacebookUid(user.getId());
 
-                                Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
-                                Log.d("FACEBOOKNAME", user.getFirstName() + " " + user.getLastName());
+                                Log.v(DrawerActivity.TAG, "UID: " + user.getId());
+                                Log.d("Name: ", user.getFirstName() + " " + user.getLastName());
                             } else {
-                                Log.e(TAG, "No DATA");
+                                Log.e(TAG, "No facebook data return on newMeRequest.");
                             }
                         }
                     }).executeAsync();
@@ -476,12 +475,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     public static Account CreateSyncAccount(Context context) {
         // Create the account type and default account
-        Account newAccount = new Account(
-                ACCOUNT, ACCOUNT_TYPE);
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+
         // Get an instance of the Android account manager
         AccountManager accountManager =
-                (AccountManager) context.getSystemService(
-                        ACCOUNT_SERVICE);
+                (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
         /*
          * Add the account and account type, no password or user data
          * If successful, return the Account object, otherwise report an error.

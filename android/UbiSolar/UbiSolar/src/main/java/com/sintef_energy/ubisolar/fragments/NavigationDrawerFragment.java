@@ -133,7 +133,6 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerItems.add(new DrawerHeader(navMenuTitles[4]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[5]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[6]));
-
         //Socialize
         navDrawerItems.add(new DrawerHeader(navMenuTitles[7]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[8], "5"));
@@ -253,7 +252,7 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerList != null) {
             mDrawerList.setItemChecked(position, true);
         }
-        if (mDrawerLayout != null) { //TODO remove? handles in onClick
+        if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {

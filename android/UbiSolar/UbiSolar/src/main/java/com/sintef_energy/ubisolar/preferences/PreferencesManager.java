@@ -27,7 +27,7 @@ public class PreferencesManager {
 
     public static final String SELECTED_RESIDENCE = PreferencesManager.class.getName() + ".SELECTED_RESIDENCE";
 
-    /** Not needed. UID auth is done in the server */
+    /** Facebook uid is also the UID used on the app server. */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
 
     private static PreferencesManager sInstance;
@@ -58,7 +58,6 @@ public class PreferencesManager {
         mPref.edit()
                 .putString(SELECTED_RESIDENCE, value)
                 .apply();
-
     }
 
     public void setFacebookName(String value) {

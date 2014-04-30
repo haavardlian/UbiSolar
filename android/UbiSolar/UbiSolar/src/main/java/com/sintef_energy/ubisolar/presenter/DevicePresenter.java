@@ -18,15 +18,10 @@ public class DevicePresenter {
 
     private static final String TAG = DevicePresenter.class.getName();
 
-    /* The Models*/
-    ArrayList<DeviceModel> dmModels;
     /* The listeners */
     ArrayList<IDeviceView> dmListeners;
 
-    public DevicePresenter(){
-      dmModels = new ArrayList<DeviceModel>();
-      dmListeners = new ArrayList<IDeviceView>();
-    };
+    public DevicePresenter(){}
 
     /* Listeners */
     public void registerListener(IDeviceView view){
@@ -47,14 +42,5 @@ public class DevicePresenter {
         //TODO: Add support for actually checking that the update went fine.
         dm.updateLastUpdate();
         EnergyDataSource.editDevice(contentResolver, dm);
-    };
-
-    public ArrayList<DeviceModel> getDeviceModels(ContentResolver contentResolver){
-        dmModels = EnergyDataSource.getAllDeviceModels(contentResolver);
-        return dmModels;
-    }
-
-    public void deleteDevices(ContentResolver contentResolver){
-        EnergyDataSource.deleteAll(contentResolver);
     }
 }

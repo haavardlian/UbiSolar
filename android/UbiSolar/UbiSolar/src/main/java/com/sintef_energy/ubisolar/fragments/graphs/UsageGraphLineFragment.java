@@ -18,16 +18,6 @@ import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
 
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.Facebook;
-import com.facebook.model.GraphObject;
-import com.facebook.model.OpenGraphAction;
-import com.facebook.model.OpenGraphObject;
-import com.facebook.widget.FacebookDialog;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.DeviceUsage;
@@ -57,7 +47,6 @@ import java.util.Date;
  * Created by perok on 2/11/14.
  */
 public class UsageGraphLineFragment extends Fragment implements IUsageView{
-
     public static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String STATE_euModels = "STATE_euModels";
 
@@ -65,15 +54,12 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     private static final int GRAPH_MARGIN = 20;
     private static final int NUMBER_OF_POINTS = 9;
 
-
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
     private int[] colors;
-
-
 
     private int mColorIndex;
 
