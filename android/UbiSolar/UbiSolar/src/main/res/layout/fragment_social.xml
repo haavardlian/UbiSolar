@@ -15,8 +15,7 @@
         android:layout_weight="1"
         android:layout_alignParentTop="true"
         android:textSize="20dp"
-        android:text="Compare yourself to ..."
-        />
+        android:text="Compare yourself to ..." />
 
     <View
         android:id="@+id/horizontal_line"
@@ -27,8 +26,7 @@
         android:layout_height="1dp"
         android:gravity="center"
         android:background="#000"
-        android:layout_below="@+id/wattLvl"/>
-
+        android:layout_below="@+id/wattLvl" />
 
 
     <ListView
@@ -36,7 +34,6 @@
         android:id="@+id/social_menu_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:dividerHeight="3dp"
-        />
+        android:dividerHeight="3dp" />
 
 </RelativeLayout>

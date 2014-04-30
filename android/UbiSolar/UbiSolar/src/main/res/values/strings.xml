@@ -24,7 +24,6 @@
         <item>Exchange tips</item>
         <item>Settings</item>
         <item>Profile</item>
-        <item>Comparison settings</item>
         <item>Log in</item>
     </string-array>
     <string-array name="nav_drawer_icons">
@@ -55,6 +54,10 @@
     <item>Producing</item>
     </string-array>
     <string name="addDeviceDialog_buttonText">Add</string>
+
+    <!-- EditDeviceDialog -->
+    <string name="editDeviceDialog_title">Edit device</string>
+    <string name="editDeviceDialog_buttonText">Saves</string>
 
     <!-- Fragment usage -->
     <string name="usage_device_dialog_title">Select Devices</string>
@@ -99,8 +102,6 @@
     <string name="friends_header_title">Friends</string>
 
     <!-- Comparison settings-->
-    <string name="comp_header">Comparison of savings</string>
-    <string name="comp_setting_header">Select what you want to compare:</string>
     <string name="comparison_setting">Comparison setting</string>
 
 
