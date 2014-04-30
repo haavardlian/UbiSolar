@@ -369,4 +369,8 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 //    {
 //        mSelectedDate = mDeviceUsageList.get(mDeviceUsageList.size() -1).:
 //    }
+
+    public void createImage(){
+
+    }
 }

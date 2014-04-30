@@ -23,4 +23,6 @@ public interface IUsageView {
 
     public boolean isLoaded();
     public void setDeviceSize(int size);
+
+    public void createImage();
 }
