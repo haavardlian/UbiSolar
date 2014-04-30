@@ -400,6 +400,8 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 session.openForRead(new Session.OpenRequest(this)
                         .setPermissions(Arrays.asList("basic_info"))
                         .setCallback(mFacebookSessionStatusCallback));
+
+                session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
@@ -467,8 +469,8 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                             if(response.getConnection() != null || response.getIsFromCache() != false) {
 
                                 mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
-                                mPrefManager.setFacebookLocation(user.getLocation().toString());
-                                mPrefManager.setFacebookAge(user.getBirthday());
+                                //mPrefManager.setFacebookLocation(user.getLocation().toString());
+                                //mPrefManager.setFacebookAge(user.getBirthday());
                                 mPrefManager.setKeyFacebookUid(user.getId());
 
                                 Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());

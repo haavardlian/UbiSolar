@@ -30,6 +30,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
+import com.sintef_energy.ubisolar.dialogs.ShareDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
@@ -194,7 +195,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 dialog.show(getFragmentManager(), "selectDeviceDialog");
                 return true;
             case R.id.share_usage:
-                graphView.createImage();
+                ShareDialog d = new ShareDialog(graphView.createImage());
+                d.setTargetFragment(UsageFragment.this, 0);
+                d.show(getFragmentManager(), "shareDialog");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -18,6 +18,16 @@ import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Toast;
 
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.Facebook;
+import com.facebook.model.GraphObject;
+import com.facebook.model.OpenGraphAction;
+import com.facebook.model.OpenGraphObject;
+import com.facebook.widget.FacebookDialog;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.DeviceUsage;
@@ -61,8 +71,10 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
-    private int[] colors = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED,
-            Color.YELLOW};
+    private int[] colors;
+
+
+
     private int mColorIndex;
 
     private Bundle mSavedState;
@@ -86,10 +98,13 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         UsageGraphLineFragment fragment = new UsageGraphLineFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
+
+
         return fragment;
     }
 
     public UsageGraphLineFragment() {
+
     }
 
     /**
@@ -99,6 +114,13 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
+        this.colors = new int[colorStringArray.length];
+
+        for(int i = 0; i < colorStringArray.length; i++) {
+            this.colors[i] = Color.parseColor(colorStringArray[i]);
+        }
     }
 
     @Override
@@ -487,12 +509,12 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         return resolution.getMode();
     }
 
-    public void createImage(){
+    public Bitmap createImage(){
         Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         mChartView.draw(canvas);
 
-        writeImage(bitmap);
+        return bitmap;
     }
 
     private void writeImage(Bitmap bitmap){
