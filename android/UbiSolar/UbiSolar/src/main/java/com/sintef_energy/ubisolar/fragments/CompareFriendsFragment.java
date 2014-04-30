@@ -15,7 +15,7 @@ import android.widget.ListView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.fragments.social.CompareSimilarFragment;
+import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class CompareFriendsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private View view;
     private FriendAdapter friendAdapter;
-    private ComparisonAdapter compAdapter;
+    private SimilarAdapter simAdapter;
 
 
 
@@ -85,7 +85,7 @@ public class CompareFriendsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Fragment fragment = CompareSimilarFragment.newInstance(position, compAdapter);
+                Fragment fragment = CompareSimilarFragment.newInstance(position, simAdapter);
                 addFragment(fragment, true, friends.get(position));
             }
         });
@@ -97,11 +97,11 @@ public class CompareFriendsFragment extends Fragment {
 
         private final String[] TITLES = { "Friends", "Similar profiles"};
         private FriendAdapter friendAdapter;
-        private ComparisonAdapter compAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, ComparisonAdapter compAdapter) {
+        private SimilarAdapter simAdapter;
+        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter simAdapter) {
             super(fm);
             this.friendAdapter = friendAdapter;
-            this.compAdapter = compAdapter;
+            this.simAdapter = simAdapter;
         }
 
 
@@ -121,7 +121,7 @@ public class CompareFriendsFragment extends Fragment {
                 case 0:
                     return CompareFriendsFragment.newInstance(0, friendAdapter);
                 case 1:
-                    return CompareSimilarFragment.newInstance(1, compAdapter);
+                    return CompareSimilarFragment.newInstance(1, simAdapter);
                 default:
                     return null;
             }

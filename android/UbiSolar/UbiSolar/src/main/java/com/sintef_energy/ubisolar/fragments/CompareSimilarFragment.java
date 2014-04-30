@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
+import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 
 import java.util.ArrayList;
@@ -27,15 +28,16 @@ public class CompareSimilarFragment extends Fragment {
      */
     public static final String TAG = CompareSimilarFragment.class.getName();
 
-    private ComparisonAdapter compAdapter;
+    //private ComparisonAdapter compAdapter;
+    private SimilarAdapter simAdapter;
 
     private View view;
     private ArrayList<ResidenceAttributes> houseDescription;
     private static final String ARG_POSITION = "position";
 
 
-    public CompareSimilarFragment(ComparisonAdapter compAdapter) {
-        this.compAdapter = compAdapter;
+    public CompareSimilarFragment(SimilarAdapter simAdapter) {
+        this.simAdapter = simAdapter;
     }
 
     public CompareSimilarFragment() {
@@ -47,8 +49,8 @@ public class CompareSimilarFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareSimilarFragment newInstance(int position, ComparisonAdapter compAdapter) {
-        CompareSimilarFragment fragment = new CompareSimilarFragment(compAdapter);
+    public static CompareSimilarFragment newInstance(int position, SimilarAdapter simAdapter) {
+        CompareSimilarFragment fragment = new CompareSimilarFragment(simAdapter);
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
@@ -84,40 +86,9 @@ public class CompareSimilarFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
 
-        houseDescription = new ArrayList<ResidenceAttributes>();
-
-        houseDescription.add(new ResidenceAttributes("Area"));
-        houseDescription.add(new ResidenceAttributes("Number of residents"));
-        houseDescription.add(new ResidenceAttributes("Resident size"));
-        houseDescription.add(new ResidenceAttributes("Energy class"));
-
-        ComparisonAdapter compAdapter= new ComparisonAdapter(getActivity(),R.layout.fragment_similar_compare_row, houseDescription);
-        ListView houseDescrList = (ListView) view.findViewById(R.id.comp_settings_list);
-        houseDescrList.setAdapter(compAdapter);
-
-        compAdapter.notifyDataSetChanged();
-
         return view;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Auto-generated method stub
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.askexperts_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                // do s.th.
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
