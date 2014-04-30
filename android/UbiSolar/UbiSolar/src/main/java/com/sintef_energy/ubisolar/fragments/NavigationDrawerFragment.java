@@ -141,7 +141,6 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerItems.add(new DrawerHeader(navMenuTitles[9]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[10]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[11]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[12]));
         // Recycle the typed array
         navMenuIcons.recycle();
 
