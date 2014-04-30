@@ -61,7 +61,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                     public void onClick(DialogInterface dialog, int id) {
                         /*Create new device model*/
                         DeviceModel deviceModel = new DeviceModel();
-                        deviceModel.setUserId(System.currentTimeMillis());
+                        deviceModel.setUserId(System.currentTimeMillis()); //TODO: BUG: Must set correct username, or maybe -1 if no username?
                         deviceModel.setId(System.currentTimeMillis());
 
                         deviceModel.setDescription(descriptionField.getText().toString());

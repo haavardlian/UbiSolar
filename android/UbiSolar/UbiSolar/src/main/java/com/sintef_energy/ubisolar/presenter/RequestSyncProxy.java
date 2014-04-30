@@ -4,12 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -22,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -52,7 +58,7 @@ public class RequestSyncProxy {
         this.requestQueue = requestQueue;
     }
 
-    public ArrayList<DeviceModel> getBackendSync(long userId, long timestamp) {
+    public ArrayList<DeviceModel> getBackendDeviceSync(long userId, long timestamp) {
 
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
 
@@ -80,8 +86,7 @@ public class RequestSyncProxy {
             Log.v(TAG, "Response: " + response);
 
             for (int i = 0; i < response.length(); i++) {
-                    dModels.add((DeviceModel) mapper.readValue(response.get(i).toString(), DeviceModel.class));
-                    //Log.d(tag, adapter.getItem(i).toString());
+                    dModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
             }
 
             return dModels;
@@ -109,71 +114,90 @@ public class RequestSyncProxy {
         return null;
     }
 
-    /*
-    public void createTip(Tip tip) {
-        String url = Global.BASE_URL + "/tips";
-        JSONObject jsonObject;
+
+    /**
+     *
+     *
+     *
+     * @param userId
+     * @param deviceModels
+     * @return ArrayList<DeviceModel> Success if size = 0
+     */
+    public ArrayList<DeviceModel> putFrontendDeviceSync(long userId, ArrayList<DeviceModel> deviceModels) {
+        RequestFuture<JSONArray> future = RequestFuture.newFuture();
+
+        ArrayList<DeviceModel> errorModels = new ArrayList<>();
+
+        Uri.Builder builder = new Uri.Builder();
+
+        builder.scheme("http").encodedAuthority(Global.URL)
+                .appendPath("user").appendPath("" + userId)
+                .appendPath("sync").appendPath("device");
+
+        String url = builder.build().toString();
+
+        Log.v(TAG, "Request to URL: " + url);
+
+        JSONArray data = new JSONArray();
 
         try {
-            jsonObject = new JSONObject(mapper.writeValueAsString(tip));
-        } catch (JsonProcessingException | JSONException e) {
+            for(DeviceModel dModel : deviceModels) {
+                data.put(mapper.writeValueAsString(dModel));
+            }
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return;
+            return null;
         }
 
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(final JSONObject response) {
-                        try {
-                            Toast.makeText(context, response.getString("message"),
-                                    Toast.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        JsonRequest<JSONArray> request = new JsonRequest<JSONArray>(JsonRequest.Method.PUT, url, data.toString(), future, future) {
+            @Override
+            protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String jsonString =
+                            new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(new JSONArray(jsonString),
+                            HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                } catch (JSONException je) {
+                    return Response.error(new ParseError(je));
+                }
+            }
+        };
 
-        requestQueue.add(jsonRequest);
+        requestQueue.add(request);
+
+        // Handle response synchronous.
+        try {
+            JSONArray response = future.get(); // this will block
+
+            Log.v(TAG, "Response: " + response);
+
+            for (int i = 0; i < response.length(); i++) {
+                    errorModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
+            }
+
+            return errorModels;
+        }catch (IOException | JSONException e) {
+            Log.e(TAG, "Error in JSON Mapping:");
+            Log.e(TAG, e.toString());
+        }
+        catch (InterruptedException e) {
+            Log.e(TAG, "InterruptedException:\n" + e.getMessage());
+            e.printStackTrace();
+        }
+        catch (ExecutionException e) {
+
+            Log.e(TAG, "ExecutionException:\n" + e.getMessage());
+
+            e.printStackTrace();
+            return errorModels;
+        }
+
+        //Toast.makeText(context, "Could not get data from server",
+        //Toast.LENGTH_LONG).show();
+        Log.e(TAG, "Error from server!!");
+
+        return null;
     }
-
-    public void createRating(TipRating rating) {
-        String url = Global.BASE_URL + "/tips/" + rating.getTipId() + "/rating/";
-        JSONObject jsonObject;
-
-        try {
-            jsonObject = new JSONObject(mapper.writeValueAsString(rating));
-        } catch (JsonProcessingException | JSONException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(final JSONObject response) {
-                        try {
-                            Toast.makeText(context, response.getString("message"),
-                                    Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "An error occurred",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-        requestQueue.add(jsonRequest);
-    }*/
 }

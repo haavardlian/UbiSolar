@@ -13,7 +13,8 @@ public abstract class Device
     protected String description;
     protected int category;
     protected boolean isTotal;
-    protected boolean isDeleted;
+    protected boolean deleted;
+    protected long lastUpdated;
 
     public Device()
     {
@@ -28,7 +29,7 @@ public abstract class Device
         this.userId = userId;
         this.category = category;
         this.isTotal = false;
-        this.isDeleted = false;
+        this.deleted = false;
     }
 
 
@@ -40,7 +41,12 @@ public abstract class Device
         this.userId = userId;
         this.category = category;
         this.isTotal = isTotal;
-        this.isDeleted = false;
+        this.deleted = false;
+    }
+
+
+    public void updateLastUpdate(){
+        setLastUpdated(System.currentTimeMillis() / 1000L);
     }
 
     public long getId() {
@@ -65,22 +71,27 @@ public abstract class Device
 
     public void setId(long id) {
         this.id = id;
+        updateLastUpdate();
     }
 
     public void setUserId(long userId) {
         this.userId = userId;
+        updateLastUpdate();
     }
 
     public void setName(String name) {
         this.name = name;
+        updateLastUpdate();
     }
 
     public void setDescription(String description) {
         this.description = description;
+        updateLastUpdate();
     }
 
     public void setCategory(int category) {
         this.category = category;
+        updateLastUpdate();
     }
 
     public boolean isTotal() {
@@ -89,13 +100,23 @@ public abstract class Device
 
     public void setIsTotal(boolean isTotal) {
         this.isTotal = isTotal;
+        updateLastUpdate();
     }
 
     public boolean isDeleted() {
-        return isDeleted;
+        return deleted;
     }
 
     public void setDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
+        this.deleted = isDeleted;
+        updateLastUpdate();
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

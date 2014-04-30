@@ -26,6 +26,7 @@ public class DeviceModel extends Device implements Parcelable{
         public static final String COLUMN_CATEGORY = "category";
         public static final String COLUMN_IS_TOTAL = "is_total";
         public static final String COLUMN_IS_DELETED = "is_deleted";
+        public static final String COLUMN_LAST_UPDATED = "lastUpdated";
     }
 
     public static final String[] projection = new String[]{
@@ -35,7 +36,8 @@ public class DeviceModel extends Device implements Parcelable{
             DeviceEntry.COLUMN_DESCRIPTION,
             DeviceEntry.COLUMN_CATEGORY,
             DeviceEntry.COLUMN_IS_TOTAL,
-            DeviceEntry.COLUMN_IS_DELETED
+            DeviceEntry.COLUMN_IS_DELETED,
+            DeviceEntry.COLUMN_LAST_UPDATED
     };
 
     /* SQL Statements*/
@@ -50,7 +52,8 @@ public class DeviceModel extends Device implements Parcelable{
                     DeviceEntry.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_CATEGORY + INTEGER_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_IS_TOTAL + INTEGER_TYPE + COMMA_SEP +
-                    DeviceEntry.COLUMN_IS_DELETED + INTEGER_TYPE +
+                    DeviceEntry.COLUMN_IS_DELETED + INTEGER_TYPE + COMMA_SEP +
+                    DeviceEntry.COLUMN_LAST_UPDATED + INTEGER_TYPE +
                     " )";
 
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DeviceEntry.TABLE_NAME;
@@ -63,12 +66,14 @@ public class DeviceModel extends Device implements Parcelable{
     private int _category = 4;
     private int _is_total = 5;
     private int _is_deleted = 6;
+    private int _lastUpdated = 7;
 
 
     /**
      * Create CalendarEventModel with default values. All relation ID's are '-1'
      */
     public DeviceModel() {
+        super();
         setId(-1);
         setUserId(-1);
         setName("");
@@ -76,6 +81,7 @@ public class DeviceModel extends Device implements Parcelable{
         setCategory(-1);
         setIsTotal(false);
         setDeleted(false);
+        //setLastUpdated(-1);
     }
 
     /* Parcable */
@@ -109,6 +115,7 @@ public class DeviceModel extends Device implements Parcelable{
         out.writeInt(getCategory());
         out.writeInt((isTotal() ? 1 : 0));
         out.writeInt((isDeleted() ? 1 : 0));
+        out.writeLong(getLastUpdated());
     }
 
     private void readFromParcel(Parcel in) {
@@ -119,6 +126,7 @@ public class DeviceModel extends Device implements Parcelable{
         setCategory(in.readInt());
         setIsTotal(in.readInt() != 0);
         setDeleted(in.readInt() != 0);
+        setLastUpdated(in.readLong());
     }
 
     /**
@@ -134,6 +142,7 @@ public class DeviceModel extends Device implements Parcelable{
         values.put(DeviceEntry.COLUMN_CATEGORY, getCategory());
         values.put(DeviceEntry.COLUMN_IS_TOTAL, (isTotal() ? 1 : 0));
         values.put(DeviceEntry.COLUMN_IS_DELETED, (isDeleted() ? 1 : 0));
+        values.put(DeviceEntry.COLUMN_LAST_UPDATED, getLastUpdated());
         return values;
     }
 
@@ -149,6 +158,7 @@ public class DeviceModel extends Device implements Parcelable{
         setCategory(cursor.getInt(_category));
         setIsTotal(cursor.getInt(_is_total) != 0);
         setDeleted(cursor.getInt(_is_deleted) != 0);
+        setLastUpdated(cursor.getLong(_lastUpdated));
     }
 
     public DeviceModel(long device_id, String name, String description, long user_id,
@@ -165,7 +175,8 @@ public class DeviceModel extends Device implements Parcelable{
         info += "\n\tDescription: " + getDescription();
         info += "\n\tCategory: " + getCategory();
         info += "\n\tisTotal: " + isTotal();
-        info += "\n\tisDeleted: " + isDeleted();
+        info += "\n\tdeleted: " + isDeleted();
+        info += "\n\tlastUpdated: " + getLastUpdated();
         return info;
     }
 }

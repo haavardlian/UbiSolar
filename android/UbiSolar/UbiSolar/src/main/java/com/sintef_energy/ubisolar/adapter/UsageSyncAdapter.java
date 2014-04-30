@@ -6,7 +6,6 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
-import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -90,7 +89,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
 
             Log.v(TAG, "Time is: " + newTimestampServerDevice + ". Syncing for date: " + lastTimestamServerDevice + ". For UID: " + uid);
 
-            ArrayList<DeviceModel> deviceModels = requestManager.doSyncRequest().getBackendSync(uid, lastTimestamServerDevice);
+            ArrayList<DeviceModel> deviceModels = requestManager.doSyncRequest().getBackendDeviceSync(uid, lastTimestamServerDevice);
             //TODO MÅ LEGGE TIL LASTMODIFIED TIL DATABASE
             if(deviceModels != null){
                 if(deviceModels.size() > 0) {
