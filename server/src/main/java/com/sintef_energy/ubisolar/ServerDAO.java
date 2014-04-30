@@ -56,8 +56,11 @@ public interface ServerDAO {
     @Mapper(DeviceUsageMapper.class)
     List<DeviceUsage> getUsageForDevice(@Bind("device_id") int device_id);
 
-    @SqlUpdate("INSERT INTO device_power_usage (device_id, datetime, power_usage) VALUES (:usage.deviceId, :usage.datetime, :usage.powerUsage)")
+    @SqlUpdate("INSERT INTO device_power_usage (device_id, timestamp, power_usage) VALUES (:usage.deviceId, :usage.timestamp, :usage.powerUsage)")
     int addUsageForDevice(@BindBean("usage") DeviceUsage usage);
+
+    @SqlBatch("INSERT INTO device_power_usage (id, device_id, power_usage, timestamp) VALUES (:u.id, :u.deviceId, :u.powerUsage, :u.timestamp) ON DUPLICATE KEY UPDATE device_id = :u.deviceId, power_usage = :u.powerUsage, timestamp = :u.timestamp")
+    int[] addUsageForDevices(@BindBean("u") Iterator<DeviceUsage> u);
 
     @SqlQuery("SELECT * FROM total_power_usage WHERE user_id = :user_id")
     @Mapper(TotalUsageMapper.class)
@@ -99,9 +102,9 @@ public interface ServerDAO {
     @Mapper(DeviceMapper.class)
     List<Device> getUpdatedDevices(@Bind("userID") int userID, @Bind("timestamp") long timestamp);
 
-    @SqlQuery("SELECT * FROM device_power_usage WHERE user_id = :userID AND timestamp > :timestamp")
+    @SqlQuery("SELECT * FROM device_power_usage, device WHERE timestamp > :timestamp AND device_id = device.id AND device.user_id = :userId")
     @Mapper(DeviceUsageMapper.class)
-    List<DeviceUsage> getUpdatedUsage(@Bind("userID") int userID, @Bind("timestamp") long timestamp);
+    List<DeviceUsage> getUpdatedUsage(@Bind("userId") int userId, @Bind("timestamp") long timestamp);
 
     @SqlQuery("SELECT MAX(last_updated) AS last_updated FROM device WHERE user_id = :user LIMTI 1")
     long getLastUpdatedTimeDevice(@Bind("user") long user);
