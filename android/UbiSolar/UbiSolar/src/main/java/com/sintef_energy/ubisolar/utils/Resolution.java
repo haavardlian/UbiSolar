@@ -80,7 +80,7 @@ public class Resolution {
         long diff = date2.getTime() - date1.getTime();
 
         if(mode == HOURS)
-            return (int) TimeUnit.MILLISECONDS.toHours(diff);
+            return (int) TimeUnit.MILLISECONDS.toHours(diff) + 1;
         else if(mode == DAYS)
             return (int) TimeUnit.MILLISECONDS.toDays(diff) + 1;
         else if(mode == WEEKS)

@@ -308,8 +308,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         Date last = getLastPoint().getDatetime();
         int numberOfPoints = resolution.getTimeDiff(first, last);
 
-        System.out.println(numberOfPoints);
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(first);
 
@@ -339,8 +337,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
 
         setRange(min, max, mDates.size());
-        DeviceUsageList largestUsageList = getLargestUsageList();
-        setLabels(formatDate(largestUsageList.get(mActiveDateIndex).getDatetime(), resolution.getTitleFormat()));
+        setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
 
         if( mChartView != null)
             mChartView.repaint();
