@@ -142,6 +142,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     private void setupPieGraph(){
+        mRenderer.setChartTitle(getResources().getString(R.string.usage_pie_graph_title));
         mRenderer.setChartTitleTextSize(20);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);

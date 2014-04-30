@@ -6,9 +6,9 @@
         android:title="@string/action_example"
         android:showAsAction="withText|ifRoom" />-->
     <item android:id="@+id/fragment_usage_menu_action_devices"
-        android:title="Select devices"
+        android:title="@string/usage_select_devices"
         android:showAsAction="withText|ifRoom" />
     <item android:id="@+id/share_usage"
-        android:title="Share"
+        android:title="@string/usage_share"
         android:showAsAction="withText|ifRoom" />
 </menu>

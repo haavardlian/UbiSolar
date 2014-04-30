@@ -129,6 +129,5 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
-        android:text="@string/add_button"
         android:id="@+id/btnAddUsage" />
 </LinearLayout>
