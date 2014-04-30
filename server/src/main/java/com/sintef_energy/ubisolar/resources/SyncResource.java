@@ -79,7 +79,7 @@ public class SyncResource {
     }
 
     @PUT
-    @Path("/device/")
+    @Path("/usage/")
     public Response syncUsage(@Valid ArrayList<DeviceUsage> usage) {
         int result[] = db.addUsageForDevices(usage.iterator());
         boolean success = true;
