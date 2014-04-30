@@ -90,7 +90,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             Log.v(TAG, "Time is: " + newTimestampServerDevice + ". Syncing for date: " + lastTimestamServerDevice + ". For UID: " + uid);
 
             ArrayList<DeviceModel> deviceModels = requestManager.doSyncRequest().getBackendDeviceSync(uid, lastTimestamServerDevice);
-            //TODO MÅ LEGGE TIL LASTMODIFIED TIL DATABASE
             if(deviceModels != null){
                 if(deviceModels.size() > 0) {
 
@@ -99,7 +98,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                     //prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestampServerDevice);
 
                     for(DeviceModel dm : deviceModels){
-                        Log.e(TAG, ""+dm);
+                        Log.v(TAG, ""+dm);
                     }
                 }
             }

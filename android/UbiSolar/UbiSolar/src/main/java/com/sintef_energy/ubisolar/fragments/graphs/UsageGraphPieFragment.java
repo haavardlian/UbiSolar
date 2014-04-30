@@ -16,6 +16,7 @@ import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
+import com.sintef_energy.ubisolar.utils.Resolution;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -47,9 +48,9 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     private ArrayList<DeviceUsageList> mDeviceUsageList;
     private Bundle mSavedState;
     private int mSelected = -1;
-    private String mTitleFormat = "EEEE dd/MM";
-    private String mDataResolution = "dd";
-    private String mPreLabel = "";
+
+    private Resolution resolution;
+
     private Date mSelectedDate;
 
     private boolean[] mSelectedDialogItems;
@@ -104,8 +105,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             mRenderer = (DefaultRenderer) mSavedState.getSerializable("mRenderer");
             mSeries = (CategorySeries) mSavedState.getSerializable("mSeries");
             mSelected = mSavedState.getInt("mSelected");
-            mTitleFormat = mSavedState.getString("mTitleFormat");
-            mDataResolution = mSavedState.getString("mDataResolution");
             mSelectedDialogItems = mSavedState.getBooleanArray("mSelectedDialogItems");
         }
         else
@@ -113,6 +112,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             setupPieGraph();
         }
 
+        resolution = new Resolution(Resolution.DAYS);
         createPieGraph();
         updateDetails();
 //        ArrayList<ArrayList<DeviceUsage>> usageList = createDeviceUsage(mDevices);
@@ -133,8 +133,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         state.putSerializable("mRenderer", mRenderer);
         state.putSerializable("mSeries", mSeries);
         state.putInt("mSelected", mSelected);
-        state.putString("mTitleFormat", mTitleFormat);
-        state.putString("mDataResolution", mDataResolution);
         state.putBooleanArray("mSelectedDialogItems", mSelectedDialogItems);
 
         return state;
@@ -151,11 +149,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
         mSavedState = saveState();
         Log.v(TAG, " onDestroyView()");
-    }
-
-    @Override
-    public void newData(EnergyUsageModel euModel) {
-
     }
 
     private void setupPieGraph()
@@ -260,13 +253,13 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         mDeviceUsageList = usageList;
         setSelectedDate();
         for(DeviceUsageList u : mDeviceUsageList)
-            u.calculateTotalUsage(formatDate(mSelectedDate, mTitleFormat) , mTitleFormat);
+            u.calculateTotalUsage(formatDate(mSelectedDate, resolution.getPieFormat()) , resolution.getPieFormat());
 
         populatePieChart();
 
         if(mSelectedDate != null) {
             TextView label = (TextView) rootView.findViewById(R.id.usagePieLabel);
-            label.setText(mPreLabel + formatDate(mSelectedDate, mTitleFormat));
+            label.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
         }
     }
 
@@ -314,40 +307,24 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         powerUsageView.setText("");
     }
 
-    public void setFormat(String labelFormat, String titleFormat)
+    public void setFormat(int mode)
     {
-//        mTitleFormat = titleFormat;
-        mDataResolution = labelFormat;
-        mPreLabel = "";
-
-        if(mDataResolution == "HH") {
-            mTitleFormat = "HH EEEE dd/MM";
-            mPreLabel = "KL ";
-        }
-        else if(mDataResolution == "dd") {
-            mTitleFormat = "EEEE dd/MM";
-        }
-        else if(mDataResolution == "w") {
-            mTitleFormat = "w y";
-            mPreLabel = "Week ";
-        }
-        else if(mDataResolution == "MMMM")
-            mTitleFormat = "MMMM";
-        else
-            mTitleFormat = titleFormat;
+      resolution.setFormat(mode);
     }
 
-    public String getResolution()
+    public int getResolution()
     {
-        return mDataResolution;
+        return resolution.getMode();
     }
 
     public boolean[] getSelectedDialogItems() {
         if(mSelectedDialogItems == null)
         {
-            mSelectedDialogItems = new boolean[mDeviceSize];
-            Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
-            mSelectedDialogItems[0] = false;
+            if(mDeviceSize > 0) {
+                mSelectedDialogItems = new boolean[mDeviceSize];
+                Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
+                mSelectedDialogItems[0] = false;
+            }
         }
         return mSelectedDialogItems;
     }
