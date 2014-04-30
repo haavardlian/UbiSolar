@@ -5,13 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.ComparisonSettingsAdapter;
+import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 
 /**
  * Created by perok on 2/11/14.
@@ -24,7 +21,7 @@ public class HomeFragment extends DefaultTabFragment {
     public static final String TAG = HomeFragment.class.getName();
 
     private View view;
-    private ComparisonSettingsAdapter comparisonSettingsAdapter;
+    private ComparisonAdapter comparisonAdapter;
 
     /**
      * Returns a new instance of this fragment for the given section
