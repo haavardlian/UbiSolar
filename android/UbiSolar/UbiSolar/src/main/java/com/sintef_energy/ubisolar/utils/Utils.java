@@ -53,6 +53,7 @@ public class Utils {
                             .detectNetwork()
                             .penaltyLog()
                             .build());
+
             StrictMode.setVmPolicy(
                     new StrictMode.VmPolicy.Builder()
             .detectLeakedSqlLiteObjects()

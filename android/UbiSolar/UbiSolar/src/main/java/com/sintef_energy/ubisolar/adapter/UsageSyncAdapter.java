@@ -70,7 +70,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             /* STEP 1: SETUP FILES */
             Log.v(TAG, "Starting sync operation");
 
-            if(Utils.isNetworkOn(getContext())){
+            if(!Utils.isNetworkOn(getContext())){
                 Log.v(TAG, "Sync aborted. No network connection.");
                 return;
             }

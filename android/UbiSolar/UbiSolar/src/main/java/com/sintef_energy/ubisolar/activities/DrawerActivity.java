@@ -500,7 +500,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
              * The account exists or some other error occurred. Log this, report it,
              * or handle it internally.
              */
-
             Log.v(TAG, "CreateSyncAccount failed: Most probably because account already exists.");
         }
 
