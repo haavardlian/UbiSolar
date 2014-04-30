@@ -38,6 +38,7 @@
             android:authorities="com.sintef_energy.ubisolar.provider.energy"
             android:exported="true"
             android:grantUriPermissions="true"
+            android:syncable="true"
             android:label="AlarmsProvider"
             android:readPermission=".alarm.db.AlarmModel.READ"
             android:writePermission=".alarm.db.AlarmModel.WRITE" />

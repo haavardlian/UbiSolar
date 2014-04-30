@@ -10,7 +10,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
@@ -43,7 +42,6 @@ import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
-import com.sintef_energy.ubisolar.utils.TestdataHelper;
 import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.Arrays;
@@ -89,26 +87,17 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     // Instance fields
     private Account mAccount;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         //We want to use the progress bar
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         //Create RequestManager instance
         RequestManager.getInstance(this);
+
         /* Set up the presenters */
-
-        /*UsagePresenter*/
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.MONTH, 8);
         mTotalEnergyPresenter = new TotalEnergyPresenter();
-        //mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
-        //        0,
-        //        calendar.getTimeInMillis());
-
+        devicePresenter = new DevicePresenter();
 
         titleNames = getResources().getStringArray(R.array.nav_drawer_items);
         setContentView(R.layout.activity_usage);
@@ -116,9 +105,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
-        /* DevicePresenter */
-        devicePresenter = new DevicePresenter();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -133,7 +119,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         getFragmentManager().
                     }
                 });*/
-
 
         /* Session data */
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
@@ -153,7 +138,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mAccount = CreateSyncAccount(this);
 
         /* The same as ticking allow sync */
-        //ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
 
         /* Request a sync operation */
         Bundle bundle = new Bundle();
@@ -169,7 +154,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         /* Start developer mode after app has been setup
          * Lots of StrictMode violations are done in startup anyways. */
-        developerMode(Global.DEVELOPER_MADE, false);
+        Utils.developerMode(getContentResolver(), Global.DEVELOPER_MADE, false);
     }
 
     /**
@@ -346,8 +331,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      * @param savedInstanceState Saved instance data
      */
     private void startFacebookLogin(Bundle savedInstanceState){
-
-
         // start Facebook Login
         // This will _only_ log in if the user is logged in from before.
         // To log in, the user must choose so himself from the menu.
@@ -445,7 +428,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
                 //What is this and what is its purpose?
                 mPrefManager.setFacebookName(session.getApplicationId()); //TODO Is appId userId? In that case, set UID here.
-
+                Log.v(TAG, "APPID:" + session.getApplicationId());
                 //SessionState.
 
                 Toast.makeText(getBaseContext(), "Logged in through facebook", Toast.LENGTH_LONG).show();
@@ -470,7 +453,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                                 mPrefManager.setKeyFacebookUid(user.getId());
 
                                 Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
-                                Log.d("FACEBOOKNAME", user.getFirstName()+user.getLastName());
+                                Log.d("FACEBOOKNAME", user.getFirstName() + " " + user.getLastName());
                             } else {
                                 Log.e(TAG, "No DATA");
                             }
@@ -485,7 +468,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 Log.v(DrawerActivity.TAG, "Facebook status is fishy");
         }
     }
-
 
     /**
      * Create a new dummy account for the sync adapter
@@ -510,6 +492,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
              * in your <provider> element in the manifest,
              * then call context.setIsSyncable(account, AUTHORITY, 1)
              * here.
+             * -> Is set in the manifest.
              */
             Log.v(TAG, "CreateSyncAccount successful");
         } else {
@@ -523,37 +506,4 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         return newAccount;
     }
-
-    /**
-     * Debug with strict mode
-     */
-    private void developerMode(boolean devMode, boolean testData){
-        if(testData) {
-            TestdataHelper.clearDatabase(getContentResolver());
-//            //Populate the database if it's empty
-//            if (EnergyDataSource.getEnergyModelSize(getContentResolver()) == 0) {
-//                Log.v(TAG, "Developer mode: Database empty. Populating it.");
-                TestdataHelper.createDevices(getContentResolver());
-//                //            createEnergyUsage();
-//            }
-        }
-
-        if(devMode){
-            StrictMode.setThreadPolicy(
-                new StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .detectNetwork()
-                .penaltyLog()
-                .build());
-                StrictMode.setVmPolicy(
-                        new StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
-                .penaltyLog()
-                .penaltyDeath()
-                .build());
-        }
-    }
-
 }
