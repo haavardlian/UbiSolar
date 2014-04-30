@@ -60,7 +60,6 @@ public class SelectDevicesDialog extends DialogFragment {
         mSelectedItems = this.getArguments().getBooleanArray(ARG_SELECTED);
 
         if(mSelectedItems.length != mDevices.size()) {
-            //TODO: Apply correct fields as selected?
             mSelectedItems = new boolean[mDevices.size()];
         }
 
