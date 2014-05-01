@@ -3,12 +3,20 @@ package com.sintef_energy.ubisolar.resources;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
+
 import com.yammer.dropwizard.jersey.params.LongParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+
 import java.util.Random;
 
 /**
@@ -20,7 +28,9 @@ import java.util.Random;
 public class DataGeneratorResource {
     private ServerDAO db;
     private ArrayList<Device> devices;
+
     long n = 125363;
+
     public DataGeneratorResource(ServerDAO db) {
         this.db = db;
         this.devices = new ArrayList<Device>();
@@ -40,6 +50,7 @@ public class DataGeneratorResource {
     private ArrayList<DeviceUsage> generateUsage(Device d) {
         ArrayList<DeviceUsage> usage = new ArrayList<DeviceUsage>();
         Random r = new Random();
+
         long time = System.currentTimeMillis();
         double rangeMin = 5.0, rangeMax = 20.0;
         double random;
@@ -54,6 +65,7 @@ public class DataGeneratorResource {
 
         return usage;
     }
+
 
     @GET
     @Path("generate/")
