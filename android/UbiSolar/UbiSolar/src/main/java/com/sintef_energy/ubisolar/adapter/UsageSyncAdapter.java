@@ -100,7 +100,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             try {
                 requestManager = RequestManager.getInstance();
             } catch (IllegalStateException ex) {
-                requestManager = RequestManager.getInstance(getContext());
+                requestManager = RequestManager.getSyncInstance(getContext());
             }
 
             /* STEP 2: Init */
