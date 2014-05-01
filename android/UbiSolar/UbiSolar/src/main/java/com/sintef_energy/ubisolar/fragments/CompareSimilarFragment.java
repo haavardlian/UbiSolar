@@ -4,17 +4,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
+import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.ResidenceAttributes;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.util.ArrayList;
 
@@ -34,6 +31,8 @@ public class CompareSimilarFragment extends Fragment {
     private View view;
     private ArrayList<ResidenceAttributes> houseDescription;
     private static final String ARG_POSITION = "position";
+    private ProfilePictureView profilePicture;
+    private ProfilePictureView friendPicture;
 
 
     public CompareSimilarFragment(SimilarAdapter simAdapter) {
@@ -85,6 +84,13 @@ public class CompareSimilarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
+        profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
+        profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
+        profilePicture.setPresetSize(ProfilePictureView.LARGE);
+
+        friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
+        friendPicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
+        friendPicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;
     }

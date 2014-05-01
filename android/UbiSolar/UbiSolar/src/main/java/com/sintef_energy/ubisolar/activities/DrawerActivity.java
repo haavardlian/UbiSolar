@@ -18,10 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
-
-import com.facebook.FacebookRequestError;
-import com.facebook.HttpMethod;
-
 import com.facebook.LoggingBehavior;
 import com.facebook.Request;
 import com.facebook.RequestAsyncTask;
@@ -414,7 +410,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         .setPermissions(FACEBOOK_PERMISSIONS)
                         .setCallback(mFacebookSessionStatusCallback));
 
-                session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
+                //session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
@@ -649,23 +645,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     }
 */
     private void setFacebookPermissions() {
-        FACEBOOK_PERMISSIONS=new ArrayList<String>();
+        FACEBOOK_PERMISSIONS=new ArrayList<>();
         FACEBOOK_PERMISSIONS.add("user_birthday");
-        FACEBOOK_PERMISSIONS.add("user_likes");
-        FACEBOOK_PERMISSIONS.add("user_questions");
-        FACEBOOK_PERMISSIONS.add("user_interests");
-        FACEBOOK_PERMISSIONS.add("user_relationships");
-        FACEBOOK_PERMISSIONS.add("user_groups");
-        FACEBOOK_PERMISSIONS.add("user_religion_politics");
-        FACEBOOK_PERMISSIONS.add("friends_birthday");
         FACEBOOK_PERMISSIONS.add("user_location");
-        FACEBOOK_PERMISSIONS.add("friends_likes");
-        FACEBOOK_PERMISSIONS.add("friends_groups");
-        FACEBOOK_PERMISSIONS.add("user_education_history");
-        FACEBOOK_PERMISSIONS.add("friends_relationships");
         FACEBOOK_PERMISSIONS.add("email");
-        FACEBOOK_PERMISSIONS.add("publish_actions");
-
     }
 
 }
