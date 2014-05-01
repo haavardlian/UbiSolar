@@ -185,7 +185,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         switch (item.getItemId()) {
             case R.id.fragment_usage_menu_action_devices:
                 SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(
-                        new ArrayList<>(mDevices.values()),
+                        new ArrayList<DeviceModel>(mDevices.values()),
                         graphView.getSelectedDialogItems());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(fragmentManager, "selectDeviceDialog");
