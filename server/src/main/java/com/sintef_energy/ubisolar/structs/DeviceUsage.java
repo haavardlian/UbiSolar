@@ -32,11 +32,11 @@ public class DeviceUsage {
     }
 
     public Date getDatetime() {
-        return new Date(this.timestamp);
+        return new Date(this.lastUpdated);
     }
 
     public void setDatetime(Date datetime) {
-        this.timestamp = datetime.getTime();
+        this.lastUpdated = datetime.getTime();
     }
 
     public boolean isDeleted() {
@@ -53,6 +53,7 @@ public class DeviceUsage {
 
     public void setLastUpdated(long lastUpdated) {
         this.lastUpdated = lastUpdated;
+        this.datetime = new Date(lastUpdated);
     }
 
     public long getId() {
@@ -69,7 +70,7 @@ public class DeviceUsage {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
-        this.datetime = new Date(timestamp);
+
     }
 
     public double getPowerUsage() {

@@ -49,7 +49,7 @@ public class DataGeneratorResource {
             rangeMin = random - 50;
             rangeMax = random + 50;
             if(random < 0) random = -random;
-            usage.add(new DeviceUsage(time+i+d.getUserId(), d.getId(), (time/1000L) - (i*3600), random, false, (time/1000L)));
+            usage.add(new DeviceUsage(time+i+d.getUserId(), d.getId(), (time/1000L) - (i*3600), random, false, time));
         }
 
         return usage;
