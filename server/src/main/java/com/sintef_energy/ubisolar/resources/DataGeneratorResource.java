@@ -29,18 +29,18 @@ public class DataGeneratorResource {
     }
 
     private void generateDevices(ArrayList<Device> devices, long user) {
-        long time = System.currentTimeMillis() / 1000l;
-        devices.add(new Device(System.currentTimeMillis(), user, "TV", "This is your TV", time, false));
-        devices.add(new Device(System.currentTimeMillis(), user, "Stove", "This is your Stove", time, false));
-        devices.add(new Device(System.currentTimeMillis(), user, "Fridge", "This is your Fridge", time, false));
-        devices.add(new Device(System.currentTimeMillis(), user, "Heater", "This is your Heater", time, false));
+        long time = System.currentTimeMillis();
+        devices.add(new Device(time+1, user, "TV", "This is your TV", time/1000l, false));
+        devices.add(new Device(time+2, user, "Stove", "This is your Stove", time/1000l, false));
+        devices.add(new Device(time+3, user, "Fridge", "This is your Fridge", time/1000l, false));
+        devices.add(new Device(time+4, user, "Heater", "This is your Heater", time/1000l, false));
 
     }
 
     private ArrayList<DeviceUsage> generateUsage(Device d) {
         ArrayList<DeviceUsage> usage = new ArrayList<DeviceUsage>();
         Random r = new Random();
-        long time = System.currentTimeMillis() / 1000L;
+        long time = System.currentTimeMillis();
         double rangeMin = 50.0, rangeMax = 400.0;
         double random;
 
@@ -48,7 +48,8 @@ public class DataGeneratorResource {
             random = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
             rangeMin = random - 50;
             rangeMax = random + 50;
-            usage.add(new DeviceUsage(System.currentTimeMillis(), d.getId(), time - (i*3600), random));
+            if(random < 0) random = -random;
+            usage.add(new DeviceUsage(time+i, d.getId(), (time/1000L) - (i*3600), random));
         }
 
         return usage;
