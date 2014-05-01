@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 public class RequestManager {
 
     private static RequestManager instance;
+    private static RequestManager syncInstance;
     private RequestTipProxy mRequestTipProxy;
     private RequestSyncProxy mRequestSyncProxy;
     private RequestQueue mRequestQueue;
@@ -35,6 +36,12 @@ public class RequestManager {
         mRequestTipProxy = new RequestTipProxy(activity, mRequestQueue);
         mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
     }
+
+    private RequestManager(Context context) {
+        mRequestQueue = newRequestQueue(context);
+        mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
+    }
+
     public RequestTipProxy doTipRequest() {
         return mRequestTipProxy;
     }
@@ -49,6 +56,12 @@ public class RequestManager {
             instance = new RequestManager(activity);
         }
         return instance;
+    }
+
+    public static synchronized RequestManager getSyncInstance(Context context) {
+        if(syncInstance == null)
+            syncInstance = new RequestManager(context);
+        return  syncInstance;
     }
 
     public static synchronized RequestManager getInstance() {

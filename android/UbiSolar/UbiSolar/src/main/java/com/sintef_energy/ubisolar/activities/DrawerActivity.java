@@ -406,7 +406,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             else if (!session.isOpened() && !session.isClosed()) {
 
 
-                session.openForRead(new Session.OpenRequest(this)
+                session.openForPublish(new Session.OpenRequest(this)
                         .setPermissions(FACEBOOK_PERMISSIONS)
                         .setCallback(mFacebookSessionStatusCallback));
 
@@ -476,17 +476,17 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                                     mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
                                 else
                                     mPrefManager.setFacebookName("Could not find Facebook name");
+                                if(user.getLocation() != null) {
+                                    if (null != user.getLocation().getCity())
+                                        mPrefManager.setFacebookLocation(user.getLocation().getCity());
+                                    else
+                                        mPrefManager.setFacebookLocation("Could not find Facebook location");
 
-                                if(null != user.getLocation().getCity())
-                                    mPrefManager.setFacebookLocation(user.getLocation().getCity());
-                                else
-                                    mPrefManager.setFacebookLocation("Could not find Facebook location");
-
-                                if(null != user.getLocation().getCountry())
-                                    mPrefManager.setFacebookCountry(user.getLocation().getCountry());
-                                else
-                                    mPrefManager.setFacebookCountry("Could not find Facebook country");
-
+                                    if (null != user.getLocation().getCountry())
+                                        mPrefManager.setFacebookCountry(user.getLocation().getCountry());
+                                    else
+                                        mPrefManager.setFacebookCountry("Could not find Facebook country");
+                                }
                                 if(null != user.getBirthday())
                                     mPrefManager.setFacebookAge(user.getBirthday());
                                 else
@@ -496,9 +496,9 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
                                 Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
                                 Log.d("FACEBOOKNAME", user.getFirstName()+" "+user.getLastName());
-                                Log.d("FACEBOOKLOCATION", user.getLocation().getCity()+" ");
+                                //Log.d("FACEBOOKLOCATION", user.getLocation().getCity()+" ");
                                 Log.d("FACEBOOKAGE", user.getBirthday()+" ");
-                                Log.d("FACEBOOKCOUNTRY", user.getLocation().getCountry()+" ");
+                                //Log.d("FACEBOOKCOUNTRY", user.getLocation().getCountry()+" ");
 
 
                             } else {
@@ -649,6 +649,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         FACEBOOK_PERMISSIONS.add("user_birthday");
         FACEBOOK_PERMISSIONS.add("user_location");
         FACEBOOK_PERMISSIONS.add("email");
+        FACEBOOK_PERMISSIONS.add("publish_actions");
     }
 
 }
