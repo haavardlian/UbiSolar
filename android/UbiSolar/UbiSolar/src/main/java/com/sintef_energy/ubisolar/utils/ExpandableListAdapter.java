@@ -13,20 +13,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
+import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class ExpandableListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener {
 
     private Activity context;
     private List<DeviceModel> devices;
-    //Changing categories from string[] to a list - or create help method to add all the categories to devices?
     private String[] categories;
     public static final String TAG = ExpandableListAdapter.class.getName();
 
-    //Denne skal ta inn cursoren i steden for lista i seg selv?
     public ExpandableListAdapter(Activity context, List<DeviceModel> devices) {
         this.context = context;
         this.devices = devices;
@@ -34,9 +36,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        //TODO fix this
-        //Trying to create a list of all children in this group and picking the right one
+    public DeviceModel getChild(int groupPosition, int childPosition) {
         ArrayList<DeviceModel> children = new ArrayList<DeviceModel>();
         for (DeviceModel deviceModel : devices){
             if (deviceModel.getCategory() == groupPosition)
@@ -80,13 +80,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         nameView.setText(device.getName());
         //TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
 
-        //Only show description if the device actually got it
+        //Only show description if the device actually got a description
         if (device.getDescription().length() > 1){
             TextView descriptionView = (TextView) convertView.findViewById(R.id.deviceDescription);
             descriptionView.setText("Description: " + device.getDescription());
         }
 
-        //idView.setText("ID: " + device.getDevice_id());
+        //idView.setText("ID: " + device.getId());
         return convertView;
     }
 
@@ -124,6 +124,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return true;
+    }
+
+    public boolean onChildClick(ExpandableListView expListView, View view, int groupPosition, int childPosition, long id) {
+        // TODO Auto-generated method stub
+        Log.d(TAG, "The devicemodel selected: " + getChild(groupPosition, childPosition).getName());
+        EditDeviceDialog editDeviceDialog = new EditDeviceDialog(getChild(groupPosition, childPosition));
+        editDeviceDialog.show(context.getFragmentManager(), TAG);
         return true;
     }
 }

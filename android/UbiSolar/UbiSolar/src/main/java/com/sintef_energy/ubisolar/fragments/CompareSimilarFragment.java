@@ -1,33 +1,47 @@
-package com.sintef_energy.ubisolar.fragments.social;
+package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
+import com.sintef_energy.ubisolar.model.ResidenceAttributes;
+
+import java.util.ArrayList;
 
 /**
  * Created by baier on 4/1/14.
  */
-public class CompareSimilarFragment extends Fragment{
+public class CompareSimilarFragment extends Fragment {
 
     /* The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = CompareSimilarFragment.class.getName();
 
-    private static final String ARG_POSITION = "position";
+    //private ComparisonAdapter compAdapter;
+    private SimilarAdapter simAdapter;
+
     private View view;
+    private ArrayList<ResidenceAttributes> houseDescription;
+    private static final String ARG_POSITION = "position";
 
 
-    private SimilarAdapter similarAdapter;
+    public CompareSimilarFragment(SimilarAdapter simAdapter) {
+        this.simAdapter = simAdapter;
+    }
 
-    public CompareSimilarFragment(SimilarAdapter similarAdapter) {
-        this.similarAdapter = similarAdapter;
+    public CompareSimilarFragment() {
+
     }
 
 
@@ -35,8 +49,16 @@ public class CompareSimilarFragment extends Fragment{
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareSimilarFragment newInstance(int position, SimilarAdapter similarAdapter) {
-        CompareSimilarFragment fragment = new CompareSimilarFragment(similarAdapter);
+    public static CompareSimilarFragment newInstance(int position, SimilarAdapter simAdapter) {
+        CompareSimilarFragment fragment = new CompareSimilarFragment(simAdapter);
+        Bundle b = new Bundle();
+        b.putInt(ARG_POSITION, position);
+        fragment.setArguments(b);
+        return fragment;
+    }
+
+    public static CompareSimilarFragment newInstance(int position) {
+        CompareSimilarFragment fragment = new CompareSimilarFragment();
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
@@ -44,8 +66,15 @@ public class CompareSimilarFragment extends Fragment{
     }
 
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     /**
      * The first call to a created fragment
+     *
      * @param activity
      */
     @Override
@@ -57,11 +86,8 @@ public class CompareSimilarFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
 
-
-
         return view;
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -80,7 +106,7 @@ public class CompareSimilarFragment extends Fragment{
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
     }
 

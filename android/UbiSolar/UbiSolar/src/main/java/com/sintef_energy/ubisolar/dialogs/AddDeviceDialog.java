@@ -13,23 +13,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.IView.IDeviceView;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by pialindkjolen on 13.03.14.
@@ -61,6 +54,8 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
+        final long uid = Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid());
+
         view = inflater.inflate(R.layout.dialog_add_device, null);
         builder.setView(view)
                 // Add action buttons
@@ -69,11 +64,10 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                     public void onClick(DialogInterface dialog, int id) {
                         /*Create new device model*/
                         DeviceModel deviceModel = new DeviceModel();
-                        deviceModel.setUser_id(System.currentTimeMillis());
-                        deviceModel.setDevice_id(System.currentTimeMillis());
+                        deviceModel.setUserId(uid);
+                        deviceModel.setId(System.currentTimeMillis());
 
                         deviceModel.setDescription(descriptionField.getText().toString());
-                        Log.v(TAG, "Description settes til : " + descriptionField.getText().toString());
                         deviceModel.setName(nameField.getText().toString());
 
                         /*Get selected category*/

@@ -61,7 +61,7 @@ public class ProfileFragment extends DefaultTabFragment  {
         super.onAttach(activity);
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
-        ((DrawerActivity) activity).publishStory();
+        //((DrawerActivity) activity).publishStory();
     }
 
     @Override
@@ -70,6 +70,7 @@ public class ProfileFragment extends DefaultTabFragment  {
 
         //Dummy creation to be replaced when facebook login is 100%
         //setDummyPrefs();
+
         if(Global.loggedIn) {
             mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
             setupList();
@@ -95,6 +96,7 @@ public class ProfileFragment extends DefaultTabFragment  {
 
         }
 
+        Session.getActiveSession();
         return mRootView;
     }
 

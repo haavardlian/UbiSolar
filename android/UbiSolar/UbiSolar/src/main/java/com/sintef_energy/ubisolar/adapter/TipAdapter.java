@@ -19,9 +19,9 @@ import java.util.List;
  * Created by Håvard on 20.03.14.
  */
 public class TipAdapter extends ArrayAdapter<Tip> {
-    Context context;
-    int layoutResourceId;
-    List<Tip> data = null;
+    private Context context;
+    private int layoutResourceId;
+    private List<Tip> data = null;
 
     public TipAdapter(Context context, int layoutResourceId, ArrayList<Tip> data) {
         super(context, layoutResourceId);

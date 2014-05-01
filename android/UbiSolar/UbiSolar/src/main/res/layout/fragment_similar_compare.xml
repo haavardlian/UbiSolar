@@ -1,126 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:weightSum="2"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:paddingLeft="0dp" >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal" >
 
 
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/userHeader"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/editText"
-                android:textSize="18dp"
-                android:textColorHint="#d8d8d8"
-                android:padding="15dp"
-                android:text="Comparison based on:"
-                android:layout_alignParentTop="true"
-                android:layout_weight="70"
-                />
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:layout_marginRight="120dp"
-                android:id="@+id/myTextView"
-                android:gravity="right"
-                android:linksClickable="true"
-                android:layout_toRightOf="@id/editText"
-                android:text="Change this?"/>
+            android:layout_height="fill_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:text="@string/user_name" />
 
 
-            <CheckedTextView
-                android:id="@+id/checkedTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-                android:checked="true"
-                android:textSize="20dp"
-                android:layout_marginTop="45dp"
-                android:paddingLeft="25dp"
-                android:paddingRight="20dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="15dp"
-                android:gravity="center_vertical"
-                android:text="Area" />
 
-            <CheckedTextView
+        <TextView
+            android:id="@+id/friendHeader"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:text="@string/friend_name" />
 
-                android:text="Number of residents"
-                android:id="@+id/checkedTextView2"
-                android:layout_below="@id/checkedTextView"
-                android:layout_marginTop="105dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-                android:checked="true"
-                android:textSize="20dp"
-                android:gravity="center_vertical"
-                android:paddingLeft="25dp"
-                android:paddingRight="20dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="15dp"/>
 
-            <CheckedTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Residence size"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-                android:checked="true"
-                android:textSize="20dp"
-                android:gravity="center_vertical"
-                android:layout_marginTop="165dp"
-                android:paddingLeft="25dp"
-                android:paddingRight="20dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="15dp"/>
 
-            <CheckedTextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Energy class"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-                android:checked="true"
-                android:textSize="20dp"
-                android:layout_marginTop="225dp"
-                android:gravity="center_vertical"
-                android:paddingLeft="25dp"
-                android:paddingRight="20dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="15dp"/>
-            </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:clipChildren="false">
+
+        <ImageView
+            android:id="@+id/userProfilePic"
+            android:layout_width="150dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="0dp"
+            android:layout_weight="2"
+            android:layout_centerInParent="true"
+            android:src="@drawable/profile" />
+
+        <ImageView
+            android:id="@+id/vs_icon"
+            android:layout_width="80dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="-40dp"
+            android:layout_marginRight="-40dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal|top"
+            android:src="@drawable/vs" />
+
+
+        <ImageView
+            android:id="@+id/friendProfilePic"
+            android:layout_width="150dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="2"
+            android:src="@drawable/profile"  />
+
+    </LinearLayout>
+
+
 
 
     <RelativeLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1" >
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="5dp" >
+
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
             <ImageView
                 android:id="@+id/compFriendChart"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_marginTop="270dp"
-
+                android:layout_marginTop="250dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/graph" />
 
-    </RelativeLayout>
 
+
+
+        </FrameLayout>
+    </RelativeLayout>
 
 
 </RelativeLayout>

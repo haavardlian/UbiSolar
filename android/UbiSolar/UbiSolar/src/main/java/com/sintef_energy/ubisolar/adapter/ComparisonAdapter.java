@@ -8,12 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.fragments.social.ComparisonSettingsFragment;
-import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
@@ -33,8 +30,6 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
     private static final String SIZE = "Resident size";
     private static final String RES = "Number of residents";
     private static final String ENERGY = "Energy class";
-
-
 
 
     public ComparisonAdapter(Context context, int resource, List<ResidenceAttributes> residenceAttr) {

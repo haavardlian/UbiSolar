@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar.fragments.social;
+package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TabHost;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
@@ -18,7 +17,6 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-import com.sintef_energy.ubisolar.fragments.DefaultTabFragment;
 import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 import com.sintef_energy.ubisolar.model.User;
 
@@ -33,7 +31,7 @@ public class CompareFragment extends DefaultTabFragment {
 
     private View mRoot;
     private FriendAdapter friendAdapter;
-    private SimilarAdapter similarAdapter;
+    private SimilarAdapter simAdapter;
 
     public static CompareFragment newInstance(int sectionNumber) {
         CompareFragment fragment = new CompareFragment();
@@ -60,10 +58,10 @@ public class CompareFragment extends DefaultTabFragment {
         mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
         //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
         friendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<User>());
-        similarAdapter = new SimilarAdapter();
+        simAdapter = new SimilarAdapter();
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
-        pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter, similarAdapter));
+        pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter, simAdapter));
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
         tabs.setViewPager(pager);
@@ -81,11 +79,11 @@ public class CompareFragment extends DefaultTabFragment {
 
         private final String[] TITLES = { "Friends", "Similar profiles"};
         private FriendAdapter friendAdapter;
-        private SimilarAdapter similarAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter similarAdapter) {
+        private SimilarAdapter simAdapter;
+        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter simAdapter) {
             super(fm);
             this.friendAdapter = friendAdapter;
-            this.similarAdapter = similarAdapter;
+            this.simAdapter = simAdapter;
         }
 
 
@@ -105,7 +103,7 @@ public class CompareFragment extends DefaultTabFragment {
                 case 0:
                     return CompareFriendsFragment.newInstance(0, friendAdapter);
                 case 1:
-                    return CompareSimilarFragment.newInstance(1, similarAdapter);
+                    return CompareSimilarFragment.newInstance(1, simAdapter);
                 default:
                     return null;
             }

@@ -1,7 +1,6 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 
 /**
  * Created by perok on 2/11/14.
@@ -21,6 +21,7 @@ public class HomeFragment extends DefaultTabFragment {
     public static final String TAG = HomeFragment.class.getName();
 
     private View view;
+    private ComparisonAdapter comparisonAdapter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -50,7 +51,8 @@ public class HomeFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_home_placeholder, container, false);
+        view = inflater.inflate(R.layout.fragment_home, container, false);
+
         return view;
     }
 
@@ -62,6 +64,7 @@ public class HomeFragment extends DefaultTabFragment {
         if (savedInstanceState != null) {
             // Restore last state for checked position.
         }
+
     }
 
     /*End lifecycle*/
