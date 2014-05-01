@@ -36,5 +36,6 @@ public class ServerService extends Service<ServerConfiguration> {
         environment.addResource(new SyncResource(dao));
         environment.addResource(new TipsResource(dao));
         environment.addProvider(new OAuthProvider<User>(new Auth(), "SECRET"));
+        environment.addResource(new DataGeneratorResource(dao));
     }
 }
