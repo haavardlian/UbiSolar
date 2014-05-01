@@ -20,7 +20,7 @@ import java.util.Random;
 public class DataGeneratorResource {
     private ServerDAO db;
     private ArrayList<Device> devices;
-
+    long n = 125363;
     public DataGeneratorResource(ServerDAO db) {
         this.db = db;
         this.devices = new ArrayList<Device>();
@@ -43,7 +43,7 @@ public class DataGeneratorResource {
         long time = System.currentTimeMillis();
         double rangeMin = 5.0, rangeMax = 20.0;
         double random;
-        long n = 125363;
+
         for(int i = 0; i < 1000; i++) {
             random = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
             rangeMin = random - 5;
