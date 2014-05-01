@@ -87,8 +87,10 @@
     <string name="profile_postcode">Postal code</string>
     <string name="profile_anon">Anonymous</string>
     <string name="superscript2"><sup><small>2</small></sup></string>
+    <string name="log_in_to_sync">"Log into Facebook to enable synchronization"</string>
     <string name="get_started">Log in to share your profile</string>
     <string name="action_forgot_password">Have you forgotten your password?</string>
+
 
     <!-- Fragment social-->
     <string name="social_user_name">User\'s name</string>
