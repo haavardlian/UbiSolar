@@ -36,6 +36,7 @@ public class DataGeneratorResource {
 
     private void generateDevices(ArrayList<Device> devices, long user) {
         long time = System.currentTimeMillis();
+
         devices.add(new Device(time+1, user, "TV", "This is your TV", time/1000l, false, 1));
         devices.add(new Device(time+2, user, "Stove", "This is your Stove", time/1000l, false, 2));
         devices.add(new Device(time+3, user, "Fridge", "This is your Fridge", time/1000l, false, 3));
@@ -49,6 +50,7 @@ public class DataGeneratorResource {
 
         long time = System.currentTimeMillis();
         double rangeMin = 5.0, rangeMax = 20.0;
+
         double random;
 
         for(int i = 0; i < 1000; i++) {
