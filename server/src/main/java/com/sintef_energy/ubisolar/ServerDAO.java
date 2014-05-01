@@ -106,7 +106,6 @@ public interface ServerDAO {
     @Mapper(DeviceUsageMapper.class)
     List<DeviceUsage> getUpdatedUsage(@Bind("userId") long userId, @Bind("timestamp") long timestamp);
 
-
     @SqlQuery("SELECT MAX(last_updated) AS timestamp FROM device WHERE user_id = :user LIMIT 1")
     long getLastUpdatedTimeDevice(@Bind("user") long user);
 
