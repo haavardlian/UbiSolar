@@ -43,9 +43,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by perok on 2/11/14.
- */
 public class UsageGraphLineFragment extends Fragment implements IUsageView{
     public static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String STATE_euModels = "STATE_euModels";
