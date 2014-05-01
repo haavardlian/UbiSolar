@@ -44,7 +44,7 @@ public class DataGeneratorResource {
         double rangeMin = 5.0, rangeMax = 20.0;
         double random;
 
-        for(int i = 0; i < 200; i++) {
+        for(int i = 0; i < 2000; i++) {
             random = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
             rangeMin = random - 5;
             rangeMax = random + 5;
