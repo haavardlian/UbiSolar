@@ -3,7 +3,6 @@ package com.sintef_energy.ubisolar.resources;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
-import com.sun.prism.Texture;
 import com.yammer.dropwizard.jersey.params.LongParam;
 
 import javax.ws.rs.Consumes;
@@ -13,7 +12,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Random;
 
 /**
