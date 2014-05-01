@@ -35,7 +35,7 @@ public class SyncResource {
 
     @GET
     @Path("/device/{timestamp}")
-    public List<Device> getNewDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
+    public List<Device> getNewDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") LongParam userID) {
         List<Device> devices = db.getUpdatedDevices(userID.get(), timestamp.get());
         if(devices != null && !devices.isEmpty())
             return devices;
@@ -77,7 +77,7 @@ public class SyncResource {
 
     @GET
     @Path("/usage/{timestamp}")
-    public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp, @PathParam("user") IntParam userID) {
+    public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp, @PathParam("user") LongParam userID) {
         List<DeviceUsage> usage = db.getUpdatedUsage(userID.get(), timestamp.get());
         if(usage != null && !usage.isEmpty())
             return usage;
