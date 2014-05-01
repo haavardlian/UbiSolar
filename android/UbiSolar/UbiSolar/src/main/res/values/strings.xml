@@ -7,6 +7,7 @@
     <!-- Sync and auth -->
     <string name="auth_account_type">com.sintef_energy.ubisolar.sync</string>
     <string name="sync_content_authority">com.sintef_energy.ubisolar.sync.provider</string>
+
     <!-- The Content Provider -->
     <string name="provider_authority_energy">com.sintef_energy.ubisolar.provider.energy</string>
 
@@ -24,7 +25,6 @@
         <item>Exchange tips</item>
         <item>Settings</item>
         <item>Profile</item>
-        <item>Comparison settings</item>
         <item>Log in</item>
     </string-array>
     <string-array name="nav_drawer_icons">
@@ -41,8 +41,9 @@
     <!-- AddTipDialog -->
     <string name="addTipDialog_title">Create tip</string>
     <string name="addTipDialog_buttonText">Create</string>
+
     <!-- AddUsageDialog -->
-    <string name="addUsageDialog_title">Add device mUsage</string>
+    <string name="addUsageDialog_title">Add usage</string>
 
     <!-- AddDeviceDialog -->
     <string name="addDeviceDialog_title">Add device</string>
@@ -56,31 +57,26 @@
     </string-array>
     <string name="addDeviceDialog_buttonText">Add</string>
 
+    <!-- EditDeviceDialog -->
+    <string name="editDeviceDialog_title">Edit device</string>
+    <string name="editDeviceDialog_buttonText">Save</string>
+
     <!-- Fragment usage -->
-    <string name="usage_device_dialog_title">Select Devices</string>
-    <string name="pie_chart_title">Power overview</string>
-    <string name="last12months">Last 12 months</string>
-    <string name="lastMonth">Last month</string>
-    <string name="devices">Devices</string>
-    <string name="totalUsage">Total mUsage</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_example">Example action</string>
-    <string name="action_settings">Settings</string>
-    <string name="add_button">Add Usage</string>
-    <string name="title_activity_add_device_energy">Total usage</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="get_started">Log in to share your profile</string>
-    <string name="action_forgot_password">Have you forgotten your password?</string>
-    <string name="add_device_button">Add Device</string>
+    <string name="usage_select_devices">Select Devices</string>
+    <string name="usage_share">Share</string>
+    <string name="usage_line_graph_title">Power overview</string>
+    <string name="usage_pie_graph_title">Distribution</string>
 
     <string-array name="fragment_usage_tabs">
         <item>Line chart</item>
         <item>Pie chart</item>
     </string-array>
+
+
+    <!--Other-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
 
     <!-- Fragment profile-->
     <string name="profile_username">Username</string>
@@ -91,6 +87,10 @@
     <string name="profile_postcode">Postal code</string>
     <string name="profile_anon">Anonymous</string>
     <string name="superscript2"><sup><small>2</small></sup></string>
+    <string name="log_in_to_sync">"Log into Facebook to enable synchronization"</string>
+    <string name="get_started">Log in to share your profile</string>
+    <string name="action_forgot_password">Have you forgotten your password?</string>
+
 
     <!-- Fragment social-->
     <string name="social_user_name">User\'s name</string>
@@ -99,8 +99,6 @@
     <string name="friends_header_title">Friends</string>
 
     <!-- Comparison settings-->
-    <string name="comp_header">Comparison of savings</string>
-    <string name="comp_setting_header">Select what you want to compare:</string>
     <string name="comparison_setting">Comparison setting</string>
 
 
@@ -114,4 +112,7 @@
 
     <!-- Toast -->
     <string name="no_internet">Internet connection required to log in</string>
+
+
+
 </resources>

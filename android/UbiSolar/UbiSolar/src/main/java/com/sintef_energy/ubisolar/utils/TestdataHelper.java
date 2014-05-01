@@ -11,6 +11,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -26,21 +27,28 @@ public class TestdataHelper {
 
     public static void createDevices(ContentResolver cr)
     {
-        addDevice(cr, "Total", "-", 0, true);
-        addDevice(cr, "TV", "Livingroom", 1, false);
-        addDevice(cr, "Radio", "Kitchen", 1, false);
-        addDevice(cr, "Heater", "Second floor", 1, false);
-        addDevice(cr, "Oven", "Kitchen", 2, false);
+        addDevice(cr, "Total", "-", 0);
+        addDevice(cr, "TV", "Livingroom", 1);
+        addDevice(cr, "Radio", "Kitchen", 1);
+        addDevice(cr, "Heater", "Second floor", 1);
+        addDevice(cr, "Oven", "Kitchen", 2);
     }
 
-    private static void addDevice(ContentResolver cr, String name, String description, int category, boolean isTotal) {
-        DeviceModel device = new DeviceModel(System.currentTimeMillis(),
-                name, description, System.currentTimeMillis(), category, isTotal);
+    private static void addDevice(ContentResolver cr, String name, String description, int category) {
+        PreferencesManager preferencesManager = PreferencesManager.getInstance();
+        DeviceModel device = new DeviceModel(
+                System.currentTimeMillis(),
+                Long.valueOf(preferencesManager.getKeyFacebookUid()),
+                name,
+                description,
+                category,
+                false,
+                System.currentTimeMillis() / 1000L);
 
         cr.insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
 
-        //mDevices.put(device.getDevice_id(), device);
+        //mDevices.put(device.getDeviceId(), device);
         Log.v(TAG, "Created device: " + device.getName());
     }
 
@@ -65,7 +73,7 @@ public class TestdataHelper {
 
                 usageModel = new EnergyUsageModel(
                         idCount++,
-                        device.getDevice_id(),
+                        device.getDeviceId(),
                         cal.getTime(),
                         random.nextInt(151) + 50);//(200 - 50) + 1) + 50);
                 values[i + (y * n)] = usageModel.getContentValues();

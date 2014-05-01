@@ -16,6 +16,7 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
 import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.utils.Global;
 
 import org.w3c.dom.Text;
 
@@ -60,6 +61,7 @@ public class ProfileFragment extends DefaultTabFragment  {
         super.onAttach(activity);
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+        //((DrawerActivity) activity).publishStory();
     }
 
     @Override
@@ -67,22 +69,32 @@ public class ProfileFragment extends DefaultTabFragment  {
         prefs = PreferencesManager.getInstance();
 
         //Dummy creation to be replaced when facebook login is 100%
-        setDummyPrefs();
+        //setDummyPrefs();
 
-        mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        setupList();
+        if(Global.loggedIn) {
+            mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
+            setupList();
 
-        name = (TextView) mRootView.findViewById(R.id.profile_name);
-        name.setText(prefs.getFacebookName());
-        location = (TextView) mRootView.findViewById(R.id.profile_location);
-        location.setText(prefs.getFacebookLocation());
-        age = (TextView) mRootView.findViewById(R.id.profile_age);
-        age.setText(prefs.getFacebookAge());
-        country = (TextView) mRootView.findViewById(R.id.profile_country);
-        country.setText(prefs.getFacebookCountry());
-        profilePicture = (ProfilePictureView) mRootView.findViewById(R.id.profile_profile_picture);
-        profilePicture.setProfileId(prefs.getKeyFacebookUid());
-        profilePicture.setPresetSize(ProfilePictureView.LARGE);
+            name = (TextView) mRootView.findViewById(R.id.profile_name);
+            name.setText(prefs.getFacebookName());
+            location = (TextView) mRootView.findViewById(R.id.profile_location);
+            location.setText(prefs.getFacebookLocation());
+            age = (TextView) mRootView.findViewById(R.id.profile_age);
+            age.setText(prefs.getFacebookAge());
+            country = (TextView) mRootView.findViewById(R.id.profile_country);
+            country.setText(prefs.getFacebookCountry());
+            profilePicture = (ProfilePictureView) mRootView.findViewById(R.id.profile_profile_picture);
+            profilePicture.setProfileId(prefs.getKeyFacebookUid());
+            profilePicture.setPresetSize(ProfilePictureView.LARGE);
+            profilePicture.setVisibility(0);
+
+            Session.getActiveSession();
+        }
+        else {
+            mRootView = inflater.inflate(R.layout.fragment_profile_offline, container, false);
+            setupList();
+
+        }
 
         Session.getActiveSession();
         return mRootView;
@@ -113,8 +125,10 @@ public class ProfileFragment extends DefaultTabFragment  {
     private void setupList()
     {
         createGroupList();
-
-        expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListView);
+        if(Global.loggedIn)
+            expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListView);
+        else
+            expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListViewOffline);
         final ResidenceListAdapter expListAdapter = new ResidenceListAdapter(getActivity(), residences);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);

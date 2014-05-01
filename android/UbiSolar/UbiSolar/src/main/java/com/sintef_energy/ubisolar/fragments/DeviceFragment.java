@@ -60,10 +60,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         super.onCreate(savedInstanceState);
         try {
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
-
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
-
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString() + " must implement " + TotalEnergyPresenter.class.getName());
         }
@@ -94,8 +92,10 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
+
         devices = new ArrayList<>();
         expListAdapter = new ExpandableListAdapter(getActivity(), devices);
+        expListView.setOnChildClickListener(expListAdapter);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
 

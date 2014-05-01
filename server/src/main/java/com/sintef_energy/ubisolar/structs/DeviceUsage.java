@@ -10,22 +10,49 @@ import java.util.Date;
  */
 @JsonSnakeCase
 public class DeviceUsage {
-    @JsonProperty
     private long id;
-    @JsonProperty
-    private Date datetime;
-    @JsonProperty
-    private double powerUsage;
-    @JsonProperty
     private long deviceId;
+    private long timestamp;
+    private Date datetime;
+    private double powerUsage;
+    private boolean deleted;
+    private long lastUpdated;
+
 
     public DeviceUsage() {}
 
-    public DeviceUsage(long id, long deviceId, Date datetime, double powerUsage) {
+    public DeviceUsage(long id, long deviceId, long timestamp, double powerUsage, boolean deleted, long lastUpdated) {
         this.id = id;
         this.powerUsage = powerUsage;
         this.deviceId = deviceId;
-        this.datetime = datetime;
+        this.timestamp = timestamp;
+        this.deleted = deleted;
+        this.lastUpdated = lastUpdated;
+        this.datetime = new Date(timestamp);
+    }
+
+    public Date getDatetime() {
+        return new Date(this.timestamp * 1000);
+    }
+
+    public void setDatetime(Date datetime) {
+        this.lastUpdated = datetime.getTime();
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     public long getId() {
@@ -36,12 +63,13 @@ public class DeviceUsage {
         this.id = id;
     }
 
-    public Date getDatetime() {
-        return datetime;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setDatetime(Date datetime) {
-        this.datetime = datetime;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+
     }
 
     public double getPowerUsage() {

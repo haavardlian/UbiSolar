@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
-import android.content.ContentResolver;
 
-import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -26,12 +24,11 @@ import android.widget.Button;
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
+import com.sintef_energy.ubisolar.dialogs.ShareDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
@@ -40,32 +37,10 @@ import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Random;
 
-/**
- * Created by perok on 2/11/14.
- *
- * BUG: Backstack for usage behaves weired.
- */
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
-
-    private static final String TAG = UsageFragment.class.getName();
-
-    private View mRootView;
-    private Bundle mSavedState;
-
-    /** List of all devices */
-    private LinkedHashMap<Long, DeviceModel> mDevices;
-
-    /** List of usage from devices */
-    private ArrayList<DeviceUsageList> mDeviceUsageList;
-
-    /** Callback for graphs */
-    private IUsageView graphView;
 
     public static final int LOADER_DEVICES = 0;
     public static final int LOADER_USAGE = 1;
@@ -74,7 +49,18 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public static final int LOADER_USAGE_MONTH = 4;
     public static final int LOADER_USAGE_YEAR = 5;
 
+    private static final String TAG = UsageFragment.class.getName();
+
+    private View mRootView;
+    private Bundle mSavedState;
+    private LinkedHashMap<Long, DeviceModel> mDevices;
+    private ArrayList<DeviceUsageList> mDeviceUsageList;
+    private IUsageView graphView;
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
+
+
+    public UsageFragment() {
+    }
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -88,23 +74,15 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         return fragment;
     }
 
-    public UsageFragment() {
-    }
-
-    /**
-     * The first call to a created fragment
-     * @param activity
-     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         //Callback to activity
-        ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+//        ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override
     public void onCreate(Bundle bundle){
-        //We can alter the option menu
         setHasOptionsMenu(true);
 
         super.onCreate(bundle);
@@ -117,13 +95,16 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(mUsageFragmentStatePageAdapter == null)
             mUsageFragmentStatePageAdapter = new UsageFragmentStatePageAdapter(getFragmentManager());
 
-        // Initialize the ViewPager and set an adapter
+        // Initialize the ViewPager and set the adapter
         ScrollViewPager pager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
         pager.setAdapter(mUsageFragmentStatePageAdapter);
-        pager.setSwipeable(false); //TODO: Should be enabled/ disabled on MotionEvents for LineGraph
+        // Makes the tabs non-swipeable. Having the tabs swipeable causes weird behavior because the
+        // graphs are also swipeable.
+        pager.setSwipeable(false);
 
         // Bind the tabs to the ViewPager
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRootView.findViewById(R.id.fragment_usage_tabs);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip)
+                mRootView.findViewById(R.id.fragment_usage_tabs);
 
         tabs.setViewPager(pager);
 
@@ -170,22 +151,22 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         mDevices = new LinkedHashMap<>();
 
-
-
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
 
+        LoaderManager loaderManager = getLoaderManager();
+
+        if(loaderManager == null){
+            Log.e(TAG, "Unable to load the loader manager");
+        }
+
         if (mSavedState != null) {
             mDeviceUsageList = mSavedState.getParcelableArrayList("mDeviceUsageList");
-            getLoaderManager().restartLoader(LOADER_DEVICES, null, this);
-        }
-        else {
+            loaderManager.restartLoader(LOADER_DEVICES, null, this);
+        } else {
             mDeviceUsageList = new ArrayList<>();
-            getLoaderManager().initLoader(LOADER_DEVICES, null, this);
+            loaderManager.initLoader(LOADER_DEVICES, null, this);
         }
-
-
-        Log.v(TAG, "EnergyModel data sie in DB: " + EnergyDataSource.getEnergyModelSize(getActivity().getContentResolver()));
     }
 
     @Override
@@ -196,17 +177,23 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
+        FragmentManager fragmentManager = getFragmentManager();
+        if(fragmentManager == null) {
+            Log.e(TAG, "Unable to load the fragment manager");
+            return false;
+        }
         switch (item.getItemId()) {
             case R.id.fragment_usage_menu_action_devices:
                 SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(
-                        new ArrayList<DeviceModel>(mDevices.values()),
+                        new ArrayList<>(mDevices.values()),
                         graphView.getSelectedDialogItems());
                 dialog.setTargetFragment(this, 0);
-                dialog.show(getFragmentManager(), "selectDeviceDialog");
+                dialog.show(fragmentManager, "selectDeviceDialog");
                 return true;
             case R.id.share_usage:
-                graphView.createImage();
+                ShareDialog d = new ShareDialog(graphView.createImage());
+                d.setTargetFragment(UsageFragment.this, 0);
+                d.show(fragmentManager, "shareDialog");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -218,14 +205,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBundle("mSavedState", mSavedState != null ? mSavedState : saveState());
-    }
-
-    private Bundle saveState(){
-        Bundle state = new Bundle();
-
-        state.putParcelableArrayList("mDeviceUsageList", mDeviceUsageList);
-
-        return state;
     }
 
     public void onDestroyView(){
@@ -240,8 +219,15 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         super.onDestroy();
     }
 
+    private Bundle saveState(){
+        Bundle state = new Bundle();
+
+        state.putParcelableArrayList("mDeviceUsageList", mDeviceUsageList);
+
+        return state;
+    }
+
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
-//        graphView.setSelectedItems(selectedItems);
         graphView.setSelectedDialogItems(itemsSelected);
 
         //Clear the graph if no devices are selected
@@ -251,38 +237,18 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.clearDevices();
     }
 
-    public void loadUsage()
-    {
+    public void loadUsage(){
         if(!graphView.isLoaded()) {
             if(mDevices.size() > 0)
                 getLoaderManager().restartLoader(LOADER_USAGE, null, this);
         }
     }
 
-    private String[] getSelectedDevicesIDs()
-    {
-        boolean[] selectedItems = graphView.getSelectedDialogItems();
-        ArrayList<String> ids = new ArrayList<>();
-
-        int i = 0;
-
-        for(Device device : mDevices.values())
-        {
-            if(selectedItems.length > i) {
-                if (selectedItems[i]) {
-                    ids.add("" + device.getDevice_id());
-                }
-                i++;
-            }
-        }
-        return ids.toArray(new String[ids.size()]);
-    }
-
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
         Uri.Builder builder;
 
-        switch (i){
+        switch (mode){
             case LOADER_DEVICES:
                 return new CursorLoader(
                         getActivity(),
@@ -290,8 +256,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         EnergyContract.Devices.PROJECTION_ALL,
                         null,
                         null,
-                        DeviceModel.DeviceEntry._ID + " ASC"
-                );
+                        DeviceModel.DeviceEntry._ID + " ASC");
             case LOADER_USAGE:
                 return new CursorLoader(
                         getActivity(),
@@ -299,8 +264,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         EnergyContract.Energy.PROJECTION_ALL,
                         sqlWhereDevices(),
                         getSelectedDevicesIDs(),
-                        EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC"
-                );
+                        EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC");
             case LOADER_USAGE_DAY:
                 builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
                 builder.appendPath(EnergyContract.Energy.Date.Day);
@@ -311,8 +275,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         null,
                         sqlWhereDevices(),
                         getSelectedDevicesIDs(),
-                        null
-                );
+                        null);
             case LOADER_USAGE_WEEK:
                 builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
                 builder.appendPath(EnergyContract.Energy.Date.Week);
@@ -323,8 +286,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         null,
                         sqlWhereDevices(),
                         getSelectedDevicesIDs(),
-                        null
-                );
+                        null);
             case LOADER_USAGE_MONTH:
                 builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
                 builder.appendPath(EnergyContract.Energy.Date.Month);
@@ -335,8 +297,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         null,
                         sqlWhereDevices(),
                         getSelectedDevicesIDs(),
-                        null
-                );
+                        null);
             case LOADER_USAGE_YEAR:
                 builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
                 builder.appendPath(EnergyContract.Energy.Date.Year);
@@ -347,47 +308,52 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         null,
                         sqlWhereDevices(),
                         getSelectedDevicesIDs(),
-                        null
-                );
+                        null);
         }
         return null;
     }
 
+    /**
+     * Creates a 'where' sql statement based on the currently selected items.
+     *
+     * @return sql 'where' statement
+     */
     private String sqlWhereDevices(){
-
         String where = "";
 
         boolean[] selectedItems = graphView.getSelectedDialogItems();
-
-
         ArrayList<String> queries = new ArrayList<>();
 
-        for(int i = 0; i < selectedItems.length; i++)
-        {
-            if(selectedItems[i]) {
-                System.out.println(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID);
+        for(boolean selectedItem : selectedItems)
+            if(selectedItem)
                 queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
-            }
-        }
 
+        // The last part of the query shall not be succeeded by an OR.
         int i;
-
-        for(i = 0; i < queries.size() -1; i++) {
-            System.out.println(queries.get(i));
+        for(i = 0; i < queries.size() - 1; i++)
             where += queries.get(i) + " OR ";
-        }
-
         where += queries.get(i);
-
-//        for(int n = 0; n < graphView.getSelectedItems().length; n++){
-//            where += EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = ? ";
-//            if(n != graphView.getSelectedItems().length - 1)
-//                where += " OR ";
-//        }
 
         return where;
     }
 
+
+    private String[] getSelectedDevicesIDs() {
+        boolean[] selectedItems = graphView.getSelectedDialogItems();
+        ArrayList<String> ids = new ArrayList<>();
+
+        int i = 0;
+
+        for(Device device : mDevices.values()){
+            if(selectedItems.length > i) {
+                if (selectedItems[i])
+                    ids.add("" + device.getId());
+               i++;
+            }
+        }
+
+        return ids.toArray(new String[ids.size()]);
+    }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
@@ -399,9 +365,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 if (cursor.getCount() != 0)
                     do {
                         DeviceModel model = new DeviceModel(cursor);
-                        mDevices.put(model.getDevice_id(), model);
+                        mDevices.put(model.getId(), model);
                     } while (cursor.moveToNext());
                 graphView.setDeviceSize(mDevices.size());
+
+                //Load the graph the first time the fragment is ran after the devices has been loaded
                 if(mDevices.size() > 0)
                     getLoaderManager().initLoader(LOADER_USAGE, null, this);
                 break;
@@ -412,17 +380,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case LOADER_USAGE_MONTH:
             case LOADER_USAGE_YEAR:
                 populateDeviceUsageList(cursor);
-                //TODO: Implement logic to handle this correctly.
-                //Maybe populate.. can take in format argument?
                 break;
         }
     }
 
-    /**
-     * Populate the graphview view usage data.
-     *
-     * @param data
-     */
     private void populateDeviceUsageList(Cursor data){
         //Hashmap containing all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
@@ -432,11 +393,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(data.getCount() >= 1) {
             do {
                 EnergyUsageModel model = new EnergyUsageModel(data, true);
-                DeviceUsageList deviceUsageList = devices.get(model.getDevice_id());
+                DeviceUsageList deviceUsageList = devices.get(model.getDeviceId());
 
                 if (deviceUsageList == null) {
-                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDevice_id()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getDevice_id()), deviceUsageList);
+                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
+                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);
@@ -445,8 +406,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         }
 
         graphView.clearDevices();
-
-
         mDeviceUsageList.clear();
         mDeviceUsageList.addAll(devices.values());
 
@@ -460,14 +419,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private class UsageFragmentStatePageAdapter extends FragmentStatePagerAdapter {
 
         private String titles[];
-
         private HashMap<Integer, Fragment> fragmentReferenceMap;
 
-        public UsageFragmentStatePageAdapter(FragmentManager fm){
-            super(fm);
-
+        public UsageFragmentStatePageAdapter(FragmentManager fragmentManager){
+            super(fragmentManager);
             titles = getResources().getStringArray(R.array.fragment_usage_tabs);
-
             fragmentReferenceMap = new HashMap<>();
         }
 
@@ -479,7 +435,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         @Override
         public Fragment getItem(int position) {
 
-            Fragment fragment = null;
+            Fragment fragment;
 
             switch (position){
                 case 0:
@@ -520,7 +476,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(graphView.getResolution() == Resolution.DAYS) {
             graphView.setFormat(Resolution.HOURS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 24);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE, null, this);
 
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(false);
@@ -528,12 +484,12 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         else if(graphView.getResolution() == Resolution.WEEKS) {
             graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 7);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
         }
         else if(graphView.getResolution() == Resolution.MONTHS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 4);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(true);
@@ -545,20 +501,21 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(graphView.getResolution() == Resolution.HOURS) {
             graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 24);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(true);
         }
         else if(graphView.getResolution() == Resolution.DAYS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 7);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
             graphView.setFormat(Resolution.MONTHS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 4);
-            getLoaderManager().initLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
+            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(false);

@@ -3,7 +3,6 @@ package com.sintef_energy.ubisolar.database.energy;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.provider.CalendarContract;
 
 /**
  * Created by perok on 2/11/14.

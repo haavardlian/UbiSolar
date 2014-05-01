@@ -8,7 +8,7 @@ public class DatabaseConfiguration extends com.yammer.dropwizard.db.DatabaseConf
     public static enum DatabaseType {MYSQL, POSTGRES};
 
     public DatabaseConfiguration() {
-        this.setUrl("jdbc:mysql://mysql.stud.ntnu.no/haavarhl_it2901");
+        this.setUrl("jdbc:mysql://188.226.188.11/haavarhl_it2901");
         this.setUser("haavarhl_it2901");
         this.setPassword("julebrus");
         this.setDriverClass("com.mysql.jdbc.Driver");

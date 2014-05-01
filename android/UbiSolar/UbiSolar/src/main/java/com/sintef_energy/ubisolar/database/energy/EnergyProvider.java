@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * Created by perok on 2/11/14.
  *
  * TODO
- * ContentProvder is not thread sage. SQLiteDatabase is thread safe.
+ * ContentProvder is not thread safee. SQLiteDatabase is thread safe.
  * Should the providers CRUD method be implemented with synchronized? Will give a overhead, but
  * will possibly avoid bugs.
  *
@@ -38,8 +38,10 @@ public class EnergyProvider extends ContentProvider{
     private final ThreadLocal<Boolean> mIsInBatchMode = new ThreadLocal<Boolean>();
 
     // helper constants for use with the UriMatcher
+    private static final int DEVICES_LIST_DELETE = 9;
     private static final int DEVICES_LIST = 1;
     private static final int DEVICES_ID = 2;
+    private static final int ENERGY_LIST_DELETE = 10;
     private static final int ENERGY_LIST = 3;
     private static final int ENERGY_ID = 4;
     private static final int ENERGY_DAY_LIST = 5;
@@ -47,8 +49,6 @@ public class EnergyProvider extends ContentProvider{
     private static final int ENERGY_MONTH_LIST = 7;
     private static final int ENERGY_YEAR_LIST = 8;
 
-    private static final int DEVICES_LIST_DELETE = 9;
-    private static final int ENERGY_LIST_DELETE = 10;
 
     private static ContentValues deleteValues;
 
@@ -105,14 +105,21 @@ public class EnergyProvider extends ContentProvider{
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         SQLiteDatabase db = mHelper.getReadableDatabase();
 
+        if(db == null) return null;
+
         SQLiteQueryBuilder builder = new SQLiteQueryBuilder();
         boolean useAuthorityUri = false; //TODO: Automatic notification of changes to LoadManager?
-        Cursor cursor = null;
+        Cursor cursor;
 
         //Used by day, month, year
         String rawSql = null;
 
+        boolean deleteData = false;
+
         switch (URI_MATCHER.match(uri)) {
+            // We want the deleted data also
+            case DEVICES_LIST_DELETE:
+                deleteData = true;
             case DEVICES_LIST:
                 builder.setTables(DeviceModel.DeviceEntry.TABLE_NAME);
                 if (TextUtils.isEmpty(sortOrder)) {
@@ -125,6 +132,8 @@ public class EnergyProvider extends ContentProvider{
                 builder.appendWhere(EnergyContract.Devices._ID + " = " +
                     uri.getLastPathSegment());
                 break;
+            case ENERGY_LIST_DELETE:
+                deleteData = true;
             case ENERGY_LIST:
                 builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
                 if (TextUtils.isEmpty(sortOrder)) {
@@ -153,12 +162,13 @@ public class EnergyProvider extends ContentProvider{
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
-        if(selection == null)
-            selection = selectionAvoidDeleteBit;
+        if(selection == null) {
+            if (!deleteData)
+                selection = selectionAvoidDeleteBit;
+        }
         else
             selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
 
-        Log.v(TAG, "query selection: " + selection);
         //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
         if(rawSql == null)
             cursor =
@@ -171,10 +181,7 @@ public class EnergyProvider extends ContentProvider{
                         null,
                         sortOrder);
         else
-            cursor =
-                    db.rawQuery(rawSql, selectionArgs);
-
-
+            cursor = db.rawQuery(rawSql, selectionArgs);
 
         // if we want to be notified of any changes:
         if (useAuthorityUri) {
@@ -187,6 +194,7 @@ public class EnergyProvider extends ContentProvider{
                     getContext().getContentResolver(),
                     uri);
         }
+
         return cursor;
     }
 
@@ -194,10 +202,11 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public Uri insert(Uri uri, ContentValues values) {
 
-        /*if (!(URI_MATCHER.match(uri) == DEVICES_LIST ||
+        /*TODO add: if (!(URI_MATCHER.match(uri) == DEVICES_LIST ||
                 URI_MATCHER.match(uri) == ENERGY_LIST))
                 throw new IllegalArgumentException("Unsupported URI for insertion: " + uri);*/
         SQLiteDatabase db = mHelper.getWritableDatabase();
+        if(db == null) return null;
 
         long id = -1;
 
@@ -220,9 +229,14 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        int delCount = 0;
-        String idStr = null;
-        String where = null;
+        if(db == null) return -1;
+
+        int delCount;
+        String idStr;
+        String where;
+
+        deleteValues.put(DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED, System.currentTimeMillis() / 1000L);
+
         switch (URI_MATCHER.match(uri)) {
             /* ONLY DELETE ON THESE TWO */
             case DEVICES_LIST_DELETE:
@@ -292,9 +306,11 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
-        int updateCount = 0;
-        String idStr = null;
-        String where = null;
+        if(db == null) return -1;
+
+        int updateCount;
+        String idStr;
+        String where;
 
         switch (URI_MATCHER.match(uri)) {
             case DEVICES_LIST:
@@ -355,11 +371,13 @@ public class EnergyProvider extends ContentProvider{
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mHelper.getWritableDatabase();
+        if(db == null) return -1;
+
         final int match = URI_MATCHER.match(uri);
+        int numInserted = 0;
         switch(match){
             case ENERGY_LIST:
                 mIsInBatchMode.set(true);
-                int numInserted= 0;
                 db.beginTransaction();
                 try {
                     //standard SQL insert statement, that can be reused
@@ -369,8 +387,9 @@ public class EnergyProvider extends ContentProvider{
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ","
-                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED + ")"
-                                    +" values " + "(?,?,?,?, ?)");
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED + ")"
+                                    +" values " + "(?,?,?,?,?,?)");
                     for (ContentValues value : values){
                         //bind the 1-indexed ?'s to the values specified
                         insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
@@ -378,6 +397,7 @@ public class EnergyProvider extends ContentProvider{
                         insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME));
                         insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
                         insert.bindLong(5, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED));
+                        insert.bindLong(6, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED));
                         insert.execute();
 
                         db.yieldIfContendedSafely();
@@ -392,7 +412,44 @@ public class EnergyProvider extends ContentProvider{
                     getContext().getContentResolver().notifyChange(EnergyContract.CONTENT_URI, null);
                 }
                 return numInserted;
-            //....
+            case DEVICES_LIST:
+                mIsInBatchMode.set(true);
+                db.beginTransaction();
+                try {
+                    //standard SQL insert statement, that can be reused
+                    SQLiteStatement insert =
+                            db.compileStatement("INSERT OR REPLACE INTO " + DeviceModel.DeviceEntry.TABLE_NAME
+                                    + "(" + DeviceModel.DeviceEntry._ID + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_USER_ID + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_NAME + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_DESCRIPTION + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_CATEGORY + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_IS_DELETED + ","
+                                    + DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED + ")"
+                                    +" VALUES " + "(?,?,?,?,?,?,?)");
+                    for (ContentValues value : values){
+                        //bind the 1-indexed ?'s to the values specified
+                        insert.bindLong(1, value.getAsLong(DeviceModel.DeviceEntry._ID));
+                        insert.bindLong(2, value.getAsLong(DeviceModel.DeviceEntry.COLUMN_USER_ID));
+                        insert.bindString(3, value.getAsString(DeviceModel.DeviceEntry.COLUMN_NAME));
+                        insert.bindString(4, value.getAsString(DeviceModel.DeviceEntry.COLUMN_DESCRIPTION));
+                        insert.bindLong(5, value.getAsInteger(DeviceModel.DeviceEntry.COLUMN_CATEGORY));
+                        insert.bindLong(6, value.getAsInteger(DeviceModel.DeviceEntry.COLUMN_IS_DELETED));
+                        insert.bindLong(7, value.getAsInteger(DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED));
+                        insert.execute();
+
+                        db.yieldIfContendedSafely();
+                    }
+                    db.setTransactionSuccessful();
+                    insert.close();
+                    numInserted = values.length;
+                } finally {
+                    mIsInBatchMode.remove();
+
+                    db.endTransaction();
+                    getContext().getContentResolver().notifyChange(EnergyContract.CONTENT_URI, null);
+                }
+                return numInserted;
             default:
                 throw new UnsupportedOperationException("unsupported uri: " + uri);
         }
@@ -403,6 +460,8 @@ public class EnergyProvider extends ContentProvider{
             ArrayList<ContentProviderOperation> operations)
             throws OperationApplicationException {
         SQLiteDatabase db = mHelper.getWritableDatabase();
+        if(db == null) return null;
+
         mIsInBatchMode.set(true);
         // the next line works because SQLiteDatabase
         // uses a thread local SQLiteSession object for
@@ -451,7 +510,7 @@ public class EnergyProvider extends ContentProvider{
         //Unixtime
         String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
 
-        String rawSql = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
+        return "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
                         + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
                         + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
@@ -460,7 +519,5 @@ public class EnergyProvider extends ContentProvider{
                         + "GROUP BY " + time + ", "
                             + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
                         + "ORDER BY `month` ASC";
-
-        return rawSql;
     }
 }
