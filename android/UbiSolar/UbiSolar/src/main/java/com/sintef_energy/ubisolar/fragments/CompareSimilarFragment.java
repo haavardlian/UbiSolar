@@ -88,9 +88,9 @@ public class CompareSimilarFragment extends Fragment {
         profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
         profilePicture.setPresetSize(ProfilePictureView.LARGE);
 
-        friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
-        friendPicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
-        friendPicture.setPresetSize(ProfilePictureView.LARGE);
+       // friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
+        //friendPicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
+        //friendPicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;
     }
