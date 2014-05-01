@@ -84,7 +84,7 @@ public class SyncResource {
         if(usage != null && !usage.isEmpty())
             return usage;
         else
-            throw new WebApplicationException(Response.Status.NOT_MODIFIED);
+            throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
     @PUT
