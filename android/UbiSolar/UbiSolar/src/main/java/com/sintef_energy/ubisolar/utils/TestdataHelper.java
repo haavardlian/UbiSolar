@@ -88,15 +88,15 @@ public class TestdataHelper {
 
     public static void clearDatabase(ContentResolver cr){
 
-//        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
-//        builder.appendPath(EnergyContract.DELETE);
-//        int it = cr.delete(builder.build(), null, null);
-//        Log.v(TAG, "EMPTY DATABASE: " + it);
-//
-//        builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-//        builder.appendPath(EnergyContract.DELETE);
-//        it = cr.delete(builder.build(), null, null);
-//        Log.v(TAG, "EMPTY DATABASE: " + it);
+        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.DELETE);
+        int it = cr.delete(builder.build(), null, null);
+        Log.v(TAG, "EMPTY DATABASE: " + it);
+
+        builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+        builder.appendPath(EnergyContract.DELETE);
+        it = cr.delete(builder.build(), null, null);
+        Log.v(TAG, "EMPTY DATABASE: " + it);
     }
 
     public static void testDateQuery(ContentResolver cr){

@@ -113,8 +113,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         resolution = new Resolution(Resolution.DAYS);
         createPieGraph();
         updateDetails();
-//        ArrayList<ArrayList<DeviceUsage>> usageList = createDeviceUsage(mDevices);
-//        populatePieChart(mDevices, usageList);
     }
 
     /*End lifecycle*/
@@ -328,7 +326,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
             mLoaded = true;
             return false;
         }
-        return mLoaded;
+        return true;
     }
 
     public void setDeviceSize(int size){
