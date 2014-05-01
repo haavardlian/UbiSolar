@@ -30,10 +30,10 @@ public class DataGeneratorResource {
 
     private void generateDevices(ArrayList<Device> devices, long user) {
         long time = System.currentTimeMillis();
-        devices.add(new Device(time+1, user, "TV", "This is your TV", time/1000l, false));
-        devices.add(new Device(time+2, user, "Stove", "This is your Stove", time/1000l, false));
-        devices.add(new Device(time+3, user, "Fridge", "This is your Fridge", time/1000l, false));
-        devices.add(new Device(time+4, user, "Heater", "This is your Heater", time/1000l, false));
+        devices.add(new Device(time+1, user, "TV", "This is your TV", time/1000l, false, 1));
+        devices.add(new Device(time+2, user, "Stove", "This is your Stove", time/1000l, false, 2));
+        devices.add(new Device(time+3, user, "Fridge", "This is your Fridge", time/1000l, false, 3));
+        devices.add(new Device(time+4, user, "Heater", "This is your Heater", time/1000l, false, 4));
 
     }
 
@@ -49,7 +49,7 @@ public class DataGeneratorResource {
             rangeMin = random - 50;
             rangeMax = random + 50;
             if(random < 0) random = -random;
-            usage.add(new DeviceUsage(time+i+d.getUserId(), d.getId(), (time/1000L) - (i*3600), random));
+            usage.add(new DeviceUsage(time+i+d.getUserId(), d.getId(), (time/1000L) - (i*3600), random, false, (time/1000L)));
         }
 
         return usage;
