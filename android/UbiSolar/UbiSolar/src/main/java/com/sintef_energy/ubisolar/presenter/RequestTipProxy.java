@@ -1,5 +1,6 @@
 package com.sintef_energy.ubisolar.presenter;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.util.Log;
@@ -34,14 +35,14 @@ public class RequestTipProxy {
     private RequestQueue requestQueue;
     private ObjectMapper mapper;
 
-    private Context context;
+    private Activity activity;
 
     // package access constructor
-    RequestTipProxy(Context context, RequestQueue requestQueue) {
+    RequestTipProxy(Activity activity, RequestQueue requestQueue) {
         this.mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-        this.context = context;
+        this.activity = activity;
         this.requestQueue = requestQueue;
     }
 
@@ -75,7 +76,13 @@ public class RequestTipProxy {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(context, "Could not get data from server", Toast.LENGTH_LONG).show();
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity.getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
+                    }
+                });
+
                 Log.e("REQUEST", "Error from server!!");
 
                 fragment.getActivity().runOnUiThread(new Runnable() {
@@ -105,18 +112,32 @@ public class RequestTipProxy {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
-                        try {
-                            Toast.makeText(context, response.getString("message"),
-                                    Toast.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Toast.makeText(activity.getApplicationContext(), response.getString("message"),
+                                            Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show();
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(activity.getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
                 });
 
@@ -138,19 +159,34 @@ public class RequestTipProxy {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
-                        try {
-                            Toast.makeText(context, response.getString("message"),
-                                    Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+
+                            activity.runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    try {
+                                        Toast.makeText(activity.getApplicationContext(), response.getString("message"),
+                                            Toast.LENGTH_SHORT).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
+
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, "An error occurred",
-                                Toast.LENGTH_SHORT).show();
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(activity.getApplicationContext(), "An error occurred",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                     }
                 });
 

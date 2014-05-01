@@ -1,5 +1,6 @@
 package com.sintef_energy.ubisolar.presenter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -29,9 +30,9 @@ public class RequestManager {
     private RequestSyncProxy mRequestSyncProxy;
     private RequestQueue mRequestQueue;
 
-    private RequestManager(Context context) {
-        mRequestQueue = newRequestQueue(context);
-        mRequestTipProxy = new RequestTipProxy(context, mRequestQueue);
+    private RequestManager(Activity activity) {
+        mRequestQueue = newRequestQueue(activity.getApplicationContext());
+        mRequestTipProxy = new RequestTipProxy(activity, mRequestQueue);
         mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
     }
     public RequestTipProxy doTipRequest() {
@@ -43,9 +44,9 @@ public class RequestManager {
     }
 
     // This method should be called first to do singleton initialization
-    public static synchronized RequestManager getInstance(Context context) {
+    public static synchronized RequestManager getInstance(Activity activity) {
         if (instance == null) {
-            instance = new RequestManager(context);
+            instance = new RequestManager(activity);
         }
         return instance;
     }
