@@ -592,7 +592,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             .build());
         }
     }
-
+/*
     public void publishStory() {
         Session session = Session.getActiveSession();
 
@@ -660,7 +660,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
         return true;
     }
-
+*/
     private void setFacebookPermissions() {
         FACEBOOK_PERMISSIONS=new ArrayList<String>();
         FACEBOOK_PERMISSIONS.add("user_birthday");
