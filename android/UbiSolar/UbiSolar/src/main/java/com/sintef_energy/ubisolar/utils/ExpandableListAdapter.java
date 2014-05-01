@@ -8,11 +8,13 @@ import java.util.Map;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.nfc.Tag;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
@@ -26,7 +28,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private String[] categories;
     public static final String TAG = ExpandableListAdapter.class.getName();
 
-    //Denne skal ta inn cursoren i steden for lista i seg selv?
     public ExpandableListAdapter(Activity context, List<DeviceModel> devices) {
         this.context = context;
         this.devices = devices;
@@ -92,9 +93,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
 
 
-    public Object getGroup(int groupPosition) {
-        //TODO fix this
-        return devices.get(groupPosition);
+    public String getGroup(int groupPosition) {
+        return categories[groupPosition];
     }
 
     public int getGroupCount() { return categories.length; }
@@ -112,6 +112,26 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                     null);
         }
         TextView item = (TextView) convertView.findViewById(R.id.device);
+        ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
+
+        //Set the icon to the right icon
+        Log.d(TAG, "The groupPosition is: " + groupPosition + "The category corresponding is: " + categories[groupPosition]);
+        switch (groupPosition){
+            case 0:
+                icon.setImageResource(R.drawable.appliances);
+            case 1:
+                icon.setImageResource(R.drawable.heat);
+            case 2:
+                icon.setImageResource(R.drawable.home_entertainment);
+            case 3:
+               //Need lighting icon, default for now
+                icon.setImageResource(R.drawable.default_device);
+            case 4:
+                icon.setImageResource(R.drawable.default_device);
+            case 5:
+                icon.setImageResource(R.drawable.power_production);
+        }
+
         item.setText(categories[groupPosition]);
         item.setTypeface(null, Typeface.BOLD);
 
