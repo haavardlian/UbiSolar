@@ -9,7 +9,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -63,7 +62,6 @@ public class DataGeneratorResource {
         return usage;
     }
 
-
     @GET
     @Path("generate/")
     public Response generateData(@PathParam("user") LongParam user) {
@@ -80,7 +78,5 @@ public class DataGeneratorResource {
 
         return Response.status(Response.Status.OK).build();
     }
-
-
 
 }
