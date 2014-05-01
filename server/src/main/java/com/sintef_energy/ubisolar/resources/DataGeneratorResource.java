@@ -3,9 +3,7 @@ package com.sintef_energy.ubisolar.resources;
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
-
 import com.yammer.dropwizard.jersey.params.LongParam;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -16,7 +14,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-
 import java.util.Random;
 
 /**
