@@ -32,7 +32,7 @@ public class DeviceUsage {
     }
 
     public Date getDatetime() {
-        return new Date(this.lastUpdated);
+        return new Date(this.timestamp * 1000);
     }
 
     public void setDatetime(Date datetime) {
@@ -53,7 +53,6 @@ public class DeviceUsage {
 
     public void setLastUpdated(long lastUpdated) {
         this.lastUpdated = lastUpdated;
-        this.datetime = new Date(lastUpdated);
     }
 
     public long getId() {
