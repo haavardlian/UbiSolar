@@ -61,6 +61,7 @@ public class DataGeneratorResource {
             usage.add(new DeviceUsage(n++, d.getId(), (time/1000L) - (i*3600), random, false, time));
         }
 
+        
         return usage;
     }
 
