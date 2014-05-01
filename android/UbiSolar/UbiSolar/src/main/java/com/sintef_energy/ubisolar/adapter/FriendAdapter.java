@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.User;
+
 import java.util.List;
 
 /**
@@ -74,7 +74,6 @@ public class FriendAdapter extends ArrayAdapter<User> {
         if(!users.isEmpty()) {
             User user = users.get(position);
             holder.name.setText(user.getName());
-            holder.profilePic.setImageDrawable(user.getProfilePic());
         }
         return row;
     }

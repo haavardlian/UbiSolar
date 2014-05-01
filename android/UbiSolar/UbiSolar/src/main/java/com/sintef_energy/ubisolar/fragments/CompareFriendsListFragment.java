@@ -70,10 +70,10 @@ public class CompareFriendsListFragment extends Fragment {
         final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
         friendsList.setAdapter(friendAdapter);
 
-        friends.add(new User("Beate", getActivity().getResources().getDrawable(R.drawable.profile)));
-        friends.add(new User("Håvi", getActivity().getResources().getDrawable(R.drawable.heat)));
-        friends.add(new User("Piai", getActivity().getResources().getDrawable(R.drawable.profile)));
-        friends.add(new User("Peri", getActivity().getResources().getDrawable(R.drawable.profile)));
+        friends.add(new User("Beate"));
+        friends.add(new User("Håvi"));
+        friends.add(new User("Piai"));
+        friends.add(new User("Peri"));
 
         friendAdapter.notifyDataSetChanged();
 

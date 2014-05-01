@@ -1,7 +1,5 @@
 package com.sintef_energy.ubisolar.model;
 
-import android.graphics.drawable.Drawable;
-
 /**
  * Created by Lars Erik on 18.03.14.
  */
