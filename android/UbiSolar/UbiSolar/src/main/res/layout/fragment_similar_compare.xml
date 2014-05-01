@@ -1,120 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:paddingLeft="0dp" >
+    android:layout_height="fill_parent"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    >
+
+
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal" >
-
-
-
-        <TextView
-            android:id="@+id/userHeader"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:textStyle="bold"
-            android:layout_centerInParent="true"
-            android:text="@string/user_name" />
-
-
-
-        <TextView
-            android:id="@+id/friendHeader"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:textStyle="bold"
-            android:layout_centerInParent="true"
-            android:text="@string/friend_name" />
-
-
-
-    </LinearLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:orientation="horizontal"
-        android:clipChildren="false">
+        android:clipChildren="false"
+        android:layout_weight="0.1"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="top">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="top"
+            android:layout_weight="2"
+            android:layout_marginTop="-70dp"
+            >
+
 
         <com.facebook.widget.ProfilePictureView
             android:id="@+id/userProfilePic"
-            android:layout_width="150dp"
+            android:layout_width="fill_parent"
             android:layout_height="130dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="0dp"
             android:layout_weight="2"
             android:layout_centerInParent="true"
             />
 
-        <ImageView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Randomize"
+                android:layout_toLeftOf="@id/vs_icon"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_below="@+id/userProfilePic"
+                />
+
+        <Button
             android:id="@+id/vs_icon"
-            android:layout_width="80dp"
-            android:layout_height="130dp"
-            android:layout_marginTop="80dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="-40dp"
-            android:layout_marginRight="-40dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal|top"
-            android:src="@drawable/vs" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.1"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/ic_action_refresh"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/userProfilePic"/>
 
+</RelativeLayout>
 
-        <com.facebook.widget.ProfilePictureView
-            android:id="@+id/friendProfilePic"
-            android:layout_width="150dp"
-            android:layout_height="130dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="20dp"
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="top"
+            android:layout_alignParentRight="true"
             android:layout_weight="2"
+            android:layout_marginTop="10dp"
+            >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:layout_weight="2"
+            android:text="location:"
+            android:textAllCaps="true"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:id="@+id/location"
+            android:layout_alignParentRight="true"
             />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trondheim"
+                android:id="@+id/locationFill"
+                android:layout_below="@+id/location"
+                android:layout_weight="2"
+                android:layout_alignParentRight="true"
+
+
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginTop="5dp"
+                android:text="# of residents:"
+                android:textAllCaps="true"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_below="@+id/locationFill"
+                android:id="@+id/residents"
+                android:layout_alignParentRight="true"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4"
+                android:id="@+id/residentsFill"
+                android:layout_below="@+id/residents"
+                android:layout_weight="2"
+                android:layout_alignParentRight="true"
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginTop="5dp"
+                android:text="area:"
+                android:textAllCaps="true"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_below="@+id/residentsFill"
+                android:id="@+id/area"
+                android:layout_alignParentRight="true"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="120 m^2"
+                android:id="@+id/areaFill"
+                android:layout_below="@+id/area"
+                android:layout_weight="2"
+                android:layout_alignParentRight="true"
+                />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginTop="5dp"
+                android:text="Energy class:"
+                android:textAllCaps="true"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_below="@+id/areaFill"
+                android:id="@+id/energy"
+                android:layout_alignParentRight="true"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="A+"
+                android:id="@+id/energyFill"
+                android:layout_below="@+id/energy"
+                android:layout_weight="2"
+                android:layout_alignParentRight="true"
+                />
+
+        </RelativeLayout>
     </LinearLayout>
 
 
 
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_alignParentBottom="true"
-        android:paddingLeft="5dp" >
+        android:paddingLeft="5dp"
+        android:layout_weight=".1"
+        android:layout_gravity="bottom">
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/compFriendChart"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginTop="250dp"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/graph" />
-
-
-
 
         </FrameLayout>
     </RelativeLayout>
 
 
-</RelativeLayout>
+</LinearLayout>

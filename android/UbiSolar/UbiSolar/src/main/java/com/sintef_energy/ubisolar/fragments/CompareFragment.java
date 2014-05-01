@@ -14,10 +14,8 @@ import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 import com.sintef_energy.ubisolar.model.User;
 
 import java.util.ArrayList;
@@ -101,7 +99,7 @@ public class CompareFragment extends DefaultTabFragment {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    return CompareFriendsFragment.newInstance(0, friendAdapter);
+                    return CompareFriendsListFragment.newInstance(0, friendAdapter);
                 case 1:
                     return CompareSimilarFragment.newInstance(1, simAdapter);
                 default:

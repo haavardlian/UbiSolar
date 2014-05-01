@@ -1,61 +1,76 @@
 package com.sintef_energy.ubisolar.fragments;
 
+/**
+ * Created by baier on 5/1/14.
+ */
+
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v13.app.FragmentStatePagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
+import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
-import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-import com.sintef_energy.ubisolar.model.User;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
-import java.util.ArrayList;
 
-/**
- * Created by baier on 3/21/14.
- */
 public class CompareFriendsFragment extends Fragment {
-    /**
-     * The fragment argument representing the section number for this
+
+    /* The fragment argument representing the section number for this
      * fragment.
      */
-    public static final String TAG = CompareFragment.class.getName();
+    public static final String TAG = CompareFriendsFragment.class.getName();
 
-    private ArrayList<User> friends;
-    private static final String ARG_POSITION = "position";
-    private View view;
-    private FriendAdapter friendAdapter;
     private SimilarAdapter simAdapter;
 
+    private View view;
+    private static final String ARG_POSITION = "position";
+    private ProfilePictureView profilePicture;
+    private ProfilePictureView friendPicture;
+
+
+    public CompareFriendsFragment(SimilarAdapter simAdapter) {
+        this.simAdapter = simAdapter;
+    }
+
+    public CompareFriendsFragment() {
+
+    }
 
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareFriendsFragment newInstance(int position, FriendAdapter friendAdapter) {
-        CompareFriendsFragment fragment = new CompareFriendsFragment(friendAdapter);
+    public static CompareFriendsFragment newInstance(int position, SimilarAdapter simAdapter) {
+        CompareFriendsFragment fragment = new CompareFriendsFragment(simAdapter);
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
         return fragment;
     }
 
-    public CompareFriendsFragment(FriendAdapter friendAdapter) {
-        this.friendAdapter = friendAdapter;
+    public static CompareFriendsFragment newInstance(int position) {
+        CompareFriendsFragment fragment = new CompareFriendsFragment();
+        Bundle b = new Bundle();
+        b.putInt(ARG_POSITION, position);
+        fragment.setArguments(b);
+        return fragment;
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     /**
      * The first call to a created fragment
+     *
      * @param activity
      */
     @Override
@@ -65,81 +80,16 @@ public class CompareFriendsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_social_friends, container, false);
-        friends = new ArrayList<User>();
-        FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
-        final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
-        friendsList.setAdapter(friendAdapter);
+        view = inflater.inflate(R.layout.fragment_friends_compare, container, false);
+        profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
+        profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
+        profilePicture.setPresetSize(ProfilePictureView.LARGE);
 
-        friends.add(new User("Beate", getActivity().getResources().getDrawable(R.drawable.profile)));
-        friends.add(new User("Håvi", getActivity().getResources().getDrawable(R.drawable.heat)));
-        friends.add(new User("Piai", getActivity().getResources().getDrawable(R.drawable.profile)));
-        friends.add(new User("Peri", getActivity().getResources().getDrawable(R.drawable.profile)));
-
-        friendAdapter.notifyDataSetChanged();
-
-        friendsList.setClickable(true);
-        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-
-                Fragment fragment = CompareSimilarFragment.newInstance(position, simAdapter);
-                addFragment(fragment, true, friends.get(position));
-            }
-        });
+        friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
+        friendPicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
+        friendPicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;
-    }
-
-    public class MyPagerAdapter extends FragmentStatePagerAdapter {
-
-        private final String[] TITLES = { "Friends", "Similar profiles"};
-        private FriendAdapter friendAdapter;
-        private SimilarAdapter simAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter simAdapter) {
-            super(fm);
-            this.friendAdapter = friendAdapter;
-            this.simAdapter = simAdapter;
-        }
-
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return TITLES[position];
-        }
-
-        @Override
-        public int getCount() {
-            return TITLES.length;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch(position) {
-                case 0:
-                    return CompareFriendsFragment.newInstance(0, friendAdapter);
-                case 1:
-                    return CompareSimilarFragment.newInstance(1, simAdapter);
-                default:
-                    return null;
-            }
-        }
-
-
-    }
-
-    public void addFragment(Fragment fragment, boolean addToBackStack, User user) {
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction ft = manager.beginTransaction();
-
-        if (addToBackStack) {
-            ft.addToBackStack(user.getName());
-        }
-
-        ft.replace(R.id.container, fragment);
-        ft.commit();
     }
 
     @Override
@@ -159,7 +109,7 @@ public class CompareFriendsFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
     }
 
