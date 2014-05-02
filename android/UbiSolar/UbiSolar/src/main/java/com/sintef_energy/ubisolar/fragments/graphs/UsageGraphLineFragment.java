@@ -235,7 +235,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     private void createLineGraph(){
         if (mChartView == null) {
             LinearLayout layout = (LinearLayout) mRootView.findViewById(R.id.lineChartView);
-            Log.v(TAG, "createLineGraph: # Datasets to render: " + mDataset.getSeriesCount());
 
             mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
 
@@ -260,7 +259,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                     }
                 }
             });
-            Log.v(TAG, "createLineGraph: Adding mChartView to layout");
             layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT));
         } else {
@@ -268,24 +266,21 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
     }
 
-
-
     /**
      * All manupulation of new graph is done here..
      */
     private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Integer, Integer>{
-
-        ArrayList<DeviceUsageList> activeUsageList;
-
+        /*ArrayList<DeviceUsageList> activeUsageList;
         XYMultipleSeriesRenderer renderer;
         XYMultipleSeriesDataset dataset;
-
-        ArrayList<Date> dates;
+        ArrayList<Date> dates;*/
 
         double max;
         double min;
 
         boolean abort = false;
+
+        long startTime = 0;
 
         /**
          * (non-Javadoc)
@@ -294,61 +289,35 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
          */
         @Override
         protected void onPreExecute() {
-            // Things to be done before execution of long running operation. For
-            // example showing ProgessDialog
 
-            // execution of result of Long time consuming operation
-            //finalResult.setText(result);
-            activeUsageList = mActiveUsageList;
-            dataset = mDataset;
-            dates = mDates;
-            renderer = mRenderer;
+            setViewState(false);
+
+            startTime = System.currentTimeMillis();
 
             max = 0;
             min = Integer.MAX_VALUE;
 
+            //Clear old data
+            mRenderer.clearXTextLabels();
+            mDates.clear();
+
         }
 
         @Override
-        protected Integer doInBackground(ArrayList<DeviceUsageList>... usageList) {
-            Log.v(TAG, "Doing #: " + usageList.length + " inBackground");
-            for(int i = 0; i < usageList[0].size(); i++){
-                activeUsageList.add(usageList[0].get(i));
-                addSeries(usageList[0].get(i).getDevice().getName(), true, false);
+        protected Integer doInBackground(ArrayList<DeviceUsageList>... dataUsageList) {
+            Log.v(TAG, "Doing #: " + dataUsageList.length + " inBackground");
+            for(int i = 0; i < dataUsageList[0].size(); i++){
+                mActiveUsageList.add(dataUsageList[0].get(i));
+                addSeries(dataUsageList[0].get(i).getDevice().getName(), true, false);
             }
 
-            populateGraphAsync();
-
-            return null;
-        }
-
-
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see android.os.AsyncTask#onProgressUpdate(Progress[])
-         */
-        @Override
-        protected void onProgressUpdate(Integer... text) {
-            //finalResult.setText(text[0]);
-            // Things to be done while execution of long running operation is in
-            // progress. For example updating ProgessDialog
-        }
-
-
-        private void populateGraphAsync(){
             int y = 0;
             int index = 0;
 
-            //Clear old data
-            renderer.clearXTextLabels();
-            dates.clear();
-
             //Abort if no data.
-            if(activeUsageList.size() < 1) {
+            if(mActiveUsageList.size() < 1) {
                 abort = true;
-                return;
+                return null;
             }
 
             Date first = getFirstPoint().toDate();
@@ -361,25 +330,25 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             Log.v(TAG, "# of points for new render: " + numberOfPoints);
             //Create the labels for the dates
             for(int i = 0; i < numberOfPoints; i++){
-                dates.add(calendar.getTime());
-                renderer.addXTextLabel(y, formatDate(calendar.getTime(), resolution.getResolutionFormat()));
+                mDates.add(calendar.getTime());
+                mRenderer.addXTextLabel(y, formatDate(calendar.getTime(), resolution.getResolutionFormat()));
                 y += POINT_DISTANCE;
                 resolution.getNextPoint(calendar);
             }
 
             // Go through the datasets (each device)
-            for(DeviceUsageList usageList : activeUsageList) {
+            for(DeviceUsageList usageList : mActiveUsageList) {
                 Log.v(TAG, "Rendering new dataset: " + usageList.getDevice().getName());
                 Log.v(TAG, "Dataset has # points: " + usageList.getUsage().size());
 
-                XYSeries series = dataset.getSeriesAt(index);
+                XYSeries series = mDataset.getSeriesAt(index);
                 series.clear(); //@torrib ??
                 y = 0;
 
                 //Add the usage
                 for (EnergyUsageModel usage : usageList.getUsage()) {
-                    while(y < dates.size()){
-                        if(compareDates(usage.toDate(), dates.get(y))){
+                    while(y < mDates.size()){
+                        if(compareDates(usage.toDate(), mDates.get(y))){
                             series.add(y * POINT_DISTANCE, usage.getPowerUsage());
                             max = Math.max(max, usage.getPowerUsage());
                             min = Math.min(min, usage.getPowerUsage());
@@ -390,8 +359,20 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                 }
                 index++;
             }
+
+            return null;
         }
 
+        /*
+         * (non-Javadoc)
+         *
+         * @see android.os.AsyncTask#onProgressUpdate(Progress[])
+         */
+        @Override
+        protected void onProgressUpdate(Integer... text) {
+            // Things to be done while execution of long running operation is in
+            // progress. For example updating ProgessDialog
+        }
 
         /**
          * (non-Javadoc)
@@ -404,15 +385,13 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                 return;
 
 
-            Log.v(TAG, "LOL TO RENDER: " + dataset.getSeriesCount());
-
+            /*
             // Set the new values
             mActiveUsageList.addAll(activeUsageList);
             mRenderer = renderer;
             mDataset = dataset;
-            mDates = dates;
+            mDates = dates;*/
 
-            Log.v(TAG, "ROFL TO RENDER: " + mDataset.getSeriesCount());
 
             setRange(min, max, mDates.size());
 
@@ -421,13 +400,14 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
             setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
 
-            Log.v(TAG, "Rendering the new ChartView");
-            //mChartView = null;
+            Log.v(TAG, "AsyncTask complete: Time: " + (startTime - System.currentTimeMillis()) + "milliseconds. Rendering the new ChartView");
 
-            createLineGraph();
 
             if( mChartView != null)
                 mChartView.repaint();
+
+            setViewState(true);
+
         }
 
         /**
@@ -437,14 +417,14 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
          */
         private void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues){
             XYSeries series = new XYSeries(seriesName);
-            dataset.addSeries(series);
+            mDataset.addSeries(series);
 
             XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
             seriesRenderer.setLineWidth(3);
             seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
             seriesRenderer.setShowLegendItem(true);
 
-            renderer.addSeriesRenderer(seriesRenderer);
+            mRenderer.addSeriesRenderer(seriesRenderer);
             if(displayPoints) {
                 seriesRenderer.setPointStyle(PointStyle.CIRCLE);
                 seriesRenderer.setFillPoints(true);
@@ -486,16 +466,16 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             if( start < 0)
                 start  = 0;
 
-            renderer.setRange(new double[]{start - GRAPH_MARGIN,
+            mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
                     start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
-            renderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
+            mRenderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
                     end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
         }
 
         private EnergyUsageModel getFirstPoint(){
-            DeviceUsageList usage = activeUsageList.get(0);
+            DeviceUsageList usage = mActiveUsageList.get(0);
 
-            for(DeviceUsageList usageList : activeUsageList) {
+            for(DeviceUsageList usageList : mActiveUsageList) {
                 if(usageList.get(0).toDate().before(usage.get(0).toDate()))
                     usage = usageList;
 
@@ -504,9 +484,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
 
         private EnergyUsageModel getLastPoint(){
-            DeviceUsageList usage = activeUsageList.get(activeUsageList.size() -1);
+            DeviceUsageList usage = mActiveUsageList.get(mActiveUsageList.size() -1);
 
-            for(DeviceUsageList usageList : activeUsageList) {
+            for(DeviceUsageList usageList : mActiveUsageList) {
                 if(usageList.get(usageList.size() -1).toDate().after(usage.get(usage.size() - 1).toDate()))
                     usage = usageList;
 
@@ -514,71 +494,20 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             return usage.get(usage.size() -1);
         }
 
-    }
-
-    /**
-     * Here be the actual calculations. Very CPU.
-     *//*
-    private void populateGraph(){
-        double max = 0;
-        double min = Integer.MAX_VALUE;
-        int y = 0;
-        int index = 0;
-
-        mRenderer.clearXTextLabels();
-        mDates.clear();
-
-        if( mActiveUsageList.size() <= 0)
-            return;
-
-        Date first = getFirstPoint().toDate();
-        Date last = getLastPoint().toDate();
-        int numberOfPoints = resolution.getTimeDiff(first, last);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(first);
-
-        for(int i = 0; i < numberOfPoints; i++){
-            mDates.add(calendar.getTime());
-            mRenderer.addXTextLabel(y, formatDate(calendar.getTime(), resolution.getResolutionFormat()));
-            y += POINT_DISTANCE;
-            resolution.getNextPoint(calendar);
+        private boolean compareDates(Date date1, Date date2){
+            return formatDate(date1, resolution.getCompareFormat())
+                    .equals(formatDate(date2, resolution.getCompareFormat()));
         }
 
-        for(DeviceUsageList usageList : mActiveUsageList) {
-            XYSeries series =  mDataset.getSeriesAt(index);
-            series.clear();
-            y = 0;
-            for (EnergyUsageModel usage : usageList.getUsage()) {
-                while(y < mDates.size()){
-                    if(compareDates(usage.toDate(), mDates.get(y))){
-                        series.add(y * POINT_DISTANCE, usage.getPowerUsage());
-                        max = Math.max(max, usage.getPowerUsage());
-                        min = Math.min(min, usage.getPowerUsage());
-                        break;
-                    }
-                    y++;
-                }
-            }
-            index++;
+        /**
+         * Enables/ disables part of the view when data loades.
+         */
+        private void setViewState(boolean state){
+            mChartView.setEnabled(state);
         }
 
-        setRange(min, max, mDates.size());
-        if(mActiveDateIndex <= mDates.size())
-            mActiveDateIndex = mDates.size() -1;
 
-        setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
-
-        if( mChartView != null)
-            mChartView.repaint();
-    }*/
-
-    private boolean compareDates(Date date1, Date date2){
-        return formatDate(date1, resolution.getCompareFormat())
-                .equals(formatDate(date2, resolution.getCompareFormat()));
     }
-
-
 
     private void setLabels(String label)
     {
@@ -604,17 +533,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
         Log.v(TAG, "addDeviceUsage: Milliseconds usage populating graph: " + (System.currentTimeMillis() - now));
     }
-/*  OLD
-    @Override
-    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
-        for(DeviceUsageList usage : usageList){
-            mActiveUsageList.add(usage);
-            addSeries(usage.getDevice().getName(), true, false);
-        }
-        long now = System.currentTimeMillis();
-        populateGraph();
-        Log.v(TAG, "addDeviceUsage: Milliseconds usage populating graph: " + (System.currentTimeMillis() - now));
-    }*/
 
     private String formatDate(Date date, String format){
         SimpleDateFormat formatter = new SimpleDateFormat (format);
@@ -678,39 +596,5 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         mChartView.draw(canvas);
 
         return bitmap;
-    }
-
-    private void writeImage(Bitmap bitmap){
-        StrictMode.ThreadPolicy old = StrictMode.getThreadPolicy();
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder(old)
-                .permitAll()
-                .build());
-        StrictMode.setThreadPolicy(old);
-
-        File imagesFolder = new File(Environment.getExternalStorageDirectory(), "Wattitude");
-        imagesFolder.mkdirs();
-        String fileName = "graph.jpg";
-        File output = new File(imagesFolder, fileName);
-        Uri uriSavedImage = Uri.fromFile(output);
-
-
-        OutputStream imageFileOS;
-        try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 40, bytes);
-            imageFileOS = getActivity().getContentResolver().openOutputStream(uriSavedImage);
-            imageFileOS.write(bytes.toByteArray());
-            imageFileOS.flush();
-            imageFileOS.close();
-
-            Toast.makeText(getActivity(),
-                    "Image saved: ",
-                    Toast.LENGTH_LONG).show();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
