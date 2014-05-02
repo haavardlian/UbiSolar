@@ -114,6 +114,9 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                 return;
             }
 
+            //TODO Set all timestamps through Date object with GMT timezone
+            // Must also fix ask for currenTime on server and use correct offset
+
             /* STEP 3: Get new data from local db */
             localDeviceModels = EnergyDataSource.getAllSyncDevices(getContext().getContentResolver(), lastTimestamp);
             localUsageModels = EnergyDataSource.getAllSyncUsage(getContext().getContentResolver(), lastTimestamp);

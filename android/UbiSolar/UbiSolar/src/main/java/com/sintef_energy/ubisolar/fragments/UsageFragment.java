@@ -407,7 +407,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             while (data.moveToNext());
         }
 
-        graphView.clearDevices();
         mDeviceUsageList.clear();
         mDeviceUsageList.addAll(devices.values());
 
@@ -482,11 +481,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(false);
+            graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
             graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 7);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+            graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.MONTHS) {
             graphView.setFormat(Resolution.WEEKS);
@@ -495,6 +496,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(true);
+            graphView.setDataLoading(true);
         }
     }
 
@@ -507,11 +509,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(true);
+            graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.DAYS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 7);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
+            graphView.setDataLoading(true);
 
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
@@ -521,6 +525,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(false);
+            graphView.setDataLoading(true);
         }
     }
 }
