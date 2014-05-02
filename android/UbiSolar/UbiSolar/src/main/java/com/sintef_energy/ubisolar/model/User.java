@@ -26,6 +26,11 @@ public class User {
         this.name = name;
     }
 
+    public User(String id, String name) {
+        this.userId = id;
+        this.name = name;
+    }
+
     public String getUserId() {
         return userId;
     }
