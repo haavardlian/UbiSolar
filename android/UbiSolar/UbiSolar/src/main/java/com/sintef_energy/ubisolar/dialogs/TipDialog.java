@@ -10,12 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.TipsFragment;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 /**
@@ -36,6 +39,8 @@ public class TipDialog extends DialogFragment {
         super.onAttach(activity);
     }
 
+    private PreferencesManager prefs;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -43,6 +48,8 @@ public class TipDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
+
+        prefs = PreferencesManager.getInstance();
 
         view = inflater.inflate(R.layout.dialog_tip, null);
         builder.setView(view)
@@ -70,10 +77,15 @@ public class TipDialog extends DialogFragment {
         ratingField.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                if(prefs.getKeyFacebookUid() == null)
+                {
+                    Toast.makeText(getActivity(), "Log into facebook to rate tips", Toast.LENGTH_SHORT);
+                    return;
+                }
                 ratingBar.setRating(v);
                 tip.setAverageRating((int)v);
-                TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
-                RequestManager.getInstance().doTipRequest().createRating(rating);
+                TipRating rating = new TipRating(0, tip.getId(), (short)v, Long.valueOf(prefs.getKeyFacebookUid()));
+                RequestManager.getInstance().doTipRequest().createRating(rating, getTargetFragment());
                 ((TipsFragment) getTargetFragment()).getAdapter().notifyDataSetChanged();
             }
         });

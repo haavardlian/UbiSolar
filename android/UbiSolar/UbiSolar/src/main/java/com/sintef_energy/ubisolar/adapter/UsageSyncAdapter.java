@@ -1,7 +1,6 @@
 package com.sintef_energy.ubisolar.adapter;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -52,12 +51,11 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
 
     private static final String TAG = UsageSyncAdapter.class.getName();
 
-    private final AccountManager mAccountManager;
-
+    //private final AccountManager mAccountManager;
 
     public UsageSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
-        mAccountManager = AccountManager.get(context);
+        //mAccountManager = AccountManager.get(context);
     }
 
     @Override
@@ -84,6 +82,8 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             ArrayList<EnergyUsageModel> serverUsageModels;
             ArrayList<EnergyUsageModel> serverUsageModelsError;
             ArrayList<EnergyUsageModel> localUsageModels;
+            ArrayList<DeviceModel> deleteDeviceModels = new ArrayList<>();
+            ArrayList<EnergyUsageModel> deleteUsageModels = new ArrayList<>();
 
             try {
                 preferencesManager = PreferencesManager.getInstance();
@@ -100,13 +100,16 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             try {
                 requestManager = RequestManager.getInstance();
             } catch (IllegalStateException ex) {
-                requestManager = RequestManager.getSyncInstance(getContext());
+                requestManager = RequestManager.getInstance(getContext());
             }
 
             /* STEP 2: Init */
             long lastTimestamp = prefManagerSyn.getSyncTimestamp();
             long newTimestamp = System.currentTimeMillis() / 1000L;
             long uid = Long.valueOf(preferencesManager.getKeyFacebookUid());
+
+            //TODO REMOVE TESTING::
+            lastTimestamp = 0;
 
             //If user is not authorized with an id, end.
             if (uid < 0) {
@@ -124,7 +127,8 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             serverDeviceModels = requestManager.doSyncRequest().getBackendDeviceSync(uid, lastTimestamp);
             serverUsageModels = requestManager.doSyncRequest().getBackendUsageSync(uid, lastTimestamp);
 
-            /* STEP 5: Send all local to server */
+            /* STEP 5: Send all local to server
+            *   And find deleted in local files */
             if(localDeviceModels == null)
                 Log.e(TAG, "Local DeviceModels query error.");
             else if (localDeviceModels.size() > 0) {
@@ -132,6 +136,11 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                 serverDeviceModelsError = requestManager.doSyncRequest().putFrontendDeviceSync(uid, localDeviceModels);
                 if (serverDeviceModelsError.size() > 0)
                     Log.e(TAG, "Frontend sync with devices to server failed with # of models: " + serverDeviceModelsError.size());
+
+                // Find deleted local device models
+                for(DeviceModel dm : localDeviceModels)
+                    if(dm.isDeleted())
+                        deleteDeviceModels.add(dm);
             }
 
             if(localUsageModels == null)
@@ -141,16 +150,19 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                 serverUsageModelsError = requestManager.doSyncRequest().putFrontendUsageSync(uid, localUsageModels);
                 if (serverUsageModelsError.size() > 0)
                     Log.e(TAG, "Frontend sync with usage to server failed with # of models: " + serverUsageModelsError.size());
+
+                // Find deleted local usage models
+                for(EnergyUsageModel dm : localUsageModels)
+                    if(dm.isDeleted())
+                        deleteUsageModels.add(dm);
             }
 
             /* STEP 6: Insert and delete */
-            ArrayList<DeviceModel> deleteDeviceModels = new ArrayList<>();
-            ArrayList<EnergyUsageModel> deleteUsageModels = new ArrayList<>();
 
             // SIDESTEP Find deleted
             if (serverDeviceModels != null){
                 if (serverDeviceModels.size() > 0) {
-                    Log.v(TAG, "Device id's on the server: " + serverDeviceModels.size());
+                    Log.v(TAG, "New # of deviceModels on the server: " + serverDeviceModels.size());
 
                     for (DeviceModel dm : serverDeviceModels) {
                         if (dm.isDeleted()) {
@@ -163,13 +175,10 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             else
                 Log.e(TAG, "Device server get sync failed");
 
-            for(DeviceModel dm : localDeviceModels)
-                if(dm.isDeleted())
-                    deleteDeviceModels.add(dm);
 
             if (serverUsageModels != null){
                 if (serverUsageModels.size() > 0) {
-                    Log.v(TAG, "Usage id's on the server: " + serverUsageModels.size());
+                    Log.v(TAG, "New # of usageModels on the server: " + serverUsageModels.size());
 
                     for (EnergyUsageModel dm : serverUsageModels) {
                         if (dm.isDeleted()) {
@@ -182,23 +191,21 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             else
                 Log.e(TAG, "Usage server get sync failed");
 
-            for(EnergyUsageModel dm : localUsageModels)
-                if(dm.isDeleted())
-                    deleteUsageModels.add(dm);
-
+            // INSERT NEW DATA
             int nDevice = EnergyDataSource.addBatchDeviceModel(getContext().getContentResolver(), serverDeviceModels);
             int nUsage = EnergyDataSource.addBatchEnergyModel(getContext().getContentResolver(), serverUsageModels);
 
             boolean deleteSuccess = true;
             boolean deleteUsageSuccess = true;
 
+            // DELETE DATA
             if(deleteDeviceModels.size() > 0)
                 deleteSuccess = EnergyDataSource.batchDeleteDeviceSyncOp(getContext().getContentResolver(), deleteDeviceModels);
 
             if(deleteUsageModels.size() > 0)
                 deleteUsageSuccess = EnergyDataSource.batchDeleteUsageSyncOp(getContext().getContentResolver(), deleteUsageModels);
 
-            /* STEP Update time */
+            /* STEP 7: Update time */
             prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestamp);
 
             Log.v(TAG, "Synchronization complete."

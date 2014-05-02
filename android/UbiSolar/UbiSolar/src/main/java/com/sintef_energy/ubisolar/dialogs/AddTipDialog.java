@@ -42,7 +42,7 @@ public class AddTipDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         Tip tip = new Tip(0, nameField.getText().toString(), descriptionField.getText().toString(), 0, 0);
 
-                        RequestManager.getInstance().doTipRequest().createTip(tip);
+                        RequestManager.getInstance().doTipRequest().createTip(tip, getParentFragment());
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

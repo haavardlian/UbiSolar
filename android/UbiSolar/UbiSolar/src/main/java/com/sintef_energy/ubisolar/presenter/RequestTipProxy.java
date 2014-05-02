@@ -1,8 +1,6 @@
 package com.sintef_energy.ubisolar.presenter;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -32,17 +30,16 @@ import java.io.IOException;
  */
 public class RequestTipProxy {
 
+    private static final String TAG = RequestTipProxy.class.getName();
+
     private RequestQueue requestQueue;
     private ObjectMapper mapper;
 
-    private Activity activity;
-
     // package access constructor
-    RequestTipProxy(Activity activity, RequestQueue requestQueue) {
+    RequestTipProxy(RequestQueue requestQueue) {
         this.mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-        this.activity = activity;
         this.requestQueue = requestQueue;
     }
 
@@ -55,7 +52,7 @@ public class RequestTipProxy {
 
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        adapter.add((Tip)mapper.readValue(jsonArray.get(i).toString(), Tip.class));
+                        adapter.add(mapper.readValue(jsonArray.get(i).toString(), Tip.class));
                         //Log.d(tag, adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");
@@ -76,18 +73,12 @@ public class RequestTipProxy {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(activity.getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                Log.e("REQUEST", "Error from server!!");
+               Log.e("REQUEST", "Error from server!!");
 
                 fragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Toast.makeText(fragment.getActivity().getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
                         fragment.getActivity().setProgressBarIndeterminateVisibility(false);
                     }
                 });
@@ -97,7 +88,7 @@ public class RequestTipProxy {
         requestQueue.add(jsonRequest);
     }
 
-    public void createTip(Tip tip) {
+    public void createTip(Tip tip, final Fragment fragment) {
         String url = Global.BASE_URL + "/tips";
         JSONObject jsonObject;
 
@@ -113,11 +104,11 @@ public class RequestTipProxy {
                     @Override
                     public void onResponse(final JSONObject response) {
 
-                            activity.runOnUiThread(new Runnable() {
+                            fragment.getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
-                                        Toast.makeText(activity.getApplicationContext(), response.getString("message"),
+                                        Toast.makeText(fragment.getActivity().getApplicationContext(), response.getString("message"),
                                             Toast.LENGTH_LONG).show();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -131,10 +122,10 @@ public class RequestTipProxy {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        activity.runOnUiThread(new Runnable() {
+                        fragment.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(activity.getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(fragment.getActivity().getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -144,7 +135,7 @@ public class RequestTipProxy {
         requestQueue.add(jsonRequest);
     }
 
-    public void createRating(TipRating rating) {
+    public void createRating(TipRating rating, final Fragment fragment) {
         String url = Global.BASE_URL + "/tips/" + rating.getTipId() + "/rating/";
         JSONObject jsonObject;
 
@@ -160,12 +151,12 @@ public class RequestTipProxy {
                     @Override
                     public void onResponse(final JSONObject response) {
 
-                            activity.runOnUiThread(new Runnable() {
+                            fragment.getActivity().runOnUiThread(new Runnable() {
 
                                 @Override
                                 public void run() {
                                     try {
-                                        Toast.makeText(activity.getApplicationContext(), response.getString("message"),
+                                        Toast.makeText(fragment.getActivity().getApplication(), response.getString("message"),
                                             Toast.LENGTH_SHORT).show();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -179,17 +170,21 @@ public class RequestTipProxy {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        activity.runOnUiThread(new Runnable() {
+                        Log.e(TAG, "createRating() Failed");
+                        //TODO BUG createRating enters this place... Maybe because of the issue with no
+                        //return data on the http header. See JsonArrayRequestTweaked. Maybe make
+                        //Something alike for JsonObjectRequest.
+                        error.printStackTrace();
+                        fragment.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(activity.getApplicationContext(), "An error occurred",
+                                Toast.makeText(fragment.getActivity().getApplicationContext(), "An error occurred",
                                         Toast.LENGTH_SHORT).show();
                             }
                         });
 
                     }
                 });
-
         requestQueue.add(jsonRequest);
     }
 }
