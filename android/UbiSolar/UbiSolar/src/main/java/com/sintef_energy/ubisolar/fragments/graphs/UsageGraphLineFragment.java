@@ -1,28 +1,21 @@
 package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
-import android.os.StrictMode;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Toast;
 
+import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.utils.Resolution;
 
@@ -35,17 +28,12 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.achartengine.tools.PanListener;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class UsageGraphLineFragment extends Fragment implements IUsageView{
+public class UsageGraphLineFragment extends ProgressFragment implements IUsageView{
     public static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String STATE_euModels = "STATE_euModels";
 
@@ -107,19 +95,23 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             this.colors[i] = Color.parseColor(colorStringArray[i]);
         }
     }
-
+/*
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mRootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
         return mRootView;
     }
-
+*/
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(mSavedState);
-
+        setContentView(R.layout.fragment_usage_graph_line);
+        mRootView = getContentView();
         Log.v(TAG, "onActivityCreated()");
+
+        //ProgressFragment show progressbar
+        setContentShown(false);
 
         /* If the Fragment was destroyed inbetween (screen rotation),
             we need to recover the mSavedState first
@@ -387,7 +379,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         protected void onPostExecute(Void values) {
             if(abort)
                 return;
-
             /*
             // Set the new values
             mActiveUsageList.addAll(activeUsageList);
@@ -431,7 +422,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                 seriesRenderer.setChartValuesSpacing(25);
             }
         }
-
 
         /**
          *
@@ -499,9 +489,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
          */
         private void setViewState(boolean state){
             mChartView.setEnabled(state);
+            setContentShown(state);
         }
-
-
     }
 
     private void setLabels(String label)
@@ -564,6 +553,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         if(mActiveDateIndex == 0)
             return mDates.size();
         return mActiveDateIndex;
+    }
+
+    @Override
+    public void setDataLoading(boolean state) {
+        setContentShown(!state);
     }
 
     public boolean isLoaded(){
