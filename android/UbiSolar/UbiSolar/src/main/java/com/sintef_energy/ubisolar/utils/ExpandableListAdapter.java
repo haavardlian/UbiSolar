@@ -121,17 +121,24 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
         switch (groupPosition){
             case 0:
                 icon.setImageResource(R.drawable.appliances);
+                break;
             case 1:
                 icon.setImageResource(R.drawable.heat);
+                break;
             case 2:
                 icon.setImageResource(R.drawable.home_entertainment);
+                break;
             case 3:
                //Need lighting icon, default for now
                 icon.setImageResource(R.drawable.default_device);
+                break;
             case 4:
                 icon.setImageResource(R.drawable.default_device);
+                break;
             case 5:
                 icon.setImageResource(R.drawable.power_production);
+                break;
+
         }
 
         item.setText(categories[groupPosition]);

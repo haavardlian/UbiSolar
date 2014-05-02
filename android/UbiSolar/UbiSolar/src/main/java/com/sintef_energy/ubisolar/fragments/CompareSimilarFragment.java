@@ -29,11 +29,8 @@ public class CompareSimilarFragment extends Fragment {
     private SimilarAdapter simAdapter;
 
     private View view;
-    private ArrayList<ResidenceAttributes> houseDescription;
     private static final String ARG_POSITION = "position";
     private ProfilePictureView profilePicture;
-    private ProfilePictureView friendPicture;
-
 
     public CompareSimilarFragment(SimilarAdapter simAdapter) {
         this.simAdapter = simAdapter;
@@ -87,10 +84,6 @@ public class CompareSimilarFragment extends Fragment {
         profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
         profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
         profilePicture.setPresetSize(ProfilePictureView.LARGE);
-
-       // friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
-        //friendPicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
-        //friendPicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;
     }

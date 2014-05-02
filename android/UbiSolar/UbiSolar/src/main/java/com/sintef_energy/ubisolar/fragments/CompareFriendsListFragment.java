@@ -27,7 +27,7 @@ public class CompareFriendsListFragment extends Fragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
-    public static final String TAG = CompareFragment.class.getName();
+    public static final String TAG = CompareFriendsListFragment.class.getName();
 
     private ArrayList<User> friends;
     private static final String ARG_POSITION = "position";

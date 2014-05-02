@@ -36,7 +36,6 @@
         android:id="@+id/powerUsage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Power consumtion: 15%"
         android:layout_below="@id/deviceDescription"
         android:paddingLeft="25dp"
         android:layout_marginTop="8dp" />
