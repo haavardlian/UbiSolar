@@ -49,6 +49,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public static final int LOADER_USAGE_MONTH = 4;
     public static final int LOADER_USAGE_YEAR = 5;
 
+    private static final int ACTIVE_USAGE_LOADER = LOADER_USAGE_DAY;
+
     private static final String TAG = UsageFragment.class.getName();
 
     private View mRootView;
@@ -240,7 +242,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void loadUsage(){
         if(!graphView.isLoaded()) {
             if(mDevices.size() > 0)
-                getLoaderManager().restartLoader(LOADER_USAGE, null, this);
+                getLoaderManager().restartLoader(ACTIVE_USAGE_LOADER, null, this);
         }
     }
 
@@ -371,7 +373,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
                 //Load the graph the first time the fragment is ran after the devices has been loaded
                 if(mDevices.size() > 0)
-                    getLoaderManager().initLoader(LOADER_USAGE, null, this);
+                    getLoaderManager().initLoader(ACTIVE_USAGE_LOADER, null, this);
                 break;
             /* Load usage */
             case LOADER_USAGE:
