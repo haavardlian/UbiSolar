@@ -26,6 +26,8 @@ import java.util.ArrayList;
  * Should the providers CRUD method be implemented with synchronized? Will give a overhead, but
  * will possibly avoid bugs.
  *
+ * TODO Use UID on all searches
+ *
  */
 public class EnergyProvider extends ContentProvider{
 
@@ -380,7 +382,7 @@ public class EnergyProvider extends ContentProvider{
                 try {
                     //standard SQL insert statement, that can be reused
                     SQLiteStatement insert =
-                            db.compileStatement("insert into " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME
+                            db.compileStatement("INSERT OR REPLACE INTO " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME
                                     + "(" + EnergyUsageModel.EnergyUsageEntry._ID + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + ","
