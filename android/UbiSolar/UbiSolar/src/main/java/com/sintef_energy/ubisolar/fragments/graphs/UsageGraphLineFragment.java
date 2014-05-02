@@ -194,8 +194,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         super.onDestroy();
     }
 
-
-
     /**
      * Configure Graph
      */

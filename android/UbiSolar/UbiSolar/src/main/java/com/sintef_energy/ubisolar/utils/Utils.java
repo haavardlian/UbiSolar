@@ -40,7 +40,7 @@ public class Utils {
 //            //Populate the database if it's empty
 //            if (EnergyDataSource.getEnergyModelSize(getContentResolver()) == 0) {
 //                Log.v(TAG, "Developer mode: Database empty. Populating it.");
-                TestdataHelper.createDevices(cr);
+                //TestdataHelper.createDevices(cr);
 //                //            createEnergyUsage();
 //            }
         }

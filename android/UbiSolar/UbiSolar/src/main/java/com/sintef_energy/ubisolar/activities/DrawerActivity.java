@@ -54,6 +54,7 @@ import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.utils.Utils;
 
 
+import org.apache.http.auth.AUTH;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -84,6 +85,15 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     private CharSequence mTitle;
     private String[] titleNames;
+
+    /* SYNC */
+    public static final long MILLISECONDS_PER_SECOND = 1000L;
+    public static final long SECONDS_PER_MINUTE = 60L;
+    public static final long SYNC_INTERVAL_IN_MINUTES = 60L;
+    public static final long SYNC_INTERVAL =
+            SYNC_INTERVAL_IN_MINUTES *
+            SECONDS_PER_MINUTE *
+            MILLISECONDS_PER_SECOND;
 
     /**
      * Presenters
@@ -120,7 +130,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         try {
             RequestManager.getInstance();
         } catch(IllegalStateException e) {
-            RequestManager.getInstance(this);
+            RequestManager.getInstance(getApplicationContext());
         }
 
         /* Set up the presenters */
@@ -166,13 +176,16 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mAccount = CreateSyncAccount(this);
 
         /* The same as ticking allow sync */
-        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        //ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+
+        /* Set sync periodically */
+        ContentResolver.addPeriodicSync(mAccount, AUTHORITY, new Bundle(), SYNC_INTERVAL);
 
         /* Request a sync operation */
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); //Do sync regardless of settings
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
-        ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
+        //ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
         
         // Extra logging for debug
         if(Global.DEVELOPER_MADE)
