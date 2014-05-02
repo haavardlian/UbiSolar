@@ -19,24 +19,24 @@ import java.util.Random;
 @Path("user/{user}/")
 public class DataGeneratorResource {
     private ServerDAO db;
-    private ArrayList<Device> devices;
 
     long n = 125363;
     public DataGeneratorResource(ServerDAO db) {
         this.db = db;
-        this.devices = new ArrayList<Device>();
 
 
     }
 
-    private void generateDevices(ArrayList<Device> devices, long user) {
+    private ArrayList<Device> generateDevices(long user) {
         long time = System.currentTimeMillis();
+        ArrayList<Device> devices = new ArrayList<Device>();
 
         devices.add(new Device(time+1, user, "TV", "This is your TV", time/1000l, false, 1));
         devices.add(new Device(time+2, user, "Stove", "This is your Stove", time/1000l, false, 2));
         devices.add(new Device(time+3, user, "Fridge", "This is your Fridge", time/1000l, false, 3));
         devices.add(new Device(time+4, user, "Heater", "This is your Heater", time/1000l, false, 4));
 
+        return devices;
     }
 
     private ArrayList<DeviceUsage> generateUsage(Device d) {
@@ -61,10 +61,10 @@ public class DataGeneratorResource {
     @Path("generate/")
     public Response generateData(@PathParam("user") LongParam user) {
         ArrayList<DeviceUsage> usage;
-        this.generateDevices(this.devices, user.get());
-        db.createDevices(this.devices.iterator());
+        ArrayList<Device> devices = this.generateDevices(user.get());
+        db.createDevices(devices.iterator());
 
-        for(Device d : this.devices) {
+        for(Device d : devices) {
             usage = generateUsage(d);
 
             db.addUsageForDevices(usage.iterator());
