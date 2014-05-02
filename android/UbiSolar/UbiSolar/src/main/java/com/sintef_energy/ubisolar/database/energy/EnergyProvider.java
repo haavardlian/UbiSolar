@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Created by perok on 2/11/14.
  *
  * TODO
- * ContentProvider is not thread safe. SQLiteDatabase is thread safe.
+ * ContentProvder is not thread safee. SQLiteDatabase is thread safe.
  * Should the providers CRUD method be implemented with synchronized? Will give a overhead, but
  * will possibly avoid bugs.
  *
@@ -148,7 +148,7 @@ public class EnergyProvider extends ContentProvider{
                 rawSql = generateRawDateSql("%Y-%m-%d", selection);
                 break;
             case ENERGY_WEEK_LIST:
-                rawSql = generateRawDateSql("%Y-%W", selection);
+                rawSql = generateRawDateSql("%Y-%w", selection);
                 break;
             case ENERGY_MONTH_LIST:
                 rawSql = generateRawDateSql("%Y-%m", selection);
@@ -514,8 +514,8 @@ public class EnergyProvider extends ContentProvider{
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
                         + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
                         + "WHERE " + where + " AND " + selectionAvoidDeleteBit
-                        + "GROUP BY " + time //+ ", "
-//                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
+                        + "GROUP BY " + time + ", "
+                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
                         + "ORDER BY `month` ASC";
     }
 }

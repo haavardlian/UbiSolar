@@ -1,9 +1,16 @@
 package com.sintef_energy.ubisolar.presenter;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,14 +19,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.JsonArrayRequestTweaked;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -46,14 +56,6 @@ public class RequestSyncProxy {
         this.requestQueue = requestQueue;
     }
 
-    /**
-     *
-     * Request all deviceModels from the server that has a timestamp > than the parameter.
-     *
-     * @param userId The user
-     * @param timestamp The time
-     * @return The deviceModels returned by the server. Including deleted models.
-     */
     public ArrayList<DeviceModel> getBackendDeviceSync(long userId, long timestamp) {
 
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
@@ -78,6 +80,8 @@ public class RequestSyncProxy {
         // Handle response synchronous.
         try {
             JSONArray response = future.get(); // this will block
+
+            Log.v(TAG, "Response: " + response);
 
             for (int i = 0; i < response.length(); i++)
                     dModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
@@ -107,10 +111,10 @@ public class RequestSyncProxy {
 
 
     /**
-     * Adds device data to the server.
      *
-     * @param userId The user
-     * @param deviceModels Models to add.
+     *
+     * @param userId
+     * @param deviceModels
      * @return ArrayList<DeviceModel> Success if size = 0
      */
     public ArrayList<DeviceModel> putFrontendDeviceSync(long userId, ArrayList<DeviceModel> deviceModels) {
@@ -149,6 +153,8 @@ public class RequestSyncProxy {
         try {
             JSONArray response = future.get(); // this will block
 
+            Log.v(TAG, "Response: " + response);
+
             for (int i = 0; i < response.length(); i++) {
                 errorModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
             }
@@ -157,10 +163,12 @@ public class RequestSyncProxy {
         }catch (IOException | JSONException e) {
             Log.e(TAG, "Error in JSON Mapping:");
             Log.e(TAG, e.toString());
-        }catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             Log.e(TAG, "InterruptedException:\n" + e.getMessage());
             e.printStackTrace();
-        }catch (ExecutionException e) {
+        }
+        catch (ExecutionException e) {
             Log.e(TAG, "ExecutionException:\n" + e.getMessage());
 
             e.printStackTrace();
@@ -171,14 +179,8 @@ public class RequestSyncProxy {
         return null;
     }
 
-    /**
-     *
-     * Request all usageModels from the server that has a timestamp > than the parameter.
-     *
-     * @param userId uid for request
-     * @param timestamp Time
-     * @return The usageModels returned by the server. Including deleted models.
-     */
+
+
     public ArrayList<EnergyUsageModel> getBackendUsageSync(long userId, long timestamp) {
 
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
@@ -203,6 +205,8 @@ public class RequestSyncProxy {
         // Handle response synchronous.
         try {
             JSONArray response = future.get(); // this will block
+
+            Log.v(TAG, "Response: " + response);
 
             for (int i = 0; i < response.length(); i++)
                     dModels.add(mapper.readValue(response.get(i).toString(), EnergyUsageModel.class));
@@ -231,13 +235,12 @@ public class RequestSyncProxy {
 
     /**
      *
-     * Adds usage data to the server.
      *
-     * @param userId Id of user
-     * @param usageModels Models to add
+     * @param userId
+     * @param deviceModels
      * @return ArrayList<DeviceModel> Success if size = 0
      */
-    public ArrayList<EnergyUsageModel> putFrontendUsageSync(long userId, ArrayList<EnergyUsageModel> usageModels) {
+    public ArrayList<EnergyUsageModel> putFrontendUsageSync(long userId, ArrayList<EnergyUsageModel> deviceModels) {
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
 
         ArrayList<EnergyUsageModel> errorModels = new ArrayList<>();
@@ -255,7 +258,7 @@ public class RequestSyncProxy {
         JSONArray data = new JSONArray();
 
         try {
-            for(EnergyUsageModel dModel : usageModels)
+            for(EnergyUsageModel dModel : deviceModels)
                 data.put(new JSONObject(mapper.writeValueAsString(dModel.getSerializeableDevice())));
 
         } catch (JsonProcessingException e) {
@@ -272,6 +275,8 @@ public class RequestSyncProxy {
         // Handle response synchronous.
         try {
             JSONArray response = future.get(); // this will block
+
+            Log.v(TAG, "Response: " + response);
 
             for (int i = 0; i < response.length(); i++) {
                 errorModels.add(mapper.readValue(response.get(i).toString(), EnergyUsageModel.class));

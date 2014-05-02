@@ -36,11 +36,11 @@ public class Utils {
      */
     public static void developerMode(ContentResolver cr, boolean devMode, boolean testData){
         if(testData) {
-            //TestdataHelper.clearDatabase(cr);
+            TestdataHelper.clearDatabase(cr);
 //            //Populate the database if it's empty
 //            if (EnergyDataSource.getEnergyModelSize(getContentResolver()) == 0) {
 //                Log.v(TAG, "Developer mode: Database empty. Populating it.");
-                //TestdataHelper.createDevices(cr);
+                TestdataHelper.createDevices(cr);
 //                //            createEnergyUsage();
 //            }
         }
