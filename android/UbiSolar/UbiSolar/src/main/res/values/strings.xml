@@ -89,14 +89,24 @@
     <string name="superscript2"><sup><small>2</small></sup></string>
     <string name="log_in_to_sync">"Log into Facebook to enable synchronization"</string>
     <string name="get_started">Log in to share your profile</string>
-    <string name="action_forgot_password">Have you forgotten your password?</string>
+    <string name="action_forgot_password">Forgot your password?</string>
 
 
     <!-- Fragment social-->
     <string name="social_user_name">User\'s name</string>
-    <string name="user_name">You</string>
-    <string name="friend_name">Your friend</string>
     <string name="friends_header_title">Friends</string>
+
+    <!-- Fragment home -->
+    <string name="home_area_placeholder">3% higher </string>
+    <string name="home_residents_placeholder">7% lower </string>
+    <string name="home_size_placeholder">100% lower </string>
+    <string name="home_energy_placeholder">1% lower </string>
+    <string name="home_improved">You have improved by 5%!</string>
+
+    <string name="home_area">than people in your area</string>
+    <string name="home_residents">than equal # of residents</string>
+    <string name="home_size">than equal residence size</string>
+    <string name="home_energy">than same energy class</string>
 
     <!-- Comparison settings-->
     <string name="comparison_setting">Comparison setting</string>
@@ -104,10 +114,10 @@
 
     <!-- Fragment Energy saving tabs -->
     <string name="fragment_energy_saving_tab_tips">Tips</string>
-    <string name="fragment_energy_saving_tab_your">Your</string>
+    <string name="fragment_energy_saving_tab_your">Your tips</string>
     <string-array name="fragment_energy_saving_tabs">
         <item>Tips</item>
-        <item>Yours</item>
+        <item>Your tips</item>
     </string-array>
 
     <!-- Toast -->
