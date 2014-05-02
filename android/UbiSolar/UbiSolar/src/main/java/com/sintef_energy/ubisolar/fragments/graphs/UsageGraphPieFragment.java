@@ -54,6 +54,10 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     private boolean mLoaded = false;
     private int mDeviceSize;
 
+    private TextView nameView;
+    private TextView descriptionView;
+    private TextView powerUsageView;
+    private TextView usagePieLabel;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -80,14 +84,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             this.colors[i] = Color.parseColor(colorStringArray[i]);
         }
     }
-/*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        rootView = inflater.inflate(R.layout.fragment_usage_graph_pie, container, false);
-        return rootView;
-    }*/
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -98,9 +94,13 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
         mChartView = null;
 
+        nameView = (TextView) mRootView.findViewById(R.id.pieDetailsName);
+        descriptionView = (TextView) mRootView.findViewById(R.id.pieDetailsDescription);
+        powerUsageView = (TextView) mRootView.findViewById(R.id.pieDetailsPowerUsage);
+        usagePieLabel = (TextView) mRootView.findViewById(R.id.usagePieLabel);
+
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
-
 
         if (mSavedState != null) {
 //            mDeviceUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mDeviceUsageList");
@@ -171,7 +171,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
     private void createPieGraph(){
         if (mChartView == null) {
-            LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.pieChartView);
+            LinearLayout layout = (LinearLayout) mRootView.findViewById(R.id.pieChartView);
             mChartView = ChartFactory.getPieChartView(getActivity().getApplicationContext(), mSeries, mRenderer);
 
             mChartView.setOnClickListener(new View.OnClickListener() {
@@ -236,8 +236,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         populatePieChart();
 
         if(mSelectedDate != null) {
-            TextView label = (TextView) getActivity().findViewById(R.id.usagePieLabel);
-            label.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
+           usagePieLabel.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
         }
 
         setContentShown(true);
@@ -256,17 +255,13 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     public void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
-        TextView label = (TextView) getActivity().findViewById(R.id.usagePieLabel);
-        label.setText("");
+        usagePieLabel.setText("");
         mChartView.repaint();
 
     }
 
     private void updateDetails(){
         if(mSelected > -1 && mSelected < mDeviceUsageList.size()) {
-            TextView nameView = (TextView) getActivity().findViewById(R.id.pieDetailsName);
-            TextView descriptionView = (TextView) getActivity().findViewById(R.id.pieDetailsDescription);
-            TextView powerUsageView = (TextView) getActivity().findViewById(R.id.pieDetailsPowerUsage);
 
             DeviceUsageList usageList = mDeviceUsageList.get(mSelected);
 
@@ -277,10 +272,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     }
 
     private void clearDetails(){
-        TextView nameView = (TextView) getActivity().findViewById(R.id.pieDetailsName);
-        TextView descriptionView = (TextView) getActivity().findViewById(R.id.pieDetailsDescription);
-        TextView powerUsageView = (TextView) getActivity().findViewById(R.id.pieDetailsPowerUsage);
-
         nameView.setText("");
         descriptionView.setText("");
         powerUsageView.setText("");
