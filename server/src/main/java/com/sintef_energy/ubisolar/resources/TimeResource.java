@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 public class TimeResource {
 
     @GET
-    long getCurrentTime()
+    public long getCurrentTime()
     {
         return System.currentTimeMillis();
     }
