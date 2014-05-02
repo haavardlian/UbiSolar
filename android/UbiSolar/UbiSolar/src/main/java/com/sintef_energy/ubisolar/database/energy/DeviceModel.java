@@ -77,7 +77,7 @@ public class DeviceModel extends Device implements Parcelable{
         setDescription("");
         setCategory(-1);
         setDeleted(false);
-        //setLastUpdated(-1);
+        setLastUpdated(-1);
     }
 
     /* Parcable */

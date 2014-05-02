@@ -1,16 +1,9 @@
 package com.sintef_energy.ubisolar.presenter;
 
-import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,17 +12,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.JsonArrayRequestTweaked;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -80,8 +70,6 @@ public class RequestSyncProxy {
         // Handle response synchronous.
         try {
             JSONArray response = future.get(); // this will block
-
-            Log.v(TAG, "Response: " + response);
 
             for (int i = 0; i < response.length(); i++)
                     dModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
@@ -153,8 +141,6 @@ public class RequestSyncProxy {
         try {
             JSONArray response = future.get(); // this will block
 
-            Log.v(TAG, "Response: " + response);
-
             for (int i = 0; i < response.length(); i++) {
                 errorModels.add(mapper.readValue(response.get(i).toString(), DeviceModel.class));
             }
@@ -205,8 +191,6 @@ public class RequestSyncProxy {
         // Handle response synchronous.
         try {
             JSONArray response = future.get(); // this will block
-
-            Log.v(TAG, "Response: " + response);
 
             for (int i = 0; i < response.length(); i++)
                     dModels.add(mapper.readValue(response.get(i).toString(), EnergyUsageModel.class));
@@ -275,8 +259,6 @@ public class RequestSyncProxy {
         // Handle response synchronous.
         try {
             JSONArray response = future.get(); // this will block
-
-            Log.v(TAG, "Response: " + response);
 
             for (int i = 0; i < response.length(); i++) {
                 errorModels.add(mapper.readValue(response.get(i).toString(), EnergyUsageModel.class));
