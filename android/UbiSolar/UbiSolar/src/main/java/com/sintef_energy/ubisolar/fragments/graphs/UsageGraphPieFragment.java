@@ -242,7 +242,7 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         if(mSelectedDate == null) {
             if (mDeviceUsageList != null) {
                 DeviceUsageList dul = mDeviceUsageList.get(mDeviceUsageList.size() - 1);
-                mSelectedDate = dul.get(dul.size() - 1).getDatetime();
+                mSelectedDate = dul.get(dul.size() - 1).toDate();
             }
         }
     }

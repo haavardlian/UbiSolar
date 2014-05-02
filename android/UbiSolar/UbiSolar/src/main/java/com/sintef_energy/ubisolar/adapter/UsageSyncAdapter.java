@@ -108,9 +108,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             long newTimestamp = System.currentTimeMillis() / 1000L;
             long uid = Long.valueOf(preferencesManager.getKeyFacebookUid());
 
-            //TODO REMOVE TESTING::
-            lastTimestamp = 0;
-
             //If user is not authorized with an id, end.
             if (uid < 0) {
                 Log.v(TAG, "No user id. Sync aborted");

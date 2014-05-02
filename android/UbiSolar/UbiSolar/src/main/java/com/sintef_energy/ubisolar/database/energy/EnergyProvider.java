@@ -14,9 +14,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 
-import android.provider.BaseColumns;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -385,7 +383,7 @@ public class EnergyProvider extends ContentProvider{
                             db.compileStatement("insert into " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME
                                     + "(" + EnergyUsageModel.EnergyUsageEntry._ID + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
-                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED + ")"
@@ -394,7 +392,7 @@ public class EnergyProvider extends ContentProvider{
                         //bind the 1-indexed ?'s to the values specified
                         insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
                         insert.bindLong(2, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID));
-                        insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME));
+                        insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP));
                         insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
                         insert.bindLong(5, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED));
                         insert.bindLong(6, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED));
@@ -505,10 +503,10 @@ public class EnergyProvider extends ContentProvider{
     private String generateRawDateSql(String date, String where){
 
         //Time to aggregate on
-        String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
+        String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
 
         //Unixtime
-        String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
+        String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
 
         return "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
                         + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "

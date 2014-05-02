@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.utils.Resolution;
@@ -209,7 +210,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         mRenderer.setXLabels(0);
         mRenderer.setXLabelsPadding(10);
         mRenderer.setYLabelsPadding(20);
-        mRenderer.setMargins(new int[]{ 20, 40, 35, 20 });
+        mRenderer.setMargins(new int[]{20, 40, 35, 20});
 
         setColors(Color.WHITE, Color.BLACK);
     }
@@ -317,8 +318,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         if( mActiveUsageList.size() <= 0)
             return;
 
-        Date first = getFirstPoint().getDatetime();
-        Date last = getLastPoint().getDatetime();
+        Date first = getFirstPoint().toDate();
+        Date last = getLastPoint().toDate();
         int numberOfPoints = resolution.getTimeDiff(first, last);
 
         Calendar calendar = Calendar.getInstance();
@@ -335,9 +336,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             XYSeries series =  mDataset.getSeriesAt(index);
             series.clear();
             y = 0;
-            for (DeviceUsage usage : usageList.getUsage()) {
+            for (EnergyUsageModel usage : usageList.getUsage()) {
                 while(y < mDates.size()){
-                    if(compareDates(usage.getDatetime(), mDates.get(y))){
+                    if(compareDates(usage.toDate(), mDates.get(y))){
                         series.add(y * POINT_DISTANCE, usage.getPowerUsage());
                         max = Math.max(max, usage.getPowerUsage());
                         min = Math.min(min, usage.getPowerUsage());
@@ -364,22 +365,22 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                 .equals(formatDate(date2, resolution.getCompareFormat()));
     }
 
-    private DeviceUsage getFirstPoint(){
+    private EnergyUsageModel getFirstPoint(){
         DeviceUsageList usage = mActiveUsageList.get(0);
 
         for(DeviceUsageList usageList : mActiveUsageList) {
-            if(usageList.get(0).getDatetime().before(usage.get(0).getDatetime()))
+            if(usageList.get(0).toDate().before(usage.get(0).toDate()))
                 usage = usageList;
 
         }
         return usage.get(0);
     }
 
-    private DeviceUsage getLastPoint(){
+    private EnergyUsageModel getLastPoint(){
         DeviceUsageList usage = mActiveUsageList.get(mActiveUsageList.size() -1);
 
         for(DeviceUsageList usageList : mActiveUsageList) {
-            if(usageList.get(usageList.size() -1).getDatetime().after(usage.get(usage.size() -1).getDatetime()))
+            if(usageList.get(usageList.size() -1).toDate().after(usage.get(usage.size() - 1).toDate()))
                 usage = usageList;
 
         }

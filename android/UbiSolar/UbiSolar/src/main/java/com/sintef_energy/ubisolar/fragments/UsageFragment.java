@@ -269,7 +269,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         EnergyContract.Energy.PROJECTION_ALL,
                         sqlWhereDevices(),
                         getSelectedDevicesIDs(),
-                        EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC");
+                        EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " ASC");
             case LOADER_USAGE_DAY:
                 builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
                 builder.appendPath(EnergyContract.Energy.Date.Day);
