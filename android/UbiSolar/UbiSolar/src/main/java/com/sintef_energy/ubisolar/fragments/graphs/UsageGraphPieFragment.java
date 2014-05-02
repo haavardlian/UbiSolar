@@ -260,7 +260,8 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     /**
      * Clears current devices.
      */
-    private void clearDevices() {
+    @Override
+    public void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
         usagePieLabel.setText("");

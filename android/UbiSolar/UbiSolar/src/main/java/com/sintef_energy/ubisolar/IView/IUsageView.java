@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public interface IUsageView {
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList);
+    public void clearDevices();
 
     public void setFormat(int mode);
     public int getResolution();
