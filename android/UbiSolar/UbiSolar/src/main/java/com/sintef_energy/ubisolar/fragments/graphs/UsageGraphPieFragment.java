@@ -226,8 +226,14 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         mChartView.repaint();
     }
 
+    /**
+     * Clears devices automatically before adding more data.
+     * @param usageList
+     */
     @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList){
+        clearDevices();
+
         mDeviceUsageList = usageList;
         setSelectedDate();
         for(DeviceUsageList u : mDeviceUsageList)
@@ -251,8 +257,10 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         }
     }
 
-    @Override
-    public void clearDevices() {
+    /**
+     * Clears current devices.
+     */
+    private void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
         usagePieLabel.setText("");

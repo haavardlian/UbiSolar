@@ -493,8 +493,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         mTitleLabel = label;
     }
 
-    @Override
-    public void clearDevices() {
+    /**
+     * Clears previous devices.
+     */
+    private void clearDevices() {
         mActiveUsageList.clear();
         mDataset.clear();
         mRenderer.removeAllRenderers();
