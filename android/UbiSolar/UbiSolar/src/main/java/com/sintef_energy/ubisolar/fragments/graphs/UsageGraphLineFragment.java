@@ -352,6 +352,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
 
         setRange(min, max, mDates.size());
+        if(mActiveDateIndex <= mDates.size())
+            mActiveDateIndex = mDates.size() -1;
+
         setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
 
         if( mChartView != null)
