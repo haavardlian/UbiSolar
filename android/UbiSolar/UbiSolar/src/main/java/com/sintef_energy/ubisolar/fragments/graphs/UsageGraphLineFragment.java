@@ -149,7 +149,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
         resolution = new Resolution(Resolution.DAYS);
         createLineGraph();
-        populateGraph();
+
+        AsyncTaskRunner lol = new AsyncTaskRunner();
+        lol.execute(new ArrayList<DeviceUsageList>());
 
         mSavedState = null;
     }
@@ -196,8 +198,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         super.onDestroy();
     }
 
-
-
     /**
      * Configure Graph
      */
@@ -205,7 +205,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
 
         renderer.setChartTitle(getResources().getString(R.string.usage_line_graph_title));
-//        mRenderer.setYTitle("KWh");
         renderer.setAxisTitleTextSize(25);
         renderer.setChartTitleTextSize(20);
         renderer.setLabelsTextSize(15);
@@ -235,30 +234,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
      */
     private void createLineGraph(){
         if (mChartView == null) {
-            LinearLayout layout = (LinearLayout) getActivity().findViewById(R.id.lineChartView);
+            LinearLayout layout = (LinearLayout) mRootView.findViewById(R.id.lineChartView);
+            Log.v(TAG, "createLineGraph: # Datasets to render: " + mDataset.getSeriesCount());
+
             mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
-//            mChartView.addZoomListener(new ZoomListener() {
-//                @Override
-//                public void zoomApplied(ZoomEvent zoomEvent) {
-//                    double zoom = mRenderer.getXAxisMax()- mRenderer.getXAxisMin();
-//
-//
-//                    if(zoom < 90)
-//                    {
-//                        zoomIn();
-//                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
-//                    }
-//                    if(zoom > 300)
-//                    {
-//                        zoomOut();
-//                        System.out.println(mRenderer.getXAxisMax()- mRenderer.getXAxisMin());
-//                    }
-//                }
-//
-//                @Override
-//                public void zoomReset() {
-//                }
-//            }, true, true);
+
             mChartView.addPanListener(new PanListener() {
                 @Override
                 public void panApplied() {
@@ -280,6 +260,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                     }
                 }
             });
+            Log.v(TAG, "createLineGraph: Adding mChartView to layout");
             layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT));
         } else {
@@ -288,104 +269,25 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     }
 
 
-    private void populateGraphAsync(ArrayList<DeviceUsageList> activeUsageList, Resolution resolution){
-        double max = 0;
-        double min = Integer.MAX_VALUE;
-        int y = 0;
-        int index = 0;
-
-        //Clear old data
-        mRenderer.clearXTextLabels();
-        mDates.clear();
-
-        //Abort if no data.
-        if(activeUsageList.size() <= 0)
-            return;
-
-        Date first = getFirstPoint().toDate();
-        Date last = getLastPoint().toDate();
-        int numberOfPoints = resolution.getTimeDiff(first, last);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(first);
-
-        //Create the labels for the dates
-        for(int i = 0; i < numberOfPoints; i++){
-            mDates.add(calendar.getTime());
-            mRenderer.addXTextLabel(y, formatDate(calendar.getTime(), resolution.getResolutionFormat()));
-            y += POINT_DISTANCE;
-            resolution.getNextPoint(calendar);
-        }
-
-        for(DeviceUsageList usageList : activeUsageList) {
-            XYSeries series =  mDataset.getSeriesAt(index);
-            series.clear();
-            y = 0;
-            for (EnergyUsageModel usage : usageList.getUsage()) {
-                while(y < mDates.size()){
-                    if(compareDates(usage.toDate(), mDates.get(y))){
-                        series.add(y * POINT_DISTANCE, usage.getPowerUsage());
-                        max = Math.max(max, usage.getPowerUsage());
-                        min = Math.min(min, usage.getPowerUsage());
-                        break;
-                    }
-                    y++;
-                }
-            }
-            index++;
-        }
-
-        setRange(min, max, mDates.size());
-        if(mActiveDateIndex <= mDates.size())
-            mActiveDateIndex = mDates.size() -1;
-
-        setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
-
-        if( mChartView != null)
-            mChartView.repaint();
-    }
 
     /**
      * All manupulation of new graph is done here..
      */
-    private class AsyncTaskRunner extends AsyncTask<DeviceUsageList, Integer, Integer>{
+    private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Integer, Integer>{
 
         ArrayList<DeviceUsageList> activeUsageList;
 
         XYMultipleSeriesRenderer renderer;
         XYMultipleSeriesDataset dataset;
 
-        @Override
-        protected Integer doInBackground(DeviceUsageList... usageList) {
+        ArrayList<Date> dates;
 
-            renderer = setupLineGraph();
+        double max;
+        double min;
 
-            for(int i = 0; i < usageList.length; i++){
-                activeUsageList.add(usageList[i]);
-                addSeries(usageList[i].getDevice().getName(), true, false);
-            }
+        boolean abort = false;
 
-            return null;
-        }
-
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-         */
-        @Override
-        protected void onPostExecute(Integer lol) {
-
-            mActiveUsageList.addAll(activeUsageList);
-
-            // execution of result of Long time consuming operation
-            //finalResult.setText(result);
-
-            mRenderer = new XYMultipleSeriesRenderer();
-        }
-
-        /*
+        /**
          * (non-Javadoc)
          *
          * @see android.os.AsyncTask#onPreExecute()
@@ -394,7 +296,33 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         protected void onPreExecute() {
             // Things to be done before execution of long running operation. For
             // example showing ProgessDialog
+
+            // execution of result of Long time consuming operation
+            //finalResult.setText(result);
+            activeUsageList = mActiveUsageList;
+            dataset = mDataset;
+            dates = mDates;
+            renderer = mRenderer;
+
+            max = 0;
+            min = Integer.MAX_VALUE;
+
         }
+
+        @Override
+        protected Integer doInBackground(ArrayList<DeviceUsageList>... usageList) {
+            Log.v(TAG, "Doing #: " + usageList.length + " inBackground");
+            for(int i = 0; i < usageList[0].size(); i++){
+                activeUsageList.add(usageList[0].get(i));
+                addSeries(usageList[0].get(i).getDevice().getName(), true, false);
+            }
+
+            populateGraphAsync();
+
+            return null;
+        }
+
+
 
         /*
          * (non-Javadoc)
@@ -409,37 +337,188 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
 
 
-            /**
-     * Define the series renderer for the mDataset and mRenderer
-     *
-     * @param seriesName The name of the series
-     */
-    public void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues){
-        XYSeries series = new XYSeries(seriesName);
-        dataset.addSeries(series);
+        private void populateGraphAsync(){
+            int y = 0;
+            int index = 0;
 
-        XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
-        seriesRenderer.setLineWidth(3);
-        seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
-        seriesRenderer.setShowLegendItem(true);
-        renderer.addSeriesRenderer(seriesRenderer);
-        if(displayPoints) {
-            seriesRenderer.setPointStyle(PointStyle.CIRCLE);
-            seriesRenderer.setFillPoints(true);
+            //Clear old data
+            renderer.clearXTextLabels();
+            dates.clear();
+
+            //Abort if no data.
+            if(activeUsageList.size() < 1) {
+                abort = true;
+                return;
+            }
+
+            Date first = getFirstPoint().toDate();
+            Date last = getLastPoint().toDate();
+            int numberOfPoints = resolution.getTimeDiff(first, last);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(first);
+
+            Log.v(TAG, "# of points for new render: " + numberOfPoints);
+            //Create the labels for the dates
+            for(int i = 0; i < numberOfPoints; i++){
+                dates.add(calendar.getTime());
+                renderer.addXTextLabel(y, formatDate(calendar.getTime(), resolution.getResolutionFormat()));
+                y += POINT_DISTANCE;
+                resolution.getNextPoint(calendar);
+            }
+
+            // Go through the datasets (each device)
+            for(DeviceUsageList usageList : activeUsageList) {
+                Log.v(TAG, "Rendering new dataset: " + usageList.getDevice().getName());
+                Log.v(TAG, "Dataset has # points: " + usageList.getUsage().size());
+
+                XYSeries series = dataset.getSeriesAt(index);
+                series.clear(); //@torrib ??
+                y = 0;
+
+                //Add the usage
+                for (EnergyUsageModel usage : usageList.getUsage()) {
+                    while(y < dates.size()){
+                        if(compareDates(usage.toDate(), dates.get(y))){
+                            series.add(y * POINT_DISTANCE, usage.getPowerUsage());
+                            max = Math.max(max, usage.getPowerUsage());
+                            min = Math.min(min, usage.getPowerUsage());
+                            break;
+                        }
+                        y++;
+                    }
+                }
+                index++;
+            }
         }
 
-        if(displayPointValues) {
-            seriesRenderer.setDisplayChartValues(true);
-            seriesRenderer.setChartValuesTextSize(25);
-            seriesRenderer.setChartValuesSpacing(25);
+
+        /**
+         * (non-Javadoc)
+         *
+         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+         */
+        @Override
+        protected void onPostExecute(Integer lol) {
+            if(abort)
+                return;
+
+
+            Log.v(TAG, "LOL TO RENDER: " + dataset.getSeriesCount());
+
+            // Set the new values
+            mActiveUsageList.addAll(activeUsageList);
+            mRenderer = renderer;
+            mDataset = dataset;
+            mDates = dates;
+
+            Log.v(TAG, "ROFL TO RENDER: " + mDataset.getSeriesCount());
+
+            setRange(min, max, mDates.size());
+
+            if(mActiveDateIndex <= mDates.size())
+                mActiveDateIndex = mDates.size() -1;
+
+            setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
+
+            Log.v(TAG, "Rendering the new ChartView");
+            //mChartView = null;
+
+            createLineGraph();
+
+            if( mChartView != null)
+                mChartView.repaint();
         }
-    }
+
+        /**
+         * Define the series renderer for the mDataset and mRenderer
+         *
+         * @param seriesName The name of the series
+         */
+        private void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues){
+            XYSeries series = new XYSeries(seriesName);
+            dataset.addSeries(series);
+
+            XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
+            seriesRenderer.setLineWidth(3);
+            seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
+            seriesRenderer.setShowLegendItem(true);
+
+            renderer.addSeriesRenderer(seriesRenderer);
+            if(displayPoints) {
+                seriesRenderer.setPointStyle(PointStyle.CIRCLE);
+                seriesRenderer.setFillPoints(true);
+            }
+
+            if(displayPointValues) {
+                seriesRenderer.setDisplayChartValues(true);
+                seriesRenderer.setChartValuesTextSize(25);
+                seriesRenderer.setChartValuesSpacing(25);
+            }
+        }
+
+
+        /**
+         *
+         * Defines the range for the renderer graph
+         *
+         * @param minY
+         * @param maxY
+         * @param points
+         */
+        private void setRange(double minY, double maxY, int points){
+            int end = points * POINT_DISTANCE;
+            int start;
+            int pointsToShow;
+
+            if(NUMBER_OF_POINTS > points)
+                pointsToShow = points;
+            else
+                pointsToShow = NUMBER_OF_POINTS;
+
+            //IF the active index is close to or the last element, find a new center index.
+            if(points - mActiveDateIndex < pointsToShow )
+                mActiveDateIndex = points - pointsToShow / 2;
+
+            int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
+            start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
+
+            if( start < 0)
+                start  = 0;
+
+            renderer.setRange(new double[]{start - GRAPH_MARGIN,
+                    start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
+            renderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
+                    end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
+        }
+
+        private EnergyUsageModel getFirstPoint(){
+            DeviceUsageList usage = activeUsageList.get(0);
+
+            for(DeviceUsageList usageList : activeUsageList) {
+                if(usageList.get(0).toDate().before(usage.get(0).toDate()))
+                    usage = usageList;
+
+            }
+            return usage.get(0);
+        }
+
+        private EnergyUsageModel getLastPoint(){
+            DeviceUsageList usage = activeUsageList.get(activeUsageList.size() -1);
+
+            for(DeviceUsageList usageList : activeUsageList) {
+                if(usageList.get(usageList.size() -1).toDate().after(usage.get(usage.size() - 1).toDate()))
+                    usage = usageList;
+
+            }
+            return usage.get(usage.size() -1);
+        }
 
     }
 
     /**
      * Here be the actual calculations. Very CPU.
-     */
+     *//*
     private void populateGraph(){
         double max = 0;
         double min = Integer.MAX_VALUE;
@@ -492,60 +571,14 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
         if( mChartView != null)
             mChartView.repaint();
-    }
+    }*/
 
     private boolean compareDates(Date date1, Date date2){
         return formatDate(date1, resolution.getCompareFormat())
                 .equals(formatDate(date2, resolution.getCompareFormat()));
     }
 
-    private EnergyUsageModel getFirstPoint(){
-        DeviceUsageList usage = mActiveUsageList.get(0);
 
-        for(DeviceUsageList usageList : mActiveUsageList) {
-            if(usageList.get(0).toDate().before(usage.get(0).toDate()))
-                usage = usageList;
-
-        }
-        return usage.get(0);
-    }
-
-    private EnergyUsageModel getLastPoint(){
-        DeviceUsageList usage = mActiveUsageList.get(mActiveUsageList.size() -1);
-
-        for(DeviceUsageList usageList : mActiveUsageList) {
-            if(usageList.get(usageList.size() -1).toDate().after(usage.get(usage.size() - 1).toDate()))
-                usage = usageList;
-
-        }
-        return usage.get(usage.size() -1);
-    }
-
-    private void setRange(double minY, double maxY, int points){
-        int end = points * POINT_DISTANCE;
-        int start;
-        int pointsToShow;
-
-        if(NUMBER_OF_POINTS > points)
-            pointsToShow = points;
-        else
-            pointsToShow = NUMBER_OF_POINTS;
-
-        //IF the active index is close to or the last element, find a new center index.
-        if(points - mActiveDateIndex < pointsToShow )
-            mActiveDateIndex = points - pointsToShow / 2;
-
-        int centerPoint = mActiveDateIndex  * POINT_DISTANCE;
-        start = centerPoint - (POINT_DISTANCE * pointsToShow) / 2;
-
-        if( start < 0)
-            start  = 0;
-
-        mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
-        mRenderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
-                end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
-    }
 
     private void setLabels(String label)
     {
@@ -564,14 +597,12 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
-        /*
-        for(DeviceUsageList usage : usageList){
-            mActiveUsageList.add(usage);
-            addSeries(usage.getDevice().getName(), true, false);
-        }
         long now = System.currentTimeMillis();
-        populateGraphAsync(mActiveUsageList, resolution);
-        Log.v(TAG, "addDeviceUsage: Milliseconds usage populating graph: " + (System.currentTimeMillis() - now));*/
+        clearDevices();
+        AsyncTaskRunner lol = new AsyncTaskRunner();
+        lol.execute(usageList);
+
+        Log.v(TAG, "addDeviceUsage: Milliseconds usage populating graph: " + (System.currentTimeMillis() - now));
     }
 /*  OLD
     @Override
@@ -682,37 +713,4 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             e.printStackTrace();
         }
     }
-
-    //    private void changeResolution()
-//    {
-//        mActiveUsageList.clear();
-//        DeviceUsageList compactList;
-//
-//
-//        for(DeviceUsageList usageList : mBaseUsageList) {
-//
-//            if(mDataResolution.equals("HH"))
-//                mActiveUsageList.add(usageList);
-//
-//            else {
-//
-//                compactList = new DeviceUsageList();
-//                String date = formatDate(usageList.get(0).getDatetime(), mDataResolution);
-//                double powerUsage = 0;
-//                Date oldDate = new Date();
-//
-//                for (EnergyUsageModel usage : usageList.getUsage()) {
-//                    if (!date.equals(formatDate(usage.getDatetime(), mDataResolution))) {
-//                        date = formatDate(usage.getDatetime(), mDataResolution);
-//                        compactList.add(new EnergyUsageModel(usage.getId(),usageList.getDevice().getDevice_id(), oldDate, powerUsage));
-//                        powerUsage = 0;
-//                    } else {
-//                        oldDate = usage.getDatetime();
-//                        powerUsage += usage.getPower_usage();
-//                    }
-//                }
-//                mActiveUsageList.add(compactList);
-//            }
-//        }
-//    }
 }
