@@ -20,9 +20,7 @@ public class DeviceUsage {
     private boolean deleted;
     private long lastUpdated;
 
-
     public DeviceUsage() {}
-
 
     public DeviceUsage(long id, long deviceId, long timestamp, double powerUsage, boolean deleted, long lastUpdated) {
         this.id = id;
@@ -31,15 +29,6 @@ public class DeviceUsage {
         this.timestamp = timestamp;
         this.deleted = deleted;
         this.lastUpdated = lastUpdated;
-        this.datetime = new Date(timestamp);
-    }
-
-    public Date getDatetime() {
-        return new Date(this.timestamp * 1000);
-    }
-
-    public void setDatetime(Date datetime) {
-        this.lastUpdated = datetime.getTime();
     }
 
     public boolean isDeleted() {

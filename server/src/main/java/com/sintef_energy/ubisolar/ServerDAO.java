@@ -17,7 +17,7 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO device (id, user_id, name, description) VALUES (:device.id, :device.userId, :device.name, :device.description)")
     int createDevice(@BindBean("device") Device device);
 
-    
+
     @SqlBatch("INSERT INTO device (id, user_id, name, description, last_updated, deleted, category) VALUES (:d.id, :d.userId, :d.name, :d.description, :d.lastUpdated, :d.deleted, :d.category) ON DUPLICATE KEY UPDATE user_id = :d.userId, name = :d.name, description = :d.description, deleted = :d.deleted, last_updated = :d.lastUpdated, category = :d.category")
     int[] createDevices(@BindBean("d") Iterator<Device> device);
     
