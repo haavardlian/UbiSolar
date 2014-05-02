@@ -61,6 +61,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private boolean mLoaded = false;
     private int mDeviceSize;
 
+
+    private int IMAGE_RENDER_WIDTH = 960, IMAGE_RENDER_HEIGHT = 540;
+
     private ArrayList<Date> mDates = new ArrayList<>();
 
     /**
@@ -578,7 +581,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     public Bitmap createImage(){
-        Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(IMAGE_RENDER_WIDTH, IMAGE_RENDER_HEIGHT, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         mChartView.draw(canvas);
 
