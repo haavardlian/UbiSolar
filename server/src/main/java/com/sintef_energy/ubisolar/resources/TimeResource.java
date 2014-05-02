@@ -7,10 +7,10 @@ import javax.ws.rs.core.Response;
 /**
  * Created by Håvard on 02.05.14.
  */
+@Path("/time")
 public class TimeResource {
 
     @GET
-    @Path("/time")
     long getCurrentTime()
     {
         return System.currentTimeMillis();
