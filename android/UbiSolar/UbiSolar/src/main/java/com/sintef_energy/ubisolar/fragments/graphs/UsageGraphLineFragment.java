@@ -95,14 +95,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             this.colors[i] = Color.parseColor(colorStringArray[i]);
         }
     }
-/*
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mRootView = inflater.inflate(R.layout.fragment_usage_graph_line, container, false);
-        return mRootView;
-    }
-*/
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(mSavedState);
@@ -377,8 +370,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
          */
         @Override
         protected void onPostExecute(Void values) {
-            if(abort)
-                return;
             /*
             // Set the new values
             mActiveUsageList.addAll(activeUsageList);
