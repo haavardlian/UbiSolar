@@ -150,8 +150,8 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         resolution = new Resolution(Resolution.DAYS);
         createLineGraph();
 
-        AsyncTaskRunner lol = new AsyncTaskRunner();
-        lol.execute(new ArrayList<DeviceUsageList>());
+        AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
+        asyncGraphCreator.execute(new ArrayList<DeviceUsageList>());
 
         mSavedState = null;
     }
@@ -269,7 +269,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     /**
      * All manupulation of new graph is done here..
      */
-    private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Integer, Integer>{
+    private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Void, Void>{
         /*ArrayList<DeviceUsageList> activeUsageList;
         XYMultipleSeriesRenderer renderer;
         XYMultipleSeriesDataset dataset;
@@ -289,6 +289,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
          */
         @Override
         protected void onPreExecute() {
+            Log.v(TAG, "Starting Async graphView update");
 
             setViewState(false);
 
@@ -304,8 +305,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
 
         @Override
-        protected Integer doInBackground(ArrayList<DeviceUsageList>... dataUsageList) {
-            Log.v(TAG, "Doing #: " + dataUsageList.length + " inBackground");
+        protected Void doInBackground(ArrayList<DeviceUsageList>... dataUsageList) {
             for(int i = 0; i < dataUsageList[0].size(); i++){
                 mActiveUsageList.add(dataUsageList[0].get(i));
                 addSeries(dataUsageList[0].get(i).getDevice().getName(), true, false);
@@ -327,7 +327,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(first);
 
-            Log.v(TAG, "# of points for new render: " + numberOfPoints);
             //Create the labels for the dates
             for(int i = 0; i < numberOfPoints; i++){
                 mDates.add(calendar.getTime());
@@ -338,9 +337,6 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
             // Go through the datasets (each device)
             for(DeviceUsageList usageList : mActiveUsageList) {
-                Log.v(TAG, "Rendering new dataset: " + usageList.getDevice().getName());
-                Log.v(TAG, "Dataset has # points: " + usageList.getUsage().size());
-
                 XYSeries series = mDataset.getSeriesAt(index);
                 series.clear(); //@torrib ??
                 y = 0;
@@ -360,6 +356,14 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
                 index++;
             }
 
+            setRange(min, max, mDates.size());
+
+            if(mActiveDateIndex <= mDates.size())
+                mActiveDateIndex = mDates.size() -1;
+
+            setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
+
+
             return null;
         }
 
@@ -369,7 +373,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
          * @see android.os.AsyncTask#onProgressUpdate(Progress[])
          */
         @Override
-        protected void onProgressUpdate(Integer... text) {
+        protected void onProgressUpdate(Void... values) {
             // Things to be done while execution of long running operation is in
             // progress. For example updating ProgessDialog
         }
@@ -380,10 +384,9 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
          * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
          */
         @Override
-        protected void onPostExecute(Integer lol) {
+        protected void onPostExecute(Void values) {
             if(abort)
                 return;
-
 
             /*
             // Set the new values
@@ -392,15 +395,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
             mDataset = dataset;
             mDates = dates;*/
 
-
-            setRange(min, max, mDates.size());
-
-            if(mActiveDateIndex <= mDates.size())
-                mActiveDateIndex = mDates.size() -1;
-
-            setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
-
-            Log.v(TAG, "AsyncTask complete: Time: " + (startTime - System.currentTimeMillis()) + "milliseconds. Rendering the new ChartView");
+            Log.v(TAG, "AsyncTask complete: Time: " + (System.currentTimeMillis() - startTime) + "milliseconds. Rendering the new ChartView");
 
 
             if( mChartView != null)
@@ -526,12 +521,10 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
-        long now = System.currentTimeMillis();
         clearDevices();
-        AsyncTaskRunner lol = new AsyncTaskRunner();
-        lol.execute(usageList);
 
-        Log.v(TAG, "addDeviceUsage: Milliseconds usage populating graph: " + (System.currentTimeMillis() - now));
+        AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
+        asyncGraphCreator.execute(usageList);
     }
 
     private String formatDate(Date date, String format){
