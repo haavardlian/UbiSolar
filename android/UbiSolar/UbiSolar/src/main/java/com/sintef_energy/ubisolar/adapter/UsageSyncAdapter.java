@@ -5,8 +5,10 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
@@ -15,6 +17,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
+import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.ArrayList;
@@ -203,6 +206,16 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
 
             /* STEP Update time */
             prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestamp);
+
+            /* SEND UPDATED */
+            //Send update for navDrawer usage
+            String usage = preferencesManager.getNavDrawerUsage();
+            if(!usage.equals("")) {
+                int i = Integer.valueOf(usage);
+                preferencesManager.setNavDrawerUsage(String.valueOf(i + serverUsageModels.size()));
+                Intent ii = new Intent(Global.BROADCAST_NAV_DRAWER_USAGE_UPDATE);
+                LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(ii);
+            }
 
             Log.v(TAG, "Synchronization complete."
                     + "\nAdded DevicesModels to local DB: " + nDevice

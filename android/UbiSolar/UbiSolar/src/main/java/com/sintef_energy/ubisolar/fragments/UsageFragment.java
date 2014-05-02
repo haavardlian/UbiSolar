@@ -6,11 +6,13 @@ import android.app.FragmentManager;
 import android.app.LoaderManager;
 
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +35,8 @@ import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
@@ -59,6 +63,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private ArrayList<DeviceUsageList> mDeviceUsageList;
     private IUsageView graphView;
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
+    private PreferencesManager mPreferenceManager;
 
 
     public UsageFragment() {
@@ -96,6 +101,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         if(mUsageFragmentStatePageAdapter == null)
             mUsageFragmentStatePageAdapter = new UsageFragmentStatePageAdapter(getFragmentManager());
+
+        mPreferenceManager = PreferencesManager.getInstance();
 
         // Initialize the ViewPager and set the adapter
         ScrollViewPager pager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
@@ -169,6 +176,10 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             mDeviceUsageList = new ArrayList<>();
             loaderManager.initLoader(LOADER_DEVICES, null, this);
         }
+
+        mPreferenceManager.setNavDrawerUsage(String.valueOf(""));
+        Intent i = new Intent(Global.BROADCAST_NAV_DRAWER_USAGE_UPDATE);
+        LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext()).sendBroadcast(i);
     }
 
     @Override

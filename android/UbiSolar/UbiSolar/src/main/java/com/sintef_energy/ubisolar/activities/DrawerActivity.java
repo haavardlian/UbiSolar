@@ -109,18 +109,26 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setFacebookPermissions();
-
-
         super.onCreate(savedInstanceState);
+
+        setFacebookPermissions();
         //We want to use the progress bar
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
+        Global.BROADCAST_NAV_DRAWER_USAGE_UPDATE = getResources().getString(R.string.broadcast_nav_drawer_usage);
 
         //Create RequestManager instance
         try {
             RequestManager.getInstance();
         } catch(IllegalStateException e) {
             RequestManager.getInstance(this);
+        }
+
+        /* Setup preference manager */
+        try {
+            mPrefManager = PreferencesManager.getInstance();
+        } catch (IllegalStateException ex) {
+            mPrefManager = PreferencesManager.initializeInstance(getApplicationContext());
         }
 
         /* Set up the presenters */
@@ -150,13 +158,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         /* Session data */
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
-
-        /* Setup preference manager */
-        try {
-            mPrefManager = PreferencesManager.getInstance();
-        } catch (IllegalStateException ex) {
-            mPrefManager = PreferencesManager.initializeInstance(getApplicationContext());
-        }
 
         /* Setup dummy account */
         AUTHORITY = getResources().getString(R.string.provider_authority_energy);

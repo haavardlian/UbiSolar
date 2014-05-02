@@ -27,6 +27,9 @@ public class PreferencesManager {
 
     public static final String SELECTED_RESIDENCE = PreferencesManager.class.getName() + ".SELECTED_RESIDENCE";
 
+
+    public static final String NAV_DRAWER_USAGE = PreferencesManager.class.getName() + ".NAV_DRAWER_USAGE";
+
     /** Facebook uid is also the UID used on the app server. */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
 
@@ -121,8 +124,13 @@ public class PreferencesManager {
     }
     public void setComparisonEnergyChecked(boolean value) {
         mPref.edit()
-
                 .putBoolean(COMPARISON_ENERGY_CHECKED, value)
+                .apply();
+    }
+
+    public void setNavDrawerUsage(String num){
+        mPref.edit()
+                .putString(NAV_DRAWER_USAGE, num)
                 .apply();
     }
 
@@ -172,6 +180,10 @@ public class PreferencesManager {
 
     public String getKeyFacebookUid(){
         return mPref.getString(KEY_FACEBOOK_UID, "-1");
+    }
+
+    public String getNavDrawerUsage(){
+        return mPref.getString(NAV_DRAWER_USAGE, "");
     }
 
     public void clearFacebookSessionData(){

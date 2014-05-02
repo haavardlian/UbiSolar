@@ -10,4 +10,8 @@ public class Global {
     public static String BASE_URL = "http://" + URL;
 
     public static boolean DEVELOPER_MADE = true;
+
+
+    public static String BROADCAST_NAV_DRAWER_USAGE_UPDATE;
+
 }
