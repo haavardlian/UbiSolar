@@ -21,6 +21,7 @@ public class DataGeneratorResource {
     private ServerDAO db;
     private ArrayList<Device> devices;
 
+    long n = 125363;
     public DataGeneratorResource(ServerDAO db) {
         this.db = db;
         this.devices = new ArrayList<Device>();
@@ -30,10 +31,11 @@ public class DataGeneratorResource {
 
     private void generateDevices(ArrayList<Device> devices, long user) {
         long time = System.currentTimeMillis();
-        devices.add(new Device(time+1, user, "TV", "This is your TV", time/1000l, false));
-        devices.add(new Device(time+2, user, "Stove", "This is your Stove", time/1000l, false));
-        devices.add(new Device(time+3, user, "Fridge", "This is your Fridge", time/1000l, false));
-        devices.add(new Device(time+4, user, "Heater", "This is your Heater", time/1000l, false));
+
+        devices.add(new Device(time+1, user, "TV", "This is your TV", time/1000l, false, 1));
+        devices.add(new Device(time+2, user, "Stove", "This is your Stove", time/1000l, false, 2));
+        devices.add(new Device(time+3, user, "Fridge", "This is your Fridge", time/1000l, false, 3));
+        devices.add(new Device(time+4, user, "Heater", "This is your Heater", time/1000l, false, 4));
 
     }
 
@@ -41,15 +43,15 @@ public class DataGeneratorResource {
         ArrayList<DeviceUsage> usage = new ArrayList<DeviceUsage>();
         Random r = new Random();
         long time = System.currentTimeMillis();
-        double rangeMin = 50.0, rangeMax = 400.0;
+        double rangeMin = 5.0, rangeMax = 20.0;
         double random;
 
-        for(int i = 0; i < 200; i++) {
+        for(int i = 0; i < 1000; i++) {
             random = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
-            rangeMin = random - 50;
-            rangeMax = random + 50;
+            rangeMin = random - 5;
+            rangeMax = random + 5;
             if(random < 0) random = -random;
-            usage.add(new DeviceUsage(time+i+d.getUserId(), d.getId(), (time/1000L) - (i*3600), random));
+            usage.add(new DeviceUsage(n++, d.getId(), (time/1000L) - (i*3600), random, false, time));
         }
 
         return usage;

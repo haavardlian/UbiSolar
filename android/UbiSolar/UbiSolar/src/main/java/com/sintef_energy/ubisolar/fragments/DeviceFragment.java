@@ -19,6 +19,7 @@ import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
@@ -58,10 +59,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         super.onCreate(savedInstanceState);
         try {
             devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
-
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
-
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString() + " must implement " + TotalEnergyPresenter.class.getName());
         }
@@ -92,12 +91,12 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
 
         expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
-        //her skal det sendes med cursoren?
+
         devices = new ArrayList<>();
         expListAdapter = new ExpandableListAdapter(getActivity(), devices);
+        expListView.setOnChildClickListener(expListAdapter);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
-        //createGroupList();
 
         return mRootview;
     }

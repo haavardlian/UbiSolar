@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="20dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="3% higher than people in your area"
+            android:id="@+id/textView" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="7% lower than equal # of residents"
+            android:id="@+id/textView2" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="1% lower than same energy class"
+            android:id="@+id/textView3" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="20dp"
+            android:paddingTop="10dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="100% lower than equal residence size"
+            android:id="@+id/textView4" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="3dp"
+            android:background="#d8d8d8" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="20dp"
+            android:paddingTop="10dp"
+            android:textSize="24dp"
+            android:textStyle="bold"
+            android:text="You have improved by 5%!"
+            android:id="@+id/textView5" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="3dp"
+            android:background="#d8d8d8" />
+
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/comp_settings_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:dividerHeight="3dp"
+        android:layout_marginTop="260dp">
+
+    </ListView>
+</RelativeLayout>

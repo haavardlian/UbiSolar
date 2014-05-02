@@ -15,12 +15,17 @@ import com.sintef_energy.ubisolar.utils.Authenticator;
  * when started.
  */
 public class AuthenticatorService extends Service {
+
+    private static final Object sSyncAdapterLock = new Object();
     // Instance field that stores the authenticator object
-    private Authenticator mAuthenticator;
+    private static Authenticator mAuthenticator;
     @Override
     public void onCreate() {
         // Create a new authenticator object
-        mAuthenticator = new Authenticator(this);
+        synchronized (sSyncAdapterLock) {
+            if (mAuthenticator == null)
+                mAuthenticator = new Authenticator(this);
+        }
     }
     /*
      * When the system binds to this Service to make the RPC call

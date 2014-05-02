@@ -3,10 +3,16 @@ package com.sintef_energy.ubisolar.database.energy;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.provider.CalendarContract;
 
 /**
  * Created by perok on 2/11/14.
+ *
+ * For all CRUD data manipulation through ContentProvider.
+ *
+ * Note: By the delete command, data is not deleted. It's delete bit is set to true.
+ * This will make the data not visible on queries.
+ * To actually delete the data, append the extra DELETE string URI.
+ *
  */
 public class EnergyContract {
     /**
@@ -25,9 +31,14 @@ public class EnergyContract {
     public static final String SELECTION_ID_BASED = BaseColumns._ID + " = ? ";
 
     /**
+     * The URI for deleting data.
+     */
+    public static final String DELETE = "delete";
+
+    /**
      * Constants for the Items table of the Devices provider.
      */
-        public static final class Devices implements DeviceModel.DeviceEntry {
+    public static final class Devices implements DeviceModel.DeviceEntry {
         /**
          * The content URI for this table.
          */

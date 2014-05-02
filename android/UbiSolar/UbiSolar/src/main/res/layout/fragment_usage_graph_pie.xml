@@ -9,8 +9,7 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1">
-    </LinearLayout>
+        android:layout_weight="1"></LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -20,7 +19,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/usagePieLabel"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerInParent="true" />
+
+        <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/usageButtonLeft"-->
+        <!--android:text="L"-->
+        <!--android:layout_alignParentLeft="true"/>-->
+
+        <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/usageButtonRight"-->
+        <!--android:text="R"-->
+        <!--android:layout_alignParentRight="true"/>-->
 
     </RelativeLayout>
 
@@ -34,18 +47,20 @@
             android:layout_height="wrap_content"
             android:id="@+id/pieDetailsName"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp" />
+
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/pieDetailsDescription"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp" />
+
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/pieDetailsPowerUsage"
             android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp" />
     </LinearLayout>
 </LinearLayout>

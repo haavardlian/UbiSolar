@@ -12,9 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.model.Tip;
-import com.sintef_energy.ubisolar.utils.RequestManager;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 /**
  * Created by Håvard on 20.03.14.
@@ -43,7 +42,7 @@ public class AddTipDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         Tip tip = new Tip(0, nameField.getText().toString(), descriptionField.getText().toString(), 0, 0);
 
-                        RequestManager.getInstance().doRequest().createTip(tip);
+                        RequestManager.getInstance().doTipRequest().createTip(tip);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

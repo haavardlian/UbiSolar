@@ -1,11 +1,11 @@
-package com.sintef_energy.ubisolar.fragments.social;
+package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by baier on 3/21/14.
  */
-public class CompareFriendsFragment extends Fragment {
+public class CompareFriendsListFragment extends Fragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -33,7 +33,7 @@ public class CompareFriendsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private View view;
     private FriendAdapter friendAdapter;
-    private SimilarAdapter similarAdapter;
+    private SimilarAdapter simAdapter;
 
 
 
@@ -41,15 +41,15 @@ public class CompareFriendsFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareFriendsFragment newInstance(int position, FriendAdapter friendAdapter) {
-        CompareFriendsFragment fragment = new CompareFriendsFragment(friendAdapter);
+    public static CompareFriendsListFragment newInstance(int position, FriendAdapter friendAdapter) {
+        CompareFriendsListFragment fragment = new CompareFriendsListFragment(friendAdapter);
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
         return fragment;
     }
 
-    public CompareFriendsFragment(FriendAdapter friendAdapter) {
+    public CompareFriendsListFragment(FriendAdapter friendAdapter) {
         this.friendAdapter = friendAdapter;
     }
 
@@ -84,12 +84,49 @@ public class CompareFriendsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Fragment fragment = CompareSimilarFragment.newInstance(position, similarAdapter);
+                Fragment fragment = CompareFriendsFragment.newInstance(position, simAdapter);
                 addFragment(fragment, true, friends.get(position));
             }
         });
 
         return view;
+    }
+
+    public class MyPagerAdapter extends FragmentStatePagerAdapter {
+
+        private final String[] TITLES = { "Friends", "Similar profiles"};
+        private FriendAdapter friendAdapter;
+        private SimilarAdapter simAdapter;
+        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter simAdapter) {
+            super(fm);
+            this.friendAdapter = friendAdapter;
+            this.simAdapter = simAdapter;
+        }
+
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TITLES[position];
+        }
+
+        @Override
+        public int getCount() {
+            return TITLES.length;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch(position) {
+                case 0:
+                    return CompareFriendsListFragment.newInstance(0, friendAdapter);
+                case 1:
+                    return CompareSimilarFragment.newInstance(1, simAdapter);
+                default:
+                    return null;
+            }
+        }
+
+
     }
 
     public void addFragment(Fragment fragment, boolean addToBackStack, User user) {

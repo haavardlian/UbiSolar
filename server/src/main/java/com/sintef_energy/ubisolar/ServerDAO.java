@@ -56,10 +56,10 @@ public interface ServerDAO {
     @Mapper(DeviceUsageMapper.class)
     List<DeviceUsage> getUsageForDevice(@Bind("device_id") int device_id);
 
-    @SqlUpdate("INSERT INTO device_power_usage (device_id, timestamp, power_usage) VALUES (:usage.deviceId, :usage.timestamp, :usage.powerUsage)")
+    @SqlUpdate("INSERT INTO device_power_usage (device_id, timestamp, power_usage, deleted, last_updated) VALUES (:usage.deviceId, :usage.timestamp, :usage.powerUsage, :usage.deleted, :usage.lastUpdated)")
     int addUsageForDevice(@BindBean("usage") DeviceUsage usage);
 
-    @SqlBatch("INSERT INTO device_power_usage (id, device_id, power_usage, timestamp) VALUES (:u.id, :u.deviceId, :u.powerUsage, :u.timestamp) ON DUPLICATE KEY UPDATE device_id = :u.deviceId, power_usage = :u.powerUsage, timestamp = :u.timestamp")
+    @SqlBatch("INSERT INTO device_power_usage (id, device_id, power_usage, timestamp, deleted, last_updated) VALUES (:u.id, :u.deviceId, :u.powerUsage, :u.timestamp, :u.deleted, :u.lastUpdated) ON DUPLICATE KEY UPDATE device_id = :u.deviceId, power_usage = :u.powerUsage, timestamp = :u.timestamp, deleted = :u.deleted, last_updated = :u.lastUpdated")
     int[] addUsageForDevices(@BindBean("u") Iterator<DeviceUsage> u);
 
     @SqlQuery("SELECT * FROM total_power_usage WHERE user_id = :user_id")

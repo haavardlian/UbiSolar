@@ -133,7 +133,6 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerItems.add(new DrawerHeader(navMenuTitles[4]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[5]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[6]));
-
         //Socialize
         navDrawerItems.add(new DrawerHeader(navMenuTitles[7]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[8], "5"));
@@ -141,7 +140,6 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerItems.add(new DrawerHeader(navMenuTitles[9]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[10]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[11]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[12]));
         // Recycle the typed array
         navMenuIcons.recycle();
 
@@ -160,7 +158,7 @@ public class NavigationDrawerFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        selectItem(position); // your fragment transactions go here
+                    selectItem(position); // your fragment transactions go here
                     }
                 }, 200);
                 //selectItem(position);
@@ -254,7 +252,7 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerList != null) {
             mDrawerList.setItemChecked(position, true);
         }
-        if (mDrawerLayout != null) { //TODO remove? handles in onClick
+        if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {

@@ -10,12 +10,12 @@ public class TipRating {
     private int id;
     private int tipId;
     private short rating;
-    private int userId;
+    private long userId;
 
     public TipRating() {
     }
 
-    public TipRating(int id, int tipId, short rating, int userId) {
+    public TipRating(int id, int tipId, short rating, long userId) {
         this.id = id;
         this.tipId = tipId;
         this.rating = rating;
@@ -46,11 +46,11 @@ public class TipRating {
         this.rating = rating;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 }

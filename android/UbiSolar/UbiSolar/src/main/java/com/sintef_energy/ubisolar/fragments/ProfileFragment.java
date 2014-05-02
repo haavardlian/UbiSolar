@@ -7,15 +7,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.facebook.Session;
+import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
 import com.sintef_energy.ubisolar.model.Residence;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.utils.Global;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -24,13 +27,16 @@ import java.util.ArrayList;
  *
  * UI design based on: https://github.com/gabrielemariotti/cardslib
  */
-public class ProfileFragment extends DefaultTabFragment {
+public class ProfileFragment extends DefaultTabFragment  {
 
-    public static final String TAG = DeviceFragment.class.getName();
+    public static final String TAG = ProfileFragment.class.getName();
     private View mRootView;
     private ExpandableListView expListView;
     private ArrayList<Residence> residences;
+    PreferencesManager prefs;
 
+    private TextView name, location, age, country;
+    private ProfilePictureView profilePicture;
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -55,16 +61,41 @@ public class ProfileFragment extends DefaultTabFragment {
         super.onAttach(activity);
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+        //((DrawerActivity) activity).publishStory();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        prefs = PreferencesManager.getInstance();
 
-        //return super.onCreateView(inflater, container, savedInstanceState);
-        mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        //textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-        setupList();
+        //Dummy creation to be replaced when facebook login is 100%
+        //setDummyPrefs();
+
+        if(Global.loggedIn) {
+            mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
+            setupList();
+
+            name = (TextView) mRootView.findViewById(R.id.profile_name);
+            name.setText(prefs.getFacebookName());
+            location = (TextView) mRootView.findViewById(R.id.profile_location);
+            location.setText(prefs.getFacebookLocation());
+            age = (TextView) mRootView.findViewById(R.id.profile_age);
+            age.setText(prefs.getFacebookAge());
+            country = (TextView) mRootView.findViewById(R.id.profile_country);
+            country.setText(prefs.getFacebookCountry());
+            profilePicture = (ProfilePictureView) mRootView.findViewById(R.id.profile_profile_picture);
+            profilePicture.setProfileId(prefs.getKeyFacebookUid());
+            profilePicture.setPresetSize(ProfilePictureView.LARGE);
+            profilePicture.setVisibility(0);
+
+            Session.getActiveSession();
+        }
+        else {
+            mRootView = inflater.inflate(R.layout.fragment_profile_offline, container, false);
+            setupList();
+
+        }
+
         Session.getActiveSession();
         return mRootView;
     }
@@ -94,12 +125,16 @@ public class ProfileFragment extends DefaultTabFragment {
     private void setupList()
     {
         createGroupList();
-
-        expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListView);
+        if(Global.loggedIn)
+            expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListView);
+        else
+            expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListViewOffline);
         final ResidenceListAdapter expListAdapter = new ResidenceListAdapter(getActivity(), residences);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
+        expListView.setOnChildClickListener(expListAdapter);
     }
+
 
     private void createGroupList() {
         residences = new ArrayList<Residence>();
@@ -107,7 +142,6 @@ public class ProfileFragment extends DefaultTabFragment {
         residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G'));
         residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B'));
         residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D'));
-
     }
 
     private void setGroupIndicatorToRight() {
@@ -126,5 +160,14 @@ public class ProfileFragment extends DefaultTabFragment {
         // Convert the dps to pixels, based on density scale
         return (int) (pixels * scale + 0.5f);
     }
+
+    private void setDummyPrefs() {
+        prefs.setFacebookName("Lars Erik Græsdal-Knutrud");
+        prefs.setFacebookLocation("Trondheim");
+        prefs.setFacebookAge("09/01/1991");
+        prefs.setFacebookCountry("Norway");
+        prefs.setKeyFacebookUid("736583709");
+    }
+
 
 }

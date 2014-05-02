@@ -2,44 +2,41 @@ package com.sintef_energy.ubisolar.model;
 
 /**
  * Created by thb on 19.02.14.
+ *
+ * A replica of the model on the backend.
  */
-public abstract class Device
+public class Device
 {
-    protected long device_id;
-    protected long user_id;
+    protected long id;
+    protected long userId;
     protected String name;
     protected String description;
     protected int category;
-    protected boolean isTotal;
+    protected boolean deleted;
+    protected long lastUpdated;
 
     public Device()
     {
 
     }
 
-    public Device(long device_id, String name, String description, long user_id,
-                  int category) {
-        this.device_id = device_id;
+    public Device(long id, long userId, String name, String description, int category, boolean deleted, long lastUpdated) {
+        this.id = id;
         this.name = name;
         this.description = description;
-        this.user_id = user_id;
+        this.userId = userId;
         this.category = category;
-        this.isTotal = false;
+        this.deleted = deleted;
+        this.lastUpdated = lastUpdated;
     }
 
 
-    public Device(long device_id, String name, String description, long user_id,
-                  int category, boolean isTotal) {
-        this.device_id = device_id;
-        this.name = name;
-        this.description = description;
-        this.user_id = user_id;
-        this.category = category;
-        this.isTotal = isTotal;
+    public void updateLastUpdate(){
+        setLastUpdated(System.currentTimeMillis() / 1000L);
     }
 
-    public long getDevice_id() {
-        return device_id;
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -50,20 +47,20 @@ public abstract class Device
         return description;
     }
 
-    public long getUser_id() {
-        return user_id;
+    public long getUserId() {
+        return userId;
     }
 
     public int getCategory() { return category; }
 
     public String toString() { return name; }
 
-    public void setDevice_id(long device_id) {
-        this.device_id = device_id;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public void setName(String name) {
@@ -78,11 +75,19 @@ public abstract class Device
         this.category = category;
     }
 
-    public boolean isTotal() {
-        return isTotal;
+    public boolean isDeleted() {
+        return deleted;
     }
 
-    public void setIsTotal(boolean isTotal) {
-        this.isTotal = isTotal;
+    public void setDeleted(boolean isDeleted) {
+        this.deleted = isDeleted;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 }

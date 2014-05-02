@@ -54,6 +54,8 @@ public class DeviceUsageList implements Parcelable
 
     public EnergyUsageModel get(int index)
     {
+        if(index >= usageList.size())
+            return usageList.get(usageList.size() -1);
         return usageList.get(index);
     }
 
@@ -71,8 +73,10 @@ public class DeviceUsageList implements Parcelable
     {
         totalUsage = 0;
         for(DeviceUsage usage : usageList) {
-            if (formatDate(usage.getDatetime(), format).equals(date));
-                totalUsage += usage.getPower_usage();
+            if (formatDate(usage.getDatetime(), format).equals(date))
+            {
+                totalUsage += usage.getPowerUsage();
+            }
         }
     }
 

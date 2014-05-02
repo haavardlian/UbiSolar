@@ -9,8 +9,6 @@ import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.FragmentActivity;
@@ -20,37 +18,51 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
-
 import com.facebook.LoggingBehavior;
 import com.facebook.Request;
+import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.Settings;
 import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
+import com.sintef_energy.ubisolar.R;
 
-import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.drawer.DrawerItem;
-import com.sintef_energy.ubisolar.drawer.Item;
 import com.sintef_energy.ubisolar.fragments.AddUsageFragment;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.HomeFragment;
+import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
-import com.sintef_energy.ubisolar.fragments.social.CompareFragment;
-import com.sintef_energy.ubisolar.fragments.social.ComparisonSettingsFragment;
-import com.sintef_energy.ubisolar.model.NavDrawerItem;
+import com.sintef_energy.ubisolar.fragments.UsageFragment;
+
+
+import com.sintef_energy.ubisolar.fragments.CompareFragment;
+
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
+
+
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
-import com.sintef_energy.ubisolar.utils.RequestManager;
+import com.sintef_energy.ubisolar.utils.Utils;
 
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * The main activity.
@@ -92,27 +104,28 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     public static String ACCOUNT;
     // Instance fields
     private Account mAccount;
-
+    //Facebook permissions
+    public static List<String> FACEBOOK_PERMISSIONS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setFacebookPermissions();
 
 
         super.onCreate(savedInstanceState);
         //We want to use the progress bar
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         //Create RequestManager instance
-        RequestManager.getInstance(this);
+        try {
+            RequestManager.getInstance();
+        } catch(IllegalStateException e) {
+            RequestManager.getInstance(this);
+        }
+
         /* Set up the presenters */
-
-        /*UsagePresenter*/
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.add(Calendar.MONTH, 8);
         mTotalEnergyPresenter = new TotalEnergyPresenter();
-        //mTotalEnergyPresenter.loadEnergyData(getContentResolver(),
-        //        0,
-        //        calendar.getTimeInMillis());
-
+        devicePresenter = new DevicePresenter();
 
         titleNames = getResources().getStringArray(R.array.nav_drawer_items);
         setContentView(R.layout.activity_usage);
@@ -120,9 +133,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-
-        /* DevicePresenter */
-        devicePresenter = new DevicePresenter();
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -138,13 +148,15 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     }
                 });*/
 
-
         /* Session data */
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
 
         /* Setup preference manager */
-        PreferencesManager.initializeInstance(getApplicationContext());
-        mPrefManager = PreferencesManager.getInstance();
+        try {
+            mPrefManager = PreferencesManager.getInstance();
+        } catch (IllegalStateException ex) {
+            mPrefManager = PreferencesManager.initializeInstance(getApplicationContext());
+        }
 
         /* Setup dummy account */
         AUTHORITY = getResources().getString(R.string.provider_authority_energy);
@@ -154,14 +166,14 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mAccount = CreateSyncAccount(this);
 
         /* The same as ticking allow sync */
-        //ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+        ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
 
         /* Request a sync operation */
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); //Do sync regardless of settings
-        //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
+        bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
         ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
-
+        
         // Extra logging for debug
         if(Global.DEVELOPER_MADE)
             Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
@@ -170,7 +182,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         /* Start developer mode after app has been setup
          * Lots of StrictMode violations are done in startup anyways. */
-        developerMode(Global.DEVELOPER_MADE);
+        Utils.developerMode(getContentResolver(), Global.DEVELOPER_MADE, false);
     }
 
     /**
@@ -185,7 +197,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         //Updates the UI based on logged in state
         changeNavdrawerSessionsView(Global.loggedIn);
     }
-
 
     @Override
     public void onStop() {
@@ -237,9 +248,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 fragment = ProfileFragment.newInstance(position);
                 break;
             case 11:
-                fragment = ComparisonSettingsFragment.newInstance(position);
-                break;
-            case 12:
                 logout = true;
                 break;
             default:
@@ -297,7 +305,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     private void changeNavdrawerSessionsView(boolean state){
         Global.loggedIn = state;
 
-        DrawerItem item = (DrawerItem)mNavigationDrawerFragment.getNavDrawerItem(12);
+        DrawerItem item = (DrawerItem)mNavigationDrawerFragment.getNavDrawerItem(11);
 
         if (Global.loggedIn) //TODO: if Session.GetActiveSession().isOpened?
             item.setTitle("Log out");
@@ -351,8 +359,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      * @param savedInstanceState Saved instance data
      */
     private void startFacebookLogin(Bundle savedInstanceState){
-
-
         // start Facebook Login
         // This will _only_ log in if the user is logged in from before.
         // To log in, the user must choose so himself from the menu.
@@ -385,7 +391,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
         /* User wants to log in */
         /* Is there internet? */
-        else if(!isNetworkOn(getApplicationContext())){
+        else if(!Utils.isNetworkOn(getApplicationContext())){
             Toast.makeText(getApplicationContext(), R.string.no_internet, Toast.LENGTH_SHORT).show();
         }
         /* There is internet */
@@ -398,9 +404,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
             else if (!session.isOpened() && !session.isClosed()) {
+
+
                 session.openForRead(new Session.OpenRequest(this)
-                        .setPermissions(Arrays.asList("basic_info"))
+                        .setPermissions(FACEBOOK_PERMISSIONS)
                         .setCallback(mFacebookSessionStatusCallback));
+
+                //session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
@@ -413,7 +423,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     private void callFacebookLogout(Context context) {
         Session session = Session.getActiveSession();
         if (session != null) {
-
             if (!session.isClosed()) {
                 session.closeAndClearTokenInformation();
                 //clear your preferences if saved
@@ -439,13 +448,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         public void call(Session session, SessionState state, Exception exception) {
             //User is logged in
             if (session.isOpened()) {
-                Log.v(DrawerActivity.TAG,"Facebook logged in.");
+
+                Log.v(DrawerActivity.TAG, "Facebook logged in.");
 
                 /* Set session data */
                 mPrefManager.setAccessToken(session.getAccessToken());
                 mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
-
-                //SessionState.
 
                 Toast.makeText(getBaseContext(), "Logged in through facebook", Toast.LENGTH_LONG).show();
                 changeNavdrawerSessionsView(true);
@@ -457,16 +465,44 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                  *  Don't need to store cached data.
                  *
                  */
-                if(isNetworkOn(getApplicationContext()))
+                if(Utils.isNetworkOn(getApplicationContext()))
                     Request.newMeRequest(session, new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
-                            if(response.getConnection() != null || response.getIsFromCache() != false) {
+                            if(response.getConnection() != null || response.getIsFromCache()) {
+
+
+                                if(null != user.getFirstName())
+                                    mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
+                                else
+                                    mPrefManager.setFacebookName("Could not find Facebook name");
+
+                                if(null != user.getLocation().getCity())
+                                    mPrefManager.setFacebookLocation(user.getLocation().getCity());
+                                else
+                                    mPrefManager.setFacebookLocation("Could not find Facebook location");
+
+                                if(null != user.getLocation().getCountry())
+                                    mPrefManager.setFacebookCountry(user.getLocation().getCountry());
+                                else
+                                    mPrefManager.setFacebookCountry("Could not find Facebook country");
+
+                                if(null != user.getBirthday())
+                                    mPrefManager.setFacebookAge(user.getBirthday());
+                                else
+                                    mPrefManager.setFacebookAge("Could not find Facebook age");
 
                                 mPrefManager.setKeyFacebookUid(user.getId());
+
                                 Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
+                                Log.d("FACEBOOKNAME", user.getFirstName()+" "+user.getLastName());
+                                Log.d("FACEBOOKLOCATION", user.getLocation().getCity()+" ");
+                                Log.d("FACEBOOKAGE", user.getBirthday()+" ");
+                                Log.d("FACEBOOKCOUNTRY", user.getLocation().getCountry()+" ");
+
+
                             } else {
-                                Log.e(TAG, "No DATA");
+                                Log.e(TAG, "No facebook data return on newMeRequest.");
                             }
                         }
                     }).executeAsync();
@@ -481,32 +517,17 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     }
 
     /**
-     * Helper class to check if app has internet connection.
-     * @param context
-     * @return
-     */
-    public boolean isNetworkOn(Context context) {
-        ConnectivityManager connMgr =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-        return (networkInfo != null && networkInfo.isConnected());
-    }
-
-
-    /**
      * Create a new dummy account for the sync adapter
      *
      * @param context The application context
      */
     public static Account CreateSyncAccount(Context context) {
         // Create the account type and default account
-        Account newAccount = new Account(
-                ACCOUNT, ACCOUNT_TYPE);
+        Account newAccount = new Account(ACCOUNT, ACCOUNT_TYPE);
+
         // Get an instance of the Android account manager
         AccountManager accountManager =
-                (AccountManager) context.getSystemService(
-                        ACCOUNT_SERVICE);
+                (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
         /*
          * Add the account and account type, no password or user data
          * If successful, return the Account object, otherwise report an error.
@@ -517,6 +538,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
              * in your <provider> element in the manifest,
              * then call context.setIsSyncable(account, AUTHORITY, 1)
              * here.
+             * -> Is set in the manifest.
              */
             Log.v(TAG, "CreateSyncAccount successful");
         } else {
@@ -524,12 +546,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
              * The account exists or some other error occurred. Log this, report it,
              * or handle it internally.
              */
-
             Log.v(TAG, "CreateSyncAccount failed: Most probably because account already exists.");
         }
 
         return newAccount;
     }
+
 
     /**
      * Debug with strict mode
@@ -538,11 +560,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         if(devMode){
             StrictMode.setThreadPolicy(
                     new StrictMode.ThreadPolicy.Builder()
-            .detectDiskReads()
-            .detectDiskWrites()
-            .detectNetwork()
-            .penaltyLog()
-            .build());
+                            .detectDiskReads()
+                            .detectDiskWrites()
+                            .detectNetwork()
+                            .penaltyLog()
+                            .build()
+            );
             StrictMode.setVmPolicy(
                     new StrictMode.VmPolicy.Builder()
             .detectLeakedSqlLiteObjects()
@@ -551,6 +574,81 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             .penaltyDeath()
             .build());
         }
+    }
+/*
+    public void publishStory() {
+        Session session = Session.getActiveSession();
+
+        if (session != null){
+
+            // Check for publish permissions
+            List<String> permissions = session.getPermissions();
+            Log.d(TAG,"Session permissions" + session.getPermissions().toString());
+            Log.d(TAG,"Stored permissions" + FACEBOOK_PERMISSIONS.toString());
+            if (!isSubsetOf(FACEBOOK_PERMISSIONS, permissions)) {
+               // pendingPublishReauthorization = true;
+                Session.NewPermissionsRequest newPermissionsRequest = new Session
+                        .NewPermissionsRequest(this, FACEBOOK_PERMISSIONS);
+                session.requestNewPublishPermissions(newPermissionsRequest);
+                return;
+            }
+
+            Bundle postParams = new Bundle();
+            postParams.putString("name", "Facebook SDK for Android");
+            postParams.putString("caption", "Build great social apps and get more installs.");
+            postParams.putString("description", "The Facebook SDK for Android makes it easier and faster to develop Facebook integrated Android apps.");
+            postParams.putString("link", "https://developers.facebook.com/android");
+            postParams.putString("picture", "https://raw.github.com/fbsamples/ios-3.x-howtos/master/Images/iossdk_logo.png");
+
+            Request.Callback callback= new Request.Callback() {
+                public void onCompleted(Response response) {
+                    JSONObject graphResponse = response
+                            .getGraphObject()
+                            .getInnerJSONObject();
+                    String postId = null;
+                    try {
+                        postId = graphResponse.getString("id");
+                    } catch (JSONException e) {
+                        Log.i(TAG,
+                                "JSON error "+ e.getMessage());
+                    }
+                    FacebookRequestError error = response.getError();
+                    if (error != null) {
+                        Toast.makeText(getApplicationContext(),
+                                error.getErrorMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                postId,
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            };
+
+            Request request = new Request(session, "me/feed", postParams,
+                    HttpMethod.POST, callback);
+
+            RequestAsyncTask task = new RequestAsyncTask(request);
+            task.execute();
+            Log.d(TAG,"POSTEDFACEBOOK");
+        }
+    }
+
+
+    private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
+        for (String string : subset) {
+            if (!superset.contains(string)) {
+                return false;
+            }
+        }
+        return true;
+    }
+*/
+    private void setFacebookPermissions() {
+        FACEBOOK_PERMISSIONS=new ArrayList<>();
+        FACEBOOK_PERMISSIONS.add("user_birthday");
+        FACEBOOK_PERMISSIONS.add("user_location");
+        FACEBOOK_PERMISSIONS.add("email");
     }
 
 }
