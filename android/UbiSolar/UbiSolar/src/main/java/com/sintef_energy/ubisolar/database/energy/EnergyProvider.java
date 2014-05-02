@@ -515,9 +515,9 @@ public class EnergyProvider extends ContentProvider{
                         + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
                         + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
-                        + "WHERE (" + where + ") AND " + selectionAvoidDeleteBit
-                        + "GROUP BY " + time + ", "
-                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
+                        + "WHERE " + where + " AND " + selectionAvoidDeleteBit
+                        + "GROUP BY " + time //+ ", "
+//                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
                         + "ORDER BY `month` ASC";
     }
 }
