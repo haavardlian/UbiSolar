@@ -177,6 +177,11 @@ public class PreferencesManager {
     public void clearFacebookSessionData(){
         remove(KEY_ACCESS_TOKEN);
         remove(KEY_ACCESS_TOKEN_EXPIRES);
+        remove(FACEBOOK_NAME);
+        remove(FACEBOOK_AGE);
+        remove(FACEBOOK_LOCATION);
+        remove(FACEBOOK_COUNTRY);
+        remove(KEY_FACEBOOK_UID)
     }
     /**
      * Removes a given key
