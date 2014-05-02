@@ -181,7 +181,7 @@ public class PreferencesManager {
         remove(FACEBOOK_AGE);
         remove(FACEBOOK_LOCATION);
         remove(FACEBOOK_COUNTRY);
-        remove(KEY_FACEBOOK_UID)
+        remove(KEY_FACEBOOK_UID);
     }
     /**
      * Removes a given key
