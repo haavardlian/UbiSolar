@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -142,7 +143,7 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
         //Initialize new data
         else {
-            setupLineGraph();
+            mRenderer = setupLineGraph();
 
             mActiveUsageList = new ArrayList<>();
         }
@@ -200,34 +201,37 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
     /**
      * Configure Graph
      */
-    private void setupLineGraph(){
-        mRenderer.setChartTitle(getResources().getString(R.string.usage_line_graph_title));
+    private XYMultipleSeriesRenderer setupLineGraph(){
+        XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
+
+        renderer.setChartTitle(getResources().getString(R.string.usage_line_graph_title));
 //        mRenderer.setYTitle("KWh");
+        renderer.setAxisTitleTextSize(25);
+        renderer.setChartTitleTextSize(20);
+        renderer.setLabelsTextSize(15);
+        renderer.setLegendTextSize(15);
+        renderer.setPointSize(5);
+        renderer.setXLabels(0);
+        renderer.setXLabelsPadding(10);
+        renderer.setYLabelsPadding(20);
+        renderer.setMargins(new int[]{ 20, 40, 35, 20 });
 
-        mRenderer.setAxisTitleTextSize(25);
-        mRenderer.setChartTitleTextSize(20);
-        mRenderer.setLabelsTextSize(15);
-        mRenderer.setLegendTextSize(15);
-        mRenderer.setPointSize(5);
-        mRenderer.setXLabels(0);
-        mRenderer.setXLabelsPadding(10);
-        mRenderer.setYLabelsPadding(20);
-        mRenderer.setMargins(new int[]{20, 40, 35, 20});
+        setColors(renderer, Color.WHITE, Color.BLACK);
 
-        setColors(Color.WHITE, Color.BLACK);
+        return renderer;
     }
 
-    private void setColors(int backgroundColor, int labelColor){
-        mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setBackgroundColor(backgroundColor);
-        mRenderer.setMarginsColor(backgroundColor);
-        mRenderer.setLabelsColor(labelColor);
-        mRenderer.setXLabelsColor(labelColor);
-        mRenderer.setYLabelsColor(0, labelColor);
+    private void setColors(XYMultipleSeriesRenderer renderer, int backgroundColor, int labelColor){
+        renderer.setApplyBackgroundColor(true);
+        renderer.setBackgroundColor(backgroundColor);
+        renderer.setMarginsColor(backgroundColor);
+        renderer.setLabelsColor(labelColor);
+        renderer.setXLabelsColor(labelColor);
+        renderer.setYLabelsColor(0, labelColor);
     }
 
     /**
-     * Set up the ChartView and add listeners.
+     * Set up the ChartView with the dataset and renderer and add listeners.
      */
     private void createLineGraph(){
         if (mChartView == null) {
@@ -283,19 +287,142 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
     }
 
+
+    private void populateGraphAsync(ArrayList<DeviceUsageList> activeUsageList, Resolution resolution){
+        double max = 0;
+        double min = Integer.MAX_VALUE;
+        int y = 0;
+        int index = 0;
+
+        //Clear old data
+        mRenderer.clearXTextLabels();
+        mDates.clear();
+
+        //Abort if no data.
+        if(activeUsageList.size() <= 0)
+            return;
+
+        Date first = getFirstPoint().toDate();
+        Date last = getLastPoint().toDate();
+        int numberOfPoints = resolution.getTimeDiff(first, last);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(first);
+
+        //Create the labels for the dates
+        for(int i = 0; i < numberOfPoints; i++){
+            mDates.add(calendar.getTime());
+            mRenderer.addXTextLabel(y, formatDate(calendar.getTime(), resolution.getResolutionFormat()));
+            y += POINT_DISTANCE;
+            resolution.getNextPoint(calendar);
+        }
+
+        for(DeviceUsageList usageList : activeUsageList) {
+            XYSeries series =  mDataset.getSeriesAt(index);
+            series.clear();
+            y = 0;
+            for (EnergyUsageModel usage : usageList.getUsage()) {
+                while(y < mDates.size()){
+                    if(compareDates(usage.toDate(), mDates.get(y))){
+                        series.add(y * POINT_DISTANCE, usage.getPowerUsage());
+                        max = Math.max(max, usage.getPowerUsage());
+                        min = Math.min(min, usage.getPowerUsage());
+                        break;
+                    }
+                    y++;
+                }
+            }
+            index++;
+        }
+
+        setRange(min, max, mDates.size());
+        if(mActiveDateIndex <= mDates.size())
+            mActiveDateIndex = mDates.size() -1;
+
+        setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
+
+        if( mChartView != null)
+            mChartView.repaint();
+    }
+
     /**
-     * Define the series renderer
+     * All manupulation of new graph is done here..
+     */
+    private class AsyncTaskRunner extends AsyncTask<DeviceUsageList, Integer, Integer>{
+
+        ArrayList<DeviceUsageList> activeUsageList;
+
+        XYMultipleSeriesRenderer renderer;
+        XYMultipleSeriesDataset dataset;
+
+        @Override
+        protected Integer doInBackground(DeviceUsageList... usageList) {
+
+            renderer = setupLineGraph();
+
+            for(int i = 0; i < usageList.length; i++){
+                activeUsageList.add(usageList[i]);
+                addSeries(usageList[i].getDevice().getName(), true, false);
+            }
+
+            return null;
+        }
+
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+         */
+        @Override
+        protected void onPostExecute(Integer lol) {
+
+            mActiveUsageList.addAll(activeUsageList);
+
+            // execution of result of Long time consuming operation
+            //finalResult.setText(result);
+
+            mRenderer = new XYMultipleSeriesRenderer();
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see android.os.AsyncTask#onPreExecute()
+         */
+        @Override
+        protected void onPreExecute() {
+            // Things to be done before execution of long running operation. For
+            // example showing ProgessDialog
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see android.os.AsyncTask#onProgressUpdate(Progress[])
+         */
+        @Override
+        protected void onProgressUpdate(Integer... text) {
+            //finalResult.setText(text[0]);
+            // Things to be done while execution of long running operation is in
+            // progress. For example updating ProgessDialog
+        }
+
+
+            /**
+     * Define the series renderer for the mDataset and mRenderer
+     *
      * @param seriesName The name of the series
      */
-    private void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues){
+    public void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues){
         XYSeries series = new XYSeries(seriesName);
-        mDataset.addSeries(series);
+        dataset.addSeries(series);
 
         XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
         seriesRenderer.setLineWidth(3);
         seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
         seriesRenderer.setShowLegendItem(true);
-        mRenderer.addSeriesRenderer(seriesRenderer);
+        renderer.addSeriesRenderer(seriesRenderer);
         if(displayPoints) {
             seriesRenderer.setPointStyle(PointStyle.CIRCLE);
             seriesRenderer.setFillPoints(true);
@@ -308,6 +435,11 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
         }
     }
 
+    }
+
+    /**
+     * Here be the actual calculations. Very CPU.
+     */
     private void populateGraph(){
         double max = 0;
         double min = Integer.MAX_VALUE;
@@ -432,18 +564,31 @@ public class UsageGraphLineFragment extends Fragment implements IUsageView{
 
     @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
+        /*
         for(DeviceUsageList usage : usageList){
             mActiveUsageList.add(usage);
             addSeries(usage.getDevice().getName(), true, false);
         }
-
-        populateGraph();
+        long now = System.currentTimeMillis();
+        populateGraphAsync(mActiveUsageList, resolution);
+        Log.v(TAG, "addDeviceUsage: Milliseconds usage populating graph: " + (System.currentTimeMillis() - now));*/
     }
+/*  OLD
+    @Override
+    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
+        for(DeviceUsageList usage : usageList){
+            mActiveUsageList.add(usage);
+            addSeries(usage.getDevice().getName(), true, false);
+        }
+        long now = System.currentTimeMillis();
+        populateGraph();
+        Log.v(TAG, "addDeviceUsage: Milliseconds usage populating graph: " + (System.currentTimeMillis() - now));
+    }*/
 
     private String formatDate(Date date, String format){
-        SimpleDateFormat formater = new SimpleDateFormat (format);
+        SimpleDateFormat formatter = new SimpleDateFormat (format);
         if(date != null)
-            return formater.format(date);
+            return formatter.format(date);
         else
             return null;
     }
