@@ -84,11 +84,11 @@
     </LinearLayout>
 
     <ListView
-        android:id="@+id/comp_settings_list"
+        android:id="@+id/news_feed_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:dividerHeight="3dp"
-        android:layout_marginTop="260dp">
+        android:layout_marginTop="300dp">
 
     </ListView>
 </RelativeLayout>
