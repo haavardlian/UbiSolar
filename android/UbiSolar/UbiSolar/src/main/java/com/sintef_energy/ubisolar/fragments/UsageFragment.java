@@ -60,8 +60,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private IUsageView graphView;
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
 
-    private Button zoomOutButton;
-    private Button zoomInButton;
 
     public UsageFragment() {
     }
@@ -90,7 +88,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         setHasOptionsMenu(true);
 
         super.onCreate(bundle);
-
     }
 
     @Override
@@ -139,8 +136,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
-        zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
+        Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
+        Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
         zoomInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -483,6 +480,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setActiveIndex(graphView.getActiveIndex() * 24);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE, null, this);
 
+            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(false);
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
@@ -495,6 +493,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setActiveIndex(graphView.getActiveIndex() * 4);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
+            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(true);
         }
     }
@@ -506,6 +505,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setActiveIndex(graphView.getActiveIndex() / 24);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
 
+            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(true);
         }
         else if(graphView.getResolution() == Resolution.DAYS) {
@@ -519,6 +519,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setActiveIndex(graphView.getActiveIndex() / 4);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
 
+            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(false);
         }
     }

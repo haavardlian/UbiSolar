@@ -3,42 +3,39 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
-    android:paddingLeft="0dp" >
-
+    android:paddingLeft="0dp">
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:clipChildren="false"
-        android:layout_marginTop="30dp"
         android:layout_marginBottom="20dp"
-        >
+        android:layout_marginTop="30dp"
+        android:clipChildren="false"
+        android:orientation="horizontal">
 
         <com.facebook.widget.ProfilePictureView
             android:id="@+id/userProfilePic"
             android:layout_width="150dp"
             android:layout_height="130dp"
+            android:layout_centerInParent="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="0dp"
-            android:layout_weight="2"
-            android:layout_centerInParent="true"
-            />
+            android:layout_weight="2" />
 
         <ImageView
             android:id="@+id/vs_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="90dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal|top"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            android:layout_marginTop="90dp"
             android:layout_weight="0.1"
-            android:layout_gravity="center_horizontal|top"
-            android:src="@drawable/vs_inv"
             android:adjustViewBounds="true"
-            android:layout_centerInParent="true"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:src="@drawable/vs_inv" />
 
 
         <com.facebook.widget.ProfilePictureView
@@ -54,13 +51,11 @@
     </LinearLayout>
 
 
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:paddingLeft="5dp" >
+        android:paddingLeft="5dp">
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
@@ -70,12 +65,10 @@
                 android:id="@+id/compFriendChart"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_marginTop="250dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_marginTop="250dp"
                 android:src="@drawable/graph" />
-
-
 
 
         </FrameLayout>
