@@ -4,13 +4,14 @@ package com.sintef_energy.ubisolar.model;
  * Created by Lars Erik on 18.03.14.
  */
 public class Residence {
-    private String houseId;
-    private String description;
-    private String status;
-    private int area;
-    private int residents;
-    private int zipCode;
-    private char energyClass;
+    protected String houseId;
+    protected String description;
+    protected int residents;
+    protected int area;
+    protected int zipCode;
+    protected char energyClass;
+
+    protected String status;
 
     public Residence(String houseId,String description, int residents, int area,
                      int zipCode, char energyClass) {
@@ -21,6 +22,10 @@ public class Residence {
         this.zipCode = zipCode;
         this.energyClass = energyClass;
         this.status = houseId;
+    }
+
+    public Residence() {
+
     }
 
     public String getHouseId() {
@@ -47,11 +52,15 @@ public class Residence {
         this.energyClass = energyClass;
     }
 
+    public void setEnergyClass(String energyClass) {
+        this.energyClass = energyClass.charAt(0);
+    }
+
     public int getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(byte zipCode) {
+    public void setZipCode(int zipCode) {
         this.zipCode = zipCode;
     }
 
@@ -59,7 +68,7 @@ public class Residence {
         return residents;
     }
 
-    public void setResidents(byte residents) {
+    public void setResidents(int residents) {
         this.residents = residents;
     }
 

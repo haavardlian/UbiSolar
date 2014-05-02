@@ -61,7 +61,6 @@ public class ProfileFragment extends DefaultTabFragment  {
         super.onAttach(activity);
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
-        //((DrawerActivity) activity).publishStory();
     }
 
     @Override
@@ -160,14 +159,5 @@ public class ProfileFragment extends DefaultTabFragment  {
         // Convert the dps to pixels, based on density scale
         return (int) (pixels * scale + 0.5f);
     }
-
-    private void setDummyPrefs() {
-        prefs.setFacebookName("Lars Erik Græsdal-Knutrud");
-        prefs.setFacebookLocation("Trondheim");
-        prefs.setFacebookAge("09/01/1991");
-        prefs.setFacebookCountry("Norway");
-        prefs.setKeyFacebookUid("736583709");
-    }
-
 
 }
