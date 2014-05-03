@@ -123,6 +123,6 @@
     <!-- Toast -->
     <string name="no_internet">Internet connection required to log in</string>
 
-    <!-- Broadcasts -->
-    <string name="broadcast_nav_drawer_usage">com.sintef_energy.ubisolar.nav_drawer_usage_update</string>
+    <!-- Broadcasts - Mirrored from AndroidManifest -->
+    <string name="broadcast_nav_drawer_usage">com.sintef_energy.ubisolar.broadcast_nav_drawer</string>
 </resources>

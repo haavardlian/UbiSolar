@@ -178,7 +178,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         }
 
         mPreferenceManager.setNavDrawerUsage(String.valueOf(""));
-        Intent i = new Intent(Global.BROADCAST_NAV_DRAWER_USAGE_UPDATE);
+        Intent i = new Intent(Global.BROADCAST_NAV_DRAWER);
         LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext()).sendBroadcast(i);
     }
 

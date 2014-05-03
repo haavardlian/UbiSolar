@@ -208,13 +208,12 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestamp);
 
             /* SEND UPDATED */
-            //Send update for navDrawer usage
-            String usage = preferencesManager.getNavDrawerUsage();
-            if(!usage.equals("")) {
-                int i = Integer.valueOf(usage);
-                preferencesManager.setNavDrawerUsage(String.valueOf(i + serverUsageModels.size()));
-                Intent ii = new Intent(Global.BROADCAST_NAV_DRAWER_USAGE_UPDATE);
-                LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(ii);
+            //Send the new usage to the navdrawer
+            if(serverUsageModels != null && serverUsageModels.size() > 0) {
+                Log.v(TAG, "Broadcasting usage update: " + serverUsageModels.size());
+                Intent i = new Intent(Global.BROADCAST_NAV_DRAWER);
+                i.putExtra(Global.DATA_B_NAV_DRAWER_USAGE, serverUsageModels.size());
+                LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(i);
             }
 
             Log.v(TAG, "Synchronization complete."

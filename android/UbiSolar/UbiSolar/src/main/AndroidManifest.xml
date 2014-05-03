@@ -68,7 +68,7 @@
 
         <receiver android:name=".fragments.NavigationDrawerFragment$DataBroadCastReciever" >
             <intent-filter>
-                <action android:name="com.sintef_energy.ubisolar.nav_drawer_usage_update" />
+                <action android:name="com.sintef_energy.ubisolar.broadcast_nav_drawer" />
             </intent-filter>
         </receiver>
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/APP_ID"/>

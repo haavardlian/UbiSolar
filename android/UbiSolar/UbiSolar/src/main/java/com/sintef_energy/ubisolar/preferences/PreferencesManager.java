@@ -128,9 +128,9 @@ public class PreferencesManager {
                 .apply();
     }
 
-    public void setNavDrawerUsage(String num){
+    public void setNavDrawerUsage(int num){
         mPref.edit()
-                .putString(NAV_DRAWER_USAGE, num)
+                .putInt(NAV_DRAWER_USAGE, num)
                 .apply();
     }
 
@@ -182,8 +182,8 @@ public class PreferencesManager {
         return mPref.getString(KEY_FACEBOOK_UID, "-1");
     }
 
-    public String getNavDrawerUsage(){
-        return mPref.getString(NAV_DRAWER_USAGE, "");
+    public int getNavDrawerUsage(){
+        return mPref.getInt(NAV_DRAWER_USAGE, -1);
     }
 
     public void clearFacebookSessionData(){

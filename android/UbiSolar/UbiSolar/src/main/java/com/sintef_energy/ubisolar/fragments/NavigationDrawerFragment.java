@@ -33,7 +33,6 @@ import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 import com.sintef_energy.ubisolar.drawer.DrawerHeader;
 import com.sintef_energy.ubisolar.drawer.DrawerItem;
 import com.sintef_energy.ubisolar.drawer.Item;
-import com.sintef_energy.ubisolar.model.NavDrawerItem;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
 
@@ -124,13 +123,12 @@ public class NavigationDrawerFragment extends Fragment {
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
 
-        updateUsageDrawItemCount();
+        updateUsageDrawItemCount(0);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-
 
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
@@ -194,9 +192,9 @@ public class NavigationDrawerFragment extends Fragment {
     public void onResume(){
         super.onResume();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Global.BROADCAST_NAV_DRAWER_USAGE_UPDATE);
+        filter.addAction(Global.BROADCAST_NAV_DRAWER);
         LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(mDataBroadcastManager, filter);
-        updateUsageDrawItemCount();
+        updateUsageDrawItemCount(0);
     }
 
     @Override
@@ -383,9 +381,11 @@ public class NavigationDrawerFragment extends Fragment {
     /**
      * Updated the usage nav drawer with the correct usage.
      */
-    private void updateUsageDrawItemCount(){
-        String text = mPreferenceManager.getNavDrawerUsage();
-        usageDrawerItem.setCount(text);
+    private void updateUsageDrawItemCount(int newValue){
+        int value = mPreferenceManager.getNavDrawerUsage();
+        value += newValue;
+        usageDrawerItem.setCount(String.valueOf(value));
+        Log.v(TAG, "UpdateUsageDrawItemCount: Nav drawer usage update: " + value);
     }
 
     public class DataBroadCastReciever extends BroadcastReceiver{
@@ -394,9 +394,12 @@ public class NavigationDrawerFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
 
             Log.v(TAG, "DataBroadcastReceiver update!: ");
-            if(intent.getAction().equals(Global.BROADCAST_NAV_DRAWER_USAGE_UPDATE)){
-                Log.v(TAG, "DataBroadcastReceiver update!: " + intent.getAction());
-                updateUsageDrawItemCount();
+            if(intent.getAction().equals(Global.BROADCAST_NAV_DRAWER)){
+                int value = intent.getIntExtra(Global.DATA_B_NAV_DRAWER_USAGE, -1);
+
+                if(value > 0) {
+                    updateUsageDrawItemCount(value);
+                }
             }
         }
     }

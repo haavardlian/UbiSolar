@@ -20,7 +20,6 @@ import android.view.Window;
 import android.widget.Toast;
 import com.facebook.LoggingBehavior;
 import com.facebook.Request;
-import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -48,21 +47,11 @@ import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 
 
-import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
-import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.utils.Utils;
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * The main activity.
@@ -115,7 +104,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         //We want to use the progress bar
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-        Global.BROADCAST_NAV_DRAWER_USAGE_UPDATE = getResources().getString(R.string.broadcast_nav_drawer_usage);
+        Global.BROADCAST_NAV_DRAWER = getResources().getString(R.string.broadcast_nav_drawer_usage);
 
         //Create RequestManager instance
         try {
