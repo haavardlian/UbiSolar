@@ -81,12 +81,12 @@ public class AddResidenceDialog extends DialogFragment implements LoaderManager.
                         /*Create new device model*/
                         ResidenceModel residenceModel = new ResidenceModel();
 
-                        residenceModel.setHouseId(nameField.getText().toString());
+                        residenceModel.setHouseName(nameField.getText().toString());
                         residenceModel.setDescription(descriptionField.getText().toString());
                         residenceModel.setResidents(Integer.parseInt(residentsField.getText().toString()));
                         residenceModel.setArea(Integer.parseInt(areaField.getText().toString()));
                         residenceModel.setZipCode(Integer.parseInt(zipCodeField.getText().toString()));
-                        residenceModel.setEnergyClass((char)energyClassSpinner.getSelectedItemPosition());
+                        residenceModel.setEnergyClass((char) energyClassSpinner.getSelectedItemPosition());
 
                         residencePresenter.addResidence(residenceModel, getActivity().getContentResolver());
 

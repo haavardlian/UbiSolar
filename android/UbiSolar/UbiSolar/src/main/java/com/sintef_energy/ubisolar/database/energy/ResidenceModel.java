@@ -15,12 +15,13 @@ public class ResidenceModel extends Residence implements Parcelable {
 
     public static interface ResidenceEntry extends BaseColumns {
         public static final String TABLE_NAME = "residence";
-        public static final String COLUMN_HOUSE_ID = "houseId";
+        public static final String COLUMN_HOUSE_ID = "houseName";
         public static final String COLUMN_DESCRIPTION = "description";
         public static final String COLUMN_RESIDENTS = "residents";
         public static final String COLUMN_AREA = "area";
         public static final String COLUMN_ZIPCODE = "zipCode";
         public static final String COLUMN_ENERGY_CLASS = "energyClass";
+        public static final String COLUM_USER_ID = "userID";
     }
 
     public static final String[] projection = new String[]{
@@ -29,13 +30,15 @@ public class ResidenceModel extends Residence implements Parcelable {
             ResidenceEntry.COLUMN_RESIDENTS,
             ResidenceEntry.COLUMN_AREA,
             ResidenceEntry.COLUMN_ZIPCODE,
-            ResidenceEntry.COLUMN_ENERGY_CLASS
+            ResidenceEntry.COLUMN_ENERGY_CLASS,
+            ResidenceEntry.COLUM_USER_ID
     };
 
     //SQL
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
+    private static final String LONG_TYPE = " LONG";
     private static final String COMMA_SEP = ",";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + ResidenceEntry.TABLE_NAME + " (" +
@@ -44,7 +47,8 @@ public class ResidenceModel extends Residence implements Parcelable {
                     ResidenceEntry.COLUMN_RESIDENTS + INTEGER_TYPE + COMMA_SEP +
                     ResidenceEntry.COLUMN_AREA + INTEGER_TYPE + COMMA_SEP +
                     ResidenceEntry.COLUMN_ZIPCODE + INTEGER_TYPE + COMMA_SEP +
-                    ResidenceEntry.COLUMN_ENERGY_CLASS + TEXT_TYPE +
+                    ResidenceEntry.COLUMN_ENERGY_CLASS + TEXT_TYPE + COMMA_SEP +
+                    ResidenceEntry.COLUM_USER_ID + LONG_TYPE +
                     " )";
 
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + ResidenceEntry.TABLE_NAME;
@@ -56,18 +60,20 @@ public class ResidenceModel extends Residence implements Parcelable {
     private int _area = 3;
     private int _zipCode = 4;
     private int _energyClass = 5;
+    private int _userId = 6;
 
     /**
      * Create ResidenceModel with default values. All relation ID's are '-1'
      */
     public ResidenceModel() {
         super();
-        setHouseId("");
+        setHouseName("");
         setDescription("");
         setResidents(-1);
         setArea(-1);
         setZipCode(-1);
         setEnergyClass(' ');
+        setUserId(-1);
     }
 
     /* Parcable */
@@ -94,21 +100,23 @@ public class ResidenceModel extends Residence implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(getHouseId());
+        out.writeString(getHouseName());
         out.writeString(getDescription());
         out.writeInt(getResidents());
         out.writeInt(getArea());
         out.writeInt(getZipCode());
         out.writeString(String.valueOf(getEnergyClass()));
+        out.writeLong(getUserId());
     }
 
     private void readFromParcel(Parcel in) {
-        setHouseId(in.readString());
+        setHouseName(in.readString());
         setDescription(in.readString());
         setResidents(in.readInt());
         setArea(in.readInt());
         setZipCode(in.readInt());
         setEnergyClass(in.readString().charAt(0));
+        setUserId(in.readLong());
     }
 
     /**
@@ -117,12 +125,13 @@ public class ResidenceModel extends Residence implements Parcelable {
      */
     public ContentValues getContentValues(){
         ContentValues values = new ContentValues();
-        values.put(ResidenceEntry.COLUMN_HOUSE_ID, getHouseId());
+        values.put(ResidenceEntry.COLUMN_HOUSE_ID, getHouseName());
         values.put(ResidenceEntry.COLUMN_DESCRIPTION, getDescription());
         values.put(ResidenceEntry.COLUMN_RESIDENTS, getResidents());
         values.put(ResidenceEntry.COLUMN_AREA, getArea());
         values.put(ResidenceEntry.COLUMN_ZIPCODE, getZipCode());
         values.put(ResidenceEntry.COLUMN_ENERGY_CLASS, String.valueOf(getEnergyClass()));
+        values.put(ResidenceEntry.COLUM_USER_ID, getUserId());
         return values;
     }
 
@@ -131,16 +140,18 @@ public class ResidenceModel extends Residence implements Parcelable {
      * @param cursor
      */
     public ResidenceModel(Cursor cursor) {
-        setHouseId(cursor.getString(_houseId));
+        setHouseName(cursor.getString(_houseId));
         setDescription(cursor.getString(_description));
         setResidents(cursor.getInt(_residents));
-        setArea(cursor.getInt(_description));
+        setArea(cursor.getInt(_area));
         setZipCode(cursor.getInt(_zipCode));
         setEnergyClass(cursor.getString(_energyClass));
+        setUserId(cursor.getLong(_userId));
     }
 
-    public ResidenceModel(String houseId, String description, int residents, int area, int zipCode, char energyClass) {
-        super(houseId, description, residents, area, zipCode, energyClass);
+    public ResidenceModel(String houseId, String description, int residents, int area,
+                          int zipCode, char energyClass, long userId) {
+        super(houseId, description, residents, area, zipCode, energyClass, userId);
     }
  /*   public ResidenceModel(int id, long user_id, String name, String description, int category, boolean deleted, long last) {
         super(id, user_id, name, description, category, deleted, last);
@@ -148,21 +159,23 @@ public class ResidenceModel extends Residence implements Parcelable {
 
     /**
      * An ugly hack do allow jackson to serialize ResidenceModel.
-     * @return new Device
+     * @return new Residence
      */
-    public Residence getSerializeableDevice(){
-        return new Residence(getHouseId(), getDescription(), getResidents(), getArea(), getZipCode(), getEnergyClass());
+    public Residence getSerializeableResidences(){
+        return new Residence(getHouseName(), getDescription(), getResidents(), getArea(),
+                getZipCode(), getEnergyClass(), getUserId());
     }
 
     @Override
     public String toString(){
         String info = "ResidenceModel:";
-        info += "\n\tID: " + getHouseId();
+        info += "\n\tID: " + getHouseName();
         info += "\n\tDescription : " + getDescription();
         info += "\n\tResidents : " + getResidents();
         info += "\n\tSize : " + getArea();
         info += "\n\tZip code: " + getZipCode();
         info += "\n\tEnergy class: " + getEnergyClass();
+        info += "\n\tUser id: " + getUserId();
         return info;
     }
 }

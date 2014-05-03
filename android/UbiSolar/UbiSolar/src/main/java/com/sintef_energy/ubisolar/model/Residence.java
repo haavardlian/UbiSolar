@@ -4,36 +4,36 @@ package com.sintef_energy.ubisolar.model;
  * Created by Lars Erik on 18.03.14.
  */
 public class Residence {
-    protected String houseId;
+    protected String houseName;
     protected String description;
     protected int residents;
     protected int area;
     protected int zipCode;
     protected char energyClass;
+    protected long userId;
 
     protected String status;
 
-    public Residence(String houseId,String description, int residents, int area,
-                     int zipCode, char energyClass) {
-        this.houseId = houseId;
+    public Residence(String houseName,String description, int residents, int area,
+                     int zipCode, char energyClass, long userId) {
+        this.houseName = houseName;
         this.description = description;
         this.residents = residents;
         this.area = area;
         this.zipCode = zipCode;
         this.energyClass = energyClass;
-        this.status = houseId;
+        this.status = houseName;
+        this.userId = userId;
     }
 
-    public Residence() {
+    public Residence() {}
 
+    public String getHouseName() {
+        return houseName;
     }
 
-    public String getHouseId() {
-        return houseId;
-    }
-
-    public void setHouseId(String houseId) {
-        this.houseId = houseId;
+    public void setHouseName(String houseName){
+        this.houseName = houseName;
     }
 
     public String getDescription() {
@@ -44,9 +44,7 @@ public class Residence {
         this.description = description;
     }
 
-    public char getEnergyClass() {
-        return energyClass;
-    }
+    public char getEnergyClass() {return energyClass;}
 
     public void setEnergyClass(char energyClass) {
         this.energyClass = energyClass;
@@ -80,11 +78,17 @@ public class Residence {
         this.area = area;
     }
 
-    public String toString() {
-        return getHouseId();
+    public long getUserId() {return userId;}
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public void setStatus(String status) {this.status = status;}
 
     public String getStatus() {return status;}
+
+    public String toString() {
+        return getHouseName();
+    }
 }

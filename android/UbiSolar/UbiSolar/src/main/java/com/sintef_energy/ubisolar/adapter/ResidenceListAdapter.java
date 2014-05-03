@@ -122,16 +122,16 @@ public class ResidenceListAdapter extends BaseExpandableListAdapter implements E
 
     public void setSelectedResidence(Residence residence) {
         for(Residence r : residences) {
-            if(r.getHouseId().equals(residence.getHouseId())) {
+            if(r.getHouseName().equals(residence.getHouseName())) {
 
                 if(selectedResidence != null) {
-                    residences.get(selectedIndex).setStatus(residences.get(selectedIndex).getHouseId());
-                    r.setStatus(r.getHouseId() + " [Selected]");
+                    residences.get(selectedIndex).setStatus(residences.get(selectedIndex).getHouseName());
+                    r.setStatus(r.getHouseName() + " [Selected]");
                     selectedIndex = residences.indexOf(r);
-                    PreferencesManager.getInstance().setSelectedResidence(r.getHouseId());
+                    PreferencesManager.getInstance().setSelectedResidence(r.getHouseName());
                 }
                 else {
-                    r.setStatus(r.getHouseId() + " [Selected]");
+                    r.setStatus(r.getHouseName() + " [Selected]");
                     selectedResidence = r;
                     selectedIndex = residences.indexOf(r);
                 }
@@ -141,7 +141,7 @@ public class ResidenceListAdapter extends BaseExpandableListAdapter implements E
 
     private void restoreSelctedResidence() {
         for(Residence r : residences) {
-            if(r.getHouseId().equals(PreferencesManager.getInstance().getSelectedResidence())) {
+            if(r.getHouseName().equals(PreferencesManager.getInstance().getSelectedResidence())) {
                 setSelectedResidence(r);
                 selectedIndex = residences.indexOf(r);
             }
