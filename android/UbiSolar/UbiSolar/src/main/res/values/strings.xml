@@ -72,6 +72,25 @@
         <item>Pie chart</item>
     </string-array>
 
+    <!-- AddResidenceDialog -->
+    <string-array name="energy_classes">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>D</item>
+        <item>E</item>
+        <item>F</item>
+        <item>G</item>
+    </string-array>
+    <string name="add_residence_name">Name</string>
+    <string name="add_residence_name_tip">Name your residence</string>
+    <string name="add_residence_description">Description</string>
+    <string name="add_residence_description_tip">Description of your residence</string>
+    <string name="add_residence_residents">Number of residents</string>
+    <string name="add_residence_area">Size of living area</string>
+    <string name="add_residence_zip_code">Zip code</string>
+    <string name="add_residence_energy_class">Energy class</string>
+
 
     <!--Other-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
