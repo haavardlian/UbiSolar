@@ -90,6 +90,7 @@
     <string name="add_residence_area">Size of living area</string>
     <string name="add_residence_zip_code">Zip code</string>
     <string name="add_residence_energy_class">Energy class</string>
+    <string name="addResidenceDialog_button">Add</string>
 
 
     <!--Other-->

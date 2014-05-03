@@ -31,7 +31,7 @@
             android:layout_toRightOf="@id/textName"
             android:inputType="text"
             android:ems="10"
-            android:id="@+id/dialog_add_usage_edit_name"
+            android:id="@+id/dialog_add_residence_name"
             android:hint="@string/add_residence_name_tip" />
 
     </RelativeLayout>
@@ -58,7 +58,7 @@
             android:layout_gravity="center_horizontal"
             android:inputType="text"
             android:ems="10"
-            android:id="@+id/dialog_add_usage_edit_description"
+            android:id="@+id/dialog_add_residence_description"
             android:hint="@string/add_residence_description_tip" />
 
     </LinearLayout>
@@ -217,12 +217,6 @@
             />
 
     </RelativeLayout>
-
-    <ImageButton
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_input_add"
-        android:id="@+id/btnAddResidence" />
 
 
 </LinearLayout>
