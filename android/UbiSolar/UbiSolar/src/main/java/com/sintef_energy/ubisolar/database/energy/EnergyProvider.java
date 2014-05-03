@@ -32,9 +32,7 @@ import java.util.ArrayList;
 public class EnergyProvider extends ContentProvider{
 
     private static final String TAG = EnergyProvider.class.getName();
-
     private EnergyOpenHelper mHelper = null;
-
     private final ThreadLocal<Boolean> mIsInBatchMode = new ThreadLocal<Boolean>();
 
     // helper constants for use with the UriMatcher
@@ -135,10 +133,11 @@ public class EnergyProvider extends ContentProvider{
             case ENERGY_LIST_DELETE:
                 deleteData = true;
             case ENERGY_LIST:
-                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
-                if (TextUtils.isEmpty(sortOrder)) {
-                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
-                }
+//                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
+//                if (TextUtils.isEmpty(sortOrder)) {
+//                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
+//                }
+                rawSql = generateRawDateSql("%Y-%m-%d %H", selection);
                 break;
             case ENERGY_ID:
                 builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
@@ -505,10 +504,16 @@ public class EnergyProvider extends ContentProvider{
     private String generateRawDateSql(String date, String where){
 
         //Time to aggregate on
-        String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
+        String time =  "strftime(\'" + date + "\', datetime(`" +
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
 
         //Unixtime
-        String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
+        String time2 =  "strftime(\'%s\', datetime(`" +
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
+
+        String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
+
 
         String statement = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
                         + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
@@ -520,6 +525,9 @@ public class EnergyProvider extends ContentProvider{
             statement += "WHERE (" + where + ") AND " + selectionAvoidDeleteBit;
         else
             statement += "WHERE " + selectionAvoidDeleteBit;
+
+//        statement += " AND " + betweenTime + " BETWEEN '2014-05-02 11:00' AND '2014-05-02 15:00' ";
+
 
         statement += "GROUP BY " + time + ", "
             + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "

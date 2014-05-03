@@ -34,13 +34,18 @@ import com.sintef_energy.ubisolar.dialogs.ShareDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -246,15 +251,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         //Clear the graph if no devices are selected
         if(selectedItems.length > 0)
-            getLoaderManager().restartLoader(activeUsageLoader, null, this);
-        else
             graphView.clearDevices();
     }
 
     public void loadUsage(){
         if(!graphView.isLoaded()) {
             if(mDevices.size() > 0)
-                getLoaderManager().restartLoader(activeUsageLoader, null, this);
+                graphView.pullData();
         }
     }
 
@@ -350,6 +353,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(i = 0; i < queries.size() - 1; i++)
             where += queries.get(i) + " OR ";
         where += queries.get(i);
+        
+        
+        //To get data points between two dates
+        String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
+            EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
+//
+        where += " AND " + betweenTime + " BETWEEN ? AND ? ";
 
         return where;
     }
@@ -357,19 +367,33 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     private String[] getSelectedDevicesIDs() {
         boolean[] selectedItems = graphView.getSelectedDialogItems();
-        ArrayList<String> ids = new ArrayList<>();
+        ArrayList<String> queryValues = new ArrayList<>();
 
         int i = 0;
 
         for(Device device : mDevices.values()){
             if(selectedItems.length > i) {
                 if (selectedItems[i])
-                    ids.add("" + device.getId());
+                    queryValues.add("" + device.getId());
                i++;
             }
         }
 
-        return ids.toArray(new String[ids.size()]);
+        try {
+            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
+            Timestamp sqlDate1 = new java.sql.Timestamp(date1.getTime());
+
+            Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 14:00");
+            Timestamp sqlDate2 = new java.sql.Timestamp(date2.getTime());
+
+            queryValues.add(sqlDate1.toString());
+            queryValues.add(sqlDate2.toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        return queryValues.toArray(new String[queryValues.size()]);
     }
 
     @Override
@@ -385,10 +409,12 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         mDevices.put(model.getId(), model);
                     } while (cursor.moveToNext());
                 graphView.setDeviceSize(mDevices.size());
+                graphView.setDevices(mDevices);
+                graphView.pullData();
 
                 //Load the graph the first time the fragment is ran after the devices has been loaded
-                if(mDevices.size() > 0)
-                    getLoaderManager().initLoader(activeUsageLoader, null, this);
+//                if(mDevices.size() > 0)
+//                    getLoaderManager().initLoader(activeUsageLoader, null, this);
                 break;
             /* Load usage */
             case LOADER_USAGE:
@@ -492,8 +518,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(graphView.getResolution() == Resolution.DAYS) {
             graphView.setFormat(Resolution.HOURS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 24);
-            activeUsageLoader = LOADER_USAGE;
-            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE, null, this);
+            graphView.pullData();
 
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(false);
@@ -502,15 +527,14 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         else if(graphView.getResolution() == Resolution.WEEKS) {
             graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 7);
-            activeUsageLoader = LOADER_USAGE_DAY;
-            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+            graphView.pullData();
             graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.MONTHS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 4);
             activeUsageLoader = LOADER_USAGE_WEEK;
-            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
+            graphView.pullData();
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(true);
@@ -523,8 +547,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         if(graphView.getResolution() == Resolution.HOURS) {
             graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 24);
-            activeUsageLoader = LOADER_USAGE_DAY;
-            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+            graphView.pullData();
 
             Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(true);
@@ -533,16 +556,14 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         else if(graphView.getResolution() == Resolution.DAYS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 7);
-            activeUsageLoader = LOADER_USAGE_WEEK;
-            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
+            graphView.pullData();
             graphView.setDataLoading(true);
 
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
             graphView.setFormat(Resolution.MONTHS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 4);
-            activeUsageLoader = LOADER_USAGE_MONTH;
-            getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
+            graphView.pullData();
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(false);

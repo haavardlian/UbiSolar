@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.utils.Resolution;
 
@@ -30,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 
 public class UsageGraphPieFragment extends ProgressFragment implements IUsageView {
 
@@ -349,5 +351,15 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         mChartView.draw(canvas);
 
         return bitmap;
+    }
+
+    @Override
+    public void setDevices(LinkedHashMap<Long, DeviceModel> devices) {
+
+    }
+
+    @Override
+    public void pullData() {
+
     }
 }
