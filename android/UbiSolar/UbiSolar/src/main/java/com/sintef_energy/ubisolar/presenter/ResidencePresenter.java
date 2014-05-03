@@ -1,6 +1,7 @@
 package com.sintef_energy.ubisolar.presenter;
 
 import android.content.ContentResolver;
+import android.util.Log;
 
 import com.sintef_energy.ubisolar.IView.IDeviceView;
 import com.sintef_energy.ubisolar.IView.IResidenceView;
@@ -31,7 +32,7 @@ public class ResidencePresenter {
     }
 
     public void addResidence(ResidenceModel residence, ContentResolver contentResolver){
-
+        Log.d(TAG,"added residence" + residence.getHouseId());
 
     }
 

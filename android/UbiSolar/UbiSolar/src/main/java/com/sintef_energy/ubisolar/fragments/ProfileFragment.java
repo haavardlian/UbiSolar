@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
@@ -14,6 +17,8 @@ import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
+import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
+import com.sintef_energy.ubisolar.dialogs.AddResidenceDialog;
 import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
@@ -64,8 +69,28 @@ public class ProfileFragment extends DefaultTabFragment  {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_residence, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menu_add_residence:
+                AddResidenceDialog addResidenceDialog = new AddResidenceDialog();
+                addResidenceDialog.show(getFragmentManager(), "addResidence");
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    };
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         prefs = PreferencesManager.getInstance();
+        setHasOptionsMenu(true);
 
         //Dummy creation to be replaced when facebook login is 100%
         //setDummyPrefs();
