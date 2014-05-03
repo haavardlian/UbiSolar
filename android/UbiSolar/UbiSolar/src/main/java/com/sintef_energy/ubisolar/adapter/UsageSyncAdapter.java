@@ -32,7 +32,7 @@ import java.util.ArrayList;
  * Synchronization is based on delete bits and timestamp.
  *
  * Step 1: Init files
- * Check for network. END if no net.
+ * Redundant: Check for network. END if no net. (SyncAdapter runs only when net is present)
  *
  * Step 2: get time and uid
  * Get last frontend sync timestamp
@@ -72,11 +72,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
 
             /* STEP 1: SETUP FILES */
             Log.v(TAG, "Starting sync operation");
-
-            if(!Utils.isNetworkOn(getContext())){
-                Log.v(TAG, "Sync aborted. No network connection.");
-                return;
-            }
 
             PreferencesManager preferencesManager;
             PreferencesManagerSync prefManagerSyn;

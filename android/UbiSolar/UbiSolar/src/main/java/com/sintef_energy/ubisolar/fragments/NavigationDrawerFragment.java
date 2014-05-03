@@ -91,7 +91,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private PreferencesManager mPreferenceManager;
 
-    private DataBroadCastReciever mDataBroadcastManager;
+    private DataBroadCastReceiver mDataBroadcastManager;
 
     public NavigationDrawerFragment() {
     }
@@ -114,7 +114,7 @@ public class NavigationDrawerFragment extends Fragment {
         selectItem(mCurrentSelectedPosition);
 
         mPreferenceManager = PreferencesManager.getInstance();
-        mDataBroadcastManager = new DataBroadCastReciever();
+        mDataBroadcastManager = new DataBroadCastReceiver();
     }
 
     @Override
@@ -384,20 +384,27 @@ public class NavigationDrawerFragment extends Fragment {
     private void updateUsageDrawItemCount(int newValue){
         int value = mPreferenceManager.getNavDrawerUsage();
         value += newValue;
-        usageDrawerItem.setCount(String.valueOf(value));
+        if(value > 0) {
+            usageDrawerItem.setCount(String.valueOf(value));
+        }
+        else
+            usageDrawerItem.setCount("");
         Log.v(TAG, "UpdateUsageDrawItemCount: Nav drawer usage update: " + value);
     }
 
-    public class DataBroadCastReciever extends BroadcastReceiver{
+    public class DataBroadCastReceiver extends BroadcastReceiver{
 
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Log.v(TAG, "DataBroadcastReceiver update!: ");
-            if(intent.getAction().equals(Global.BROADCAST_NAV_DRAWER)){
-                int value = intent.getIntExtra(Global.DATA_B_NAV_DRAWER_USAGE, -1);
+            String action = intent.getAction();
 
-                if(value > 0) {
+            Log.v(TAG, "DataBroadcastReceiver update!: ");
+
+            if(action.equals(Global.BROADCAST_NAV_DRAWER)){
+                if(intent.hasExtra(Global.DATA_B_NAV_DRAWER_USAGE)) {
+                    int value = intent.getIntExtra(Global.DATA_B_NAV_DRAWER_USAGE, -1);
+
                     updateUsageDrawItemCount(value);
                 }
             }

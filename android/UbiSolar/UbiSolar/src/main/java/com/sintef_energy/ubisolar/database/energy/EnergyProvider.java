@@ -162,24 +162,24 @@ public class EnergyProvider extends ContentProvider{
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
-        if(selection == null) {
-            if (!deleteData)
-                selection = selectionAvoidDeleteBit;
-        }
-        else
-            selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
+        if(rawSql == null) {
+            if (selection == null) {
+                if (!deleteData)
+                    selection = selectionAvoidDeleteBit;
+            } else if (!selection.equals("")) {
+                selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
+            }
 
-        //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
-        if(rawSql == null)
             cursor =
-                  builder.query(
-                        db,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                    builder.query(
+                            db,
+                            projection,
+                            selection,
+                            selectionArgs,
+                            null,
+                            null,
+                            sortOrder);
+        }
         else
             cursor = db.rawQuery(rawSql, selectionArgs);
 
@@ -500,7 +500,7 @@ public class EnergyProvider extends ContentProvider{
    }
 
 
-    private static final String selectionAvoidDeleteBit =  DeviceModel.DeviceEntry.COLUMN_IS_DELETED + "<>1 ";
+    private static final String selectionAvoidDeleteBit = DeviceModel.DeviceEntry.COLUMN_IS_DELETED + "<>1 ";
 
     private String generateRawDateSql(String date, String where){
 
@@ -510,14 +510,21 @@ public class EnergyProvider extends ContentProvider{
         //Unixtime
         String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
 
-        return "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
+        String statement = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
                         + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
                         + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
-                        + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
-                        + "WHERE " + where + " AND " + selectionAvoidDeleteBit
-                        + "GROUP BY " + time + ", "
-                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
-                        + "ORDER BY `month` ASC";
+                        + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " ";
+
+        if(!where.equals(""))
+            statement += "WHERE (" + where + ") AND " + selectionAvoidDeleteBit;
+        else
+            statement += "WHERE " + selectionAvoidDeleteBit;
+
+        statement += "GROUP BY " + time + ", "
+            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
+            + "ORDER BY `month` ASC";
+
+        return statement;
     }
 }

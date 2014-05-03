@@ -66,6 +66,7 @@
     <string name="usage_share">Share</string>
     <string name="usage_line_graph_title">Power overview</string>
     <string name="usage_pie_graph_title">Distribution</string>
+    <string name="usage_no_content">No data</string>
 
     <string-array name="fragment_usage_tabs">
         <item>Line chart</item>

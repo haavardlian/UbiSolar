@@ -108,6 +108,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         //ProgressFragment show progressbar
         setContentShown(false);
+        setEmptyText(getResources().getString(R.string.usage_no_content));
 
         /* If the Fragment was destroyed inbetween (screen rotation),
             we need to recover the mSavedState first

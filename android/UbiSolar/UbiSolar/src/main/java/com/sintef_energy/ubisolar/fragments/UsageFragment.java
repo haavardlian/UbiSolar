@@ -177,8 +177,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             loaderManager.initLoader(LOADER_DEVICES, null, this);
         }
 
-        mPreferenceManager.setNavDrawerUsage(String.valueOf(""));
+        mPreferenceManager.setNavDrawerUsage(0);
         Intent i = new Intent(Global.BROADCAST_NAV_DRAWER);
+        i.putExtra(Global.DATA_B_NAV_DRAWER_USAGE, 0);
         LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext()).sendBroadcast(i);
     }
 
@@ -340,6 +341,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(boolean selectedItem : selectedItems)
             if(selectedItem)
                 queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
+
+        if(queries.size() < 1)
+            return "";
 
         // The last part of the query shall not be succeeded by an OR.
         int i;

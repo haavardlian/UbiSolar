@@ -91,6 +91,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         setContentView(R.layout.fragment_usage_graph_pie);
         mRootView = getContentView();
         setContentShown(false);
+        setEmptyText(getResources().getString(R.string.usage_no_content));
 
         mChartView = null;
 
@@ -266,7 +267,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         mSeries.clear();
         usagePieLabel.setText("");
         mChartView.repaint();
-
     }
 
     private void updateDetails(){
