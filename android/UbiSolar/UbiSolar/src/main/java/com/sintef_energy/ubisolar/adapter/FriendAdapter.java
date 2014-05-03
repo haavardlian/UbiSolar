@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.User;
 
@@ -64,7 +65,7 @@ public class FriendAdapter extends ArrayAdapter<User> {
 
             holder = new FriendHolder();
             holder.name = (TextView)row.findViewById(R.id.social_user_name);
-            holder.profilePic = (ImageView)row.findViewById(R.id.social_profile_pic);
+            holder.profilePic = (ProfilePictureView)row.findViewById(R.id.social_profile_pic);
 
             row.setTag(holder);
         } else {
@@ -80,7 +81,7 @@ public class FriendAdapter extends ArrayAdapter<User> {
 
     static class FriendHolder {
         TextView name;
-        ImageView profilePic;
+        ProfilePictureView profilePic;
     }
 
 }

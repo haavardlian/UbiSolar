@@ -86,7 +86,7 @@ public class CompareFriendsFragment extends Fragment {
         profilePicture.setPresetSize(ProfilePictureView.LARGE);
 
         friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
-        friendPicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
+        friendPicture.setProfileId("");
         friendPicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;

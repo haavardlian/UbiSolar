@@ -7,14 +7,13 @@
     android:paddingRight="20dp">
 
 
-    <ImageView
+    <com.facebook.widget.ProfilePictureView
         android:id="@+id/social_profile_pic"
         android:layout_width="40dp"
         android:layout_height="60dp"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/profile"></ImageView>
+        android:layout_marginTop="10dp"/>
 
 
     <TextView
