@@ -52,6 +52,7 @@ import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.presenter.UserPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 
 import com.sintef_energy.ubisolar.utils.Utils;
@@ -87,6 +88,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     private TotalEnergyPresenter mTotalEnergyPresenter;
     private DevicePresenter devicePresenter;
     private ResidencePresenter residencePresenter;
+    private UserPresenter userPresenter;
 
     private FacebookSessionStatusCallback mFacebookSessionStatusCallback;
 
@@ -141,6 +143,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mTotalEnergyPresenter = new TotalEnergyPresenter();
         devicePresenter = new DevicePresenter();
         residencePresenter = new ResidencePresenter();
+        userPresenter = new UserPresenter();
 
         titleNames = getResources().getStringArray(R.array.nav_drawer_items);
         setContentView(R.layout.activity_usage);
@@ -422,6 +425,9 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     @Override
     public ResidencePresenter getResidencePresenter() {return residencePresenter;}
+
+    @Override
+    public UserPresenter getUserPresenter() {return userPresenter;}
     /* Login logic */
 
     /**
