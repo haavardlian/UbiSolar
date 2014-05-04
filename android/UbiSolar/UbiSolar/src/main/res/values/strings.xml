@@ -109,7 +109,12 @@
     <string name="home_energy">than same energy class</string>
 
     <!-- Comparison settings-->
-    <string name="comparison_setting">Comparison setting</string>
+    <string name="comparison_setting">Comparison settings</string>
+    <string name="location_comparison_setting">Location</string>
+    <string name="res_comparison_setting">Number of residents</string>
+    <string name="area_comparison_setting">Area</string>
+    <string name="energy_comparison_setting">Energy class</string>
+
 
 
     <!-- Fragment Energy saving tabs -->
