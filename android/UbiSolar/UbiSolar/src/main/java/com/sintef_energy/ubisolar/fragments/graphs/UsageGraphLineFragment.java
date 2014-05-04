@@ -68,7 +68,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private Resolution resolution;
 
     private boolean[] mSelectedDialogItems;
-    private int mActiveDateIndex = 0;
+    private int mActiveDateIndex = -1;
 
     private LinkedHashMap<Long, DeviceModel> mDevices;
 
@@ -357,11 +357,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 index++;
             }
 
-            setRange(min, max, mDates.size());
-
-            if (mActiveDateIndex <= mDates.size())
+            if (mActiveDateIndex >= mDates.size() || mActiveDateIndex < 0)
                 mActiveDateIndex = mDates.size() - 1;
 
+            setRange(min, max, mDates.size());
             setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
             return null;
         }
@@ -585,6 +584,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         return bitmap;
     }
 
+    //Database functionality
+
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
         Uri.Builder builder;
@@ -659,7 +660,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
                 EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
 //
-        where += " AND " + betweenTime + " BETWEEN ? AND ? ";
+//        where += " AND " + betweenTime + " BETWEEN ? AND ? ";
 
         return where;
     }
@@ -673,25 +674,27 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         for(Device device : mDevices.values()){
             if(selectedItems.length > i) {
-                if (selectedItems[i])
+                if (selectedItems[i]) {
                     queryValues.add("" + device.getId());
+                    System.out.println(device.getName());
+                }
                 i++;
             }
         }
 
 
-        try {
-            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
-            Timestamp sqlDate1 = new java.sql.Timestamp(date1.getTime());
-
-            Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 14:00");
-            Timestamp sqlDate2 = new java.sql.Timestamp(date2.getTime());
-
-            queryValues.add(sqlDate1.toString());
-            queryValues.add(sqlDate2.toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
+//            Timestamp sqlDate1 = new java.sql.Timestamp(date1.getTime());
+//
+//            Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 14:00");
+//            Timestamp sqlDate2 = new java.sql.Timestamp(date2.getTime());
+//
+//            queryValues.add(sqlDate1.toString());
+//            queryValues.add(sqlDate2.toString());
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 
 
         return queryValues.toArray(new String[queryValues.size()]);
@@ -700,19 +703,14 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
 
-       populateDeviceUsageList(cursor);
-
-    }
-
-    private void populateDeviceUsageList(Cursor data){
         //Hashmap containing all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
         /* Get data from cursor and add */
-        data.moveToFirst();
-        if(data.getCount() >= 1) {
+        cursor.moveToFirst();
+        if(cursor.getCount() >= 1) {
             do {
-                EnergyUsageModel model = new EnergyUsageModel(data, true);
+                EnergyUsageModel model = new EnergyUsageModel(cursor, true);
                 DeviceUsageList deviceUsageList = devices.get(model.getDeviceId());
 
                 if (deviceUsageList == null) {
@@ -722,7 +720,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
                 deviceUsageList.add(model);
             }
-            while (data.moveToNext());
+            while (cursor.moveToNext());
         }
 
         ArrayList<DeviceUsageList> deviceUsageLists = new ArrayList<>();
@@ -731,6 +729,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         if(deviceUsageLists.size() > 0)
             addDeviceUsage(deviceUsageLists);
+
     }
 
     @Override

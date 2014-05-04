@@ -114,14 +114,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             @Override
             public void onPageSelected(int position) {
                 graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
-                loadUsage();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
 
-        //BUG: onPageChangeLIstener does not set graphView the first time.
+        //BUG: onPageChangeListener does not set graphView the first time.
         //This is an ugly fix
         graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(pager, 0);
 
@@ -234,16 +233,15 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         graphView.setSelectedDialogItems(itemsSelected);
 
         //Clear the graph if no devices are selected
-        if(selectedItems.length > 0)
+        if(selectedItems.length < 1)
             graphView.clearDevices();
+        else
+            graphView.pullData();
+
+        graphView.setDataLoading(true);
     }
 
-    public void loadUsage(){
-        if(!graphView.isLoaded()) {
-            if(mDevices.size() > 0)
-                graphView.pullData();
-        }
-    }
+
 
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
