@@ -5,12 +5,14 @@ import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.FacebookUser;
 import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.yammer.dropwizard.jersey.params.IntParam;
+import com.yammer.dropwizard.jersey.params.LongParam;
 import com.yammer.metrics.annotation.Timed;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,11 +55,27 @@ public class FacebookUserResource {
         if(result == 1) return Response.ok(new SimpleJSONMessage("User deleted")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
+
     @Path("/{user}")
     @GET
     public FacebookUser getUserById(@PathParam("user") IntParam user) {
         FacebookUser fbUser = db.getFacebookUserById(user.get());
         if(user != null) return fbUser;
+        else throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    @Path("/friends/")
+    @GET
+    public List<FacebookUser> getFacebookFriends(@Valid ArrayList<FacebookUser> users) {
+        List<FacebookUser> fbUsers = db.getAllFacebookUsers();
+        List<FacebookUser> result = new ArrayList<FacebookUser>();
+
+        for(FacebookUser listedUser : fbUsers) {
+            if(users.contains(listedUser))
+                result.add(listedUser);
+        }
+
+        if(fbUsers != null) return result;
         else throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
