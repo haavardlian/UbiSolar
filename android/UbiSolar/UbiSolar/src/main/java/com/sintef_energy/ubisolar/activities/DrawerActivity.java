@@ -53,6 +53,7 @@ import com.sintef_energy.ubisolar.utils.Utils;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -437,7 +438,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         .setPermissions(FACEBOOK_PERMISSIONS)
                         .setCallback(mFacebookSessionStatusCallback));
 
-                //session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
+                session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("user_friends")));
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
@@ -581,6 +582,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         FACEBOOK_PERMISSIONS=new ArrayList<>();
         FACEBOOK_PERMISSIONS.add("user_birthday");
         FACEBOOK_PERMISSIONS.add("user_location");
-        FACEBOOK_PERMISSIONS.add("email");
+        FACEBOOK_PERMISSIONS.add("user_friends");
     }
 }
