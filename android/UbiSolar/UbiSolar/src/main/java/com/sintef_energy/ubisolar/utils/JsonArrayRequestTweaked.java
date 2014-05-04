@@ -1,5 +1,7 @@
 package com.sintef_energy.ubisolar.utils;
 
+import android.util.Log;
+
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
@@ -15,13 +17,6 @@ import java.io.UnsupportedEncodingException;
  * Created by perok on 30.04.14.
  *
  * Correctly handles no return data.
- *
- * This is an almost indentical wrapper as volleys JsonArrayRequest. The main difference is that the
- * parser does not fail when there is no data returned, but an ok http response.
- *
- * The failing code was that
- *  new JSONArray(jsonString)
- * throws an exception when jsonString is null or < 1.
  */
 public class JsonArrayRequestTweaked extends JsonRequest<JSONArray>{
 

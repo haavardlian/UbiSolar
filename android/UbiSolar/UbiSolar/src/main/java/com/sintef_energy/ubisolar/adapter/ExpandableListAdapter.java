@@ -1,14 +1,12 @@
-package com.sintef_energy.ubisolar.utils;
+package com.sintef_energy.ubisolar.adapter;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.nfc.Tag;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener {
@@ -129,7 +126,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
                 icon.setImageResource(R.drawable.home_entertainment);
                 break;
             case 3:
-               //Need lighting icon, default for now
+               //TODO Need lighting icon, default for now
                 icon.setImageResource(R.drawable.default_device);
                 break;
             case 4:
@@ -138,7 +135,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
             case 5:
                 icon.setImageResource(R.drawable.power_production);
                 break;
-
         }
 
         item.setText(categories[groupPosition]);

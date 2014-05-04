@@ -73,7 +73,7 @@ public class TipDialog extends DialogFragment {
                 ratingBar.setRating(v);
                 tip.setAverageRating((int)v);
                 TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
-                RequestManager.getInstance().doTipRequest().createRating(rating, getParentFragment());
+                RequestManager.getInstance().doTipRequest().createRating(rating);
                 ((TipsFragment) getTargetFragment()).getAdapter().notifyDataSetChanged();
             }
         });

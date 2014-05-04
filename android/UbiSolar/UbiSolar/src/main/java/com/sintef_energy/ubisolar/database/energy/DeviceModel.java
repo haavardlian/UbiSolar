@@ -44,13 +44,15 @@ public class DeviceModel extends Device implements Parcelable{
     private static final String COMMA_SEP = ",";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + DeviceEntry.TABLE_NAME + " (" +
-                    DeviceEntry._ID + " INTEGER PRIMARY KEY," +
+                    DeviceEntry._ID + INTEGER_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_USER_ID + INTEGER_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_CATEGORY + INTEGER_TYPE + COMMA_SEP +
                     DeviceEntry.COLUMN_IS_DELETED + INTEGER_TYPE + COMMA_SEP +
-                    DeviceEntry.COLUMN_LAST_UPDATED + INTEGER_TYPE +
+                    DeviceEntry.COLUMN_LAST_UPDATED + INTEGER_TYPE + COMMA_SEP +
+                    " PRIMARY KEY(" + DeviceEntry._ID + COMMA_SEP +
+                        DeviceEntry.COLUMN_USER_ID + ")" +
                     " )";
 
     public static final String SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DeviceEntry.TABLE_NAME;
@@ -75,7 +77,7 @@ public class DeviceModel extends Device implements Parcelable{
         setDescription("");
         setCategory(-1);
         setDeleted(false);
-        //setLastUpdated(-1);
+        setLastUpdated(-1);
     }
 
     /* Parcable */

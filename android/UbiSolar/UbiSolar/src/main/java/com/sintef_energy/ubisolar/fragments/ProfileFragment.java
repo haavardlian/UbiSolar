@@ -23,8 +23,6 @@ import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**
@@ -38,7 +36,7 @@ public class ProfileFragment extends DefaultTabFragment  {
     private View mRootView;
     private ExpandableListView expListView;
     private ArrayList<Residence> residences;
-    PreferencesManager prefs;
+    private PreferencesManager prefs;
 
     private TextView name, location, age, country;
     private ProfilePictureView profilePicture;
@@ -117,13 +115,11 @@ public class ProfileFragment extends DefaultTabFragment  {
         else {
             mRootView = inflater.inflate(R.layout.fragment_profile_offline, container, false);
             setupList();
-
         }
 
         Session.getActiveSession();
         return mRootView;
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -161,11 +157,11 @@ public class ProfileFragment extends DefaultTabFragment  {
 
 
     private void createGroupList() {
-        residences = new ArrayList<Residence>();
-        residences.add(new Residence("Huset", "Stadsing Dahls gate", 6, 140, 7015,'A'));
-        residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G'));
-        residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B'));
-        residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D'));
+        residences = new ArrayList<>();
+        residences.add(new Residence("Huset", "Stadsing Dahls gate", 6, 140, 7015,'A',736583709));
+        residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G',736583709));
+        residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B',736583709));
+        residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D',736583709));
     }
 
     private void setGroupIndicatorToRight() {
@@ -184,5 +180,4 @@ public class ProfileFragment extends DefaultTabFragment  {
         // Convert the dps to pixels, based on density scale
         return (int) (pixels * scale + 0.5f);
     }
-
 }

@@ -11,7 +11,7 @@ public class DeviceUsage
 {
     private long id;
     private long deviceId;
-    private Date datetime;
+    private long timestamp;
     private double powerUsage;
     private boolean deleted;
     protected long lastUpdated;
@@ -21,25 +21,30 @@ public class DeviceUsage
 
     }
 
-    public DeviceUsage(long id, long deviceId, Date datetime, double powerUsage) {
+    public DeviceUsage(long id, long deviceId, long timestamp, double powerUsage, boolean deleted, long lastUpdated) {
         this.id = id;
         this.powerUsage = powerUsage;
-        this.datetime = datetime;
         this.deviceId = deviceId;
         this.deleted = false;
+        this.timestamp = timestamp;
+        this.deleted = deleted;
+        this.lastUpdated = lastUpdated;
+    }
+
+    public DeviceUsage(long id, long deviceId, long timestamp, double powerUsage) {
+        this.id = id;
+        this.powerUsage = powerUsage;
+        this.deviceId = deviceId;
+        this.deleted = false;
+        this.timestamp = timestamp;
     }
 
     public void updateLastUpdated(){
         setLastUpdated(System.currentTimeMillis() / 1000L);
     }
 
-
     public double getPowerUsage() {
         return powerUsage;
-    }
-
-    public Date getDatetime() {
-        return datetime;
     }
 
     public long getDeviceId() {
@@ -57,10 +62,6 @@ public class DeviceUsage
 
     public void setDeviceId(long deviceId) {
         this.deviceId = deviceId;
-    }
-
-    public void setDatetime(Date datetime) {
-        this.datetime = datetime;
     }
 
     public void setPowerUsage(double powerUsage) {
@@ -81,5 +82,13 @@ public class DeviceUsage
 
     public void setLastUpdated(long lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

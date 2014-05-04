@@ -4,15 +4,21 @@ package com.sintef_energy.ubisolar.fragments;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +33,8 @@ import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 import com.sintef_energy.ubisolar.drawer.DrawerHeader;
 import com.sintef_energy.ubisolar.drawer.DrawerItem;
 import com.sintef_energy.ubisolar.drawer.Item;
-import com.sintef_energy.ubisolar.model.NavDrawerItem;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.utils.Global;
 
 import java.util.ArrayList;
 
@@ -41,6 +48,8 @@ import java.util.ArrayList;
  *  Followed these steps: http://www.androidhive.info/2013/11/android-sliding-menu-using-navigation-drawer/
  */
 public class NavigationDrawerFragment extends Fragment {
+
+    private static final String TAG = NavigationDrawerFragment.class.getName();
 
     /**
      * Remember the position of the selected item.
@@ -72,11 +81,17 @@ public class NavigationDrawerFragment extends Fragment {
     private ArrayList<Item> navDrawerItems;
     private NavDrawerListAdapter adapter;
 
+    private DrawerItem usageDrawerItem;
+
     /** The fault startup tab */
     private int mCurrentSelectedPosition = 0;
 
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
+
+    private PreferencesManager mPreferenceManager;
+
+    private DataBroadCastReceiver mDataBroadcastManager;
 
     public NavigationDrawerFragment() {
     }
@@ -97,6 +112,9 @@ public class NavigationDrawerFragment extends Fragment {
 
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
+
+        mPreferenceManager = PreferencesManager.getInstance();
+        mDataBroadcastManager = new DataBroadCastReceiver();
     }
 
     @Override
@@ -104,12 +122,13 @@ public class NavigationDrawerFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
+
+        updateUsageDrawItemCount(0);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-
 
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
@@ -127,7 +146,8 @@ public class NavigationDrawerFragment extends Fragment {
         // View
         //navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true));
         navDrawerItems.add(new DrawerHeader(navMenuTitles[1]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[2], "23"));
+        usageDrawerItem = new DrawerItem(navMenuTitles[2]);
+        navDrawerItems.add(usageDrawerItem);
         navDrawerItems.add(new DrawerItem(navMenuTitles[3]));
         //Manage
         navDrawerItems.add(new DrawerHeader(navMenuTitles[4]));
@@ -166,6 +186,21 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Global.BROADCAST_NAV_DRAWER);
+        LocalBroadcastManager.getInstance(this.getActivity()).registerReceiver(mDataBroadcastManager, filter);
+        updateUsageDrawItemCount(0);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(mDataBroadcastManager);
     }
 
     public boolean isDrawerOpen() {
@@ -340,5 +375,39 @@ public class NavigationDrawerFragment extends Fragment {
 
     public NavDrawerListAdapter getNavDrawerListAdapter(){
         return adapter;
+    }
+
+
+    /**
+     * Updated the usage nav drawer with the correct usage.
+     */
+    private void updateUsageDrawItemCount(int newValue){
+        int value = mPreferenceManager.getNavDrawerUsage();
+        value += newValue;
+        if(value > 0) {
+            usageDrawerItem.setCount(String.valueOf(value));
+        }
+        else
+            usageDrawerItem.setCount("");
+        Log.v(TAG, "UpdateUsageDrawItemCount: Nav drawer usage update: " + value);
+    }
+
+    public class DataBroadCastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+
+            Log.v(TAG, "DataBroadcastReceiver update!: ");
+
+            if(action.equals(Global.BROADCAST_NAV_DRAWER)){
+                if(intent.hasExtra(Global.DATA_B_NAV_DRAWER_USAGE)) {
+                    int value = intent.getIntExtra(Global.DATA_B_NAV_DRAWER_USAGE, -1);
+
+                    updateUsageDrawItemCount(value);
+                }
+            }
+        }
     }
 }

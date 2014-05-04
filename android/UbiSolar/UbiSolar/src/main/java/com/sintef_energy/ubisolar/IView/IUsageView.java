@@ -1,10 +1,6 @@
 package com.sintef_energy.ubisolar.IView;
 
-import android.app.LoaderManager;
 import android.graphics.Bitmap;
-
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
 import java.util.ArrayList;
@@ -21,6 +17,9 @@ public interface IUsageView {
 
     public void setActiveIndex(int index);
     public int getActiveIndex();
+
+    /** Sets the progress view to load or not. */
+    public void setDataLoading(boolean state);
 
     public boolean isLoaded();
     public void setDeviceSize(int size);

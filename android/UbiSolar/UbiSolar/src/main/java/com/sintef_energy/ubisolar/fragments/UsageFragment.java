@@ -6,11 +6,13 @@ import android.app.FragmentManager;
 import android.app.LoaderManager;
 
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +35,8 @@ import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
@@ -59,9 +63,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private ArrayList<DeviceUsageList> mDeviceUsageList;
     private IUsageView graphView;
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
+    private PreferencesManager mPreferenceManager;
 
-    private Button zoomOutButton;
-    private Button zoomInButton;
 
     public UsageFragment() {
     }
@@ -90,7 +93,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         setHasOptionsMenu(true);
 
         super.onCreate(bundle);
-
     }
 
     @Override
@@ -99,6 +101,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         if(mUsageFragmentStatePageAdapter == null)
             mUsageFragmentStatePageAdapter = new UsageFragmentStatePageAdapter(getFragmentManager());
+
+        mPreferenceManager = PreferencesManager.getInstance();
 
         // Initialize the ViewPager and set the adapter
         ScrollViewPager pager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
@@ -139,8 +143,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
-        zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
+        Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
+        Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
         zoomInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -172,6 +176,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             mDeviceUsageList = new ArrayList<>();
             loaderManager.initLoader(LOADER_DEVICES, null, this);
         }
+
+        mPreferenceManager.setNavDrawerUsage(0);
+        Intent i = new Intent(Global.BROADCAST_NAV_DRAWER);
+        i.putExtra(Global.DATA_B_NAV_DRAWER_USAGE, 0);
+        LocalBroadcastManager.getInstance(this.getActivity().getApplicationContext()).sendBroadcast(i);
     }
 
     @Override
@@ -269,7 +278,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         EnergyContract.Energy.PROJECTION_ALL,
                         sqlWhereDevices(),
                         getSelectedDevicesIDs(),
-                        EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " ASC");
+                        EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " ASC");
             case LOADER_USAGE_DAY:
                 builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
                 builder.appendPath(EnergyContract.Energy.Date.Day);
@@ -332,6 +341,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         for(boolean selectedItem : selectedItems)
             if(selectedItem)
                 queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
+
+        if(queries.size() < 1)
+            return "";
 
         // The last part of the query shall not be succeeded by an OR.
         int i;
@@ -410,7 +422,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             while (data.moveToNext());
         }
 
-        graphView.clearDevices();
         mDeviceUsageList.clear();
         mDeviceUsageList.addAll(devices.values());
 
@@ -483,19 +494,24 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setActiveIndex(graphView.getActiveIndex() * 24);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE, null, this);
 
+            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(false);
+            graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
             graphView.setFormat(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 7);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
+            graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.MONTHS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 4);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
 
+            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(true);
+            graphView.setDataLoading(true);
         }
     }
 
@@ -506,12 +522,15 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setActiveIndex(graphView.getActiveIndex() / 24);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_DAY, null, this);
 
+            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
             zoomInButton.setEnabled(true);
+            graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.DAYS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 7);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_WEEK, null, this);
+            graphView.setDataLoading(true);
 
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
@@ -519,7 +538,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setActiveIndex(graphView.getActiveIndex() / 4);
             getLoaderManager().restartLoader(UsageFragment.LOADER_USAGE_MONTH, null, this);
 
+            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
             zoomOutButton.setEnabled(false);
+            graphView.setDataLoading(true);
         }
     }
 }

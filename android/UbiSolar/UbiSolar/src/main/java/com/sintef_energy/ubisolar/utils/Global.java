@@ -10,4 +10,9 @@ public class Global {
     public static String BASE_URL = "http://" + URL;
 
     public static boolean DEVELOPER_MADE = true;
+
+    /* Broadcasts and and data. Broadcasts are set from string.xml */
+    public static String BROADCAST_NAV_DRAWER = "";
+    public static final String DATA_B_NAV_DRAWER_USAGE = "DATA_B_NAV_DRAWER_USAGE";
+
 }

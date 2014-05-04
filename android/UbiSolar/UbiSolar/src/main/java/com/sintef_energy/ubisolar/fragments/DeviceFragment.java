@@ -4,7 +4,6 @@ import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -20,11 +19,10 @@ import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.utils.ExpandableListAdapter;
+import com.sintef_energy.ubisolar.adapter.ExpandableListAdapter;
 
 import java.util.ArrayList;
 

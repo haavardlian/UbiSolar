@@ -46,14 +46,6 @@ public class RequestSyncProxy {
         this.requestQueue = requestQueue;
     }
 
-    /**
-     *
-     * Request all deviceModels from the server that has a timestamp > than the parameter.
-     *
-     * @param userId The user
-     * @param timestamp The time
-     * @return The deviceModels returned by the server. Including deleted models.
-     */
     public ArrayList<DeviceModel> getBackendDeviceSync(long userId, long timestamp) {
 
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
@@ -107,10 +99,10 @@ public class RequestSyncProxy {
 
 
     /**
-     * Adds device data to the server.
      *
-     * @param userId The user
-     * @param deviceModels Models to add.
+     *
+     * @param userId
+     * @param deviceModels
      * @return ArrayList<DeviceModel> Success if size = 0
      */
     public ArrayList<DeviceModel> putFrontendDeviceSync(long userId, ArrayList<DeviceModel> deviceModels) {
@@ -157,10 +149,12 @@ public class RequestSyncProxy {
         }catch (IOException | JSONException e) {
             Log.e(TAG, "Error in JSON Mapping:");
             Log.e(TAG, e.toString());
-        }catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             Log.e(TAG, "InterruptedException:\n" + e.getMessage());
             e.printStackTrace();
-        }catch (ExecutionException e) {
+        }
+        catch (ExecutionException e) {
             Log.e(TAG, "ExecutionException:\n" + e.getMessage());
 
             e.printStackTrace();
@@ -171,14 +165,8 @@ public class RequestSyncProxy {
         return null;
     }
 
-    /**
-     *
-     * Request all usageModels from the server that has a timestamp > than the parameter.
-     *
-     * @param userId uid for request
-     * @param timestamp Time
-     * @return The usageModels returned by the server. Including deleted models.
-     */
+
+
     public ArrayList<EnergyUsageModel> getBackendUsageSync(long userId, long timestamp) {
 
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
@@ -231,13 +219,12 @@ public class RequestSyncProxy {
 
     /**
      *
-     * Adds usage data to the server.
      *
-     * @param userId Id of user
-     * @param usageModels Models to add
+     * @param userId
+     * @param deviceModels
      * @return ArrayList<DeviceModel> Success if size = 0
      */
-    public ArrayList<EnergyUsageModel> putFrontendUsageSync(long userId, ArrayList<EnergyUsageModel> usageModels) {
+    public ArrayList<EnergyUsageModel> putFrontendUsageSync(long userId, ArrayList<EnergyUsageModel> deviceModels) {
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
 
         ArrayList<EnergyUsageModel> errorModels = new ArrayList<>();
@@ -255,7 +242,7 @@ public class RequestSyncProxy {
         JSONArray data = new JSONArray();
 
         try {
-            for(EnergyUsageModel dModel : usageModels)
+            for(EnergyUsageModel dModel : deviceModels)
                 data.put(new JSONObject(mapper.writeValueAsString(dModel.getSerializeableDevice())));
 
         } catch (JsonProcessingException e) {
