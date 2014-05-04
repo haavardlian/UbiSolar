@@ -5,14 +5,14 @@ package com.sintef_energy.ubisolar.model;
  */
 public class User {
 
-    private String userId;
+    private long userId;
     private String name;
     private byte age;
     private byte zipCode;
     private Residence[] residences;
     private String country;
 
-    public User (String userId, byte zipCode, byte age, String name,
+    public User (long userId, byte zipCode, byte age, String name,
                      Residence[] residences, String country) {
         this.userId = userId;
         this.zipCode = zipCode;
@@ -26,16 +26,16 @@ public class User {
         this.name = name;
     }
 
-    public User(String id, String name) {
+    public User(long id, String name) {
         this.userId = id;
         this.name = name;
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
