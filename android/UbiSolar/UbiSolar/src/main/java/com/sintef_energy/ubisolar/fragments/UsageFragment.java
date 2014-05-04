@@ -9,7 +9,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
@@ -28,24 +27,17 @@ import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
 import com.sintef_energy.ubisolar.dialogs.ShareDialog;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphLineFragment;
 import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
-import com.sintef_energy.ubisolar.model.Device;
-import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -122,7 +114,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             @Override
             public void onPageSelected(int position) {
                 graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
-                graphView.setDeviceSize(mDevices.size());
                 loadUsage();
             }
 
@@ -276,7 +267,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         DeviceModel model = new DeviceModel(cursor);
                         mDevices.put(model.getId(), model);
                     } while (cursor.moveToNext());
-                graphView.setDeviceSize(mDevices.size());
                 graphView.setDevices(mDevices);
                 graphView.pullData();
     }

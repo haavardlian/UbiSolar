@@ -244,7 +244,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 @Override
                 public void panApplied() {
                     int activePoint = (int) (mRenderer.getXAxisMin() + mRenderer.getXAxisMax()) / 2;
-                    mActiveDateIndex = (int) activePoint / POINT_DISTANCE;
+                    mActiveDateIndex = activePoint / POINT_DISTANCE;
                     if (mActiveDateIndex < 0)
                         return;
 
@@ -303,7 +303,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             //Clear old data
             mRenderer.clearXTextLabels();
             mDates.clear();
-
         }
 
         @Override
@@ -364,8 +363,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 mActiveDateIndex = mDates.size() - 1;
 
             setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
-
-
             return null;
         }
 
@@ -459,9 +456,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 start = 0;
 
             mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
-                    start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
+                start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
             mRenderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
-                    end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
+                end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
         }
 
         private EnergyUsageModel getFirstPoint() {
