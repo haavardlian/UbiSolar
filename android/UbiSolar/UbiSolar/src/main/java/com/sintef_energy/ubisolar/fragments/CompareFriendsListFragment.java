@@ -10,12 +10,17 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
@@ -26,11 +31,12 @@ import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by baier on 3/21/14.
  */
-public class CompareFriendsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class CompareFriendsListFragment extends Fragment/* implements LoaderManager.LoaderCallbacks<Cursor>*/{
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -77,12 +83,12 @@ public class CompareFriendsListFragment extends Fragment implements LoaderManage
         FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
         final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
         friendsList.setAdapter(friendAdapter);
-
+        //RequestManager.getInstance().doFriendRequest().getAllUsers(friendAdapter, this);
         friends.add(new User("Beate"));
         friends.add(new User("Håvi"));
         friends.add(new User("Piai"));
         friends.add(new User("Peri"));
-
+        getFriends();
         friendAdapter.notifyDataSetChanged();
 
         friendsList.setClickable(true);
@@ -174,7 +180,7 @@ public class CompareFriendsListFragment extends Fragment implements LoaderManage
     public void onDestroy(){
         super.onDestroy();
     }
-
+/*
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(
@@ -204,6 +210,31 @@ public class CompareFriendsListFragment extends Fragment implements LoaderManage
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         friends.clear();
+    }
+*/
+    private void getFriends() {
+        Session activeSession = Session.getActiveSession();
+        if (activeSession.getState().isOpened()) {
+            Request friendRequest = Request.newMyFriendsRequest(activeSession,
+                    new Request.GraphUserListCallback() {
+                        @Override
+                        public void onCompleted(List<GraphUser> users,
+                                                Response response) {
+                            Log.i("INFO", response.toString());
+                            for(int i=0; i<users.size(); i++) {
+                                User cu = new User(Long.parseLong(users.get(i).getId()), users.get(i).getName());
+                                friendAdapter.add(cu);
+                            }
+
+                        }
+                    }
+            );
+            Bundle params = new Bundle();
+            params.putString("fields", "id,name");
+            friendRequest.setParameters(params);
+            friendRequest.executeAsync();
+            friendAdapter.notifyDataSetChanged();
+        }
     }
 
 }

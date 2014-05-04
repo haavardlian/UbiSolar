@@ -33,6 +33,7 @@ public class RequestManager {
     private RequestSyncProxy mRequestSyncProxy;
 
     private RequestQueue mRequestQueue;
+    private RequestFriendsProxy mRequestFriendsProxy;
 
     private RequestManager(Activity activity) {
         mRequestQueue = newRequestQueue(activity.getApplicationContext());
