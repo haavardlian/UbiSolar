@@ -727,6 +727,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     public void pullData(){
+
         //If no items are selected, clear te graph
         for(boolean selected : getSelectedDialogItems())
             if(selected) {

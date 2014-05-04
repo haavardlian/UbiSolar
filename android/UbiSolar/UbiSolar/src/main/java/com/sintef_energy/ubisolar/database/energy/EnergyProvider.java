@@ -515,6 +515,8 @@ public class EnergyProvider extends ContentProvider{
                 EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
 
 
+//        String statement = "SELECT * FROM (";
+
         String statement = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
                         + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
                         + time2 + " As `month`, "
@@ -526,12 +528,12 @@ public class EnergyProvider extends ContentProvider{
         else
             statement += "WHERE " + selectionAvoidDeleteBit;
 
-//        statement += " AND " + betweenTime + " BETWEEN '2014-05-02 11:00' AND '2014-05-02 15:00' ";
-
 
         statement += "GROUP BY " + time + ", "
             + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
             + "ORDER BY `month` ASC";
+
+//        statement += " limit 15) ORDER BY `month` ASC";
 
         return statement;
     }
