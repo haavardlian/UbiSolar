@@ -58,8 +58,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
-    private int[] colors;
 
+    private int[] colors;
     private int mColorIndex;
 
     private Bundle mSavedState;
@@ -73,8 +73,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private LinkedHashMap<Long, DeviceModel> mDevices;
 
     private boolean mLoaded = false;
-    private int mDeviceSize;
-
 
     private int IMAGE_RENDER_WIDTH = 960, IMAGE_RENDER_HEIGHT = 540;
 
@@ -105,13 +103,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
-        this.colors = new int[colorStringArray.length];
-
-        for (int i = 0; i < colorStringArray.length; i++) {
-            this.colors[i] = Color.parseColor(colorStringArray[i]);
-        }
     }
 
     @Override
@@ -156,6 +147,13 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
         asyncGraphCreator.execute(new ArrayList<DeviceUsageList>());
+
+        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
+        this.colors = new int[colorStringArray.length];
+
+        for (int i = 0; i < colorStringArray.length; i++) {
+            this.colors[i] = Color.parseColor(colorStringArray[i]);
+        }
 
         mSavedState = null;
     }
@@ -249,7 +247,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                     mActiveDateIndex = (int) activePoint / POINT_DISTANCE;
                     if (mActiveDateIndex < 0)
                         return;
-                    // If the center point does not match the label, swap it with the new label
 
                     if (mTitleLabel == null || mDates.size() < 1)
                         return;
@@ -257,6 +254,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                     if (mDates.size() == 1)
                         return;
 
+                    // If the center point does not match the label, swap it with the new label
                     if (!mTitleLabel.equals(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()))) {
                         mTitleLabel = formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat());
                         setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
@@ -542,8 +540,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
     public boolean[] getSelectedDialogItems() {
         if (mSelectedDialogItems == null) {
-            mSelectedDialogItems = new boolean[mDeviceSize];
-            if (mDeviceSize > 0)
+            mSelectedDialogItems = new boolean[mDevices.size()];
+            if (mDevices.size() > 0)
                 mSelectedDialogItems[0] = true;
         }
         return mSelectedDialogItems;
@@ -576,11 +574,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             return false;
         }
         return mLoaded;
-    }
-
-    @Override
-    public void setDeviceSize(int size) {
-        mDeviceSize = size;
     }
 
     public int getResolution() {

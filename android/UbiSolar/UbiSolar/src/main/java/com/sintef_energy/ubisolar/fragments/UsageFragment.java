@@ -52,13 +52,6 @@ import java.util.LinkedHashMap;
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final int LOADER_DEVICES = 0;
-    public static final int LOADER_USAGE = 1;
-    public static final int LOADER_USAGE_DAY = 2;
-    public static final int LOADER_USAGE_WEEK= 3;
-    public static final int LOADER_USAGE_MONTH = 4;
-    public static final int LOADER_USAGE_YEAR = 5;
-
-    private int activeUsageLoader = LOADER_USAGE_DAY;
 
     private static final String TAG = UsageFragment.class.getName();
 
@@ -263,10 +256,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
-        Uri.Builder builder;
 
-        switch (mode){
-            case LOADER_DEVICES:
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Devices.CONTENT_URI,
@@ -274,133 +264,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                         null,
                         null,
                         DeviceModel.DeviceEntry._ID + " ASC");
-            case LOADER_USAGE:
-                return new CursorLoader(
-                        getActivity(),
-                        EnergyContract.Energy.CONTENT_URI,
-                        EnergyContract.Energy.PROJECTION_ALL,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " ASC");
-            case LOADER_USAGE_DAY:
-                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-                builder.appendPath(EnergyContract.Energy.Date.Day);
-
-                return new CursorLoader(
-                        getActivity(),
-                        builder.build(),
-                        null,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        null);
-            case LOADER_USAGE_WEEK:
-                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-                builder.appendPath(EnergyContract.Energy.Date.Week);
-
-                return new CursorLoader(
-                        getActivity(),
-                        builder.build(),
-                        null,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        null);
-            case LOADER_USAGE_MONTH:
-                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-                builder.appendPath(EnergyContract.Energy.Date.Month);
-
-                return new CursorLoader(
-                        getActivity(),
-                        builder.build(),
-                        null,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        null);
-            case LOADER_USAGE_YEAR:
-                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
-                builder.appendPath(EnergyContract.Energy.Date.Year);
-
-                return new CursorLoader(
-                        getActivity(),
-                        builder.build(),
-                        null,
-                        sqlWhereDevices(),
-                        getSelectedDevicesIDs(),
-                        null);
-        }
-        return null;
     }
 
-    /**
-     * Creates a 'where' sql statement based on the currently selected items.
-     *
-     * @return sql 'where' statement
-     */
-    private String sqlWhereDevices(){
-        String where = "";
-
-        boolean[] selectedItems = graphView.getSelectedDialogItems();
-        ArrayList<String> queries = new ArrayList<>();
-
-        for(boolean selectedItem : selectedItems)
-            if(selectedItem)
-                queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
-
-        if(queries.size() < 1)
-            return "";
-
-        // The last part of the query shall not be succeeded by an OR.
-        int i;
-        for(i = 0; i < queries.size() - 1; i++)
-            where += queries.get(i) + " OR ";
-        where += queries.get(i);
-        
-        
-        //To get data points between two dates
-        String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
-            EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
-//
-        where += " AND " + betweenTime + " BETWEEN ? AND ? ";
-
-        return where;
-    }
-
-
-    private String[] getSelectedDevicesIDs() {
-        boolean[] selectedItems = graphView.getSelectedDialogItems();
-        ArrayList<String> queryValues = new ArrayList<>();
-
-        int i = 0;
-
-        for(Device device : mDevices.values()){
-            if(selectedItems.length > i) {
-                if (selectedItems[i])
-                    queryValues.add("" + device.getId());
-               i++;
-            }
-        }
-
-        try {
-            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
-            Timestamp sqlDate1 = new java.sql.Timestamp(date1.getTime());
-
-            Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 14:00");
-            Timestamp sqlDate2 = new java.sql.Timestamp(date2.getTime());
-
-            queryValues.add(sqlDate1.toString());
-            queryValues.add(sqlDate2.toString());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-
-        return queryValues.toArray(new String[queryValues.size()]);
-    }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
-        switch (cursorLoader.getId()) {
-            /* Fetch all device data. Is used to show list of devices and choose which to see. */
-            case LOADER_DEVICES:
                 mDevices.clear();
                 cursor.moveToFirst();
                 if (cursor.getCount() != 0)
@@ -411,48 +279,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 graphView.setDeviceSize(mDevices.size());
                 graphView.setDevices(mDevices);
                 graphView.pullData();
-
-                //Load the graph the first time the fragment is ran after the devices has been loaded
-//                if(mDevices.size() > 0)
-//                    getLoaderManager().initLoader(activeUsageLoader, null, this);
-                break;
-            /* Load usage */
-            case LOADER_USAGE:
-            case LOADER_USAGE_DAY:
-            case LOADER_USAGE_WEEK:
-            case LOADER_USAGE_MONTH:
-            case LOADER_USAGE_YEAR:
-                populateDeviceUsageList(cursor);
-                break;
-        }
-    }
-
-    private void populateDeviceUsageList(Cursor data){
-        //Hashmap containing all DevicesUsage
-        HashMap<Long, DeviceUsageList> devices = new HashMap<>();
-
-        /* Get data from cursor and add */
-        data.moveToFirst();
-        if(data.getCount() >= 1) {
-            do {
-                EnergyUsageModel model = new EnergyUsageModel(data, true);
-                DeviceUsageList deviceUsageList = devices.get(model.getDeviceId());
-
-                if (deviceUsageList == null) {
-                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
-                }
-
-                deviceUsageList.add(model);
-            }
-            while (data.moveToNext());
-        }
-
-        mDeviceUsageList.clear();
-        mDeviceUsageList.addAll(devices.values());
-
-        if(mDeviceUsageList.size() > 0)
-            graphView.addDeviceUsage(mDeviceUsageList);
     }
 
     @Override
@@ -533,7 +359,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         else if(graphView.getResolution() == Resolution.MONTHS) {
             graphView.setFormat(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 4);
-            activeUsageLoader = LOADER_USAGE_WEEK;
             graphView.pullData();
 
             Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);

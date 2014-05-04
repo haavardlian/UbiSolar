@@ -25,7 +25,6 @@ public interface IUsageView {
     public void setDataLoading(boolean state);
 
     public boolean isLoaded();
-    public void setDeviceSize(int size);
 
     public void setDevices(LinkedHashMap<Long, DeviceModel> devices);
 
