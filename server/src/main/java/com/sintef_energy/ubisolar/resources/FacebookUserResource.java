@@ -33,7 +33,11 @@ public class FacebookUserResource {
 
     @PUT
     @Timed
-    public Response createFacebookUser(@Valid FacebookUser user) {
+    public Response createFacebookUser(@Valid FacebookUser user, @Valid ArrayList<FacebookUser> users) {
+
+        for(int i = 0; i<users.size(); i++) {
+            //db.addfriendship(user.getUserId(),users.get(i).getUserId());
+        }
         int result = db.createFacebookUser(user);
 
         if(result == 1) return  Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("User created")).build();

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -225,7 +226,6 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
                                 User cu = new User(Long.parseLong(users.get(i).getId()), users.get(i).getName());
                                 friendAdapter.add(cu);
                             }
-
                         }
                     }
             );
@@ -233,6 +233,26 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
             params.putString("fields", "id,name");
             friendRequest.setParameters(params);
             friendRequest.executeAsync();
+            friendAdapter.notifyDataSetChanged();
+            getFriendsInstalled();
+        }
+    }
+
+    private void getFriendsInstalled() {
+        Session activeSession = Session.getActiveSession();
+        if (activeSession.getState().isOpened()) {
+
+            new Request(
+                    Session.getActiveSession(),
+                    "/me/friends?fields=installed",
+                    null,
+                    HttpMethod.GET,
+                    new Request.Callback() {
+                        public void onCompleted(Response response) {
+                            Log.d("FACEBOOKTEST",response.toString());
+                        }
+                    }
+            ).executeAsync();
             friendAdapter.notifyDataSetChanged();
         }
     }
