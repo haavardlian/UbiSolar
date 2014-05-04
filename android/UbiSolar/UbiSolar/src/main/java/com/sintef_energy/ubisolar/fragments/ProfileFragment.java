@@ -17,7 +17,6 @@ import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
-import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.dialogs.AddResidenceDialog;
 import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
@@ -83,7 +82,7 @@ public class ProfileFragment extends DefaultTabFragment  {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    };
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -108,7 +107,7 @@ public class ProfileFragment extends DefaultTabFragment  {
             profilePicture = (ProfilePictureView) mRootView.findViewById(R.id.profile_profile_picture);
             profilePicture.setProfileId(prefs.getKeyFacebookUid());
             profilePicture.setPresetSize(ProfilePictureView.LARGE);
-            profilePicture.setVisibility(0);
+            profilePicture.setVisibility(View.VISIBLE);
 
             Session.getActiveSession();
         }

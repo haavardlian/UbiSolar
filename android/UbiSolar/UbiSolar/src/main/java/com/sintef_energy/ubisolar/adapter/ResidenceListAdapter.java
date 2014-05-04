@@ -57,9 +57,8 @@ public class ResidenceListAdapter extends BaseExpandableListAdapter implements E
         LayoutInflater inflater = context.getLayoutInflater();
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.profile_residence_expanded, null);
+            convertView = inflater.inflate(R.layout.profile_residence_expanded, parent, false);
         }
-
 
 
         TextView descriptionView = (TextView) convertView.findViewById(R.id.residence_description);

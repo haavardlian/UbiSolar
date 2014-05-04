@@ -36,7 +36,7 @@ public class DrawerItem implements Item {
         holder = new DrawerHolder();
 
         if (convertView == null) {
-            view = (View) inflater.inflate(R.layout.drawer_list_item, null);
+            view = inflater.inflate(R.layout.drawer_list_item, null);
             // Do some initialization
         } else {
             view = convertView;

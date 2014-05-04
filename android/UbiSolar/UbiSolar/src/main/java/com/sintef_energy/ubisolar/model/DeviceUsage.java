@@ -1,7 +1,5 @@
 package com.sintef_energy.ubisolar.model;
 
-import java.util.Date;
-
 /**
  * Created by thb on 19.02.14.
  *

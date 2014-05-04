@@ -414,7 +414,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
                 if (deviceUsageList == null) {
                     deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
+                    devices.put(deviceUsageList.getDevice().getId(), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);

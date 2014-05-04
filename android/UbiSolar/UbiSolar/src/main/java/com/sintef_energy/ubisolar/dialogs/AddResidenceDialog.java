@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.LoaderManager;
 import android.content.DialogInterface;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +22,7 @@ import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 /**
  * Created by Lars Erik on 03.05.2014.
  */
-public class AddResidenceDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor>{
+public class AddResidenceDialog extends DialogFragment {
 
     private TextView nameField, descriptionField;
     private EditText residentsField, areaField, zipCodeField;
@@ -103,26 +100,8 @@ public class AddResidenceDialog extends DialogFragment implements LoaderManager.
 
         energyClassSpinner.setAdapter(energyClassAdapter);
 
-        //TODO: Remove Loadmanager?
-        getLoaderManager().initLoader(0, null, this);
-        AlertDialog alertDialog = builder.create();
-
-        return alertDialog;
+        return builder.create();
 
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
 }

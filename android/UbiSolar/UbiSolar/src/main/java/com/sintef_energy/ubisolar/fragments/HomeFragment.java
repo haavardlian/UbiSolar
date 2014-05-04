@@ -9,7 +9,6 @@ import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.ComparisonAdapter;
 import com.sintef_energy.ubisolar.adapter.NewsFeedAdapter;
 import com.sintef_energy.ubisolar.model.NewsFeed;
 
@@ -71,7 +70,7 @@ public class HomeFragment extends DefaultTabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        newsFeed = new ArrayList<NewsFeed>();
+        newsFeed = new ArrayList<>();
         NewsFeedAdapter newsFeedAdapter = new NewsFeedAdapter(getActivity(),R.layout.fragment_home_row, newsFeed);
         final ListView friendsList = (ListView) view.findViewById(R.id.news_feed_list);
         friendsList.setAdapter(newsFeedAdapter);

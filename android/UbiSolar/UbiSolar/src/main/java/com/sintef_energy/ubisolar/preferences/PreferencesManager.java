@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.CheckBox;
 
 import java.util.Date;
 
@@ -35,6 +34,7 @@ public class PreferencesManager {
 
     private static PreferencesManager sInstance;
     private final SharedPreferences mPref;
+
 
     private PreferencesManager(Context context) {
         mPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);

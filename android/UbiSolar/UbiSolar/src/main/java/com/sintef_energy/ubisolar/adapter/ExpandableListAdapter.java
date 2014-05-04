@@ -37,7 +37,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
 
     @Override
     public DeviceModel getChild(int groupPosition, int childPosition) {
-        ArrayList<DeviceModel> children = new ArrayList<DeviceModel>();
+        ArrayList<DeviceModel> children = new ArrayList<>();
         for (DeviceModel deviceModel : devices){
             if (deviceModel.getCategory() == groupPosition)
                 children.add(deviceModel);
@@ -68,12 +68,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
 
     public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
-        final DeviceModel device = (DeviceModel)getChild(groupPosition, childPosition);
+        final DeviceModel device = getChild(groupPosition, childPosition);
 
         LayoutInflater inflater = context.getLayoutInflater();
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.device_child_item, null);
+            convertView = inflater.inflate(R.layout.device_child_item, parent, false);
         }
 
         TextView nameView = (TextView) convertView.findViewById(R.id.deviceName);

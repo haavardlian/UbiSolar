@@ -80,7 +80,7 @@ public class DeviceModel extends Device implements Parcelable{
         setLastUpdated(-1);
     }
 
-    /* Parcable */
+    /* Parcelable */
     public DeviceModel(Parcel in) {
         readFromParcel(in);
     }
@@ -164,7 +164,7 @@ public class DeviceModel extends Device implements Parcelable{
      * An ugly hack do allow jackson to serialize DeviceModel.
      * @return new Device
      */
-    public Device getSerializeableDevice(){
+    public Device getSerializableDevice(){
         return new Device(getId(), getUserId(), getName(), getDescription(), getCategory(), isDeleted(), getLastUpdated());
     }
 

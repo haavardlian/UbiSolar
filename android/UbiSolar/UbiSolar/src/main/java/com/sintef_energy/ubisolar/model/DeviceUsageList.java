@@ -119,9 +119,9 @@ public class DeviceUsageList implements Parcelable
 
     private String formatDate(Date date, String format)
     {
-        SimpleDateFormat formater = new SimpleDateFormat (format);
+        SimpleDateFormat formatter = new SimpleDateFormat (format);
         if(date != null)
-            return formater.format(date);
+            return formatter.format(date);
         else
             return null;
     }

@@ -26,7 +26,7 @@ public class DrawerHeader implements Item {
     public View getView(LayoutInflater inflater, View convertView) {
         View view;
         if (convertView == null) {
-            view = (View) inflater.inflate(R.layout.drawer_list_header, null);
+            view = inflater.inflate(R.layout.drawer_list_header, null);
             // Do some initialization
         } else {
             view = convertView;

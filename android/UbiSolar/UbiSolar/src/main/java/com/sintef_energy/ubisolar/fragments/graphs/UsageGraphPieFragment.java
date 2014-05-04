@@ -6,9 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
@@ -37,7 +35,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
     private View mRootView;
 
-    private static int[] colors;
+    private int[] colors;
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
@@ -77,16 +75,18 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        //Setup colors
         String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
         this.colors = new int[colorStringArray.length];
 
         for(int i = 0; i < colorStringArray.length; i++) {
             this.colors[i] = Color.parseColor(colorStringArray[i]);
         }
-    }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setContentView(R.layout.fragment_usage_graph_pie);
         mRootView = getContentView();

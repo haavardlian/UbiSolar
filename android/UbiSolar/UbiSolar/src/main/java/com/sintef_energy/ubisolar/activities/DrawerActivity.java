@@ -373,7 +373,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     }
 
     /**
-     * Handles login and logout from facebook, when the user clicks the login/ lgout button.
+     * Handles login and logout from facebook, when the user clicks the login/ logout button.
      * What done is based on Global.isloggedIn state.
      *
      * Updates state, and UI accordingly.

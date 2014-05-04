@@ -10,10 +10,7 @@ import android.view.ViewGroup;
 import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-import com.sintef_energy.ubisolar.model.ResidenceAttributes;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
-
-import java.util.ArrayList;
 
 /**
  * Created by baier on 4/1/14.

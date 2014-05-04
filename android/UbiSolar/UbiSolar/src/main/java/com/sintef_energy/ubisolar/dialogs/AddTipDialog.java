@@ -52,15 +52,9 @@ public class AddTipDialog extends DialogFragment {
                 })
                 .setTitle(R.string.addTipDialog_title);
 
-
-
         nameField = (EditText) view.findViewById(R.id.createTipDialogName);
         descriptionField = (EditText) view.findViewById(R.id.createTipDialogDescription);
 
-
-        AlertDialog alertDialog = builder.create();
-
-        return alertDialog;
-
+        return builder.create();
     }
 }

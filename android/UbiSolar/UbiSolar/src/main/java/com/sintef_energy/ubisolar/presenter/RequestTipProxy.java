@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.presenter;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -55,7 +54,7 @@ public class RequestTipProxy {
 
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        adapter.add((Tip)mapper.readValue(jsonArray.get(i).toString(), Tip.class));
+                        adapter.add(mapper.readValue(jsonArray.get(i).toString(), Tip.class));
                         //Log.d(tag, adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");

@@ -231,7 +231,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 @Override
                 public void panApplied() {
                     int activePoint = (int) (mRenderer.getXAxisMin() + mRenderer.getXAxisMax()) / 2;
-                    mActiveDateIndex = (int) activePoint / POINT_DISTANCE;
+                    mActiveDateIndex = (int) (activePoint / POINT_DISTANCE);
                     if(mActiveDateIndex < 0)
                         return;
                     // If the center point does not match the label, swap it with the new label

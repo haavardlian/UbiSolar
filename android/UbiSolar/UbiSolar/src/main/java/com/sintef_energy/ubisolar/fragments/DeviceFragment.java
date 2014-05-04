@@ -81,7 +81,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
             default:
                 return super.onOptionsItemSelected(item);
         }
-    };
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
