@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.view.LayoutInflater;
@@ -15,6 +19,9 @@ import android.widget.ListView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.UserModel;
 import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
@@ -23,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Created by baier on 3/21/14.
  */
-public class CompareFriendsListFragment extends Fragment {
+public class CompareFriendsListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -95,6 +102,8 @@ public class CompareFriendsListFragment extends Fragment {
         return view;
     }
 
+
+
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
         private final String[] TITLES = { "Friends", "Similar profiles"};
@@ -164,6 +173,37 @@ public class CompareFriendsListFragment extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(
+                getActivity(),
+                EnergyContract.Users.CONTENT_URI,
+                EnergyContract.Users.PROJECTION_ALL,
+                null,
+                null,
+                UserModel.UserEntry._ID + " ASC"
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        friends.clear();
+
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0)
+            do {
+                UserModel model = new UserModel(cursor);
+                friends.add(model);
+            } while (cursor.moveToNext());
+
+        friendAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        friends.clear();
     }
 
 }
