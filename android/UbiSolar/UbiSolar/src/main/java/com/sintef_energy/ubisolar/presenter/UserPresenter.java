@@ -3,9 +3,7 @@ package com.sintef_energy.ubisolar.presenter;
 import android.content.ContentResolver;
 import android.util.Log;
 
-import com.sintef_energy.ubisolar.IView.IDeviceView;
-import com.sintef_energy.ubisolar.IView.IResidenceView;
-import com.sintef_energy.ubisolar.database.energy.ResidenceModel;
+import com.sintef_energy.ubisolar.IView.IUserView;
 import com.sintef_energy.ubisolar.database.energy.UserModel;
 
 import java.util.ArrayList;
@@ -17,7 +15,7 @@ public class UserPresenter {
 
 
     private static final String TAG = UserPresenter.class.getName();
-    ArrayList<iUserView> userModelListeners;
+    ArrayList<IUserView> userModelListeners;
 
 
     public UserPresenter(){}
@@ -35,8 +33,7 @@ public class UserPresenter {
         Log.d(TAG, "added user" + user.getName());
     }
 
-    public void editUser(ContentResolver contentResolver, UserModel user) {
-
+    public void deleteUser(ContentResolver contentResolver, UserModel user) {
 
     }
 }

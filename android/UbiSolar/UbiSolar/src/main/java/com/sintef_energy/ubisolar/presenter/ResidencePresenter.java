@@ -24,7 +24,7 @@ public class ResidencePresenter {
         this.residenceModelListeners.add(view);
     }
 
-    public void unregisterListener(IDeviceView view){
+    public void unregisterListener(IResidenceView view){
         this.residenceModelListeners.remove(view);
     }
 
