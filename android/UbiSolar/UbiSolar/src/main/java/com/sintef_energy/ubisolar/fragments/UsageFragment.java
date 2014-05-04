@@ -231,14 +231,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
         graphView.setSelectedDialogItems(itemsSelected);
-
-        //Clear the graph if no devices are selected
-        if(selectedItems.length < 1)
-            graphView.clearDevices();
-        else
-            graphView.pullData();
-
-        graphView.setDataLoading(true);
+        graphView.pullData();
     }
 
 
@@ -330,7 +323,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private void zoomIn()
     {
         if(graphView.getResolution() == Resolution.DAYS) {
-            graphView.setFormat(Resolution.HOURS);
+            graphView.setResolution(Resolution.HOURS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 24);
             graphView.pullData();
 
@@ -339,13 +332,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
-            graphView.setFormat(Resolution.DAYS);
+            graphView.setResolution(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 7);
             graphView.pullData();
             graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.MONTHS) {
-            graphView.setFormat(Resolution.WEEKS);
+            graphView.setResolution(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() * 4);
             graphView.pullData();
 
@@ -358,7 +351,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private void zoomOut()
     {
         if(graphView.getResolution() == Resolution.HOURS) {
-            graphView.setFormat(Resolution.DAYS);
+            graphView.setResolution(Resolution.DAYS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 24);
             graphView.pullData();
 
@@ -367,14 +360,14 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             graphView.setDataLoading(true);
         }
         else if(graphView.getResolution() == Resolution.DAYS) {
-            graphView.setFormat(Resolution.WEEKS);
+            graphView.setResolution(Resolution.WEEKS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 7);
             graphView.pullData();
             graphView.setDataLoading(true);
 
         }
         else if(graphView.getResolution() == Resolution.WEEKS) {
-            graphView.setFormat(Resolution.MONTHS);
+            graphView.setResolution(Resolution.MONTHS);
             graphView.setActiveIndex(graphView.getActiveIndex() / 4);
             graphView.pullData();
 

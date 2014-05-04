@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public interface IUsageView {
-    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList);
-    public void clearDevices();
-
-    public void setFormat(int mode);
+    public void setResolution(int mode);
     public int getResolution();
 
     public boolean[] getSelectedDialogItems();
@@ -23,8 +20,6 @@ public interface IUsageView {
 
     /** Sets the progress view to load or not. */
     public void setDataLoading(boolean state);
-
-    public boolean isLoaded();
 
     public void setDevices(LinkedHashMap<Long, DeviceModel> devices);
 

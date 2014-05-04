@@ -504,7 +504,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     /**
      * Clears previous devices.
      */
-    @Override
     public void clearDevices() {
         mActiveUsageList.clear();
         mDataset.clear();
@@ -513,7 +512,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         mColorIndex = 0;
     }
 
-    @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
         clearDevices();
 
@@ -530,7 +528,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     @Override
-    public void setFormat(int mode) {
+    public void setResolution(int mode) {
         resolution.setFormat(mode);
     }
 
@@ -562,14 +560,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     @Override
     public void setDataLoading(boolean state) {
         setContentShown(!state);
-    }
-
-    public boolean isLoaded() {
-        if (!mLoaded) {
-            mLoaded = true;
-            return false;
-        }
-        return mLoaded;
     }
 
     public int getResolution() {
@@ -676,12 +666,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             if(selectedItems.length > i) {
                 if (selectedItems[i]) {
                     queryValues.add("" + device.getId());
-                    System.out.println(device.getName());
                 }
                 i++;
             }
         }
-
 
 //        try {
 //            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
@@ -729,7 +717,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         if(deviceUsageLists.size() > 0)
             addDeviceUsage(deviceUsageLists);
-
     }
 
     @Override
@@ -740,7 +727,13 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     public void pullData(){
-        getLoaderManager().restartLoader(resolution.getMode(), null, this);
+        //If no items are selected, clear te graph
+        for(boolean selected : getSelectedDialogItems())
+            if(selected) {
+                getLoaderManager().restartLoader(resolution.getMode(), null, this);
+                return;
+            }
+        clearDevices();
     }
 
 }
