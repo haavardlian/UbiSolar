@@ -277,6 +277,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     /**
      * All manupulation of new graph is done here..
      */
+    //TODO Rewrite to static and use WeakReference
     private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Void, Void>{
         /*ArrayList<DeviceUsageList> activeUsageList;
         XYMultipleSeriesRenderer renderer;
@@ -309,7 +310,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             //Clear old data
             mRenderer.clearXTextLabels();
             mDates.clear();
-
         }
 
         @Override

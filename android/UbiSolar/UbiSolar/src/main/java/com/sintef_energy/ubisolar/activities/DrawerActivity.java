@@ -198,6 +198,32 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     }
 
     @Override
+    public void onDestroy(){
+        super.onDestroy();
+        cleanUpReferences();
+    }
+
+    /**
+     * Everything is nulled out so the GC can collect the fragment instance.
+     */
+    private void cleanUpReferences(){
+        mNavigationDrawerFragment = null;
+        mTitle = null;
+        titleNames = null;
+        mTotalEnergyPresenter = null;
+        devicePresenter = null;
+        residencePresenter = null;
+        mFacebookSessionStatusCallback = null;
+        mPrefManager = null;
+        AUTHORITY = null;
+        ACCOUNT_TYPE = null;
+        ACCOUNT = null;
+        mAccount = null;
+        FACEBOOK_PERMISSIONS = null;
+    }
+
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
@@ -465,8 +491,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
                             if(response.getConnection() != null || response.getIsFromCache()) {
-
-
                                 if(null != user.getFirstName())
                                     mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
                                 else
@@ -489,12 +513,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
                                 mPrefManager.setKeyFacebookUid(user.getId());
 
-                                Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
+                                Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());/*
                                 Log.d("FACEBOOKNAME", user.getFirstName() + " " + user.getLastName());
                                 Log.d("FACEBOOKLOCATION", user.getLocation().getCity()+" ");
                                 Log.d("FACEBOOKAGE", user.getBirthday()+" ");
-                                Log.d("FACEBOOKCOUNTRY", user.getLocation().getCountry()+" ");
-
+                                Log.d("FACEBOOKCOUNTRY", user.getLocation().getCountry()+" ");*/
 
                             } else {
                                 Log.e(TAG, "No facebook data return on newMeRequest.");
@@ -577,5 +600,4 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         FACEBOOK_PERMISSIONS.add("user_location");
         FACEBOOK_PERMISSIONS.add("email");
     }
-
 }

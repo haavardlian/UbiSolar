@@ -275,7 +275,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
         Uri.Builder builder;
-
         switch (mode){
             case LOADER_DEVICES:
                 return new CursorLoader(
