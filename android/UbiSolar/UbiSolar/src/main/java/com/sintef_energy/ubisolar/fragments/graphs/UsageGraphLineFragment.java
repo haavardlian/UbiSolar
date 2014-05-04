@@ -185,6 +185,25 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     @Override
     public void onDestroy(){
         super.onDestroy();
+        cleanUpReferences();
+    }
+
+    /**
+     * Everything is nulled out so the GC can collect the fragment instance.
+     */
+    private void cleanUpReferences(){
+        mRootView = null;
+        mSavedState = null;
+        mDataset = null;
+        mRenderer = null;
+        mChartView = null;
+        mActiveUsageList = null;
+        mTitleLabel = null;
+        colors = null;
+        mSavedState = null;
+        resolution = null;
+        mSelectedDialogItems = null;
+        mDates = null;
     }
 
     /**

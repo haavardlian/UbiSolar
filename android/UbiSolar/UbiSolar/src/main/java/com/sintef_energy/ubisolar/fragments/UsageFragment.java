@@ -231,6 +231,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public void onDestroy(){
         super.onDestroy();
+        cleanUpReferences();
     }
 
     private Bundle saveState(){
@@ -239,6 +240,19 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         state.putParcelableArrayList("mDeviceUsageList", mDeviceUsageList);
 
         return state;
+    }
+
+    /**
+     * Everything is nulled out so the GC can collect the fragment instance.
+     */
+    private void cleanUpReferences(){
+        mRootView = null;
+        mSavedState = null;
+        mDevices = null;
+        mDeviceUsageList = null;
+        graphView = null;
+        mUsageFragmentStatePageAdapter = null;
+        mPreferenceManager = null;
     }
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
