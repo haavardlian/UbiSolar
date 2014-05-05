@@ -1,21 +1,13 @@
 package com.sintef_energy.ubisolar.utils;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
 
 /**
  * Created by perok on 29.04.14.

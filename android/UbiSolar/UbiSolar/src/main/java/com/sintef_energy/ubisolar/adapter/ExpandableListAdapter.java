@@ -1,14 +1,12 @@
-package com.sintef_energy.ubisolar.utils;
+package com.sintef_energy.ubisolar.adapter;
 
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.nfc.Tag;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener {
@@ -40,7 +37,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
 
     @Override
     public DeviceModel getChild(int groupPosition, int childPosition) {
-        ArrayList<DeviceModel> children = new ArrayList<DeviceModel>();
+        ArrayList<DeviceModel> children = new ArrayList<>();
         for (DeviceModel deviceModel : devices){
             if (deviceModel.getCategory() == groupPosition)
                 children.add(deviceModel);
@@ -71,12 +68,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
 
     public View getChildView(final int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
-        final DeviceModel device = (DeviceModel)getChild(groupPosition, childPosition);
+        final DeviceModel device = getChild(groupPosition, childPosition);
 
         LayoutInflater inflater = context.getLayoutInflater();
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.device_child_item, null);
+            convertView = inflater.inflate(R.layout.device_child_item, parent, false);
         }
 
         TextView nameView = (TextView) convertView.findViewById(R.id.deviceName);
@@ -117,21 +114,27 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
         ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
 
         //Set the icon to the right icon
-        Log.d(TAG, "The groupPosition is: " + groupPosition + "The category corresponding is: " + categories[groupPosition]);
+        //Log.d(TAG, "The groupPosition is: " + groupPosition + "The category corresponding is: " + categories[groupPosition]);
         switch (groupPosition){
             case 0:
                 icon.setImageResource(R.drawable.appliances);
+                break;
             case 1:
                 icon.setImageResource(R.drawable.heat);
+                break;
             case 2:
                 icon.setImageResource(R.drawable.home_entertainment);
+                break;
             case 3:
-               //Need lighting icon, default for now
+               //TODO Need lighting icon, default for now
                 icon.setImageResource(R.drawable.default_device);
+                break;
             case 4:
                 icon.setImageResource(R.drawable.default_device);
+                break;
             case 5:
                 icon.setImageResource(R.drawable.power_production);
+                break;
         }
 
         item.setText(categories[groupPosition]);

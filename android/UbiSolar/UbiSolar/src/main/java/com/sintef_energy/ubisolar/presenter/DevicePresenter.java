@@ -1,14 +1,11 @@
 package com.sintef_energy.ubisolar.presenter;
 
 import android.content.ContentResolver;
-import android.util.Log;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.IView.IDeviceView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**

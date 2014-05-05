@@ -4,31 +4,36 @@ package com.sintef_energy.ubisolar.model;
  * Created by Lars Erik on 18.03.14.
  */
 public class Residence {
-    private String houseId;
-    private String description;
-    private String status;
-    private int area;
-    private int residents;
-    private int zipCode;
-    private char energyClass;
+    protected String houseName;
+    protected String description;
+    protected int residents;
+    protected int area;
+    protected int zipCode;
+    protected char energyClass;
+    protected long userId;
 
-    public Residence(String houseId,String description, int residents, int area,
-                     int zipCode, char energyClass) {
-        this.houseId = houseId;
+    protected String status;
+
+    public Residence(String houseName,String description, int residents, int area,
+                     int zipCode, char energyClass, long userId) {
+        this.houseName = houseName;
         this.description = description;
         this.residents = residents;
         this.area = area;
         this.zipCode = zipCode;
         this.energyClass = energyClass;
-        this.status = houseId;
+        this.status = houseName;
+        this.userId = userId;
     }
 
-    public String getHouseId() {
-        return houseId;
+    public Residence() {}
+
+    public String getHouseName() {
+        return houseName;
     }
 
-    public void setHouseId(String houseId) {
-        this.houseId = houseId;
+    public void setHouseName(String houseName){
+        this.houseName = houseName;
     }
 
     public String getDescription() {
@@ -39,19 +44,21 @@ public class Residence {
         this.description = description;
     }
 
-    public char getEnergyClass() {
-        return energyClass;
-    }
+    public char getEnergyClass() {return energyClass;}
 
     public void setEnergyClass(char energyClass) {
         this.energyClass = energyClass;
+    }
+
+    public void setEnergyClass(String energyClass) {
+        this.energyClass = energyClass.charAt(0);
     }
 
     public int getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(byte zipCode) {
+    public void setZipCode(int zipCode) {
         this.zipCode = zipCode;
     }
 
@@ -59,7 +66,7 @@ public class Residence {
         return residents;
     }
 
-    public void setResidents(byte residents) {
+    public void setResidents(int residents) {
         this.residents = residents;
     }
 
@@ -71,11 +78,17 @@ public class Residence {
         this.area = area;
     }
 
-    public String toString() {
-        return getHouseId();
+    public long getUserId() {return userId;}
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public void setStatus(String status) {this.status = status;}
 
     public String getStatus() {return status;}
+
+    public String toString() {
+        return getHouseName();
+    }
 }

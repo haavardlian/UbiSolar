@@ -24,6 +24,7 @@ import org.json.JSONTokener;
 /**
  * Created by thb on 17.03.14.
  */
+@Deprecated
 public class ConnectionHandler {
     String tag = "CONNECTION";
     private final static String BASE_URL = "http://78.91.2.176:8080/";

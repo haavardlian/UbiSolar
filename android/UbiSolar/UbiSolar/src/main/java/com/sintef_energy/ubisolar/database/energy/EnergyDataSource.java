@@ -38,8 +38,6 @@ public class EnergyDataSource {
     }
 
     public static int getEnergyModelSize(ContentResolver resolver){
-        ArrayList<EnergyUsageModel> euModels = new ArrayList<>();
-
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
         //ContentUris.appendId(builder, id);
         Cursor cursor = resolver.query(
@@ -70,8 +68,8 @@ public class EnergyDataSource {
         Cursor cursor = resolver.query(
                 builder.build(),
                 EnergyContract.Energy.PROJECTION_ALL,
-                EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " >= " + from +
-                    " AND " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " <= " + to,
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " >= " + from +
+                    " AND " + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " <= " + to,
                 null,
                 null
         );
@@ -232,8 +230,8 @@ public class EnergyDataSource {
         return n;
     }
 
-    public static void editDevice(ContentResolver contentResolver, DeviceModel dm){
-        int i = contentResolver.update(EnergyContract.Devices.CONTENT_URI, dm.getContentValues(),
+    public static int editDevice(ContentResolver contentResolver, DeviceModel dm){
+        return contentResolver.update(EnergyContract.Devices.CONTENT_URI, dm.getContentValues(),
                 DeviceModel.DeviceEntry._ID + "=?",new String[]{"" + dm.getId()});
     }
 

@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.CheckBox;
 
 import java.util.Date;
 
@@ -27,11 +26,15 @@ public class PreferencesManager {
 
     public static final String SELECTED_RESIDENCE = PreferencesManager.class.getName() + ".SELECTED_RESIDENCE";
 
+
+    public static final String NAV_DRAWER_USAGE = PreferencesManager.class.getName() + ".NAV_DRAWER_USAGE";
+
     /** Facebook uid is also the UID used on the app server. */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
 
     private static PreferencesManager sInstance;
     private final SharedPreferences mPref;
+
 
     private PreferencesManager(Context context) {
         mPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -121,8 +124,13 @@ public class PreferencesManager {
     }
     public void setComparisonEnergyChecked(boolean value) {
         mPref.edit()
-
                 .putBoolean(COMPARISON_ENERGY_CHECKED, value)
+                .apply();
+    }
+
+    public void setNavDrawerUsage(int num){
+        mPref.edit()
+                .putInt(NAV_DRAWER_USAGE, num)
                 .apply();
     }
 
@@ -174,9 +182,18 @@ public class PreferencesManager {
         return mPref.getString(KEY_FACEBOOK_UID, "-1");
     }
 
+    public int getNavDrawerUsage(){
+        return mPref.getInt(NAV_DRAWER_USAGE, -1);
+    }
+
     public void clearFacebookSessionData(){
         remove(KEY_ACCESS_TOKEN);
         remove(KEY_ACCESS_TOKEN_EXPIRES);
+        remove(FACEBOOK_NAME);
+        remove(FACEBOOK_AGE);
+        remove(FACEBOOK_LOCATION);
+        remove(FACEBOOK_COUNTRY);
+        remove(KEY_FACEBOOK_UID);
     }
     /**
      * Removes a given key

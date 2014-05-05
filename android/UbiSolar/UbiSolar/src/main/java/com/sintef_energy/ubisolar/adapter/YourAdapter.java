@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +11,12 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.dialogs.YourDialog;
 import com.sintef_energy.ubisolar.model.Tip;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Håvard on 20.03.14.
@@ -31,7 +27,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     int layoutResourceId;
     List<Tip> data = null;
     SharedPreferences sharedPreferences;
-    List<String> list;
 
     public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data, FragmentManager fragmentManager) {
         super(context, layoutResourceId);
@@ -50,9 +45,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     public void add(Tip object) {
         if(!data.contains(object)) {
             data.add(object);
-            Gson gson = new Gson();
-            String json = gson.toJson(object, Tip.class);
-            
             notifyDataSetChanged();
         }
     }

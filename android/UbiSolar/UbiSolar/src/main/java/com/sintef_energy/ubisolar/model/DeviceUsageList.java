@@ -73,7 +73,7 @@ public class DeviceUsageList implements Parcelable
     {
         totalUsage = 0;
         for(DeviceUsage usage : usageList) {
-            if (formatDate(usage.getDatetime(), format).equals(date))
+            if (formatDate(((EnergyUsageModel)usage).toDate(), format).equals(date))
             {
                 totalUsage += usage.getPowerUsage();
             }
@@ -119,9 +119,9 @@ public class DeviceUsageList implements Parcelable
 
     private String formatDate(Date date, String format)
     {
-        SimpleDateFormat formater = new SimpleDateFormat (format);
+        SimpleDateFormat formatter = new SimpleDateFormat (format);
         if(date != null)
-            return formater.format(date);
+            return formatter.format(date);
         else
             return null;
     }

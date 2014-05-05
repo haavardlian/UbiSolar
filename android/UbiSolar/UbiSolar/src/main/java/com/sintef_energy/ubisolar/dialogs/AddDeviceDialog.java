@@ -4,12 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.LoaderManager;
 import android.content.DialogInterface;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,7 +23,7 @@ import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 /**
  * Created by pialindkjolen on 13.03.14.
  */
-public class AddDeviceDialog extends DialogFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class AddDeviceDialog extends DialogFragment {
 
     private TextView nameField, descriptionField;
     private DevicePresenter devicePresenter;
@@ -90,7 +86,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
 
 
         /*Fill spinner with categories*/
-        categoryAdapter = new ArrayAdapter<String>(
+        categoryAdapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.simple_spinner_item,
                 android.R.id.text1,
@@ -98,26 +94,7 @@ public class AddDeviceDialog extends DialogFragment implements LoaderManager.Loa
                 );
 
         categorySpinner.setAdapter(categoryAdapter);
-        //TODO: Remove Loadmanager?
-        getLoaderManager().initLoader(0, null, this);
-        AlertDialog alertDialog = builder.create();
 
-        return alertDialog;
-
-    };
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return null;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        return builder.create();
     }
 }

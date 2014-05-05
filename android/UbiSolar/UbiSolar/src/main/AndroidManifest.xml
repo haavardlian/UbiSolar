@@ -66,6 +66,11 @@
                 android:resource="@xml/authenticator" />
         </service>
 
+        <receiver android:name=".fragments.NavigationDrawerFragment$DataBroadCastReceiver" >
+            <intent-filter>
+                <action android:name="com.sintef_energy.ubisolar.broadcast_nav_drawer" />
+            </intent-filter>
+        </receiver>
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/APP_ID"/>
 
     </application>

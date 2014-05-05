@@ -1,19 +1,17 @@
 package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
+import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
@@ -31,13 +29,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-public class UsageGraphPieFragment extends Fragment implements IUsageView {
+public class UsageGraphPieFragment extends ProgressFragment implements IUsageView {
 
     public static final String TAG = UsageGraphLineFragment.class.getName();
 
-    private View rootView;
+    private View mRootView;
 
-    private static int[] colors;
+    private int[] colors;
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
@@ -54,6 +52,10 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     private boolean mLoaded = false;
     private int mDeviceSize;
 
+    private TextView nameView;
+    private TextView descriptionView;
+    private TextView powerUsageView;
+    private TextView usagePieLabel;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -73,31 +75,33 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        //Setup colors
         String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
         this.colors = new int[colorStringArray.length];
 
         for(int i = 0; i < colorStringArray.length; i++) {
             this.colors[i] = Color.parseColor(colorStringArray[i]);
         }
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        rootView = inflater.inflate(R.layout.fragment_usage_graph_pie, container, false);
-        return rootView;
-    }
-
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setContentView(R.layout.fragment_usage_graph_pie);
+        mRootView = getContentView();
+        setContentShown(false);
+        setEmptyText(getResources().getString(R.string.usage_no_content));
 
         mChartView = null;
 
+        nameView = (TextView) mRootView.findViewById(R.id.pieDetailsName);
+        descriptionView = (TextView) mRootView.findViewById(R.id.pieDetailsDescription);
+        powerUsageView = (TextView) mRootView.findViewById(R.id.pieDetailsPowerUsage);
+        usagePieLabel = (TextView) mRootView.findViewById(R.id.usagePieLabel);
+
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
-
 
         if (mSavedState != null) {
 //            mDeviceUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mDeviceUsageList");
@@ -168,8 +172,8 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     private void createPieGraph(){
         if (mChartView == null) {
-            LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.pieChartView);
-            mChartView = ChartFactory.getPieChartView(rootView.getContext(), mSeries, mRenderer);
+            LinearLayout layout = (LinearLayout) mRootView.findViewById(R.id.pieChartView);
+            mChartView = ChartFactory.getPieChartView(getActivity().getApplicationContext(), mSeries, mRenderer);
 
             mChartView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -223,8 +227,14 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         mChartView.repaint();
     }
 
+    /**
+     * Clears devices automatically before adding more data.
+     * @param usageList
+     */
     @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList){
+        clearDevices();
+
         mDeviceUsageList = usageList;
         setSelectedDate();
         for(DeviceUsageList u : mDeviceUsageList)
@@ -233,35 +243,34 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
         populatePieChart();
 
         if(mSelectedDate != null) {
-            TextView label = (TextView) rootView.findViewById(R.id.usagePieLabel);
-            label.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
+           usagePieLabel.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
         }
+
+        setContentShown(true);
     }
 
     public void setSelectedDate(){
         if(mSelectedDate == null) {
             if (mDeviceUsageList != null) {
                 DeviceUsageList dul = mDeviceUsageList.get(mDeviceUsageList.size() - 1);
-                mSelectedDate = dul.get(dul.size() - 1).getDatetime();
+                mSelectedDate = dul.get(dul.size() - 1).toDate();
             }
         }
     }
 
+    /**
+     * Clears current devices.
+     */
     @Override
     public void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
-        TextView label = (TextView) rootView.findViewById(R.id.usagePieLabel);
-        label.setText("");
+        usagePieLabel.setText("");
         mChartView.repaint();
-
     }
 
     private void updateDetails(){
         if(mSelected > -1 && mSelected < mDeviceUsageList.size()) {
-            TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
-            TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
-            TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
 
             DeviceUsageList usageList = mDeviceUsageList.get(mSelected);
 
@@ -272,10 +281,6 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
     }
 
     private void clearDetails(){
-        TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
-        TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
-        TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
-
         nameView.setText("");
         descriptionView.setText("");
         powerUsageView.setText("");
@@ -319,6 +324,11 @@ public class UsageGraphPieFragment extends Fragment implements IUsageView {
 
     public int getActiveIndex(){
         return 0;
+    }
+
+    @Override
+    public void setDataLoading(boolean state) {
+        setContentShown(state);
     }
 
     public boolean isLoaded(){

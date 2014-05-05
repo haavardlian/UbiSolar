@@ -1,7 +1,5 @@
 package com.sintef_energy.ubisolar.utils;
 
-import android.util.Log;
-
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Response;
@@ -27,7 +25,7 @@ public class JsonArrayRequestTweaked extends JsonRequest<JSONArray>{
     }
 
     @Override
-    protected Response parseNetworkResponse(NetworkResponse response) {
+    protected Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
         try {
             String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 

@@ -51,7 +51,7 @@ public class RequestFriendsProxy {
 
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        adapter.add((User)mapper.readValue(jsonArray.get(i).toString(), User.class));
+                        adapter.add(mapper.readValue(jsonArray.get(i).toString(), User.class));
                         //Log.d(tag, adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");

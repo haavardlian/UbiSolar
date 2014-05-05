@@ -117,7 +117,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
 
                         EnergyUsageModel euModel = new EnergyUsageModel();
-                        euModel.setDatetime(formatter.parse(mDateField.getText().toString()));
+                        euModel.setTimeStampFromDate(formatter.parse(mDateField.getText().toString()));
                         euModel.setDeviceId(item.getLong(pos));
                         euModel.setPowerUsage(value);
                         euModel.setDeleted(false);
