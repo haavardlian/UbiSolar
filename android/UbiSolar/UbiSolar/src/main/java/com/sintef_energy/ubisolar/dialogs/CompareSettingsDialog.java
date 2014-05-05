@@ -54,8 +54,8 @@ private ResidenceAttributes resAttr;
             energy = (CheckBox)view.findViewById(R.id.energyCheckBox);
             residents = (CheckBox)view.findViewById(R.id.resCheckBox);
 
-            area.setChecked(pref.getComparisonSizeChecked());
-            location.setChecked(pref.getComparisonAreaChecked());
+            area.setChecked(pref.getComparisonAreaChecked());
+            location.setChecked(pref.getComparisonLocationChecked());
             energy.setChecked(pref.getComparisonEnergyChecked());
             residents.setChecked(pref.getComparisonResidentsChecked());
 
@@ -65,10 +65,10 @@ private ResidenceAttributes resAttr;
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-                            pref.setComparisonSizeChecked(area.isChecked());
+                            pref.setComparisonAreaChecked(area.isChecked());
                             pref.setComparisonEnergyChecked(energy.isChecked());
                             pref.setComparisonResidentsChecked(residents.isChecked());
-                            pref.setComparisonAreaChecked(location.isChecked());
+                            pref.setComparisonLocationChecked(location.isChecked());
 
                         }
                     })
