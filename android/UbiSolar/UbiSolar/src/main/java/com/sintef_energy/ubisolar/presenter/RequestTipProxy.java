@@ -123,8 +123,6 @@ public class RequestTipProxy {
                                     }
                                 }
                             });
-
-
                     }
                 },
                 new Response.ErrorListener() {
