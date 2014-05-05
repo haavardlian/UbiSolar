@@ -17,8 +17,6 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 
 import com.sintef_energy.ubisolar.dialogs.CompareSettingsDialog;
-import com.sintef_energy.ubisolar.model.ResidenceAttributes;
-
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 /**
@@ -31,13 +29,11 @@ public class CompareSimilarFragment extends Fragment {
      */
     public static final String TAG = CompareSimilarFragment.class.getName();
 
-    //private ComparisonAdapter compAdapter;
     private SimilarAdapter simAdapter;
 
     private View view;
     private static final String ARG_POSITION = "position";
     private ProfilePictureView profilePicture;
-
 
     public CompareSimilarFragment(SimilarAdapter simAdapter) {
         this.simAdapter = simAdapter;
@@ -109,6 +105,7 @@ public class CompareSimilarFragment extends Fragment {
         inflater.inflate(R.menu.compare, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
