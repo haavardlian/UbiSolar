@@ -16,6 +16,9 @@
 #   public *;
 #}
 
+# Show line numbers in stack trace
+-keepattributes SourceFile,LineNumberTable
+
 # For facebook api
 -keep class com.facebook.** { *; }
 -keepattributes Signature

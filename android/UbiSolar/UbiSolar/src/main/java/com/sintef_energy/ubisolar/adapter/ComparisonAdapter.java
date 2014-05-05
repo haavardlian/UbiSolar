@@ -31,7 +31,6 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
     private static final String RES = "Number of residents";
     private static final String ENERGY = "Energy class";
 
-
     public ComparisonAdapter(Context context, int resource, List<ResidenceAttributes> residenceAttr) {
         super(context, resource);
 
@@ -65,11 +64,9 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        ComparisonHolder holder = null;
-
+        ComparisonHolder holder;
 
         if(row == null) {
-
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(resource, parent, false);
 
@@ -77,13 +74,11 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
             holder.name = (TextView)row.findViewById(R.id.comparison_setting_label);
             holder.checkBox = (CheckBox) row.findViewById(R.id.checkBox);
 
-
             if(!residenceAttr.isEmpty()) {
                 ResidenceAttributes residenceAttribute = residenceAttr.get(position);
                 holder.name.setText(residenceAttribute.getResidenceAttributeLabel());
                 holder.checkBox.setSelected(residenceAttribute.isSelected());
             }
-
 
             holder.checkBox.setTag(R.id.checkBox, holder.name.getText());
             holder.checkBox.setOnClickListener(new View.OnClickListener() {
@@ -110,9 +105,7 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
         CheckBox checkBox;
     }
 
-
     private void setTextSetting(String text, boolean state){
-
         Log.v(TAG, text + "  " + state);
 
         PreferencesManager pref = PreferencesManager.getInstance();
@@ -153,5 +146,4 @@ public class ComparisonAdapter extends ArrayAdapter<ResidenceAttributes> {
 
         cb.setChecked(value);
     }
-
 }

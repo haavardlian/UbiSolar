@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
+
 import com.sintef_energy.ubisolar.dialogs.CompareSettingsDialog;
 import com.sintef_energy.ubisolar.model.ResidenceAttributes;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
-import java.util.ArrayList;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 /**
  * Created by baier on 4/1/14.
@@ -38,7 +38,6 @@ public class CompareSimilarFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private ProfilePictureView profilePicture;
 
-    private ArrayList<Boolean> resCheckboxes = new ArrayList<Boolean>();
 
     public CompareSimilarFragment(SimilarAdapter simAdapter) {
         this.simAdapter = simAdapter;

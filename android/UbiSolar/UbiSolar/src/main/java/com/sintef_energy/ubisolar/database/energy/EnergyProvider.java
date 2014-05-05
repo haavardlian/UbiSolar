@@ -14,9 +14,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
 
-import android.provider.BaseColumns;
 import android.text.TextUtils;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -28,6 +26,8 @@ import java.util.ArrayList;
  * Should the providers CRUD method be implemented with synchronized? Will give a overhead, but
  * will possibly avoid bugs.
  *
+ * TODO Use UID on all searches
+ *
  */
 public class EnergyProvider extends ContentProvider{
 
@@ -35,7 +35,7 @@ public class EnergyProvider extends ContentProvider{
 
     private EnergyOpenHelper mHelper = null;
 
-    private final ThreadLocal<Boolean> mIsInBatchMode = new ThreadLocal<Boolean>();
+    private final ThreadLocal<Boolean> mIsInBatchMode = new ThreadLocal<>();
 
     // helper constants for use with the UriMatcher
     private static final int DEVICES_LIST_DELETE = 9;
@@ -162,24 +162,24 @@ public class EnergyProvider extends ContentProvider{
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
 
-        if(selection == null) {
-            if (!deleteData)
-                selection = selectionAvoidDeleteBit;
-        }
-        else
-            selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
+        if(rawSql == null) {
+            if (selection == null) {
+                if (!deleteData)
+                    selection = selectionAvoidDeleteBit;
+            } else if (!selection.equals("")) {
+                selection = "(" + selection + ") AND " + selectionAvoidDeleteBit;
+            }
 
-        //Log.v(TAG, "SORT ORDER BETCH: " + sortOrder);
-        if(rawSql == null)
             cursor =
-                  builder.query(
-                        db,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
+                    builder.query(
+                            db,
+                            projection,
+                            selection,
+                            selectionArgs,
+                            null,
+                            null,
+                            sortOrder);
+        }
         else
             cursor = db.rawQuery(rawSql, selectionArgs);
 
@@ -382,10 +382,10 @@ public class EnergyProvider extends ContentProvider{
                 try {
                     //standard SQL insert statement, that can be reused
                     SQLiteStatement insert =
-                            db.compileStatement("insert into " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME
+                            db.compileStatement("INSERT OR REPLACE INTO " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME
                                     + "(" + EnergyUsageModel.EnergyUsageEntry._ID + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ","
-                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + ","
+                                    + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED + ","
                                     + EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED + ")"
@@ -394,7 +394,7 @@ public class EnergyProvider extends ContentProvider{
                         //bind the 1-indexed ?'s to the values specified
                         insert.bindLong(1, value.getAsLong(EnergyUsageModel.EnergyUsageEntry._ID));
                         insert.bindLong(2, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID));
-                        insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME));
+                        insert.bindLong(3, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP));
                         insert.bindDouble(4, value.getAsDouble(EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER));
                         insert.bindLong(5, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_IS_DELETED));
                         insert.bindLong(6, value.getAsLong(EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED));
@@ -500,24 +500,31 @@ public class EnergyProvider extends ContentProvider{
    }
 
 
-    private static final String selectionAvoidDeleteBit =  DeviceModel.DeviceEntry.COLUMN_IS_DELETED + "<>1 ";
+    private static final String selectionAvoidDeleteBit = DeviceModel.DeviceEntry.COLUMN_IS_DELETED + "<>1 ";
 
     private String generateRawDateSql(String date, String where){
 
         //Time to aggregate on
-        String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
+        String time =  "strftime(\'" + date + "\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
 
         //Unixtime
-        String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + "`, 'unixepoch'))";
+        String time2 =  "strftime(\'%s\', datetime(`" + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
 
-        return "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
+        String statement = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
                         + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
                         + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
-                        + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " "
-                        + "WHERE " + where + " AND " + selectionAvoidDeleteBit
-                        + "GROUP BY " + time + ", "
-                            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
-                        + "ORDER BY `month` ASC";
+                        + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " ";
+
+        if(!where.equals(""))
+            statement += "WHERE (" + where + ") AND " + selectionAvoidDeleteBit;
+        else
+            statement += "WHERE " + selectionAvoidDeleteBit;
+
+        statement += "GROUP BY " + time + ", "
+            + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " "
+            + "ORDER BY `month` ASC";
+
+        return statement;
     }
 }
