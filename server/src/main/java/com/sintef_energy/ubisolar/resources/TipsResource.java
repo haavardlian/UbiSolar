@@ -54,8 +54,8 @@ public class TipsResource {
     @Path("/{id}/rating")
     public Response createRating(@Valid TipRating rating) {
         int result = db.createRating(rating);
-
-        if(result == 1) return Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Rating created")).build();
+        System.out.println("Changed: " + result);
+        if(result > 0) return Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Rating created")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 

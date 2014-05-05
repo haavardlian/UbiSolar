@@ -53,4 +53,10 @@ public class TipRating {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
+    public String toString() {
+        return "Id: " + this.id + "\n" +
+               "Tip: " + this.tipId + "\n" +
+               "User" + this.userId;
+    }
 }
