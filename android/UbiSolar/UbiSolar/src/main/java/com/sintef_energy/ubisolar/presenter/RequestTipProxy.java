@@ -169,8 +169,6 @@ public class RequestTipProxy {
                                     }
                                 }
                             });
-
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -183,7 +181,6 @@ public class RequestTipProxy {
                                         Toast.LENGTH_SHORT).show();
                             }
                         });
-
                     }
                 });
 

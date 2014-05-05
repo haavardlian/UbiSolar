@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 
 import com.devspark.progressfragment.ProgressFragment;
+import com.sintef_energy.ubisolar.IView.ITaskComplete;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class UsageGraphLineFragment extends ProgressFragment implements IUsageView{
+public class UsageGraphLineFragment extends ProgressFragment implements IUsageView, ITaskComplete<GraphicalView>{
     public static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String STATE_euModels = "STATE_euModels";
 
@@ -46,9 +47,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private GraphicalView mChartView;
     private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
-    private int[] colors;
+    private static int[] colors;
 
-    private int mColorIndex;
+    //private int mColorIndex;
 
     private Bundle mSavedState;
     private View mRootView;
@@ -274,15 +275,33 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         }
     }
 
+    @Override
+    public void onComplete(GraphicalView graphicalView) {
+       setViewState(true);
+        mChartView = graphicalView;
+        //Repaint?
+    }
+
+    @Override
+    public void updateProgress(int progress) {
+
+    }
+
     /**
-     * All manupulation of new graph is done here..
+     * All manipulation of new graph is done here..
      */
     //TODO Rewrite to static and use WeakReference
-    private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Void, Void>{
-        /*ArrayList<DeviceUsageList> activeUsageList;
-        XYMultipleSeriesRenderer renderer;
-        XYMultipleSeriesDataset dataset;
-        ArrayList<Date> dates;*/
+    private static class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Void, Void>{
+        // TODO Assign references
+        ArrayList<DeviceUsageList> mActiveUsageList;
+        XYMultipleSeriesRenderer mRenderer;
+        XYMultipleSeriesDataset mDataset;
+        ArrayList<Date> mDates;
+        Resolution resolution;
+        int mActiveDateIndex = 0;
+        GraphicalView mChartView;
+
+        ITaskComplete<GraphicalView> callback;
 
         double max;
         double min;
@@ -290,6 +309,15 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         boolean abort = false;
 
         long startTime = 0;
+
+        int colorIndex = 0;
+
+        /**
+         * Todo references
+         */
+        public void startup(){
+
+        }
 
         /**
          * (non-Javadoc)
@@ -300,7 +328,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         protected void onPreExecute() {
             Log.v(TAG, "Starting Async graphView update");
 
-            setViewState(false);
+            ((UsageGraphLineFragment)callback).setViewState(false);
 
             startTime = System.currentTimeMillis();
 
@@ -314,6 +342,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         @Override
         protected Void doInBackground(ArrayList<DeviceUsageList>... dataUsageList) {
+            colorIndex = 0;
+
             for(int i = 0; i < dataUsageList[0].size(); i++){
                 mActiveUsageList.add(dataUsageList[0].get(i));
                 addSeries(dataUsageList[0].get(i).getDevice().getName(), true, false);
@@ -369,8 +399,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             if(mActiveDateIndex <= mDates.size())
                 mActiveDateIndex = mDates.size() -1;
 
-            setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
-
+            ((UsageGraphLineFragment)callback).setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
 
             return null;
         }
@@ -402,12 +431,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
             Log.v(TAG, "AsyncTask complete: Time: " + (System.currentTimeMillis() - startTime) + "milliseconds. Rendering the new ChartView");
 
-
             if( mChartView != null)
                 mChartView.repaint();
 
-            setViewState(true);
-
+            callback.onComplete(mChartView);
         }
 
         /**
@@ -421,7 +448,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
             XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
             seriesRenderer.setLineWidth(3);
-            seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
+            seriesRenderer.setColor(colors[colorIndex++ % colors.length]);
             seriesRenderer.setShowLegendItem(true);
 
             mRenderer.addSeriesRenderer(seriesRenderer);
@@ -498,16 +525,18 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                     .equals(formatDate(date2, resolution.getCompareFormat()));
         }
 
-        /**
-         * Enables/ disables part of the view when data loades.
-         */
-        private void setViewState(boolean state){
-            mChartView.setEnabled(state);
-            setContentShown(state);
-        }
+
     }
 
-    private void setLabels(String label)
+    /**
+     * Enables/ disables part of the view when data loades.
+     */
+    public void setViewState(boolean state){
+        mChartView.setEnabled(state);
+        setContentShown(state);
+    }
+
+    public void setLabels(String label)
     {
         mRenderer.setXTitle(label);
         mTitleLabel = label;
@@ -522,7 +551,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         mDataset.clear();
         mRenderer.removeAllRenderers();
         mChartView.repaint();
-        mColorIndex = 0;
+        //mColorIndex = 0;
     }
 
     @Override
@@ -533,7 +562,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         asyncGraphCreator.execute(usageList);
     }
 
-    private String formatDate(Date date, String format){
+    private static String formatDate(Date date, String format){
         SimpleDateFormat formatter = new SimpleDateFormat (format);
         if(date != null)
             return formatter.format(date);
