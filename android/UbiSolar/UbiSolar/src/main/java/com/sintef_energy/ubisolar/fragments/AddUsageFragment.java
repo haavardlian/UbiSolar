@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -47,7 +48,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     private EditText mKwhField;
     private ImageButton mButtonKwhUp;
     private ImageButton mButtonKwhDown;
-    private ImageButton mButtonAddUsage;
+    private Button mButtonAddUsage;
     private RelativeLayout mRelativeLayout;
 
     private Spinner spinnerDevice;
@@ -95,7 +96,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mKwhField = (EditText)view.findViewById(R.id.dialog_add_usage_edittext_kwh);
         mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
         mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
-        mButtonAddUsage = (ImageButton)view.findViewById(R.id.btnAddUsage);
+        mButtonAddUsage = (Button)view.findViewById(R.id.btnAddUsage);
         final DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.setTargetFragment(this, 0);
 
@@ -105,43 +106,50 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             public void onClick(View view) {
                 String text = mKwhField.getText().toString();
 
-                if (text.length() > 0) {
-                    Double value = Double.valueOf(text);
-
-                    int pos = spinnerDevice.getSelectedItemPosition();
-
-                    Cursor item = mDeviceAdapter.getCursor();
-                    item.moveToPosition(pos);
-                    pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
-
-                    try {
-
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
-
-                        EnergyUsageModel euModel = new EnergyUsageModel();
-                        euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
-                        euModel.setDeviceId(item.getLong(pos));
-                        euModel.setPowerUsage(value);
-                        euModel.setDeleted(false);
-
-                        if (mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
-                            Log.v(TAG, "Added object to database:\n" + euModel);
-                        Utils.makeShortToast(getActivity().getApplicationContext(), "Usage added");
-
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        Utils.makeShortToast(getActivity().getApplicationContext(), "Unable to parse the date");
-                    }
+                if(text.length() < 1){
+                    Utils.makeLongToast(getActivity().getApplicationContext(), "Error: No usage added");
+                    return;
                 }
+
+                Double value = Double.valueOf(text);
+                int pos = spinnerDevice.getSelectedItemPosition();
+
+                if(pos == Spinner.INVALID_POSITION){
+                    Utils.makeLongToast(getActivity().getApplicationContext(), "Error: No device selected");
+                   return;
+                }
+
+                Cursor item = mDeviceAdapter.getCursor();
+                item.moveToPosition(pos);
+                pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
+
+                try {
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
+
+                    EnergyUsageModel euModel = new EnergyUsageModel();
+                    euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
+                    euModel.setDeviceId(item.getLong(pos));
+                    euModel.setPowerUsage(value);
+                    euModel.setDeleted(false);
+
+                    if (mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
+                        Log.v(TAG, "Added object to database:\n" + euModel);
+
+                    Utils.makeLongToast(getActivity().getApplicationContext(), "Usage added for device: " + item.getString(
+                            item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME)));
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    Utils.makeShortToast(getActivity().getApplicationContext(), "Unable to parse the date");
+                }
+
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
                         getActivity().getApplicationContext().INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mKwhField.getWindowToken(), 0);
-
             }
         });
 
-
-        //mButtonCalendar
         mRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,7 +215,6 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         updateDateText();
         return view;
     }
-
 
     private void updateDateText(){
         mTextDate.setText(formatter.format(currentMonth.getTime()));

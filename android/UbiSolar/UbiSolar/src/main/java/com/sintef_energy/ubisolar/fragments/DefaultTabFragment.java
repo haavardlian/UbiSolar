@@ -21,7 +21,5 @@ public abstract class DefaultTabFragment extends Fragment {
 
         ((DrawerActivity) getActivity()).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
         ((DrawerActivity) getActivity()).restoreActionBar();
-        //getActivity().getActionBar().setTitle();
     }
-
 }
