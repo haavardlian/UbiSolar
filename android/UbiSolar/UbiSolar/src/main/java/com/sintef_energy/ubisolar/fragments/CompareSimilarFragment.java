@@ -2,14 +2,21 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
+
+import com.sintef_energy.ubisolar.dialogs.CompareSettingsDialog;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 /**
@@ -22,7 +29,6 @@ public class CompareSimilarFragment extends Fragment {
      */
     public static final String TAG = CompareSimilarFragment.class.getName();
 
-    //private ComparisonAdapter compAdapter;
     private SimilarAdapter simAdapter;
 
     private View view;
@@ -91,6 +97,31 @@ public class CompareSimilarFragment extends Fragment {
 
         if (savedInstanceState != null) {
             // Restore last state for checked position.
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.compare, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        FragmentManager fragmentManager = getFragmentManager();
+        if(fragmentManager == null) {
+            Log.e(TAG, "Unable to load the fragment manager");
+            return false;
+        }
+        switch (item.getItemId()) {
+            case R.id.compare_filter:
+                CompareSettingsDialog d = new CompareSettingsDialog();
+                d.setTargetFragment(CompareSimilarFragment.this, 0);
+                d.show(fragmentManager, "filterCompare");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 

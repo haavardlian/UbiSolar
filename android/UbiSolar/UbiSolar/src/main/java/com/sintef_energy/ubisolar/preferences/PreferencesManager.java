@@ -14,9 +14,9 @@ public class PreferencesManager {
     public static final String KEY_ACCESS_TOKEN = PreferencesManager.class.getName() + ".KEY_SYNC_TIMESTAMP";
     public static final String KEY_ACCESS_TOKEN_EXPIRES = PreferencesManager.class.getName() + ".KEY_FRONTEND_DEVICE_SYNC_TIMESTAMP";
 
-    public static final String COMPARISON_AREA_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_AREA_CHECKED";
+    public static final String COMPARISON_LOCATION_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_LOCATION_CHECKED";
     public static final String COMPARISON_RESIDENTS_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_RESIDENTS_CHECKED";
-    public static final String COMPARISON_SIZE_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_SIZE_CHECKED";
+    public static final String COMPARISON_AREA_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_AREA_CHECKED";
     public static final String COMPARISON_ENERGY_CHECKED = PreferencesManager.class.getName() + ".COMPARISON_ENERGY_CHECKED";
 
     public static final String FACEBOOK_NAME = PreferencesManager.class.getName() + ".FACEBOOK_NAME";
@@ -105,15 +105,15 @@ public class PreferencesManager {
                 .apply();
     }
 
-    public void setComparisonAreaChecked(boolean value) {
+    public void setComparisonLocationChecked(boolean value) {
         mPref.edit()
-                .putBoolean(COMPARISON_AREA_CHECKED, value)
+                .putBoolean(COMPARISON_LOCATION_CHECKED, value)
                 .apply();
     }
 
-    public void setComparisonSizeChecked(boolean value) {
+    public void setComparisonAreaChecked(boolean value) {
         mPref.edit()
-                .putBoolean(COMPARISON_SIZE_CHECKED, value)
+                .putBoolean(COMPARISON_AREA_CHECKED, value)
                 .apply();
     }
 
@@ -158,12 +158,12 @@ public class PreferencesManager {
         return mPref.getString(KEY_ACCESS_TOKEN, "");
     }
 
-    public boolean getComparisonAreaChecked(){
-        return mPref.getBoolean(COMPARISON_AREA_CHECKED, false);
+    public boolean getComparisonLocationChecked(){
+        return mPref.getBoolean(COMPARISON_LOCATION_CHECKED, false);
     }
 
-    public boolean getComparisonSizeChecked(){
-        return mPref.getBoolean(COMPARISON_SIZE_CHECKED, false);
+    public boolean getComparisonAreaChecked(){
+        return mPref.getBoolean(COMPARISON_AREA_CHECKED, false);
     }
 
     public boolean getComparisonResidentsChecked(){
