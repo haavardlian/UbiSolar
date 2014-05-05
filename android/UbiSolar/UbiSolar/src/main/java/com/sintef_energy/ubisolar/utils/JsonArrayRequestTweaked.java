@@ -33,10 +33,8 @@ public class JsonArrayRequestTweaked extends JsonRequest<JSONArray>{
                 return Response.success(new JSONArray(jsonString), HttpHeaderParser.parseCacheHeaders(response));
             else
                 return Response.success(new JSONArray(), HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException | JSONException | NullPointerException e) {
             return Response.error(new ParseError(e));
-        } catch (JSONException je) {
-            return Response.error(new ParseError(je));
         }
     }
 }

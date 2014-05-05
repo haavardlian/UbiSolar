@@ -19,6 +19,7 @@ import com.sintef_energy.ubisolar.adapter.TipAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.utils.Global;
+import com.sintef_energy.ubisolar.utils.JsonObjectRequestTweaked;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,7 +97,7 @@ public class RequestTipProxy {
         requestQueue.add(jsonRequest);
     }
 
-    public void createTip(Tip tip) {
+    public void createTip(Tip tip, final Fragment fragment) {
         String url = Global.BASE_URL + "/tips";
         JSONObject jsonObject;
 
@@ -116,7 +117,7 @@ public class RequestTipProxy {
                                 @Override
                                 public void run() {
                                     try {
-                                        Toast.makeText(activity.getApplicationContext(), response.getString("message"),
+                                        Toast.makeText(fragment.getActivity(), response.getString("message"),
                                             Toast.LENGTH_LONG).show();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -131,7 +132,7 @@ public class RequestTipProxy {
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(activity.getApplicationContext(), "An error occurred", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(fragment.getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -141,7 +142,7 @@ public class RequestTipProxy {
         requestQueue.add(jsonRequest);
     }
 
-    public void createRating(TipRating rating) {
+    public void createRating(TipRating rating, final Fragment fragment) {
         String url = Global.BASE_URL + "/tips/" + rating.getTipId() + "/rating/";
         JSONObject jsonObject;
 
@@ -152,17 +153,16 @@ public class RequestTipProxy {
             return;
         }
 
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
+        JsonObjectRequest jsonRequest = new JsonObjectRequestTweaked(Request.Method.PUT, url, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
-
                             activity.runOnUiThread(new Runnable() {
 
                                 @Override
                                 public void run() {
                                     try {
-                                        Toast.makeText(activity.getApplicationContext(), response.getString("message"),
+                                        Toast.makeText(fragment.getActivity(), response.getString("message"),
                                             Toast.LENGTH_SHORT).show();
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -176,10 +176,11 @@ public class RequestTipProxy {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
                         activity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(activity.getApplicationContext(), "An error occurred",
+                                Toast.makeText(fragment.getActivity(), "An error occurred",
                                         Toast.LENGTH_SHORT).show();
                             }
                         });
