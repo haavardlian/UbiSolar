@@ -221,6 +221,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public void onDestroy(){
         super.onDestroy();
+        cleanUpReferences();
     }
 
     private Bundle saveState(){
@@ -229,6 +230,19 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         state.putParcelableArrayList("mDeviceUsageList", mDeviceUsageList);
 
         return state;
+    }
+
+    /**
+     * Everything is nulled out so the GC can collect the fragment instance.
+     */
+    private void cleanUpReferences(){
+        mRootView = null;
+        mSavedState = null;
+        mDevices = null;
+        mDeviceUsageList = null;
+        graphView = null;
+        mUsageFragmentStatePageAdapter = null;
+        mPreferenceManager = null;
     }
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
@@ -240,27 +254,27 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
-                return new CursorLoader(
-                        getActivity(),
-                        EnergyContract.Devices.CONTENT_URI,
-                        EnergyContract.Devices.PROJECTION_ALL,
-                        null,
-                        null,
-                        DeviceModel.DeviceEntry._ID + " ASC");
+        return new CursorLoader(
+                getActivity(),
+                EnergyContract.Devices.CONTENT_URI,
+                EnergyContract.Devices.PROJECTION_ALL,
+                null,
+                null,
+                DeviceModel.DeviceEntry._ID + " ASC");
     }
 
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
-                mDevices.clear();
-                cursor.moveToFirst();
-                if (cursor.getCount() != 0)
-                    do {
-                        DeviceModel model = new DeviceModel(cursor);
-                        mDevices.put(model.getId(), model);
-                    } while (cursor.moveToNext());
-                graphView.setDevices(mDevices);
-                graphView.pullData();
+        mDevices.clear();
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0)
+            do {
+                DeviceModel model = new DeviceModel(cursor);
+                mDevices.put(model.getId(), model);
+            } while (cursor.moveToNext());
+        graphView.setDevices(mDevices);
+        graphView.pullData();
     }
 
     @Override

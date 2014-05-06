@@ -73,6 +73,26 @@
         <item>Pie chart</item>
     </string-array>
 
+    <!-- AddResidenceDialog -->
+    <string-array name="energy_classes">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>D</item>
+        <item>E</item>
+        <item>F</item>
+        <item>G</item>
+    </string-array>
+    <string name="add_residence_name">Name</string>
+    <string name="add_residence_name_tip">Name your residence</string>
+    <string name="add_residence_description">Description</string>
+    <string name="add_residence_description_tip">Description of your residence</string>
+    <string name="add_residence_residents">Number of residents</string>
+    <string name="add_residence_area">Size of living area</string>
+    <string name="add_residence_zip_code">Zip code</string>
+    <string name="add_residence_energy_class">Energy class</string>
+    <string name="addResidenceDialog_button">Add</string>
+
 
     <!--Other-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -110,7 +130,13 @@
     <string name="home_energy">than same energy class</string>
 
     <!-- Comparison settings-->
-    <string name="comparison_setting">Comparison setting</string>
+    <string name="comparison_setting">Comparison settings</string>
+    <string name="location_comparison_setting">Location</string>
+    <string name="res_comparison_setting">Number of residents</string>
+    <string name="area_comparison_setting">Area</string>
+    <string name="energy_comparison_setting">Energy class</string>
+    <string name="compare_filter">Filter</string>
+
 
 
     <!-- Fragment Energy saving tabs -->

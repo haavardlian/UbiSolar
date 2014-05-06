@@ -33,7 +33,7 @@ public class EnergyProvider extends ContentProvider{
 
     private static final String TAG = EnergyProvider.class.getName();
     private EnergyOpenHelper mHelper = null;
-    private final ThreadLocal<Boolean> mIsInBatchMode = new ThreadLocal<Boolean>();
+    private final ThreadLocal<Boolean> mIsInBatchMode = new ThreadLocal<>();
 
     // helper constants for use with the UriMatcher
     private static final int DEVICES_LIST_DELETE = 9;

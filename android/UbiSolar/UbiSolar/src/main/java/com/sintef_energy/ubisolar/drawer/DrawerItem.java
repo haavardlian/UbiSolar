@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.drawer;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
@@ -31,12 +32,12 @@ public class DrawerItem implements Item {
     }
 
     @Override
-    public View getView(LayoutInflater inflater, View convertView) {
+    public View getView(LayoutInflater inflater, View convertView, ViewGroup parent) {
         View view;
         holder = new DrawerHolder();
 
         if (convertView == null) {
-            view = (View) inflater.inflate(R.layout.drawer_list_item, null);
+            view = inflater.inflate(R.layout.drawer_list_item, parent, false);
             // Do some initialization
         } else {
             view = convertView;

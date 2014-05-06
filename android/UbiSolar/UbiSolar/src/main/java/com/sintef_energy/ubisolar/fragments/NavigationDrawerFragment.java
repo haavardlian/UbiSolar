@@ -392,6 +392,7 @@ public class NavigationDrawerFragment extends Fragment {
         Log.v(TAG, "UpdateUsageDrawItemCount: Nav drawer usage update: " + value);
     }
 
+    //TODO Rewrite to static and use WeakReference
     public class DataBroadCastReceiver extends BroadcastReceiver{
 
         @Override

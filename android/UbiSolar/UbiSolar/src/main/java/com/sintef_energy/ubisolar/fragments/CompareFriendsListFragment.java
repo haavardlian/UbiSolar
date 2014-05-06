@@ -65,7 +65,7 @@ public class CompareFriendsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_social_friends, container, false);
-        friends = new ArrayList<User>();
+        friends = new ArrayList<>();
         FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
         final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
         friendsList.setAdapter(friendAdapter);

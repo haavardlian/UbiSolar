@@ -2,18 +2,13 @@ package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.TipAdapter;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
-import com.sintef_energy.ubisolar.dialogs.TipDialog;
-import com.sintef_energy.ubisolar.dialogs.YourDialog;
 import com.sintef_energy.ubisolar.model.Tip;
 
 import java.util.ArrayList;

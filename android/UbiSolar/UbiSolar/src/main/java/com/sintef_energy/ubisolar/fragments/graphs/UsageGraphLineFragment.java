@@ -198,6 +198,25 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     @Override
     public void onDestroy() {
         super.onDestroy();
+        cleanUpReferences();
+    }
+
+    /**
+     * Everything is nulled out so the GC can collect the fragment instance.
+     */
+    private void cleanUpReferences(){
+        mRootView = null;
+        mSavedState = null;
+        mDataset = null;
+        mRenderer = null;
+        mChartView = null;
+        mActiveUsageList = null;
+        mTitleLabel = null;
+        colors = null;
+        mSavedState = null;
+        resolution = null;
+        mSelectedDialogItems = null;
+        mDates = null;
     }
 
     /**
@@ -245,6 +264,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 public void panApplied() {
                     int activePoint = (int) (mRenderer.getXAxisMin() + mRenderer.getXAxisMax()) / 2;
                     mActiveDateIndex = activePoint / POINT_DISTANCE;
+
                     if (mActiveDateIndex < 0)
                         return;
 
@@ -271,7 +291,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     /**
      * All manupulation of new graph is done here..
      */
-    private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Void, Void> {
+    //TODO Rewrite to static and use WeakReference
+    private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Void, Void>{
         /*ArrayList<DeviceUsageList> activeUsageList;
         XYMultipleSeriesRenderer renderer;
         XYMultipleSeriesDataset dataset;

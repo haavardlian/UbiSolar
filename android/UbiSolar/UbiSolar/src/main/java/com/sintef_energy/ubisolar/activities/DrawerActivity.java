@@ -43,6 +43,7 @@ import com.sintef_energy.ubisolar.fragments.CompareFragment;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
+import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Global;
 
@@ -79,6 +80,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     private TotalEnergyPresenter mTotalEnergyPresenter;
     private DevicePresenter devicePresenter;
+    private ResidencePresenter residencePresenter;
 
     private FacebookSessionStatusCallback mFacebookSessionStatusCallback;
 
@@ -123,6 +125,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         /* Set up the presenters */
         mTotalEnergyPresenter = new TotalEnergyPresenter();
         devicePresenter = new DevicePresenter();
+        residencePresenter = new ResidencePresenter();
 
         titleNames = getResources().getStringArray(R.array.nav_drawer_items);
         setContentView(R.layout.activity_usage);
@@ -193,6 +196,32 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         super.onStop();
         Session.getActiveSession().removeCallback(mFacebookSessionStatusCallback);
     }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        cleanUpReferences();
+    }
+
+    /**
+     * Everything is nulled out so the GC can collect the fragment instance.
+     */
+    private void cleanUpReferences(){
+        mNavigationDrawerFragment = null;
+        mTitle = null;
+        titleNames = null;
+        mTotalEnergyPresenter = null;
+        devicePresenter = null;
+        residencePresenter = null;
+        mFacebookSessionStatusCallback = null;
+        mPrefManager = null;
+        AUTHORITY = null;
+        ACCOUNT_TYPE = null;
+        ACCOUNT = null;
+        mAccount = null;
+        FACEBOOK_PERMISSIONS = null;
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -338,6 +367,8 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     @Override
     public DevicePresenter getDevicePresenter() { return devicePresenter; }
 
+    @Override
+    public ResidencePresenter getResidencePresenter() {return residencePresenter;}
     /* Login logic */
 
     /**
@@ -368,7 +399,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     }
 
     /**
-     * Handles login and logout from facebook, when the user clicks the login/ lgout button.
+     * Handles login and logout from facebook, when the user clicks the login/ logout button.
      * What done is based on Global.isloggedIn state.
      *
      * Updates state, and UI accordingly.
@@ -460,8 +491,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
                             if(response.getConnection() != null || response.getIsFromCache()) {
-
-
                                 if(null != user.getFirstName())
                                     mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
                                 else
@@ -484,12 +513,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
                                 mPrefManager.setKeyFacebookUid(user.getId());
 
-                                Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
-                                Log.d("FACEBOOKNAME", user.getFirstName()+" "+user.getLastName());
-                                //Log.d("FACEBOOKLOCATION", user.getLocation().getCity()+" ");
+                                Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());/*
+                                Log.d("FACEBOOKNAME", user.getFirstName() + " " + user.getLastName());
+                                Log.d("FACEBOOKLOCATION", user.getLocation().getCity()+" ");
                                 Log.d("FACEBOOKAGE", user.getBirthday()+" ");
-                                //Log.d("FACEBOOKCOUNTRY", user.getLocation().getCountry()+" ");
-
+                                Log.d("FACEBOOKCOUNTRY", user.getLocation().getCountry()+" ");*/
 
                             } else {
                                 Log.e(TAG, "No facebook data return on newMeRequest.");
@@ -565,81 +593,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             .build());
         }
     }
-/*
-    public void publishStory() {
-        Session session = Session.getActiveSession();
 
-        if (session != null){
-
-            // Check for publish permissions
-            List<String> permissions = session.getPermissions();
-            Log.d(TAG,"Session permissions" + session.getPermissions().toString());
-            Log.d(TAG,"Stored permissions" + FACEBOOK_PERMISSIONS.toString());
-            if (!isSubsetOf(FACEBOOK_PERMISSIONS, permissions)) {
-               // pendingPublishReauthorization = true;
-                Session.NewPermissionsRequest newPermissionsRequest = new Session
-                        .NewPermissionsRequest(this, FACEBOOK_PERMISSIONS);
-                session.requestNewPublishPermissions(newPermissionsRequest);
-                return;
-            }
-
-            Bundle postParams = new Bundle();
-            postParams.putString("name", "Facebook SDK for Android");
-            postParams.putString("caption", "Build great social apps and get more installs.");
-            postParams.putString("description", "The Facebook SDK for Android makes it easier and faster to develop Facebook integrated Android apps.");
-            postParams.putString("link", "https://developers.facebook.com/android");
-            postParams.putString("picture", "https://raw.github.com/fbsamples/ios-3.x-howtos/master/Images/iossdk_logo.png");
-
-            Request.Callback callback= new Request.Callback() {
-                public void onCompleted(Response response) {
-                    JSONObject graphResponse = response
-                            .getGraphObject()
-                            .getInnerJSONObject();
-                    String postId = null;
-                    try {
-                        postId = graphResponse.getString("id");
-                    } catch (JSONException e) {
-                        Log.i(TAG,
-                                "JSON error "+ e.getMessage());
-                    }
-                    FacebookRequestError error = response.getError();
-                    if (error != null) {
-                        Toast.makeText(getApplicationContext(),
-                                error.getErrorMessage(),
-                                Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getApplicationContext(),
-                                postId,
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-            };
-
-            Request request = new Request(session, "me/feed", postParams,
-                    HttpMethod.POST, callback);
-
-            RequestAsyncTask task = new RequestAsyncTask(request);
-            task.execute();
-            Log.d(TAG,"POSTEDFACEBOOK");
-        }
-    }
-
-
-    private boolean isSubsetOf(Collection<String> subset, Collection<String> superset) {
-        for (String string : subset) {
-            if (!superset.contains(string)) {
-                return false;
-            }
-        }
-        return true;
-    }
-*/
     private void setFacebookPermissions() {
         FACEBOOK_PERMISSIONS=new ArrayList<>();
         FACEBOOK_PERMISSIONS.add("user_birthday");
         FACEBOOK_PERMISSIONS.add("user_location");
         FACEBOOK_PERMISSIONS.add("email");
-        FACEBOOK_PERMISSIONS.add("publish_actions");
     }
-
 }

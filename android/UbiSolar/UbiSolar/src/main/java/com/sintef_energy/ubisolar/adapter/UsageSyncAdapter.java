@@ -18,7 +18,6 @@ import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.utils.Global;
-import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.ArrayList;
 

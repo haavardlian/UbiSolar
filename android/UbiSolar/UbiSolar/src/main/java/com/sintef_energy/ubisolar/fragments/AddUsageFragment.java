@@ -14,8 +14,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.IView.IDateCallback;
@@ -41,12 +43,12 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     private Calendar currentMonth;
     private SimpleDateFormat formatter;
 
-    private EditText mDateField;
+    private TextView mTextDate;
     private EditText mKwhField;
-    private ImageButton mButtonCalendar;
     private ImageButton mButtonKwhUp;
     private ImageButton mButtonKwhDown;
     private ImageButton mButtonAddUsage;
+    private RelativeLayout mRelativeLayout;
 
     private Spinner spinnerDevice;
     private SimpleCursorAdapter mDeviceAdapter;
@@ -76,7 +78,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        View view = inflater.inflate(R.layout.fragment_add_usage, null);
+        View view = inflater.inflate(R.layout.fragment_add_usage, container, false);
 
         //Set the calendar
         currentMonth = Calendar.getInstance();
@@ -88,9 +90,9 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
 
         /* Fetch view */
         spinnerDevice = (Spinner)view.findViewById(R.id.dialog_add_usage_spinner);
-        mDateField = (EditText)view.findViewById(R.id.dialog_add_usage_edit_date);
+        mRelativeLayout = (RelativeLayout)view.findViewById(R.id.fragment_add_usage_rl_date);
+        mTextDate = (TextView)view.findViewById(R.id.fragment_add_usage_text_date);
         mKwhField = (EditText)view.findViewById(R.id.dialog_add_usage_edittext_kwh);
-        mButtonCalendar = (ImageButton)view.findViewById(R.id.dialog_add_usage_button_calendar);
         mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
         mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
         mButtonAddUsage = (ImageButton)view.findViewById(R.id.btnAddUsage);
@@ -117,7 +119,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
 
                         EnergyUsageModel euModel = new EnergyUsageModel();
-                        euModel.setTimeStampFromDate(formatter.parse(mDateField.getText().toString()));
+                        euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
                         euModel.setDeviceId(item.getLong(pos));
                         euModel.setPowerUsage(value);
                         euModel.setDeleted(false);
@@ -138,10 +140,13 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             }
         });
 
-        mButtonCalendar.setOnClickListener(new View.OnClickListener() {
+
+        //mButtonCalendar
+        mRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mButtonCalendar.setEnabled(false);
+                //mButtonCalendar.setEnabled(false);
+                mRelativeLayout.setEnabled(false);
                 Calendar calender = Calendar.getInstance();
                 Bundle args = new Bundle();
                 args.putInt("year", calender.get(Calendar.YEAR));
@@ -200,13 +205,12 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         getLoaderManager().initLoader(0, null, this);
 
         updateDateText();
-        //alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
         return view;
     }
 
 
     private void updateDateText(){
-        mDateField.setText(formatter.format(currentMonth.getTime()));
+        mTextDate.setText(formatter.format(currentMonth.getTime()));
     }
 
     @Override
@@ -215,7 +219,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         currentMonth.set(Calendar.MONTH, month);
         currentMonth.set(Calendar.DAY_OF_MONTH, day);
         updateDateText();
-        mButtonCalendar.setEnabled(true);
+        mRelativeLayout.setEnabled(true);
     }
 
     @Override

@@ -124,7 +124,7 @@ public class RequestSyncProxy {
 
         try {
             for(DeviceModel dModel : deviceModels)
-                data.put(new JSONObject(mapper.writeValueAsString(dModel.getSerializeableDevice())));
+                data.put(new JSONObject(mapper.writeValueAsString(dModel.getSerializableDevice())));
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
