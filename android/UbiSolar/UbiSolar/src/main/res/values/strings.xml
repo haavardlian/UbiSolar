@@ -149,6 +149,9 @@
 
     <!-- Toast -->
     <string name="no_internet">Internet connection required to log in</string>
+    <string name="fb_login">User logged in with facebook</string>
+    <string name="fb_logout">User logged out of facebook</string>
+
 
     <!-- Broadcasts - Mirrored from AndroidManifest -->
     <string name="broadcast_nav_drawer_usage">com.sintef_energy.ubisolar.broadcast_nav_drawer</string>

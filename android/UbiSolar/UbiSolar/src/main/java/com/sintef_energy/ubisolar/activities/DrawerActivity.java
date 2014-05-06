@@ -458,6 +458,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         changeNavdrawerSessionsView(false);
         mPrefManager.clearFacebookSessionData();
+        Utils.makeLongToast(getApplicationContext(), getResources().getString(R.string.fb_logout));
     }
 
 
@@ -476,7 +477,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 mPrefManager.setAccessToken(session.getAccessToken());
                 mPrefManager.setKeyAccessTokenExpires(session.getExpirationDate());
 
-                Toast.makeText(getBaseContext(), "Logged in through facebook", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.fb_login), Toast.LENGTH_LONG).show();
                 changeNavdrawerSessionsView(true);
 
                 /* How to do the callback?
@@ -568,30 +569,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
 
         return newAccount;
-    }
-
-
-    /**
-     * Debug with strict mode
-     */
-    private void developerMode(boolean devMode){
-        if(devMode){
-            StrictMode.setThreadPolicy(
-                    new StrictMode.ThreadPolicy.Builder()
-                            .detectDiskReads()
-                            .detectDiskWrites()
-                            .detectNetwork()
-                            .penaltyLog()
-                            .build()
-            );
-            StrictMode.setVmPolicy(
-                    new StrictMode.VmPolicy.Builder()
-            .detectLeakedSqlLiteObjects()
-            .detectLeakedClosableObjects()
-            .penaltyLog()
-            .penaltyDeath()
-            .build());
-        }
     }
 
     private void setFacebookPermissions() {
