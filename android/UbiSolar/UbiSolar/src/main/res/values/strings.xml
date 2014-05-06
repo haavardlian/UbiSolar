@@ -135,6 +135,7 @@
     <string name="res_comparison_setting">Number of residents</string>
     <string name="area_comparison_setting">Area</string>
     <string name="energy_comparison_setting">Energy class</string>
+    <string name="compare_filter">Filter</string>
 
 
 

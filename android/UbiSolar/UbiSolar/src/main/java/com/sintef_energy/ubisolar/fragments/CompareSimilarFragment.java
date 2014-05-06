@@ -68,6 +68,7 @@ public class CompareSimilarFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -84,6 +85,7 @@ public class CompareSimilarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
+
         profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
         profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
         profilePicture.setPresetSize(ProfilePictureView.LARGE);
@@ -129,7 +131,6 @@ public class CompareSimilarFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //outState.putInt("curChoice", mCurCheckPosition);
     }
 
     @Override
