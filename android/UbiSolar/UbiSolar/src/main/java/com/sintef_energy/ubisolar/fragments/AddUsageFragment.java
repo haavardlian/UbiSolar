@@ -33,6 +33,7 @@ import com.sintef_energy.ubisolar.utils.Utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by perok on 12.03.14.
@@ -85,7 +86,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         currentMonth = Calendar.getInstance();
         currentMonth.set(Calendar.MINUTE, 0);
         currentMonth.set(Calendar.HOUR_OF_DAY, 0);
-        currentMonth.set(Calendar.MILLISECOND, 0);
+
 
         formatter = new SimpleDateFormat("dd/MM-yyyy");
 
@@ -126,6 +127,10 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 try {
 
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
+
+                    //If in the past, remove milliseconds resolution
+                    if (!isSameDay(currentMonth, Calendar.getInstance()))
+                        currentMonth.set(Calendar.MILLISECOND, 0);
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
                     euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
@@ -208,7 +213,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         spinnerDevice.setEnabled(false);
         spinnerDevice.setAdapter(mDeviceAdapter);
 
-        mButtonAddUsage.setEnabled(false);
+        //mButtonAddUsage.setEnabled(false);
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -218,6 +223,20 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
 
     private void updateDateText(){
         mTextDate.setText(formatter.format(currentMonth.getTime()));
+    }
+
+    /**
+     * Checks if two Calendar objects is on the same day or not.
+     *
+     * @param other
+     * @param that
+     * @return
+     */
+    private boolean isSameDay(Calendar other, Calendar that){
+
+        return ((other.get(Calendar.YEAR) == that.get(Calendar.YEAR)) &&
+                (other.get(Calendar.MONTH) == that.get(Calendar.MONTH)) &&
+                (other.get(Calendar.DAY_OF_MONTH) == that.get(Calendar.DAY_OF_MONTH)));
     }
 
     @Override
@@ -253,7 +272,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             enableAdding = true;
 
         spinnerDevice.setEnabled(enableAdding);
-        mButtonAddUsage.setEnabled(enableAdding);
+        //mButtonAddUsage.setEnabled(enableAdding);
     }
 
     @Override
