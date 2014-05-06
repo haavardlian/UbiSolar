@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -27,11 +28,13 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.DatePickerFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.utils.OnOneOffClickListener;
 import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by perok on 12.03.14.
@@ -47,7 +50,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     private EditText mKwhField;
     private ImageButton mButtonKwhUp;
     private ImageButton mButtonKwhDown;
-    private ImageButton mButtonAddUsage;
+    private Button mButtonAddUsage;
     private RelativeLayout mRelativeLayout;
 
     private Spinner spinnerDevice;
@@ -84,7 +87,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         currentMonth = Calendar.getInstance();
         currentMonth.set(Calendar.MINUTE, 0);
         currentMonth.set(Calendar.HOUR_OF_DAY, 0);
-        currentMonth.set(Calendar.MILLISECOND, 0);
+
 
         formatter = new SimpleDateFormat("dd/MM-yyyy");
 
@@ -95,7 +98,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mKwhField = (EditText)view.findViewById(R.id.dialog_add_usage_edittext_kwh);
         mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
         mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
-        mButtonAddUsage = (ImageButton)view.findViewById(R.id.btnAddUsage);
+        mButtonAddUsage = (Button)view.findViewById(R.id.btnAddUsage);
         final DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.setTargetFragment(this, 0);
 
@@ -105,48 +108,59 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             public void onClick(View view) {
                 String text = mKwhField.getText().toString();
 
-                if (text.length() > 0) {
-                    Double value = Double.valueOf(text);
-
-                    int pos = spinnerDevice.getSelectedItemPosition();
-
-                    Cursor item = mDeviceAdapter.getCursor();
-                    item.moveToPosition(pos);
-                    pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
-
-                    try {
-
-                        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
-
-                        EnergyUsageModel euModel = new EnergyUsageModel();
-                        euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
-                        euModel.setDeviceId(item.getLong(pos));
-                        euModel.setPowerUsage(value);
-                        euModel.setDeleted(false);
-
-                        if (mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
-                            Log.v(TAG, "Added object to database:\n" + euModel);
-                        Utils.makeShortToast(getActivity().getApplicationContext(), "Usage added");
-
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        Utils.makeShortToast(getActivity().getApplicationContext(), "Unable to parse the date");
-                    }
+                if(text.length() < 1){
+                    Utils.makeLongToast(getActivity().getApplicationContext(), "Error: No usage added");
+                    return;
                 }
+
+                Double value = Double.valueOf(text);
+                int pos = spinnerDevice.getSelectedItemPosition();
+
+                if(pos == Spinner.INVALID_POSITION){
+                    Utils.makeLongToast(getActivity().getApplicationContext(), "Error: No device selected");
+                   return;
+                }
+
+                Cursor item = mDeviceAdapter.getCursor();
+                item.moveToPosition(pos);
+                pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
+
+                try {
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
+
+                    //If in the past, remove milliseconds resolution
+                    if (!isSameDay(currentMonth, Calendar.getInstance()))
+                        currentMonth.set(Calendar.MILLISECOND, 0);
+
+                    EnergyUsageModel euModel = new EnergyUsageModel();
+                    euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
+                    euModel.setDeviceId(item.getLong(pos));
+                    euModel.setPowerUsage(value);
+                    euModel.setDeleted(false);
+
+                    if (mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
+                        Log.v(TAG, "Added object to database:\n" + euModel);
+
+                    Utils.makeLongToast(getActivity().getApplicationContext(), "Usage added for device: " + item.getString(
+                            item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME)));
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    Utils.makeShortToast(getActivity().getApplicationContext(), "Unable to parse the date");
+                }
+
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
                         getActivity().getApplicationContext().INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mKwhField.getWindowToken(), 0);
-
             }
         });
 
-
-        //mButtonCalendar
-        mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+        // Double clicks will make the app crash. So OnOneOffClickListener is used instead.
+        //TODO BUG: The textView within the relativeLayout swallows the onClick
+        mRelativeLayout.setOnClickListener(new OnOneOffClickListener() {
             @Override
-            public void onClick(View view) {
-                //mButtonCalendar.setEnabled(false);
-                mRelativeLayout.setEnabled(false);
+            public void onOneClick(View v) {
                 Calendar calender = Calendar.getInstance();
                 Bundle args = new Bundle();
                 args.putInt("year", calender.get(Calendar.YEAR));
@@ -200,7 +214,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         spinnerDevice.setEnabled(false);
         spinnerDevice.setAdapter(mDeviceAdapter);
 
-        mButtonAddUsage.setEnabled(false);
+        //mButtonAddUsage.setEnabled(false);
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -208,9 +222,22 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         return view;
     }
 
-
     private void updateDateText(){
         mTextDate.setText(formatter.format(currentMonth.getTime()));
+    }
+
+    /**
+     * Checks if two Calendar objects is on the same day or not.
+     *
+     * @param other
+     * @param that
+     * @return
+     */
+    private boolean isSameDay(Calendar other, Calendar that){
+
+        return ((other.get(Calendar.YEAR) == that.get(Calendar.YEAR)) &&
+                (other.get(Calendar.MONTH) == that.get(Calendar.MONTH)) &&
+                (other.get(Calendar.DAY_OF_MONTH) == that.get(Calendar.DAY_OF_MONTH)));
     }
 
     @Override
@@ -239,14 +266,9 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mDeviceAdapter.swapCursor(cursor);
 
         // Only enable adding of data if we have devices to add data to.
-
-        boolean enableAdding = false;
-
-        if(cursor.getCount() > 0)
-            enableAdding = true;
+        boolean enableAdding = (cursor.getCount() > 0);
 
         spinnerDevice.setEnabled(enableAdding);
-        mButtonAddUsage.setEnabled(enableAdding);
     }
 
     @Override

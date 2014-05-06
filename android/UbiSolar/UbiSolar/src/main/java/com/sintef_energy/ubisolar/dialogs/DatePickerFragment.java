@@ -9,20 +9,22 @@ import android.widget.DatePicker;
 import com.sintef_energy.ubisolar.IView.IDateCallback;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by perok on 12.03.14.
+ *
+ * A date picker dialog.
  */
-
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
     @Override
     public Dialog onCreateDialog(Bundle args) {
         // Use the current date as the default date in the picker
 
-        int year = 0;
-        int month = 0;
-        int day = 0;
+        int year;
+        int month;
+        int day;
 
         if(args == null) {
             final Calendar c = Calendar.getInstance();
@@ -37,7 +39,11 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         }
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month, day);
+
+        // Max date is now.
+        dialog.getDatePicker().setMaxDate(new Date().getTime());
+        return dialog;
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {

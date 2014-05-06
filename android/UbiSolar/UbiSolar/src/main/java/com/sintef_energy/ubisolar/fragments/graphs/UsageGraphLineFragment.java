@@ -419,12 +419,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
             Log.v(TAG, "AsyncTask complete: Time: " + (System.currentTimeMillis() - startTime) + "milliseconds. Rendering the new ChartView");
 
-
             if (mChartView != null)
                 mChartView.repaint();
 
             setViewState(true);
-
         }
 
         /**

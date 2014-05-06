@@ -58,7 +58,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private IUsageView graphView;
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
     private PreferencesManager mPreferenceManager;
-
     private boolean mFragmentSwap = false;
 
 
@@ -80,8 +79,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        //Callback to activity
-//        ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override

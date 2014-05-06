@@ -168,6 +168,5 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
                     return null;
             }
         }
-
     }
 }

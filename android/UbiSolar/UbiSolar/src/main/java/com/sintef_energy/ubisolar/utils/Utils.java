@@ -16,6 +16,10 @@ public class Utils {
         Toast.makeText(c, text, Toast.LENGTH_SHORT).show();
     }
 
+    public static void makeLongToast(Context c, String text){
+        Toast.makeText(c, text, Toast.LENGTH_LONG).show();
+    }
+
     /**
      * Helper class to check if app has internet connection.
      * @param context
@@ -28,8 +32,6 @@ public class Utils {
 
         return (networkInfo != null && networkInfo.isConnected());
     }
-
-
 
     /**
      * Debug with strict mode
