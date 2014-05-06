@@ -26,16 +26,38 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true">
 
-        <Button
-            android:id="@+id/zoomOutButton"
+        <info.hoang8f.android.segmented.SegmentedGroup
+            android:id="@+id/usage_segment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="-" />
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/zoomInButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+" />
+            <RadioButton
+                android:id="@+id/usage_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hours"
+                style="@style/RadioButton" />
+
+            <RadioButton
+                android:id="@+id/usage_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Days"
+                style="@style/RadioButton" />
+            <RadioButton
+                android:id="@+id/usage_weeks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weeks"
+                style="@style/RadioButton" />
+            <RadioButton
+                android:id="@+id/usage_months"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Months"
+                style="@style/RadioButton" />
+        </info.hoang8f.android.segmented.SegmentedGroup>
     </LinearLayout>
 </RelativeLayout>
