@@ -106,13 +106,13 @@ public class Resolution {
         long diff = date2.getTime() - date1.getTime();
 
         if(mode == HOURS)
-            return (int) TimeUnit.MILLISECONDS.toHours(diff) + 1;
+            return (int) Math.ceil((double)TimeUnit.MILLISECONDS.toHours(diff)) + 1;
         else if(mode == DAYS)
-            return (int) TimeUnit.MILLISECONDS.toDays(diff) + 1;
+            return (int) Math.ceil((double)TimeUnit.MILLISECONDS.toDays(diff)) + 1;
         else if(mode == WEEKS)
-            return (int) TimeUnit.MILLISECONDS.toDays(diff) / 7 + 1;
+            return (int) Math.ceil((double)TimeUnit.MILLISECONDS.toDays(diff) / 7) + 1;
         else if(mode == MONTHS)
-            return (int) TimeUnit.MILLISECONDS.toDays(diff) / 30 + 1;
+            return (int) Math.ceil((double)TimeUnit.MILLISECONDS.toDays(diff) / 30) + 1;
         else
             return -1;
     }

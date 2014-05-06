@@ -24,6 +24,7 @@ import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.utils.Resolution;
 
@@ -228,7 +229,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         renderer.setChartTitle(getResources().getString(R.string.usage_line_graph_title));
         renderer.setAxisTitleTextSize(25);
-        renderer.setChartTitleTextSize(20);
+        renderer.setChartTitleTextSize(40);
         renderer.setLabelsTextSize(15);
         renderer.setLegendTextSize(15);
         renderer.setPointSize(5);
@@ -361,7 +362,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             // Go through the datasets (each device)
             for (DeviceUsageList usageList : mActiveUsageList) {
                 XYSeries series = mDataset.getSeriesAt(index);
-                series.clear(); //@torrib ??
+                series.clear();
                 y = 0;
 
                 //Add the usage
@@ -540,6 +541,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
         clearDevices();
+
+        for(DeviceUsageList u : usageList)
+            for(EnergyUsageModel us : u.getUsage())
+                System.out.println(us.toDate());
 
         AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
         asyncGraphCreator.execute(usageList);
