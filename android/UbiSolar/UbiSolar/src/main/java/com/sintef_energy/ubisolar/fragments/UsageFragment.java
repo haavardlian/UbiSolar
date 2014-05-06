@@ -9,6 +9,7 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.IView.IUsageView;
@@ -41,6 +43,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import info.hoang8f.android.segmented.SegmentedGroup;
+
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final int LOADER_DEVICES = 0;
@@ -54,8 +58,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private IUsageView graphView;
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
     private PreferencesManager mPreferenceManager;
+    private boolean mFragmentSwap = false;
 
-    public UsageFragment() {}
+
+    public UsageFragment() {
+    }
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -109,9 +116,12 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             @Override
             public void onPageSelected(int position) {
+                mFragmentSwap = true;
                 graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
                 graphView.setDevices(mDevices);
-                graphView.pullData();
+                SegmentedGroup segment = (SegmentedGroup) getActivity().findViewById(R.id.usage_segment);
+                segment.check(segment.getChildAt(graphView.getResolution()).getId());
+//                graphView.pullData();
             }
 
             @Override
@@ -122,6 +132,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //This is an ugly fix
         graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(pager, 0);
 
+        SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
+        segment.check(segment.getChildAt(graphView.getResolution()).getId());
+
         return mRootView;
     }
 
@@ -129,22 +142,22 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
-        Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
-        zoomInButton.setOnClickListener(new View.OnClickListener() {
+        SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
+        segment.setTintColor(Color.DKGRAY);
+
+        segment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                zoomIn();
-            }
-        });
-        zoomOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                zoomOut();
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                if(!mFragmentSwap) {
+                    SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
+                    graphView.setResolution(segment.indexOfChild(segment.findViewById(segment.getCheckedRadioButtonId())));
+                    graphView.pullData();
+                }
+                mFragmentSwap = false;
             }
         });
 
-        mDevices = new LinkedHashMap<>();
+                mDevices = new LinkedHashMap<>();
 
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
@@ -246,8 +259,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         graphView.pullData();
     }
 
-
-
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
         return new CursorLoader(
@@ -258,7 +269,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 null,
                 DeviceModel.DeviceEntry._ID + " ASC");
     }
-
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
@@ -331,60 +341,4 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         }
     }
 
-    private void zoomIn()
-    {
-        if(graphView.getResolution() == Resolution.DAYS) {
-            graphView.setResolution(Resolution.HOURS);
-            graphView.setActiveIndex(graphView.getActiveIndex() * 24);
-            graphView.pullData();
-
-            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
-            zoomInButton.setEnabled(false);
-            graphView.setDataLoading(true);
-        }
-        else if(graphView.getResolution() == Resolution.WEEKS) {
-            graphView.setResolution(Resolution.DAYS);
-            graphView.setActiveIndex(graphView.getActiveIndex() * 7);
-            graphView.pullData();
-            graphView.setDataLoading(true);
-        }
-        else if(graphView.getResolution() == Resolution.MONTHS) {
-            graphView.setResolution(Resolution.WEEKS);
-            graphView.setActiveIndex(graphView.getActiveIndex() * 4);
-            graphView.pullData();
-
-            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
-            zoomOutButton.setEnabled(true);
-            graphView.setDataLoading(true);
-        }
-    }
-
-    private void zoomOut()
-    {
-        if(graphView.getResolution() == Resolution.HOURS) {
-            graphView.setResolution(Resolution.DAYS);
-            graphView.setActiveIndex(graphView.getActiveIndex() / 24);
-            graphView.pullData();
-
-            Button zoomInButton = (Button) mRootView.findViewById(R.id.zoomInButton);
-            zoomInButton.setEnabled(true);
-            graphView.setDataLoading(true);
-        }
-        else if(graphView.getResolution() == Resolution.DAYS) {
-            graphView.setResolution(Resolution.WEEKS);
-            graphView.setActiveIndex(graphView.getActiveIndex() / 7);
-            graphView.pullData();
-            graphView.setDataLoading(true);
-
-        }
-        else if(graphView.getResolution() == Resolution.WEEKS) {
-            graphView.setResolution(Resolution.MONTHS);
-            graphView.setActiveIndex(graphView.getActiveIndex() / 4);
-            graphView.pullData();
-
-            Button zoomOutButton = (Button) mRootView.findViewById(R.id.zoomOutButton);
-            zoomOutButton.setEnabled(false);
-            graphView.setDataLoading(true);
-        }
-    }
 }

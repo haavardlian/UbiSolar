@@ -40,9 +40,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import info.hoang8f.android.segmented.SegmentedGroup;
+
 public class UsageGraphPieFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = UsageGraphLineFragment.class.getName();
+
+    private final int DEFAULT_RESOLUTION = Resolution.MONTHS;
 
     private View mRootView;
 
@@ -122,7 +126,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             setupPieGraph();
         }
 
-        resolution = new Resolution(Resolution.MONTHS);
+        resolution = new Resolution(DEFAULT_RESOLUTION);
         createPieGraph();
         updateDetails();
     }
@@ -161,7 +165,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
     private void setupPieGraph(){
         mRenderer.setChartTitle(getResources().getString(R.string.usage_pie_graph_title));
-        mRenderer.setChartTitleTextSize(20);
+        mRenderer.setChartTitleTextSize(40);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
 
@@ -501,6 +505,9 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
     @Override
     public void pullData(){
+
+        if(mDevices == null)
+            return;
 
         //If no items are selected, clear te graph
         for(boolean selected : getSelectedDialogItems())

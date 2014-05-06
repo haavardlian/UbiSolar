@@ -24,6 +24,7 @@ import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.utils.Resolution;
 
@@ -36,8 +37,6 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 import org.achartengine.tools.PanListener;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,10 +44,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import info.hoang8f.android.segmented.SegmentedGroup;
+
 public class UsageGraphLineFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int IMAGE_RENDER_WIDTH = 960;
-    private static final int IMAGE_RENDER_HEIGHT = 540;
+    private final int IMAGE_RENDER_WIDTH = 960;
+    private final int IMAGE_RENDER_HEIGHT = 540;
+
+    private final int DEFAULT_RESOLUTION = Resolution.DAYS;
 
     private static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String STATE_euModels = "STATE_euModels";
@@ -142,7 +145,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
             mActiveUsageList = new ArrayList<>();
         }
-        resolution = new Resolution(Resolution.DAYS);
+        resolution = new Resolution(DEFAULT_RESOLUTION);
         createLineGraph();
 
         AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
@@ -177,7 +180,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         mSavedState = saveState();
     }
-
 
     private Bundle saveState() {
         Bundle state = new Bundle();
@@ -227,7 +229,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         renderer.setChartTitle(getResources().getString(R.string.usage_line_graph_title));
         renderer.setAxisTitleTextSize(25);
-        renderer.setChartTitleTextSize(20);
+        renderer.setChartTitleTextSize(40);
         renderer.setLabelsTextSize(15);
         renderer.setLegendTextSize(15);
         renderer.setPointSize(5);
@@ -360,7 +362,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             // Go through the datasets (each device)
             for (DeviceUsageList usageList : mActiveUsageList) {
                 XYSeries series = mDataset.getSeriesAt(index);
-                series.clear(); //@torrib ??
+                series.clear();
                 y = 0;
 
                 //Add the usage
@@ -378,8 +380,12 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 index++;
             }
 
+
             if (mActiveDateIndex >= mDates.size() || mActiveDateIndex < 0)
                 mActiveDateIndex = mDates.size() - 1;
+            
+            if(mActiveDateIndex < 0)
+                return null;
 
             setRange(min, max, mDates.size());
             setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
@@ -548,7 +554,45 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
     @Override
     public void setResolution(int mode) {
+        setActiveIndex(resolution.getMode(), mode);
         resolution.setFormat(mode);
+    }
+
+    private void setActiveIndex(int oldMode, int newMode){
+        switch(oldMode){
+            case Resolution.HOURS:
+                if(newMode == Resolution.DAYS)
+                    mActiveDateIndex = mActiveDateIndex / 24;
+                else if(newMode == Resolution.WEEKS)
+                    mActiveDateIndex = mActiveDateIndex / 24 / 7;
+                else if(newMode == Resolution.MONTHS)
+                    mActiveDateIndex = mActiveDateIndex / 24 / 7 / 4;
+                break;
+            case Resolution.DAYS:
+                if(newMode == Resolution.HOURS)
+                    mActiveDateIndex = mActiveDateIndex * 24;
+                else if(newMode == Resolution.WEEKS)
+                    mActiveDateIndex = mActiveDateIndex / 7;
+                else if(newMode == Resolution.MONTHS)
+                    mActiveDateIndex = mActiveDateIndex / 7 / 4;
+                break;
+            case Resolution.WEEKS:
+                if(newMode == Resolution.HOURS)
+                    mActiveDateIndex = mActiveDateIndex * 7 * 24;
+                else if(newMode == Resolution.DAYS)
+                    mActiveDateIndex = mActiveDateIndex * 7;
+                else if(newMode == Resolution.MONTHS)
+                    mActiveDateIndex = mActiveDateIndex / 4;
+                break;
+            case Resolution.MONTHS:
+                if(newMode == Resolution.HOURS)
+                    mActiveDateIndex = mActiveDateIndex * 4 * 7 * 24;
+                else if(newMode == Resolution.DAYS)
+                    mActiveDateIndex = mActiveDateIndex * 7 * 4;
+                else if(newMode == Resolution.WEEKS)
+                    mActiveDateIndex = mActiveDateIndex * 4;
+                break;
+        }
     }
 
     public boolean[] getSelectedDialogItems() {
@@ -582,6 +626,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     public int getResolution() {
+        if(resolution == null)
+            return DEFAULT_RESOLUTION;
+
         return resolution.getMode();
     }
 
@@ -749,6 +796,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     public void pullData(){
 
         //If no items are selected, clear te graph
+        if(mDevices == null)
+            return;
+
         for(boolean selected : getSelectedDialogItems())
             if(selected) {
                 getLoaderManager().restartLoader(resolution.getMode(), null, this);

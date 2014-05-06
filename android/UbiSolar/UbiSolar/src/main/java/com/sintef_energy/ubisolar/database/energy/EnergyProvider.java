@@ -149,7 +149,7 @@ public class EnergyProvider extends ContentProvider{
                 rawSql = generateRawDateSql("%Y-%m-%d", selection);
                 break;
             case ENERGY_WEEK_LIST:
-                rawSql = generateRawDateSql("%Y-%w", selection);
+                rawSql = generateRawDateSql("%Y-%W", selection);
                 break;
             case ENERGY_MONTH_LIST:
                 rawSql = generateRawDateSql("%Y-%m", selection);
