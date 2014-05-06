@@ -108,6 +108,11 @@
 
     <!-- Comparison settings-->
     <string name="comparison_setting">Sammenlikningsinnstillinger</string>
+    <string name="location_comparison_setting">Område</string>
+    <string name="res_comparison_setting">Antall beboere</string>
+    <string name="area_comparison_setting">Areal</string>
+    <string name="energy_comparison_setting">Energiklasse</string>
+    <string name="compare_filter">Filtrer</string>
 
 
     <!-- Fragment Energy saving tabs -->

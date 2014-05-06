@@ -1,8 +1,6 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="${packageName}.${activityClass}">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 <item android:id="@+id/compare_filter"
-    android:title="Filter"
+    android:title="@string/compare_filter"
     android:showAsAction="withText|ifRoom" />
 </menu>

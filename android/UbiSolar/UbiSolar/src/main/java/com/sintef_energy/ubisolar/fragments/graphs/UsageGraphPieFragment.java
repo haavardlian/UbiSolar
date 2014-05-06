@@ -1,9 +1,14 @@
 package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +19,10 @@ import android.widget.TextView;
 import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
+import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.utils.Resolution;
 
@@ -28,8 +37,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
-public class UsageGraphPieFragment extends ProgressFragment implements IUsageView {
+public class UsageGraphPieFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = UsageGraphLineFragment.class.getName();
 
@@ -44,18 +55,15 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     private int mSelected = -1;
 
     private Resolution resolution;
-
     private Date mSelectedDate;
-
     private boolean[] mSelectedDialogItems;
-
-    private boolean mLoaded = false;
-    private int mDeviceSize;
 
     private TextView nameView;
     private TextView descriptionView;
     private TextView powerUsageView;
     private TextView usagePieLabel;
+
+    private LinkedHashMap<Long, DeviceModel> mDevices;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -114,7 +122,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             setupPieGraph();
         }
 
-        resolution = new Resolution(Resolution.DAYS);
+        resolution = new Resolution(Resolution.MONTHS);
         createPieGraph();
         updateDetails();
     }
@@ -231,7 +239,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
      * Clears devices automatically before adding more data.
      * @param usageList
      */
-    @Override
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList){
         clearDevices();
 
@@ -261,7 +268,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     /**
      * Clears current devices.
      */
-    @Override
     public void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
@@ -286,7 +292,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         powerUsageView.setText("");
     }
 
-    public void setFormat(int mode){
+    public void setResolution(int mode){
       resolution.setFormat(mode);
     }
 
@@ -297,10 +303,12 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
     public boolean[] getSelectedDialogItems() {
         if(mSelectedDialogItems == null) {
-            mSelectedDialogItems = new boolean[mDeviceSize];
-            if (mDeviceSize > 0)
-                if (mDeviceSize > 0)
-                    Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
+            mSelectedDialogItems = new boolean[mDevices.size()];
+            if (mDevices.size() > 0) {
+                Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
+                mSelectedDialogItems[0] = false;
+            }
+
 
         }
         return mSelectedDialogItems;
@@ -331,23 +339,175 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         setContentShown(state);
     }
 
-    public boolean isLoaded(){
-        if(!mLoaded) {
-            mLoaded = true;
-            return false;
-        }
-        return true;
-    }
-
-    public void setDeviceSize(int size){
-        mDeviceSize = size;
-    }
-
     public Bitmap createImage(){
         Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         mChartView.draw(canvas);
 
         return bitmap;
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
+        Uri.Builder builder;
+
+        switch (mode){
+            case Resolution.HOURS:
+                return new CursorLoader(
+                        getActivity(),
+                        EnergyContract.Energy.CONTENT_URI,
+                        EnergyContract.Energy.PROJECTION_ALL,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " ASC");
+            case Resolution.DAYS:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Day);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+            case Resolution.WEEKS:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Week);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+            case Resolution.MONTHS:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Month);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+        }
+        return null;
+    }
+
+    private String sqlWhereDevices(){
+        String where = "";
+
+        boolean[] selectedItems = getSelectedDialogItems();
+        ArrayList<String> queries = new ArrayList<>();
+
+        for(boolean selectedItem : selectedItems)
+            if(selectedItem)
+                queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
+
+        if(queries.size() < 1)
+            return "";
+
+        // The last part of the query shall not be succeeded by an OR.
+        int i;
+        for(i = 0; i < queries.size() - 1; i++)
+            where += queries.get(i) + " OR ";
+        where += queries.get(i);
+
+
+        //To get data points between two dates
+        String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
+//
+//        where += " AND " + betweenTime + " BETWEEN ? AND ? ";
+
+        return where;
+    }
+
+    private String[] getSelectedDevicesIDs() {
+        boolean[] selectedItems = getSelectedDialogItems();
+        ArrayList<String> queryValues = new ArrayList<>();
+
+        int i = 0;
+
+        for(Device device : mDevices.values()){
+            if(selectedItems.length > i) {
+                if (selectedItems[i]) {
+                    queryValues.add("" + device.getId());
+                }
+                i++;
+            }
+        }
+
+//        try {
+//            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
+//            Timestamp sqlDate1 = new java.sql.Timestamp(date1.getTime());
+//
+//            Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 14:00");
+//            Timestamp sqlDate2 = new java.sql.Timestamp(date2.getTime());
+//
+//            queryValues.add(sqlDate1.toString());
+//            queryValues.add(sqlDate2.toString());
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
+
+        return queryValues.toArray(new String[queryValues.size()]);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
+
+        //Hashmap containing all DevicesUsage
+        HashMap<Long, DeviceUsageList> devices = new HashMap<>();
+
+        /* Get data from cursor and add */
+        cursor.moveToFirst();
+        if(cursor.getCount() >= 1) {
+            do {
+                EnergyUsageModel model = new EnergyUsageModel(cursor, true);
+                DeviceUsageList deviceUsageList = devices.get(model.getDeviceId());
+
+                if (deviceUsageList == null) {
+                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
+                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
+                }
+
+                deviceUsageList.add(model);
+            }
+            while (cursor.moveToNext());
+        }
+
+        ArrayList<DeviceUsageList> deviceUsageLists = new ArrayList<>();
+
+        deviceUsageLists.addAll(devices.values());
+
+        if(deviceUsageLists.size() > 0)
+            addDeviceUsage(deviceUsageLists);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {}
+
+
+    @Override
+    public void setDevices(LinkedHashMap<Long, DeviceModel> devices) {
+        mDevices = devices;
+    }
+
+    @Override
+    public void pullData(){
+
+        //If no items are selected, clear te graph
+        for(boolean selected : getSelectedDialogItems())
+            if(selected) {
+                getLoaderManager().restartLoader(resolution.getMode(), null, this);
+                return;
+            }
+        clearDevices();
     }
 }
