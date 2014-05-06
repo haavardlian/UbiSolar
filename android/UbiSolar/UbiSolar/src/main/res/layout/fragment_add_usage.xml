@@ -33,14 +33,12 @@
                 android:layout_gravity="center_horizontal"
                 android:paddingBottom="20dp"/>
 
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp">
-
 
                 <View
                     android:id="@+id/fragment_add_usage_spacer_date"
@@ -71,24 +69,23 @@
 
                  <!-- BUTTON DATE -->
                 <RelativeLayout
+                    android:id="@+id/fragment_add_usage_rl_date"
                     android:layout_width="fill_parent"
                     android:layout_height="?android:attr/listPreferredItemHeight"
                     style="?android:attr/editTextStyle"
-                    android:clickable="true"
                     android:focusable="true"
                     android:orientation="horizontal"
                     android:layout_alignParentRight="true"
-                    android:layout_alignLeft="@id/fragment_add_usage_spacer_date"
-                    android:id="@+id/fragment_add_usage_rl_date">
+                    android:layout_alignLeft="@id/fragment_add_usage_spacer_date">
                     <!--TODO Padding or margin bottom/ top?-->
 
-                    <ImageButton
+                    <ImageView
                         android:id="@+id/dialog_add_usage_button_calendar"
                         android:layout_width="50dip"
                         android:layout_height="50dip"
                         android:layout_alignParentRight="true"
                         android:background="@null"
-                        android:clickable="false"
+                        android:focusable="false"
                         android:duplicateParentState="true"
                         android:scaleType="center"
                         android:src="@android:drawable/ic_menu_today" />
@@ -99,11 +96,10 @@
                         android:layout_height="fill_parent"
                         android:layout_toLeftOf="@id/dialog_add_usage_button_calendar"
                         android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:focusable="false"
                         android:paddingTop="11dp"
                         android:paddingLeft="12dp"
                         android:ems="10"
-                        android:editable="false"
-                        android:clickable="false"
                         android:duplicateParentState="true"
                         android:text="xxxx"
                         android:hint="Date of usage"
@@ -264,4 +260,13 @@
         android:layout_alignTop="@id/btnAddUsage"
         android:background="?android:attr/dividerVertical"
         android:paddingTop="10dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="366dp" />
 </RelativeLayout>

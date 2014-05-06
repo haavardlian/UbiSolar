@@ -28,6 +28,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.dialogs.DatePickerFragment;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.utils.OnOneOffClickListener;
 import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.text.ParseException;
@@ -155,11 +156,11 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             }
         });
 
-        mRelativeLayout.setOnClickListener(new View.OnClickListener() {
+        // Double clicks will make the app crash. So OnOneOffClickListener is used instead.
+        //TODO BUG: The textView within the relativeLayout swallows the onClick
+        mRelativeLayout.setOnClickListener(new OnOneOffClickListener() {
             @Override
-            public void onClick(View view) {
-                //mButtonCalendar.setEnabled(false);
-                mRelativeLayout.setEnabled(false);
+            public void onOneClick(View v) {
                 Calendar calender = Calendar.getInstance();
                 Bundle args = new Bundle();
                 args.putInt("year", calender.get(Calendar.YEAR));
@@ -265,14 +266,9 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mDeviceAdapter.swapCursor(cursor);
 
         // Only enable adding of data if we have devices to add data to.
-
-        boolean enableAdding = false;
-
-        if(cursor.getCount() > 0)
-            enableAdding = true;
+        boolean enableAdding = (cursor.getCount() > 0);
 
         spinnerDevice.setEnabled(enableAdding);
-        //mButtonAddUsage.setEnabled(enableAdding);
     }
 
     @Override
