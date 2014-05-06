@@ -540,10 +540,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
         clearDevices();
 
-        for(DeviceUsageList u : usageList)
-            for(EnergyUsageModel us : u.getUsage())
-                System.out.println(us.toDate());
-
         AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
         asyncGraphCreator.execute(usageList);
     }
