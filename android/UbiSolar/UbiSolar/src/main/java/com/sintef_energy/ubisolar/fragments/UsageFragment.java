@@ -114,6 +114,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             @Override
             public void onPageSelected(int position) {
                 graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
+                graphView.setDevices(mDevices);
+                graphView.pullData();
             }
 
             @Override
@@ -238,7 +240,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
-
                 return new CursorLoader(
                         getActivity(),
                         EnergyContract.Devices.CONTENT_URI,

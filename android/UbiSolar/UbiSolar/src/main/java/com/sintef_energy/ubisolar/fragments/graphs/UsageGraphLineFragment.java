@@ -46,7 +46,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class UsageGraphLineFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
-    public static final String TAG = UsageGraphLineFragment.class.getName();
+
+    private static final int IMAGE_RENDER_WIDTH = 960;
+    private static final int IMAGE_RENDER_HEIGHT = 540;
+
+    private static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String STATE_euModels = "STATE_euModels";
 
     private static final int POINT_DISTANCE = 15;
@@ -71,10 +75,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private int mActiveDateIndex = -1;
 
     private LinkedHashMap<Long, DeviceModel> mDevices;
-
-    private boolean mLoaded = false;
-
-    private int IMAGE_RENDER_WIDTH = 960, IMAGE_RENDER_HEIGHT = 540;
 
     private ArrayList<Date> mDates = new ArrayList<>();
 
@@ -726,6 +726,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         mDevices = devices;
     }
 
+    @Override
     public void pullData(){
 
         //If no items are selected, clear te graph
