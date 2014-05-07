@@ -46,12 +46,12 @@ public class DataGeneratorResource {
         double rangeMin = 5.0, rangeMax = 20.0;
         double random;
 
-        for(int i = 0; i < 1000; i++) {
+        for(int i = 0; i < 100; i++) {
             random = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
             rangeMin = random - 5;
             rangeMax = random + 5;
             if(random < 0) random = -random;
-            usage.add(new DeviceUsage(n++, d.getId(), (time/1000L) - (i*3600), random, false, (time/1000L)));
+            usage.add(new DeviceUsage(n++, d.getId(), (time/1000L) - (i*172800), random, false, (time/1000L)));
         }
 
         return usage;
