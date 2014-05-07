@@ -154,7 +154,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
 
     public boolean onChildClick(ExpandableListView expListView, View view, int groupPosition, int childPosition, long id) {
         // TODO Auto-generated method stub
-        Log.d(TAG, "The devicemodel selected: " + getChild(groupPosition, childPosition).getName());
+        System.out.println(groupPosition + " - " + childPosition);
         EditDeviceDialog editDeviceDialog = new EditDeviceDialog(getChild(groupPosition, childPosition));
         editDeviceDialog.show(context.getFragmentManager(), TAG);
         return true;

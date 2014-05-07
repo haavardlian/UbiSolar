@@ -26,7 +26,8 @@ public class TestdataHelper {
         addDevice(cr, "Oven", "Kitchen", 2);
     }
 
-    private static void addDevice(ContentResolver cr, String name, String description, int category) {
+    private static void addDevice(ContentResolver contentResolver,
+                                  String name, String description, int category) {
         PreferencesManager preferencesManager = PreferencesManager.getInstance();
         DeviceModel device = new DeviceModel(
                 System.currentTimeMillis(),
@@ -37,7 +38,7 @@ public class TestdataHelper {
                 false,
                 System.currentTimeMillis() / 1000L);
 
-        cr.insert(
+        contentResolver.insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
 
         //mDevices.put(device.getDeviceId(), device);
