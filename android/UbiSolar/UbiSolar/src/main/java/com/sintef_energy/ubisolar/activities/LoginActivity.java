@@ -22,6 +22,10 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Utils;
 
+/**
+ * Handles the generation of a Facebook session. Be it a token that has expired, or setup of
+ * permissions.
+ */
 public class LoginActivity extends AccountAuthenticatorActivity implements ILoginCallback{
     private static final String TAG = LoginActivity.class.getName();
 
@@ -30,8 +34,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
     public static String ACCOUNT_TYPE;
     // The account name
     public static String ACCOUNT;
-    // Instance fields
-    private Account mAccount;
 
     private FacebookSessionStatusCallback mFacebookSessionStatusCallback;
 
@@ -55,7 +57,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
         }
 
         // Setup session state and start session login if necessary
-        //TODO this calls the callback immediately.. and fails.
         Session session = Session.getActiveSession();
         if (session == null) {
             if (savedInstanceState != null) {
@@ -106,7 +107,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
         mFacebookSessionStatusCallback = null;
         ACCOUNT_TYPE = null;
         ACCOUNT = null;
-        mAccount = null;
     }
 
 
@@ -170,10 +170,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
             intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, accountType);
             intent.putExtra(AccountManager.KEY_AUTHTOKEN, data.getString(Global.DATA_AUTH_TOKEN));
 
-            Log.v(TAG, data.getString(Global.DATA_FB_UID));
-            Log.v(TAG, ""+accountType);
-            Log.v(TAG, ""+data.getString(Global.DATA_AUTH_TOKEN));
-
             this.setAccountAuthenticatorResult(intent.getExtras());
             this.setResult(RESULT_OK, intent);
             this.finish();
@@ -183,7 +179,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
             this.finish();
         }
      }
-
 
     /**
      * Handles the login to FB
@@ -205,16 +200,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
 
             final Bundle data = new Bundle();
 
-            /*
-            if(session == null) {
-                Log.e(TAG, "Facebook login error bigtime.");
-                mLoginCallback.loginFinished(null);
-            }
-            else if(!session.isOpened() && !session.isClosed()){
-                Log.e(TAG, "Facebook can't log in; Weird state: " + session.getState());
-
-                mLoginCallback.loginFinished(null);
-            }*/
             //User is logged in
             if (session.isOpened()) {
 
@@ -237,8 +222,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
                         if (response.getConnection() != null || response.getIsFromCache()) {
 
                             data.putString(Global.DATA_FB_UID, user.getId());
-
-                           Log.v(TAG, "USER ID: " + user.getId());
 
                             mLoginCallback.loginFinished(data);
 

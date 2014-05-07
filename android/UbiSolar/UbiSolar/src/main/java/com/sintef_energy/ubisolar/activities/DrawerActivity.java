@@ -127,7 +127,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         try {
             RequestManager.getInstance();
         } catch(IllegalStateException e) {
-            RequestManager.getInstance(this.getApplicationContext());
+            RequestManager.getInstance(getApplicationContext());
         }
 
         /* Setup preference manager */
@@ -243,11 +243,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             if(resultCode == Activity.RESULT_OK) {
                 Log.v(TAG, "Login success");
                 Session session = Session.getActiveSession();
+                //TODO use startFacebookLogin, as it does not start a view if not logged in.
                 if (session == null) {
                     // start Facebook Login
                     // This will _only_ log in if the user is logged in from before.
                     // To log in, the user must choose so himself from the menu.
-                    Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
+                    Session.openActiveSession(this, false, mFacebookSessionStatusCallback);
                 } else if (!session.isOpened() && !session.isClosed()) {
                     session.openForPublish(new Session.OpenRequest(this)
                             .setPermissions(FACEBOOK_PERMISSIONS)
@@ -438,6 +439,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         // This will _only_ log in if the user is logged in from before.
         // To log in, the user must choose so himself from the menu.
         Session session = Session.getActiveSession();
+
         // We don't have a session
         if (session == null) {
             // We have session data
