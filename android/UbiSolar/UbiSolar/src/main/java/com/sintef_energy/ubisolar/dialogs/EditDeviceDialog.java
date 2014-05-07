@@ -63,6 +63,17 @@ public class EditDeviceDialog extends DialogFragment {
         description = (EditText) view.findViewById(R.id.edit_description);
         categorySpinner = (Spinner) view.findViewById(R.id.dialog_edit_device_category_spinner);
 
+
+        /*Fill spinner with categories*/
+        categoryAdapter = new ArrayAdapter<>(
+                getActivity(),
+                android.R.layout.simple_spinner_item,
+                android.R.id.text1,
+                getResources().getStringArray(R.array.device_categories)
+        );
+
+        categorySpinner.setAdapter(categoryAdapter);
+
         //Get the existing data for the model
         dm.getId();
         name.setText(dm.getName());
@@ -88,16 +99,6 @@ public class EditDeviceDialog extends DialogFragment {
                     }
                 })
                 .setTitle(R.string.addDeviceDialog_title);
-
-        /*Fill spinner with categories*/
-        categoryAdapter = new ArrayAdapter<>(
-                getActivity(),
-                android.R.layout.simple_spinner_item,
-                android.R.id.text1,
-                getResources().getStringArray(R.array.device_categories)
-        );
-
-        categorySpinner.setAdapter(categoryAdapter);
 
         return builder.create();
     }

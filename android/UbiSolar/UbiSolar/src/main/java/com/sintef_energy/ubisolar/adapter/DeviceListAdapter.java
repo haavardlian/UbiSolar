@@ -8,7 +8,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -22,14 +24,14 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener {
+public class DeviceListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener {
 
     private Activity context;
     private List<DeviceModel> devices;
     private String[] categories;
-    public static final String TAG = ExpandableListAdapter.class.getName();
+    public static final String TAG = DeviceListAdapter.class.getName();
 
-    public ExpandableListAdapter(Activity context, List<DeviceModel> devices) {
+    public DeviceListAdapter(Activity context, List<DeviceModel> devices) {
         this.context = context;
         this.devices = devices;
         this.categories = context.getResources().getStringArray(R.array.device_categories);
@@ -58,7 +60,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
             }
         }
         return count;
-
     }
 
     @Override
@@ -154,9 +155,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter implements 
 
     public boolean onChildClick(ExpandableListView expListView, View view, int groupPosition, int childPosition, long id) {
         // TODO Auto-generated method stub
-        Log.d(TAG, "The devicemodel selected: " + getChild(groupPosition, childPosition).getName());
-        EditDeviceDialog editDeviceDialog = new EditDeviceDialog(getChild(groupPosition, childPosition));
-        editDeviceDialog.show(context.getFragmentManager(), TAG);
+
+//        EditDeviceDialog editDeviceDialog = new EditDeviceDialog(getChild(groupPosition, childPosition));
+//        editDeviceDialog.show(context.getFragmentManager(), TAG);
         return true;
     }
+
 }
