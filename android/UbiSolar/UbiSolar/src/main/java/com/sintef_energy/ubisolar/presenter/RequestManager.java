@@ -16,6 +16,7 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HttpClientStack;
 import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.HurlStack;
+import com.facebook.Session;
 
 import java.io.File;
 import java.util.concurrent.Executors;
@@ -28,13 +29,16 @@ public class RequestManager {
     private static RequestManager instance;
     private static RequestManager syncInstance;
     private RequestTipProxy mRequestTipProxy;
+    private RequestFacebookProxy mRequestFacebookProxy;
     private RequestSyncProxy mRequestSyncProxy;
+
     private RequestQueue mRequestQueue;
 
     private RequestManager(Activity activity) {
         mRequestQueue = newRequestQueue(activity.getApplicationContext());
         mRequestTipProxy = new RequestTipProxy(activity, mRequestQueue);
         mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
+        mRequestFacebookProxy = new RequestFacebookProxy(Session.getActiveSession());
     }
 
     private RequestManager(Context context) {
@@ -48,6 +52,10 @@ public class RequestManager {
 
     public RequestSyncProxy doSyncRequest(){
         return mRequestSyncProxy;
+    }
+
+    public RequestFacebookProxy doFacebookRequest() {
+        return mRequestFacebookProxy;
     }
 
     // This method should be called first to do singleton initialization
