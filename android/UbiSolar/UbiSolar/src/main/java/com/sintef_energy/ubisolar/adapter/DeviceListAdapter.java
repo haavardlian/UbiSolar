@@ -7,10 +7,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -22,7 +19,6 @@ import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 
 public class DeviceListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener {
 
@@ -77,13 +73,13 @@ public class DeviceListAdapter extends BaseExpandableListAdapter implements Expa
             convertView = inflater.inflate(R.layout.device_child_item, parent, false);
         }
 
-        TextView nameView = (TextView) convertView.findViewById(R.id.deviceName);
+        TextView nameView = (TextView) convertView.findViewById(R.id.device_name);
         nameView.setText(device.getName());
         //TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
 
         //Only show description if the device actually got a description
         if (device.getDescription().length() > 1){
-            TextView descriptionView = (TextView) convertView.findViewById(R.id.deviceDescription);
+            TextView descriptionView = (TextView) convertView.findViewById(R.id.device_description);
             descriptionView.setText("Description: " + device.getDescription());
         }
 

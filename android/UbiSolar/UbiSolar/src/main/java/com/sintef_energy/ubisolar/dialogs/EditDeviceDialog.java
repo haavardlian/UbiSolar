@@ -17,6 +17,7 @@ import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
@@ -33,16 +34,22 @@ public class EditDeviceDialog extends DialogFragment {
     private DeviceModel device;
     private ArrayAdapter<String> categoryAdapter;
     private String title;
+    private boolean newDevice;
 
 
 
     public EditDeviceDialog(DeviceModel device, String title){
         this.device = device;
         this.title = title;
+        newDevice = false;
     }
 
     public EditDeviceDialog(String title){
         this.title = title;
+        this.device = new DeviceModel();
+        device.setUserId(Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()));
+        device.setId(System.currentTimeMillis());
+        newDevice = true;
     }
 
     @Override
@@ -100,7 +107,11 @@ public class EditDeviceDialog extends DialogFragment {
                         device.setDescription(description.getText().toString());
                         device.setName(name.getText().toString());
                         device.setCategory(categorySpinner.getSelectedItemPosition());
-                        devicePresenter.editDevice(getActivity().getContentResolver(), device);
+                        
+                        if(newDevice)
+                            devicePresenter.addDevice(device, getActivity().getContentResolver());
+                        else
+                            devicePresenter.editDevice(getActivity().getContentResolver(), device);
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
