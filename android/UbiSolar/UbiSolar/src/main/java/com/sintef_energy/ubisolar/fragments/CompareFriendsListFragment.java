@@ -13,11 +13,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.facebook.Request;
+import com.facebook.Response;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -62,6 +67,8 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        Log.d("ATTACHED", "yay");
     }
 
     @Override
@@ -80,13 +87,39 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Fragment fragment = CompareFriendsFragment.newInstance(position, simAdapter);
+                Fragment fragment = CompareFriendsFragment.newInstance(position, friendAdapter.getItem(position));
                 addFragment(fragment, true, friends.get(position));
+
             }
         });
 
-        RequestManager.getInstance().doFacebookRequest().populateFriendList(friendAdapter);
+        populateFriendList(friendAdapter);
         return view;
+    }
+
+    public void populateFriendList(final FriendAdapter friendAdapter) {
+        Request.Callback callback = new Request.Callback() {
+            @Override
+            public void onCompleted(Response response) {
+                if(response.getError() != null)
+                    return;
+                try {
+                    JSONArray friends = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                    friendAdapter.clear();
+                    for(int i = 0; i < friends.length(); i++) {
+                        JSONObject friend = friends.getJSONObject(i);
+                        if(friend.has("installed") && friend.getBoolean("installed"))
+                            friendAdapter.add(new User(friend.getLong("id"), friend.getString("name")));
+                    }
+
+                    friendAdapter.notifyDataSetChanged();
+                } catch(Exception e) {
+
+                }
+            }
+        };
+
+        RequestManager.getInstance().doFacebookRequest().getFriends(callback);
     }
 
 
@@ -139,14 +172,10 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
 
     public void addFragment(Fragment fragment, boolean addToBackStack, User user) {
         FragmentManager manager = getFragmentManager();
-        FragmentTransaction ft = manager.beginTransaction();
-
-        if (addToBackStack) {
-            ft.addToBackStack(user.getName());
-        }
-
-        ft.replace(R.id.container, fragment);
-        ft.commit();
+        manager.beginTransaction()
+               .replace(R.id.container, fragment, "Compare")
+               .addToBackStack(null)
+               .commit();
     }
 
     @Override

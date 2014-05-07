@@ -278,7 +278,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
 
         if(fragment != null) //todo: Add to backstack? Or add null?
-            addFragment(fragment, false, true, titleNames[position]);
+            addFragment(fragment, false, false, titleNames[position]);
             //fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
         else if(logout) {
             onClickLogin();
@@ -438,7 +438,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         .setPermissions(FACEBOOK_PERMISSIONS)
                         .setCallback(mFacebookSessionStatusCallback));
 
-                session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("user_friends")));
+                //session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("user_friends")));
             } else {
                 Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
             }
@@ -583,5 +583,15 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         FACEBOOK_PERMISSIONS.add("user_birthday");
         FACEBOOK_PERMISSIONS.add("user_location");
         FACEBOOK_PERMISSIONS.add("user_friends");
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragmentManager = getFragmentManager();
+
+        if(fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStackImmediate();
+        } else
+            super.onBackPressed();
     }
 }

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
+import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 
@@ -30,14 +31,14 @@ public class CompareFriendsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private ProfilePictureView profilePicture;
     private ProfilePictureView friendPicture;
-
+    private User friend;
 
     public CompareFriendsFragment(SimilarAdapter simAdapter) {
         this.simAdapter = simAdapter;
     }
 
-    public CompareFriendsFragment() {
-
+    public CompareFriendsFragment(User friend) {
+        this.friend = friend;
     }
 
 
@@ -53,8 +54,8 @@ public class CompareFriendsFragment extends Fragment {
         return fragment;
     }
 
-    public static CompareFriendsFragment newInstance(int position) {
-        CompareFriendsFragment fragment = new CompareFriendsFragment();
+    public static CompareFriendsFragment newInstance(int position, User user) {
+        CompareFriendsFragment fragment = new CompareFriendsFragment(user);
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
@@ -86,7 +87,7 @@ public class CompareFriendsFragment extends Fragment {
         profilePicture.setPresetSize(ProfilePictureView.LARGE);
 
         friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
-        friendPicture.setProfileId("");
+        friendPicture.setProfileId(String.valueOf(this.friend.getUserId()));
         friendPicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;
@@ -112,5 +113,7 @@ public class CompareFriendsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
+
+
 
 }
