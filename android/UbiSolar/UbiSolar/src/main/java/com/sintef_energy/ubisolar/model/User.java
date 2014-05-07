@@ -35,4 +35,7 @@ public class User {
         this.name = name;
     }
 
+    public String toString() {
+        return "ID: " + userId + "Name: " + name;
+    }
 }

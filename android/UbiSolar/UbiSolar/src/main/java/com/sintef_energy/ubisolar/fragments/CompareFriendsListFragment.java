@@ -13,17 +13,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by baier on 3/21/14.
@@ -72,16 +68,10 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_social_friends, container, false);
         friends = new ArrayList<>();
-        FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
+        friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
         final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
         friendsList.setAdapter(friendAdapter);
         //RequestManager.getInstance().doFriendRequest().getAllUsers(friendAdapter, this);
-        friends.add(new User("Beate"));
-        friends.add(new User("Håvi"));
-        friends.add(new User("Piai"));
-        friends.add(new User("Peri"));
-        getFriends();
-        friendAdapter.notifyDataSetChanged();
 
         friendsList.setClickable(true);
         friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -95,12 +85,19 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
             }
         });
 
-        RequestManager.getInstance().doFacebookRequest().getFriends();
-
+        RequestManager.getInstance().doFacebookRequest().populateFriendList(friendAdapter);
         return view;
     }
 
 
+    public void addFriend(User friend) {
+        Log.d("Adding friend:", friend.toString());
+        friendAdapter.add(friend);
+    }
+
+    public FriendAdapter getAdapter() {
+        return friendAdapter;
+    }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -204,29 +201,6 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
         friends.clear();
     }
 */
-    private void getFriends() {
-        Session activeSession = Session.getActiveSession();
-        if (activeSession.getState().isOpened()) {
-            Request friendRequest = Request.newMyFriendsRequest(activeSession,
-                    new Request.GraphUserListCallback() {
-                        @Override
-                        public void onCompleted(List<GraphUser> users,
-                                                Response response) {
-                            Log.i("INFO", response.toString());
-                            for(int i=0; i<users.size(); i++) {
-                                User cu = new User(Long.parseLong(users.get(i).getId()), users.get(i).getName());
-                                friendAdapter.add(cu);
-                            }
-                        }
-                    }
-            );
-            Bundle params = new Bundle();
-            params.putString("fields", "id,name");
-            friendRequest.setParameters(params);
-            friendRequest.executeAsync();
-            friendAdapter.notifyDataSetChanged();
-        }
-    }
 
 
 }
