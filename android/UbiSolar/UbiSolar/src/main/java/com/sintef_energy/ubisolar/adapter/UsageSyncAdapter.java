@@ -3,7 +3,9 @@ package com.sintef_energy.ubisolar.adapter;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProvider;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SyncResult;
@@ -72,6 +74,8 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             /* STEP 1: SETUP FILES */
             Log.v(TAG, "Starting sync operation");
 
+            //ContentResolver., mPager2
+
             PreferencesManager preferencesManager;
             PreferencesManagerSync prefManagerSyn;
             RequestManager requestManager;
@@ -85,19 +89,19 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             try {
                 preferencesManager = PreferencesManager.getInstance();
             } catch (IllegalStateException ex) {
-                preferencesManager = PreferencesManager.initializeInstance(getContext());
+                preferencesManager = PreferencesManager.initializeInstance(getContext().getApplicationContext());
             }
 
             try {
                 prefManagerSyn = PreferencesManagerSync.getInstance();
             } catch (IllegalStateException ex) {
-                prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext());
+                prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext().getApplicationContext());
             }
 
             try {
                 requestManager = RequestManager.getInstance();
             } catch (IllegalStateException ex) {
-                requestManager = RequestManager.getSyncInstance(getContext());
+                requestManager = RequestManager.getInstance(getContext().getApplicationContext());
             }
 
             /* STEP 2: Init */

@@ -31,15 +31,10 @@ public class RequestManager {
     private RequestSyncProxy mRequestSyncProxy;
     private RequestQueue mRequestQueue;
 
-    private RequestManager(Activity activity) {
-        mRequestQueue = newRequestQueue(activity.getApplicationContext());
-        mRequestTipProxy = new RequestTipProxy(activity, mRequestQueue);
-        mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
-    }
-
     private RequestManager(Context context) {
         mRequestQueue = newRequestQueue(context);
         mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
+        mRequestTipProxy = new RequestTipProxy(mRequestQueue);
     }
 
     public RequestTipProxy doTipRequest() {
@@ -51,14 +46,7 @@ public class RequestManager {
     }
 
     // This method should be called first to do singleton initialization
-    public static synchronized RequestManager getInstance(Activity activity) {
-        if (instance == null) {
-            instance = new RequestManager(activity);
-        }
-        return instance;
-    }
-
-    public static synchronized RequestManager getSyncInstance(Context context) {
+    public static synchronized RequestManager getInstance(Context context) {
         if(syncInstance == null)
             syncInstance = new RequestManager(context);
         return  syncInstance;

@@ -112,7 +112,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         try {
             RequestManager.getInstance();
         } catch(IllegalStateException e) {
-            RequestManager.getInstance(this);
+            RequestManager.getInstance(this.getApplicationContext());
         }
 
         /* Setup preference manager */
