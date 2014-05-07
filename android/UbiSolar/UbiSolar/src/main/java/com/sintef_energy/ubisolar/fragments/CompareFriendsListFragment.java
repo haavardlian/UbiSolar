@@ -4,10 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.LoaderManager;
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.util.Log;
@@ -17,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -25,11 +20,7 @@ import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.database.energy.UserModel;
 import com.sintef_energy.ubisolar.model.User;
-import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -234,27 +225,8 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
             friendRequest.setParameters(params);
             friendRequest.executeAsync();
             friendAdapter.notifyDataSetChanged();
-            getFriendsInstalled();
         }
     }
 
-    private void getFriendsInstalled() {
-        Session activeSession = Session.getActiveSession();
-        if (activeSession.getState().isOpened()) {
-
-            new Request(
-                    Session.getActiveSession(),
-                    "/me/friends?fields=installed",
-                    null,
-                    HttpMethod.GET,
-                    new Request.Callback() {
-                        public void onCompleted(Response response) {
-                            Log.d("FACEBOOKTEST",response.toString());
-                        }
-                    }
-            ).executeAsync();
-            friendAdapter.notifyDataSetChanged();
-        }
-    }
 
 }
