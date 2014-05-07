@@ -16,6 +16,7 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
 
@@ -89,6 +90,8 @@ public class CompareFriendsListFragment extends Fragment {
             }
         });
 
+        RequestManager.getInstance().doFacebookRequest().getFriends();
+
         return view;
     }
 
@@ -102,6 +105,7 @@ public class CompareFriendsListFragment extends Fragment {
             this.friendAdapter = friendAdapter;
             this.simAdapter = simAdapter;
         }
+
 
 
         @Override

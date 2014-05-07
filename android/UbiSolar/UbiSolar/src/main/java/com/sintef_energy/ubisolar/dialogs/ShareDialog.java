@@ -17,6 +17,7 @@ import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.io.ByteArrayOutputStream;
 
@@ -48,20 +49,10 @@ public class ShareDialog extends DialogFragment {
                 .setPositiveButton("Post to Facebook", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        Bundle param = new Bundle();
-                        Request r;
+                        ByteArrayOutputStream image = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, image);
+                        RequestManager.getInstance().doFacebookRequest().postPicture(getTargetFragment(), caption.getText().toString(), image.toByteArray());
 
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                        param.putString("message", caption.getText().toString());
-                        param.putByteArray("picture", baos.toByteArray());
-                        r = new Request(Session.getActiveSession(), "me/photos", param, HttpMethod.POST, new Request.Callback() {
-                            @Override
-                            public void onCompleted(Response response) {
-                                Log.d("FACEBOOK", "Returned");
-                            }
-                        });
-                        r.executeAsync();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
