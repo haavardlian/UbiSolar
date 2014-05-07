@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.presenter;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Adapter;
 import android.widget.Toast;
 
 import com.facebook.HttpMethod;
@@ -10,13 +11,21 @@ import com.facebook.Request;
 import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.google.gson.JsonObject;
+import com.sintef_energy.ubisolar.adapter.FriendAdapter;
+import com.sintef_energy.ubisolar.fragments.CompareFriendsListFragment;
+import com.sintef_energy.ubisolar.model.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Håvard on 07.05.14.
  */
 public class RequestFacebookProxy {
 
-   Session session;
+    Session session;
 
     public RequestFacebookProxy(Session session) {
         this.session = session;
@@ -42,16 +51,44 @@ public class RequestFacebookProxy {
         }).executeAsync();
     }
 
-    public void getFriends() {
+    private void getFriends(Request.Callback callback) {
         Bundle param = new Bundle();
         param.putString("fields", "name, installed");
-        RequestAsyncTask requestTask = new Request(Session.getActiveSession(), "me/friends", param, HttpMethod.GET, new Request.Callback() {
+        new Request(Session.getActiveSession(), "me/friends", param, HttpMethod.GET, callback).executeAsync();
+    }
+
+    public void populateFriendList(final FriendAdapter friendAdapter) {
+        Request.Callback callback = new Request.Callback() {
             @Override
             public void onCompleted(Response response) {
-                Log.d("FRIENDS", response.getGraphObject().getInnerJSONObject().toString());
+                try {
+                    JSONArray friends = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                    friendAdapter.clear();
+                    for(int i = 0; i < friends.length(); i++) {
+                        JSONObject friend = friends.getJSONObject(i);
+                        if(friend.getBoolean("installed"))
+                            friendAdapter.add(new User(friend.getLong("id"), friend.getString("name")));
+                    }
 
+                    friendAdapter.notifyDataSetChanged();
+                } catch(Exception e) {
+                    
+                }
             }
-        }).executeAsync();
+        };
+
+        getFriends(callback);
+    }
+
+    public void populateFeed(final Adapter adapter) {
+        Request.Callback callback = new Request.Callback() {
+            @Override
+            public void onCompleted(Response response) {
+                //Call server for friend feed
+            }
+        };
+
+        getFriends(callback);
     }
 
 }

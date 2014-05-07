@@ -35,7 +35,6 @@ public class FriendAdapter extends ArrayAdapter<User> {
     @Override
     public void add(User object) {
         users.add(object);
-        notifyDataSetChanged();
     }
 
     @Override
@@ -67,6 +66,7 @@ public class FriendAdapter extends ArrayAdapter<User> {
             holder.name = (TextView)row.findViewById(R.id.social_user_name);
             holder.profilePic = (ProfilePictureView)row.findViewById(R.id.social_profile_pic);
 
+
             row.setTag(holder);
         } else {
             holder = (FriendHolder)row.getTag();
@@ -75,6 +75,7 @@ public class FriendAdapter extends ArrayAdapter<User> {
         if(!users.isEmpty()) {
             User user = users.get(position);
             holder.name.setText(user.getName());
+            holder.profilePic.setProfileId(String.valueOf(user.getUserId()));
         }
         return row;
     }
