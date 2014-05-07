@@ -44,7 +44,7 @@ public class DrawerItem implements Item {
         }
 
         holder.text = (TextView) view.findViewById(R.id.title);
-        holder.count = (TextView) view.findViewById(R.id.counter);
+        holder.count = (TextView) view.findViewById(R.id.device_group_counter);
         holder.text.setText(str1);
 
         setCount(str2);

@@ -107,7 +107,7 @@ public class EditDeviceDialog extends DialogFragment {
                         device.setDescription(description.getText().toString());
                         device.setName(name.getText().toString());
                         device.setCategory(categorySpinner.getSelectedItemPosition());
-                        
+
                         if(newDevice)
                             devicePresenter.addDevice(device, getActivity().getContentResolver());
                         else

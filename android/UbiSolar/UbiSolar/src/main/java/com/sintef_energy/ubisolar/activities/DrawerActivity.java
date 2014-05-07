@@ -326,6 +326,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         DrawerItem item = (DrawerItem)mNavigationDrawerFragment.getNavDrawerItem(11);
 
+        //TODO use Strings
         if (Global.loggedIn) //TODO: if Session.GetActiveSession().isOpened?
             item.setTitle("Log out");
         else

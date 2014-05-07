@@ -101,8 +101,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
         devices = new ArrayList<>();
         expListAdapter = new DeviceListAdapter(getActivity(), devices);
-        expListView.setOnChildClickListener(expListAdapter);
         setGroupIndicatorToRight();
+//        expListView.setGroupIndicator(getResources().getDrawable(R.drawable.device_statelist));
         expListView.setAdapter(expListAdapter);
 
         registerForContextMenu(expListView);
@@ -192,6 +192,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
                         new EditDeviceDialog(mDevice, getString(R.string.device_edit_title));
                 editDeviceDialog.show(getFragmentManager(), TAG);
                 break;
+            //TODO use Strings
             case R.id.device_delete:
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)

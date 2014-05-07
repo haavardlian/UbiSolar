@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 
-public class DeviceListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener {
+public class DeviceListAdapter extends BaseExpandableListAdapter {
 
     private Activity context;
     private List<DeviceModel> devices;
@@ -80,7 +80,7 @@ public class DeviceListAdapter extends BaseExpandableListAdapter implements Expa
         //Only show description if the device actually got a description
         if (device.getDescription().length() > 1){
             TextView descriptionView = (TextView) convertView.findViewById(R.id.device_description);
-            descriptionView.setText("Description: " + device.getDescription());
+            descriptionView.setText(device.getDescription());
         }
 
         //idView.setText("ID: " + device.getId());
@@ -101,41 +101,45 @@ public class DeviceListAdapter extends BaseExpandableListAdapter implements Expa
 
     public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
 
+        int childrenCount = getChildrenCount(groupPosition);
         if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) context
+            LayoutInflater layoutInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.device_list_item,
-                    null);
-        }
-        TextView item = (TextView) convertView.findViewById(R.id.device);
-        ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
-
-        //Set the icon to the right icon
-        //Log.d(TAG, "The groupPosition is: " + groupPosition + "The category corresponding is: " + categories[groupPosition]);
-        switch (groupPosition){
-            case 0:
-                icon.setImageResource(R.drawable.appliances);
-                break;
-            case 1:
-                icon.setImageResource(R.drawable.heat);
-                break;
-            case 2:
-                icon.setImageResource(R.drawable.home_entertainment);
-                break;
-            case 3:
-               //TODO Need lighting icon, default for now
-                icon.setImageResource(R.drawable.default_device);
-                break;
-            case 4:
-                icon.setImageResource(R.drawable.default_device);
-                break;
-            case 5:
-                icon.setImageResource(R.drawable.power_production);
-                break;
+            convertView = layoutInflater.inflate(R.layout.device_list_item, null);
         }
 
-        item.setText(categories[groupPosition]);
-        item.setTypeface(null, Typeface.BOLD);
+        if(childrenCount > 0) {
+
+            TextView category = (TextView) convertView.findViewById(R.id.device_category);
+            ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
+            TextView counter = (TextView) convertView.findViewById(R.id.device_group_counter);
+
+            //Set the icon to the right icon
+            switch (groupPosition) {
+                case 0:
+                    icon.setImageResource(R.drawable.appliances);
+                    break;
+                case 1:
+                    icon.setImageResource(R.drawable.heat);
+                    break;
+                case 2:
+                    icon.setImageResource(R.drawable.home_entertainment);
+                    break;
+                case 3:
+                    //TODO Need lighting icon, default for now
+                    icon.setImageResource(R.drawable.default_device);
+                    break;
+                case 4:
+                    icon.setImageResource(R.drawable.default_device);
+                    break;
+                case 5:
+                    icon.setImageResource(R.drawable.power_production);
+                    break;
+            }
+
+            category.setText(categories[groupPosition]);
+            counter.setText(""+ childrenCount);
+        }
 
         return convertView;
 
@@ -146,15 +150,6 @@ public class DeviceListAdapter extends BaseExpandableListAdapter implements Expa
     }
 
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
+        return false;
     }
-
-    public boolean onChildClick(ExpandableListView expListView, View view, int groupPosition, int childPosition, long id) {
-        // TODO Auto-generated method stub
-
-//        EditDeviceDialog editDeviceDialog = new EditDeviceDialog(getChild(groupPosition, childPosition));
-//        editDeviceDialog.show(context.getFragmentManager(), TAG);
-        return true;
-    }
-
 }
