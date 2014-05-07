@@ -45,21 +45,21 @@
     <!-- AddUsageDialog -->
     <string name="addUsageDialog_title">Add usage</string>
 
-    <!-- AddDeviceDialog -->
-    <string name="addDeviceDialog_title">Add device</string>
+    <!-- Device -->
+    <string name="device_add_title">Add device</string>
+    <string name="device_add_button">Add</string>
+
+    <string name="device_edit_title">Edit device</string>
+    <string name="device_edit_save">Save</string>
+
     <string-array name="device_categories">
     <item>Appliances</item>
     <item>Heat</item>
     <item>Home Entertainment</item>
     <item>Lighting</item>
     <item>Other</item>
-    <item>Producing</item>
+    <item>Production</item>
     </string-array>
-    <string name="addDeviceDialog_buttonText">Add</string>
-
-    <!-- EditDeviceDialog -->
-    <string name="editDeviceDialog_title">Edit device</string>
-    <string name="editDeviceDialog_buttonText">Save</string>
 
     <!-- Fragment usage -->
     <string name="usage_select_devices">Select Devices</string>

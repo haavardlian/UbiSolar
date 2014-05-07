@@ -26,7 +26,6 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.DeviceListAdapter;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
 import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
@@ -84,9 +83,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
             case R.id.menu_add_device:
-                AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
+                EditDeviceDialog addDeviceDialog = new EditDeviceDialog(getString(R.string.device_add_title));
                 addDeviceDialog.show(getFragmentManager(), "addDevice");
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -190,7 +188,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
         switch(item.getItemId()){
             case R.id.device_edit:
-                EditDeviceDialog editDeviceDialog = new EditDeviceDialog(mDevice);
+                EditDeviceDialog editDeviceDialog =
+                        new EditDeviceDialog(mDevice, getString(R.string.device_edit_title));
                 editDeviceDialog.show(getFragmentManager(), TAG);
                 break;
             case R.id.device_delete:
