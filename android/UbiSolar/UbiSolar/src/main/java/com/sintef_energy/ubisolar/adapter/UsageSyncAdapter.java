@@ -71,6 +71,13 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             //TODO:Get the auth token for the current account
             //String authToken = mAccountManager.blockingGetAuthToken(account, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS, true);
 
+            String accUid = mAccountManager.getUserData(account, Global.DATA_FB_UID);
+
+            if(accUid == null){
+                Log.v(TAG, "No FB UID for sync account. Aborting");
+                return;
+            }
+
             /* STEP 1: SETUP FILES */
             Log.v(TAG, "Starting sync operation");
 
@@ -107,7 +114,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             /* STEP 2: Init */
             long lastTimestamp = prefManagerSyn.getSyncTimestamp();
             long newTimestamp = System.currentTimeMillis() / 1000L;
-            long uid = Long.valueOf(preferencesManager.getKeyFacebookUid());
+            long uid = Long.valueOf(accUid);
 
             //If user is not authorized with an id, end.
             if (uid < 0) {

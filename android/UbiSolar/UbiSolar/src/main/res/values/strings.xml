@@ -11,7 +11,6 @@
     <!-- The Content Provider -->
     <string name="provider_authority_energy">com.sintef_energy.ubisolar.provider.energy</string>
 
-
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
         <item>Home</item>
@@ -35,7 +34,7 @@
         <item>@drawable/social</item>
         <item>@drawable/profile</item>
         <item>@drawable/heat</item>
- <!-- TODO: Icons for log out -->
+        <!-- TODO: Icons for log out -->
     </string-array>
 
     <!-- AddTipDialog -->
@@ -47,14 +46,16 @@
 
     <!-- AddDeviceDialog -->
     <string name="addDeviceDialog_title">Add device</string>
+
     <string-array name="device_categories">
-    <item>Appliances</item>
-    <item>Heat</item>
-    <item>Home Entertainment</item>
-    <item>Lighting</item>
-    <item>Other</item>
-    <item>Producing</item>
+        <item>Appliances</item>
+        <item>Heat</item>
+        <item>Home Entertainment</item>
+        <item>Lighting</item>
+        <item>Other</item>
+        <item>Producing</item>
     </string-array>
+
     <string name="addDeviceDialog_buttonText">Add</string>
 
     <!-- EditDeviceDialog -->
@@ -83,6 +84,7 @@
         <item>F</item>
         <item>G</item>
     </string-array>
+
     <string name="add_residence_name">Name</string>
     <string name="add_residence_name_tip">Name your residence</string>
     <string name="add_residence_description">Description</string>
@@ -93,13 +95,12 @@
     <string name="add_residence_energy_class">Energy class</string>
     <string name="addResidenceDialog_button">Add</string>
 
-
-    <!--Other-->
+    <!-- Other -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
 
-    <!-- Fragment profile-->
+    <!-- Fragment profile -->
     <string name="profile_username">Username</string>
     <string name="profile_name">Name</string>
     <string name="profile_age">Age</string>
@@ -112,8 +113,7 @@
     <string name="get_started">Log in to share your profile</string>
     <string name="action_forgot_password">Forgot your password?</string>
 
-
-    <!-- Fragment social-->
+    <!-- Fragment social -->
     <string name="social_user_name">User\'s name</string>
     <string name="friends_header_title">Friends</string>
 
@@ -123,13 +123,12 @@
     <string name="home_size_placeholder">100% lower </string>
     <string name="home_energy_placeholder">1% lower </string>
     <string name="home_improved">You have improved by 5%!</string>
-
     <string name="home_area">than people in your area</string>
     <string name="home_residents">than equal # of residents</string>
     <string name="home_size">than equal residence size</string>
     <string name="home_energy">than same energy class</string>
 
-    <!-- Comparison settings-->
+    <!-- Comparison settings -->
     <string name="comparison_setting">Comparison settings</string>
     <string name="location_comparison_setting">Location</string>
     <string name="res_comparison_setting">Number of residents</string>
@@ -137,11 +136,10 @@
     <string name="energy_comparison_setting">Energy class</string>
     <string name="compare_filter">Filter</string>
 
-
-
     <!-- Fragment Energy saving tabs -->
     <string name="fragment_energy_saving_tab_tips">Tips</string>
     <string name="fragment_energy_saving_tab_your">Your tips</string>
+
     <string-array name="fragment_energy_saving_tabs">
         <item>Tips</item>
         <item>Your tips</item>
@@ -152,7 +150,9 @@
     <string name="fb_login">User logged in with facebook</string>
     <string name="fb_logout">User logged out of facebook</string>
 
-
     <!-- Broadcasts - Mirrored from AndroidManifest -->
     <string name="broadcast_nav_drawer_usage">com.sintef_energy.ubisolar.broadcast_nav_drawer</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
