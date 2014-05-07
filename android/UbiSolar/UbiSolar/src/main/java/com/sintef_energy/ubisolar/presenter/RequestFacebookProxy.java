@@ -51,34 +51,13 @@ public class RequestFacebookProxy {
         }).executeAsync();
     }
 
-    private void getFriends(Request.Callback callback) {
+    public void getFriends(Request.Callback callback) {
         Bundle param = new Bundle();
         param.putString("fields", "name, installed");
         new Request(Session.getActiveSession(), "me/friends", param, HttpMethod.GET, callback).executeAsync();
     }
 
-    public void populateFriendList(final FriendAdapter friendAdapter) {
-        Request.Callback callback = new Request.Callback() {
-            @Override
-            public void onCompleted(Response response) {
-                try {
-                    JSONArray friends = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
-                    friendAdapter.clear();
-                    for(int i = 0; i < friends.length(); i++) {
-                        JSONObject friend = friends.getJSONObject(i);
-                        if(friend.getBoolean("installed"))
-                            friendAdapter.add(new User(friend.getLong("id"), friend.getString("name")));
-                    }
 
-                    friendAdapter.notifyDataSetChanged();
-                } catch(Exception e) {
-                    
-                }
-            }
-        };
-
-        getFriends(callback);
-    }
 
     public void populateFeed(final Adapter adapter) {
         Request.Callback callback = new Request.Callback() {

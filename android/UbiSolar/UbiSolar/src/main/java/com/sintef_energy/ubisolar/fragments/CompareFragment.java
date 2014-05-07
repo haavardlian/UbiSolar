@@ -68,18 +68,17 @@ public class CompareFragment extends DefaultTabFragment {
         simAdapter = new SimilarAdapter();
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
-        pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter, simAdapter));
+        MyPagerAdapter adapter = new MyPagerAdapter(getFragmentManager(), friendAdapter, simAdapter);
+        pager.setAdapter(adapter);
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
         tabs.setViewPager(pager);
-
         return mRoot;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setRetainInstance(true);
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
