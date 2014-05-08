@@ -87,12 +87,14 @@ public class PreferencesManager {
                 .apply();
     }
 
+    @Deprecated
     public void setAccessToken(String value) {
         mPref.edit()
             .putString(KEY_ACCESS_TOKEN, value)
             .apply();
     }
 
+    @Deprecated
     public void setKeyAccessTokenExpires(Date date){
        mPref.edit()
             .putLong(KEY_ACCESS_TOKEN_EXPIRES, date.getTime())
@@ -154,6 +156,7 @@ public class PreferencesManager {
         return mPref.getString(FACEBOOK_COUNTRY, "");
     }
 
+    @Deprecated
     public String getAccessToken()  {
         return mPref.getString(KEY_ACCESS_TOKEN, "");
     }
@@ -174,6 +177,7 @@ public class PreferencesManager {
         return mPref.getBoolean(COMPARISON_ENERGY_CHECKED, false);
     }
 
+    @Deprecated
     public Date getAccessTokenExpires(){
         return new Date(mPref.getLong(KEY_ACCESS_TOKEN_EXPIRES, 0));
     }

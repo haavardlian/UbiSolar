@@ -1,6 +1,5 @@
 package com.sintef_energy.ubisolar.presenter;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
@@ -35,14 +34,11 @@ public class RequestTipProxy {
     private RequestQueue requestQueue;
     private ObjectMapper mapper;
 
-    private Activity activity;
-
     // package access constructor
-    RequestTipProxy(Activity activity, RequestQueue requestQueue) {
+    RequestTipProxy(RequestQueue requestQueue) {
         this.mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-        this.activity = activity;
         this.requestQueue = requestQueue;
     }
 
@@ -76,10 +72,10 @@ public class RequestTipProxy {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                activity.runOnUiThread(new Runnable() {
+                fragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(activity.getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
+                        Toast.makeText(fragment.getActivity().getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -113,7 +109,7 @@ public class RequestTipProxy {
                     @Override
                     public void onResponse(final JSONObject response) {
 
-                            activity.runOnUiThread(new Runnable() {
+                            fragment.getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
@@ -129,7 +125,7 @@ public class RequestTipProxy {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        activity.runOnUiThread(new Runnable() {
+                        fragment.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 Toast.makeText(fragment.getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
@@ -157,7 +153,7 @@ public class RequestTipProxy {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
-                            activity.runOnUiThread(new Runnable() {
+                            fragment.getActivity().runOnUiThread(new Runnable() {
 
                                 @Override
                                 public void run() {
@@ -177,7 +173,7 @@ public class RequestTipProxy {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
-                        activity.runOnUiThread(new Runnable() {
+                        fragment.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 Toast.makeText(fragment.getActivity(), "An error occurred",

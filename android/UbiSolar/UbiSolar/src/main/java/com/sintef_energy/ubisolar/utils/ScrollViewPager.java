@@ -22,13 +22,21 @@ public class ScrollViewPager extends ViewPager {
     }
 
     // Call this method in your motion events when you want to disable or enable
-// It should work as desired.
+    // It should work as desired.
     public void setSwipeable(boolean swipeable) {
         this.swipeable = swipeable;
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent arg0) {
+
+
         return (this.swipeable) ? super.onInterceptTouchEvent(arg0) : false;
+    }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+            return (this.swipeable) ? super.onTouchEvent(event) : false;
     }
 }

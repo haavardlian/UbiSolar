@@ -19,9 +19,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -36,7 +36,6 @@ import com.sintef_energy.ubisolar.fragments.graphs.UsageGraphPieFragment;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
-import com.sintef_energy.ubisolar.utils.Resolution;
 import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
     private PreferencesManager mPreferenceManager;
     private boolean mFragmentSwap = false;
-
+    private ScrollViewPager mPager;
 
     public UsageFragment() {
     }
@@ -91,24 +90,24 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_usage, container, false);
+        mPager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
 
         if(mUsageFragmentStatePageAdapter == null)
-            mUsageFragmentStatePageAdapter = new UsageFragmentStatePageAdapter(getFragmentManager());
+            mUsageFragmentStatePageAdapter = new UsageFragmentStatePageAdapter(this, mPager);
 
         mPreferenceManager = PreferencesManager.getInstance();
 
         // Initialize the ViewPager and set the adapter
-        ScrollViewPager pager = (ScrollViewPager) mRootView.findViewById(R.id.fragment_usage_tabs_pager);
-        pager.setAdapter(mUsageFragmentStatePageAdapter);
+        mPager.setAdapter(mUsageFragmentStatePageAdapter);
         // Makes the tabs non-swipeable. Having the tabs swipeable causes weird behavior because the
         // graphs are also swipeable.
-        pager.setSwipeable(false);
+        mPager.setSwipeable(false);
 
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip)
                 mRootView.findViewById(R.id.fragment_usage_tabs);
 
-        tabs.setViewPager(pager);
+        tabs.setViewPager(mPager);
 
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -130,12 +129,34 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         //BUG: onPageChangeListener does not set graphView the first time.
         //This is an ugly fix
-        graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(pager, 0);
+        graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(mPager, 0);
 
         SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
         segment.check(segment.getChildAt(graphView.getResolution()).getId());
 
         return mRootView;
+    }
+
+    private static class GraphViewTouchListener implements View.OnTouchListener{
+
+        ScrollViewPager pager;
+
+        GraphViewTouchListener(ScrollViewPager pager){
+           this.pager = pager;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            //We have a multitouch event
+            if(motionEvent.getPointerCount() > 1) {
+                pager.setSwipeable(false);
+                //requestDisallowInterceptTouchEvent ?
+                return true;
+            }
+
+            pager.setSwipeable(true);
+            return false;
+        }
     }
 
     @Override
@@ -252,6 +273,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         graphView = null;
         mUsageFragmentStatePageAdapter = null;
         mPreferenceManager = null;
+        mPager = null;
     }
 
     public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
@@ -286,15 +308,17 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {}
 
-    private class UsageFragmentStatePageAdapter extends FragmentStatePagerAdapter {
+    private static class UsageFragmentStatePageAdapter extends FragmentStatePagerAdapter {
 
         private String titles[];
         private HashMap<Integer, Fragment> fragmentReferenceMap;
+        private ScrollViewPager mPager;
 
-        public UsageFragmentStatePageAdapter(FragmentManager fragmentManager){
-            super(fragmentManager);
-            titles = getResources().getStringArray(R.array.fragment_usage_tabs);
+        public UsageFragmentStatePageAdapter(Fragment fragment, ScrollViewPager pager){
+            super(fragment.getFragmentManager());
+            titles = fragment.getResources().getStringArray(R.array.fragment_usage_tabs);
             fragmentReferenceMap = new HashMap<>();
+            mPager = pager;
         }
 
         @Override
@@ -310,9 +334,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             switch (position){
                 case 0:
                     fragment = UsageGraphLineFragment.newInstance();
+                    //fragment.getView().setOnTouchListener(new GraphViewTouchListener(mPager));
                     break;
                 case 1:
                     fragment = UsageGraphPieFragment.newInstance();
+                    //fragment.getView().setOnTouchListener(new GraphViewTouchListener(mPager));
                     break;
                 default:
                     return null;
@@ -340,5 +366,4 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             return fragmentReferenceMap.get(key);
         }
     }
-
 }
