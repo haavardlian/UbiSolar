@@ -126,7 +126,7 @@ public class EditDeviceDialog extends DialogFragment {
                         EditDeviceDialog.this.getDialog().cancel();
                     }
                 })
-                .setTitle(R.string.device_edit_title);
+                .setTitle(title);
 
         return builder.create();
     }
