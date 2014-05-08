@@ -11,33 +11,18 @@
     </ListView>
 
     <TextView
-        android:id="@+id/deviceName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <!--<TextView
-        android:id="@+id/deviceID"
+        android:id="@+id/device_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="id"
         android:paddingLeft="25dp"
-        android:enabled="false"/>-->
+        android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/deviceDescription"
+        android:id="@+id/device_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/deviceName"
+        android:layout_below="@id/device_name"
         android:layout_marginTop="8dp"
         android:paddingLeft="25dp" />
 
-
-    <TextView
-        android:id="@+id/powerUsage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/deviceDescription"
-        android:layout_marginTop="8dp"
-        android:paddingLeft="25dp"
-        android:text="Power consumtion: 15%" />
 </RelativeLayout>

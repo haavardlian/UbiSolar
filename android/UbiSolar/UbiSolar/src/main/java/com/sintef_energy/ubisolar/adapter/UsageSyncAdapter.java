@@ -3,7 +3,9 @@ package com.sintef_energy.ubisolar.adapter;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProvider;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SyncResult;
@@ -69,8 +71,17 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             //TODO:Get the auth token for the current account
             //String authToken = mAccountManager.blockingGetAuthToken(account, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS, true);
 
+            String accUid = mAccountManager.getUserData(account, Global.DATA_FB_UID);
+
+            if(accUid == null){
+                Log.v(TAG, "No FB UID for sync account. Aborting");
+                return;
+            }
+
             /* STEP 1: SETUP FILES */
             Log.v(TAG, "Starting sync operation");
+
+            //ContentResolver., mPager2
 
             PreferencesManager preferencesManager;
             PreferencesManagerSync prefManagerSyn;
@@ -85,25 +96,25 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             try {
                 preferencesManager = PreferencesManager.getInstance();
             } catch (IllegalStateException ex) {
-                preferencesManager = PreferencesManager.initializeInstance(getContext());
+                preferencesManager = PreferencesManager.initializeInstance(getContext().getApplicationContext());
             }
 
             try {
                 prefManagerSyn = PreferencesManagerSync.getInstance();
             } catch (IllegalStateException ex) {
-                prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext());
+                prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext().getApplicationContext());
             }
 
             try {
                 requestManager = RequestManager.getInstance();
             } catch (IllegalStateException ex) {
-                requestManager = RequestManager.getSyncInstance(getContext());
+                requestManager = RequestManager.getInstance(getContext().getApplicationContext());
             }
 
             /* STEP 2: Init */
             long lastTimestamp = prefManagerSyn.getSyncTimestamp();
             long newTimestamp = System.currentTimeMillis() / 1000L;
-            long uid = Long.valueOf(preferencesManager.getKeyFacebookUid());
+            long uid = Long.valueOf(accUid);
 
             //If user is not authorized with an id, end.
             if (uid < 0) {
