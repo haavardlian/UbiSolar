@@ -47,6 +47,7 @@ public class RequestFacebookProxy {
         }).executeAsync();
     }
 
+
     public void postMessage(final Fragment fragment, String message, String name) {
         Bundle param = new Bundle();
         param.putString("message", name + " - " + message);
@@ -62,13 +63,12 @@ public class RequestFacebookProxy {
         }).executeAsync();
     }
 
+
     public void getFriends(Request.Callback callback) {
         Bundle param = new Bundle();
         param.putString("fields", "name, installed");
         new Request(Session.getActiveSession(), "me/friends", param, HttpMethod.GET, callback).executeAsync();
     }
-
-
 
     public void populateFeed(final Adapter adapter) {
         Request.Callback callback = new Request.Callback() {

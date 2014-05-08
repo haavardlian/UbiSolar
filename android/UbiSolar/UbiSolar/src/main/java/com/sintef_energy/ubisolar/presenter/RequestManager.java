@@ -34,7 +34,6 @@ public class RequestManager {
     private RequestQueue mRequestQueue;
     private RequestFriendsProxy mRequestFriendsProxy;
 
-
     private RequestManager(Context context) {
         mRequestQueue = newRequestQueue(context);
         mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);

@@ -59,6 +59,7 @@ import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
@@ -527,6 +528,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
             // Rest of the login logic is performed in onActivityResult
             startActivityForResult(i, LOGIN_CALL_ID);
+                //session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("user_friends")));
         }
     }
 
