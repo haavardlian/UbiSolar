@@ -10,14 +10,34 @@ public class Tip {
     private int id;
     private String name;
     private String description;
+    private int numberOfRatings;
+    private int averageRating;
 
-    public Tip(int id, String name, String description) {
+    public Tip(int id, String name, String description, int numberOfRatings, int averageRating) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.numberOfRatings = numberOfRatings;
+        this.averageRating = averageRating;
     }
 
     public Tip() {
+    }
+
+    public int getNumberOfRatings() {
+        return numberOfRatings;
+    }
+
+    public void setNumberOfRatings(int numberOfRatings) {
+        this.numberOfRatings = numberOfRatings;
+    }
+
+    public int getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(int averageRating) {
+        this.averageRating = averageRating;
     }
 
     public int getId() {

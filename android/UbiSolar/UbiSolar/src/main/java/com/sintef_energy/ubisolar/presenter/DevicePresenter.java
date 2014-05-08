@@ -1,14 +1,11 @@
 package com.sintef_energy.ubisolar.presenter;
 
 import android.content.ContentResolver;
-import android.util.Log;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.IView.IDeviceView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -16,19 +13,12 @@ import java.util.ArrayList;
  */
 public class DevicePresenter {
 
-    //TODO arrange the data to be sent to the view, react to changes in the view
-
     private static final String TAG = DevicePresenter.class.getName();
 
-    /* The Models*/
-    ArrayList<DeviceModel> dmModels;
     /* The listeners */
     ArrayList<IDeviceView> dmListeners;
 
-    public DevicePresenter(){
-      dmModels = new ArrayList<DeviceModel>();
-      dmListeners = new ArrayList<IDeviceView>();
-    };
+    public DevicePresenter(){}
 
     /* Listeners */
     public void registerListener(IDeviceView view){
@@ -40,15 +30,14 @@ public class DevicePresenter {
     }
 
     public void addDevice(DeviceModel device, ContentResolver contentResolver){
+        device.updateLastUpdate();
         EnergyDataSource.insertDevice(contentResolver, device);
-        this.dmModels.add(device);
+        //this.dmModels.add(device);
     }
 
-    public ArrayList<DeviceModel> getDeviceModels(){
-        return this.dmModels;
-    }
-
-    public void deleteDevices(ContentResolver contentResolver){
-        EnergyDataSource.deleteAll(contentResolver);
+    public void editDevice(ContentResolver contentResolver, DeviceModel dm) {
+        //TODO: Add support for actually checking that the update went fine.
+        dm.updateLastUpdate();
+        EnergyDataSource.editDevice(contentResolver, dm);
     }
 }

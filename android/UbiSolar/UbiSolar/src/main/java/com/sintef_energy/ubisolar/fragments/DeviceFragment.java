@@ -1,15 +1,16 @@
 package com.sintef_energy.ubisolar.fragments;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
-
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.BaseColumns;
+import android.text.Html;
+import android.util.DisplayMetrics;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,47 +18,39 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.util.Log;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CursorAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
+import android.widget.ExpandableListView;
 
-import com.sintef_energy.ubisolar.IView.IDeviceView;
+import com.facebook.android.Util;
+import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.activities.DrawerActivity;
+import com.sintef_energy.ubisolar.adapter.DeviceListAdapter;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.dialogs.AddDeviceDialog;
-import com.sintef_energy.ubisolar.dialogs.AddUsageDialog;
+import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
+import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.presenter.DevicePresenter;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.ArrayList;
 
 /**
  * Created by perok on 2/11/14.
  */
-public class DeviceFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, IDeviceView {
+public class DeviceFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = DeviceFragment.class.getName();
-    private static final String ARG_SECTION_NUMBER = "section_number";
-
-    //private EnergyUsageModel usageField;
-    private SimpleCursorAdapter adapter;
+    private View mRootview;
+    private DevicePresenter devicePresenter;
+    private ExpandableListView expListView;
+    private DeviceListAdapter expListAdapter;
     private ArrayList<DeviceModel> devices;
-    //private ArrayList<EnergyUsageModel> usage;
-    private View view;
 
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
+    private DeviceModel mDevice;
+
     public static DeviceFragment newInstance(int sectionNumber) {
         DeviceFragment fragment = new DeviceFragment();
         Bundle args = new Bundle();
@@ -67,35 +60,32 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     public DeviceFragment() {
-    }
 
-
-
-    /**
-     * The first call to a created fragment
-     * @param activity
-     */
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        //Callback to activity
-        ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
     @Override
-    public void onCreate(Bundle bundle){
-        //Adding options menu
-        setHasOptionsMenu(true);
-        super.onCreate(bundle);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        try {
+            devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
+             /*Line so we can delete test data easily*/
+            //EnergyDataSource.deleteAll(getActivity().getContentResolver());
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement " +
+                    TotalEnergyPresenter.class.getName());
+        }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_device, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
             case R.id.menu_add_device:
-                AddDeviceDialog addDeviceDialog = new AddDeviceDialog();
+                EditDeviceDialog addDeviceDialog = new EditDeviceDialog(getString(R.string.device_add_title));
                 addDeviceDialog.show(getFragmentManager(), "addDevice");
                 return true;
             default:
@@ -104,111 +94,132 @@ public class DeviceFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_device, container, false);
-        return view;
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
 
+        mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
+
+        expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
+
+        devices = new ArrayList<>();
+        expListAdapter = new DeviceListAdapter(getActivity(), devices);
+        setGroupIndicatorToRight();
+        expListView.setAdapter(expListAdapter);
+
+        registerForContextMenu(expListView);
+
+        return mRootview;
+    }
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        //There was some reason I could not create the list view outside of this method
-        final ListView listView = (ListView) getActivity().findViewById(R.id.device_list);
-        devices = new ArrayList<DeviceModel>();
-        //EnergyDataSource.deleteAll(getActivity().getContentResolver());
-        //usage = new ArrayList<EnergyUsageModel>();
-
-        adapter = new SimpleCursorAdapter(
-                getActivity().getApplicationContext(),
-                R.layout.fragment_device_row,
-                null,
-                new String[]{DeviceModel.DeviceEntry.COLUMN_NAME, DeviceModel.DeviceEntry.COLUMN_DESCRIPTION},
-                new int[]{R.id.row_header, R.id.row_description},
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.v(TAG, "Du klikka på listeItem nummer: " + i);
-            }
-        });
-
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-
-
-        }
-
         getLoaderManager().initLoader(0, null, this);
-
     }
 
-    /*End lifecycle*/
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //outState.putInt("curChoice", mCurCheckPosition);
+    private void setGroupIndicatorToRight() {
+        /* Get the screen width */
+        DisplayMetrics dm = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+
+        expListView.setIndicatorBounds(width - getDipsFromPixel(35), width
+                - getDipsFromPixel(5));
     }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
+    public int getDipsFromPixel(float pixels) {
+        // Get the screen's density scale
+        final float scale = getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+        return (int) (pixels * scale + 0.5f);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(getActivity(), EnergyContract.Devices.CONTENT_URI,
-                EnergyContract.Devices.PROJECTION_ALL, null, null,
-                BaseColumns._ID + " ASC");
+        return new CursorLoader(
+                getActivity(),
+                EnergyContract.Devices.CONTENT_URI,
+                EnergyContract.Devices.PROJECTION_ALL,
+                null,
+                null,
+                DeviceModel.DeviceEntry._ID + " ASC"
+        );
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        this.adapter.swapCursor(cursor);
+        devices.clear();
 
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0)
+            do {
+                DeviceModel model = new DeviceModel(cursor);
+                devices.add(model);
+            } while (cursor.moveToNext());
+
+        expListAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        this.adapter.swapCursor(null);
-    }
-
-
-    @Override
-    public void addDevice(DeviceModel model) {
-
+        devices.clear();
     }
 
     @Override
-    public void deleteDevice(DeviceModel model) {
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
+        int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+        int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
+        Device device = expListAdapter.getChild(group, child);
 
+        MenuInflater m = getActivity().getMenuInflater();
+        menu.setHeaderTitle(device.getName());
+        menu.setHeaderIcon(R.drawable.devices);
+        m.inflate(R.menu.device_menu, menu);
     }
 
     @Override
-    public void changeDevice(DeviceModel model, String name, String description) {
+    public boolean onContextItemSelected(MenuItem item) {
+        ExpandableListView.ExpandableListContextMenuInfo info =
+                (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
+        int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
+        int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
+        mDevice = expListAdapter.getChild(group, child);
 
-    }
+        switch(item.getItemId()){
+            case R.id.device_edit:
+                EditDeviceDialog editDeviceDialog =
+                        new EditDeviceDialog(mDevice, getString(R.string.device_edit_title));
+                editDeviceDialog.show(getFragmentManager(), TAG);
+                break;
+            //TODO use Strings
+            case R.id.device_delete:
+                new AlertDialog.Builder(getActivity())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle(getString(R.string.device_dialog_delete))
+                        .setMessage(Html.fromHtml(getString(R.string.device_delete_conf1) + " <b>" +
+                                mDevice.getName() + "</b> " + getString(R.string.device_delete_conf2)))
+                        .setPositiveButton(getString(R.string.device_ok), new DialogInterface.OnClickListener() {
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.add_device, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Uri.Builder builer = EnergyContract.Devices.CONTENT_URI.buildUpon();
+                                builer.appendPath("" + mDevice.getId());
+                                getActivity().getContentResolver().delete(builer.build(), null, null);
+                                devices.remove(mDevice);
+                                Utils.makeShortToast(getActivity(),
+                                        mDevice.getName() + " " + getString(R.string.device_toast_deleted));
+                            }
 
-    /*public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection OBS: copy paste
-        /*switch (item.getItemId()) {
-            case R.id.fragment_usage_menu_add:
-                Intent intent = new Intent(this.getActivity(), AddDeviceEnergyActivity.class);
-                startActivityForResult(intent, 0);
+                        })
+                        .setNegativeButton(getString(R.string.device_cancel), null)
+                        .show();
+
+                this.expListAdapter.notifyDataSetChanged();
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
         }
-
-        //TODO: Show the addusage acivity when clicked
-    }*/
+        return super.onContextItemSelected(item);
+    }
 }

@@ -1,24 +1,30 @@
 package com.sintef_energy.ubisolar.fragments.graphs;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.IView.ITotalEnergyView;
+import com.devspark.progressfragment.ProgressFragment;
+import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
-import com.sintef_energy.ubisolar.structs.DeviceUsageList;
+import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.model.DeviceUsageList;
+import com.sintef_energy.ubisolar.utils.Resolution;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -27,25 +33,41 @@ import org.achartengine.model.SeriesSelection;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.Random;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
-/**
- * Created by perok on 2/11/14.
- */
-public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView {
+import info.hoang8f.android.segmented.SegmentedGroup;
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    TotalEnergyPresenter presenter;
+public class UsageGraphPieFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private View rootView;
+    public static final String TAG = UsageGraphLineFragment.class.getName();
 
-    private static int[] COLORS = new int[] { Color.GREEN, Color.BLUE,Color.MAGENTA, Color.CYAN, Color.RED, Color.YELLOW};
+    private final int DEFAULT_RESOLUTION = Resolution.MONTHS;
+
+    private View mRootView;
+
+    private int[] colors;
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
-    private ArrayList<Device> devices;
+    private ArrayList<DeviceUsageList> mDeviceUsageList;
+    private Bundle mSavedState;
+    private int mSelected = -1;
+
+    private Resolution resolution;
+    private Date mSelectedDate;
+    private boolean[] mSelectedDialogItems;
+
+    private TextView nameView;
+    private TextView descriptionView;
+    private TextView powerUsageView;
+    private TextView usagePieLabel;
+
+    private LinkedHashMap<Long, DeviceModel> mDevices;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -54,7 +76,6 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     public static UsageGraphPieFragment newInstance() {
         UsageGraphPieFragment fragment = new UsageGraphPieFragment();
         Bundle args = new Bundle();
-        //args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,85 +83,109 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
     public UsageGraphPieFragment() {
     }
 
-    /**
-     * The first call to a created fragment
-     * @param activity
-     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        rootView = inflater.inflate(R.layout.fragment_usage_graph_pie, container, false);
-        return rootView;
-    }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+        //Setup colors
+        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
+        this.colors = new int[colorStringArray.length];
 
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
+        for(int i = 0; i < colorStringArray.length; i++) {
+            this.colors[i] = Color.parseColor(colorStringArray[i]);
         }
 
-        setupPieGraph();
+        super.onActivityCreated(savedInstanceState);
+        setContentView(R.layout.fragment_usage_graph_pie);
+        mRootView = getContentView();
+        setContentShown(false);
+        setEmptyText(getResources().getString(R.string.usage_no_content));
+
+        mChartView = null;
+
+        nameView = (TextView) mRootView.findViewById(R.id.pieDetailsName);
+        descriptionView = (TextView) mRootView.findViewById(R.id.pieDetailsDescription);
+        powerUsageView = (TextView) mRootView.findViewById(R.id.pieDetailsPowerUsage);
+        usagePieLabel = (TextView) mRootView.findViewById(R.id.usagePieLabel);
+
+        if(savedInstanceState != null && mSavedState == null)
+            mSavedState = savedInstanceState.getBundle("mSavedState");
+
+        if (mSavedState != null) {
+//            mDeviceUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mDeviceUsageList");
+            mRenderer = (DefaultRenderer) mSavedState.getSerializable("mRenderer");
+            mSeries = (CategorySeries) mSavedState.getSerializable("mSeries");
+            mSelected = mSavedState.getInt("mSelected");
+            mSelectedDialogItems = mSavedState.getBooleanArray("mSelectedDialogItems");
+        }
+        else{
+            setupPieGraph();
+        }
+
+        resolution = new Resolution(DEFAULT_RESOLUTION);
         createPieGraph();
-        devices = createDevices();
-        ArrayList<ArrayList<DeviceUsage>> usageList = createDeviceUsage(devices);
-        populatePieChart(devices, usageList);
+        updateDetails();
     }
 
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //outState.putInt("curChoice", mCurCheckPosition);
+        outState.putBundle("mSavedState", mSavedState != null ? mSavedState : saveState());
+    }
+
+    private Bundle saveState(){
+        Bundle state = new Bundle();
+
+        state.putSerializable("mDeviceUsageList", mDeviceUsageList);
+        state.putSerializable("mRenderer", mRenderer);
+        state.putSerializable("mSeries", mSeries);
+        state.putInt("mSelected", mSelected);
+        state.putBooleanArray("mSelectedDialogItems", mSelectedDialogItems);
+
+        return state;
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-
-        if(presenter != null)
-            presenter.unregisterListener(this);
-    }
-
-    public void registerTotalEnergyPresenter(TotalEnergyPresenter presenter){
-        this.presenter = presenter;
-    }
+   }
 
     @Override
-    public void newData(EnergyUsageModel euModel) {
+    public void onDestroyView(){
+        super.onDestroy();
 
+        mSavedState = saveState();
+        Log.v(TAG, " onDestroyView()");
     }
 
-    private void setupPieGraph()
-    {
-        mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setBackgroundColor(Color.WHITE);
-        mRenderer.setChartTitleTextSize(20);
+    private void setupPieGraph(){
+        mRenderer.setChartTitle(getResources().getString(R.string.usage_pie_graph_title));
+        mRenderer.setChartTitleTextSize(40);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
+
+        mRenderer.setApplyBackgroundColor(true);
+        mRenderer.setBackgroundColor(Color.WHITE);
+        mRenderer.setLabelsColor(Color.BLACK);
+
         mRenderer.setMargins(new int[] { 20, 30, 15, 0 });
         mRenderer.setStartAngle(90);
         mRenderer.setZoomEnabled(false);
         mRenderer.setPanEnabled(false);
-        mRenderer.setChartTitle("Power overview");
-        mRenderer.setLabelsColor(Color.BLACK);
         mRenderer.setShowLegend(false);
         mRenderer.setClickEnabled(true);
         mRenderer.setSelectableBuffer(10);
     }
 
-    private void createPieGraph()
-    {
+    private void createPieGraph(){
         if (mChartView == null) {
-            LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.pieChartView);
-            mChartView = ChartFactory.getPieChartView(rootView.getContext(), mSeries, mRenderer);
+            LinearLayout layout = (LinearLayout) mRootView.findViewById(R.id.pieChartView);
+            mChartView = ChartFactory.getPieChartView(getActivity().getApplicationContext(), mSeries, mRenderer);
 
             mChartView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -149,18 +194,17 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
 
                     if (seriesSelection != null) {
                         for (int i = 0; i < mSeries.getItemCount(); i++) {
-                            if(mRenderer.getSeriesRendererAt(i).isHighlighted() && i == seriesSelection.getPointIndex())
-                            {
+                            if(mRenderer.getSeriesRendererAt(i).isHighlighted() && i == seriesSelection.getPointIndex()){
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(false);
+                                mSelected = -1;
                                 clearDetails();
                             }
-                            else if(i == seriesSelection.getPointIndex())
-                            {
+                            else if(i == seriesSelection.getPointIndex()){
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(true);
-                                updateDetails(devices.get(seriesSelection.getPointIndex()), String.valueOf(seriesSelection.getValue()));
+                                mSelected = seriesSelection.getPointIndex();
+                                updateDetails();
                             }
-                            else
-                            {
+                            else{
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(false);
                             }
                         }
@@ -168,20 +212,6 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
                     }
                 }
             });
-
-//            mChartView.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    SeriesSelection seriesSelection = mChartView.getCurrentSeriesAndPoint();
-//                    if (seriesSelection == null) {
-//                        Toast.makeText(PieActivity.this,"No chart element was long pressed", Toast.LENGTH_SHORT);
-//                        return false;
-//                    } else {
-//                        Toast.makeText(PieActivity.this,"Chart element data point index "+ seriesSelection.getPointIndex()+ " was long pressed",Toast.LENGTH_SHORT);
-//                        return true;
-//                    }
-//                }
-//            });
             layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }
         else {
@@ -189,98 +219,302 @@ public class UsageGraphPieFragment extends Fragment implements ITotalEnergyView 
         }
     }
 
-    private void populatePieChart(ArrayList<Device> devices,
-                                  ArrayList<ArrayList<DeviceUsage>> usageList)
-    {
+    private void populatePieChart(){
+        clearDetails();
         double totalPowerUsage = 0;
 
-        for(int i = 0; i < devices.size(); i++)
-        {
-            ArrayList<DeviceUsage> usage = usageList.get(i);
-            for(DeviceUsage u : usage)
-                totalPowerUsage += u.getPower_usage();
-        }
+        for(DeviceUsageList deviceUsageList : mDeviceUsageList)
+            totalPowerUsage += deviceUsageList.getTotalUsage();
 
-        for(int i = 0; i < devices.size(); i++)
-        {
-            ArrayList<DeviceUsage> usage = usageList.get(i);
-            double powerUsage = 0;
+        for(DeviceUsageList deviceUsageList : mDeviceUsageList){
+            int percentage = (int) ((deviceUsageList.getTotalUsage() / totalPowerUsage) * 100);
+            deviceUsageList.setPercentage(percentage);
 
-            for(DeviceUsage u : usage)
-                powerUsage += u.getPower_usage();
-
-
-            double percentage = (powerUsage / totalPowerUsage) * 100;
-
-            mSeries.add(devices.get(i).getName() + " - " + (int) percentage + "%", powerUsage);
+            mSeries.add(deviceUsageList.getDevice().getName() + " - " + percentage + "%",
+                    deviceUsageList.getTotalUsage());
             SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-            renderer.setColor(COLORS[(mSeries.getItemCount() - 1) % COLORS.length]);
+            renderer.setColor(colors[(mSeries.getItemCount() - 1) % colors.length]);
             mRenderer.addSeriesRenderer(renderer);
         }
+        mChartView.repaint();
     }
 
-    @Override
-    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
-        
-    }
+    /**
+     * Clears devices automatically before adding more data.
+     * @param usageList
+     */
+    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList){
+        clearDevices();
 
-    @Override
-    public void clearDevices() {
+        mDeviceUsageList = usageList;
+        setSelectedDate();
+        for(DeviceUsageList u : mDeviceUsageList)
+            u.calculateTotalUsage(formatDate(mSelectedDate, resolution.getPieFormat()) , resolution.getPieFormat());
 
-    }
+        populatePieChart();
 
-    // Create data
-    private ArrayList<Device> createDevices()
-    {
-        ArrayList<Device> devices = new ArrayList<>();
-        devices.add(new DeviceModel(1, "TV", "-", 1));
-        devices.add(new DeviceModel(2, "Radio", "-", 1));
-        devices.add(new DeviceModel(3, "PC", "-", 1));
-        devices.add(new DeviceModel(4, "Oven", "-", 1));
-        devices.add(new DeviceModel(5, "Heater", "-", 1));
-        return devices;
-    }
-
-    private ArrayList<ArrayList<DeviceUsage>> createDeviceUsage(ArrayList<Device> devices)
-    {
-        ArrayList<ArrayList<DeviceUsage>> collection = new ArrayList<>();
-        Date date;
-        Random random = new Random();
-
-
-        for(Device device : devices)
-        {
-            ArrayList<DeviceUsage> usage = new ArrayList<>();
-            for(int i = 0; i < 100; i++)
-            {
-                date = new Date(System.currentTimeMillis() + (i * 60 * 60 * 1000));
-                usage.add(new EnergyUsageModel(System.currentTimeMillis(), device.getDevice_id(), date, random.nextInt((50 - 0) + 1) + 50));
-            }
-            collection.add(usage);
+        if(mSelectedDate != null) {
+           usagePieLabel.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
         }
-        return collection;
+
+        setContentShown(true);
     }
 
-    private void updateDetails(Device device, String powerUsage)
-    {
-        TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
-        TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
-        TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
-
-
-        nameView.setText(device.getName());
-        descriptionView.setText(device.getDescription());
-        powerUsageView.setText(powerUsage + " kWh");
+    public void setSelectedDate(){
+        if(mSelectedDate == null) {
+            if (mDeviceUsageList != null) {
+                DeviceUsageList dul = mDeviceUsageList.get(mDeviceUsageList.size() - 1);
+                mSelectedDate = dul.get(dul.size() - 1).toDate();
+            }
+        }
     }
 
-    private void clearDetails()
-    {
-        TextView nameView = (TextView) rootView.findViewById(R.id.pieDetailsName);
-        TextView descriptionView = (TextView) rootView.findViewById(R.id.pieDetailsDescription);
-        TextView powerUsageView = (TextView) rootView.findViewById(R.id.pieDetailsPowerUsage);
+    /**
+     * Clears current devices.
+     */
+    public void clearDevices() {
+        mRenderer.removeAllRenderers();
+        mSeries.clear();
+        usagePieLabel.setText("");
+        mChartView.repaint();
+    }
 
+    private void updateDetails(){
+        if(mSelected > -1 && mSelected < mDeviceUsageList.size()) {
+
+            DeviceUsageList usageList = mDeviceUsageList.get(mSelected);
+
+            nameView.setText(usageList.getDevice().getName());
+            descriptionView.setText(usageList.getDevice().getDescription());
+            powerUsageView.setText(usageList.getTotalUsage() + " kWh (" + usageList.getPercentage() + "%)");
+        }
+    }
+
+    private void clearDetails(){
         nameView.setText("");
         descriptionView.setText("");
         powerUsageView.setText("");
+    }
+
+    public void setResolution(int mode){
+      resolution.setFormat(mode);
+    }
+
+    public int getResolution()
+    {
+        return resolution.getMode();
+    }
+
+    public boolean[] getSelectedDialogItems() {
+        if(mSelectedDialogItems == null) {
+            mSelectedDialogItems = new boolean[mDevices.size()];
+            if (mDevices.size() > 0) {
+                Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
+                mSelectedDialogItems[0] = false;
+            }
+
+
+        }
+        return mSelectedDialogItems;
+    }
+
+    public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
+        this.mSelectedDialogItems = mSelectedDialogItems;
+    }
+
+    private String formatDate(Date date, String format){
+        SimpleDateFormat formater = new SimpleDateFormat (format);
+        if(date != null)
+            return formater.format(date);
+        else
+            return null;
+    }
+
+    public void setActiveIndex(int index){
+        //TODO set selected date
+    }
+
+    public int getActiveIndex(){
+        return 0;
+    }
+
+    @Override
+    public void setDataLoading(boolean state) {
+        setContentShown(state);
+    }
+
+    public Bitmap createImage(){
+        Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        mChartView.draw(canvas);
+
+        return bitmap;
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
+        Uri.Builder builder;
+
+        switch (mode){
+            case Resolution.HOURS:
+                return new CursorLoader(
+                        getActivity(),
+                        EnergyContract.Energy.CONTENT_URI,
+                        EnergyContract.Energy.PROJECTION_ALL,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " ASC");
+            case Resolution.DAYS:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Day);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+            case Resolution.WEEKS:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Week);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+            case Resolution.MONTHS:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Month);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+        }
+        return null;
+    }
+
+    private String sqlWhereDevices(){
+        String where = "";
+
+        boolean[] selectedItems = getSelectedDialogItems();
+        ArrayList<String> queries = new ArrayList<>();
+
+        for(boolean selectedItem : selectedItems)
+            if(selectedItem)
+                queries.add(EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + "=?");
+
+        if(queries.size() < 1)
+            return "";
+
+        // The last part of the query shall not be succeeded by an OR.
+        int i;
+        for(i = 0; i < queries.size() - 1; i++)
+            where += queries.get(i) + " OR ";
+        where += queries.get(i);
+
+
+        //To get data points between two dates
+        String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
+//
+//        where += " AND " + betweenTime + " BETWEEN ? AND ? ";
+
+        return where;
+    }
+
+    private String[] getSelectedDevicesIDs() {
+        boolean[] selectedItems = getSelectedDialogItems();
+        ArrayList<String> queryValues = new ArrayList<>();
+
+        int i = 0;
+
+        for(Device device : mDevices.values()){
+            if(selectedItems.length > i) {
+                if (selectedItems[i]) {
+                    queryValues.add("" + device.getId());
+                }
+                i++;
+            }
+        }
+
+//        try {
+//            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
+//            Timestamp sqlDate1 = new java.sql.Timestamp(date1.getTime());
+//
+//            Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 14:00");
+//            Timestamp sqlDate2 = new java.sql.Timestamp(date2.getTime());
+//
+//            queryValues.add(sqlDate1.toString());
+//            queryValues.add(sqlDate2.toString());
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
+
+        return queryValues.toArray(new String[queryValues.size()]);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
+
+        //Hashmap containing all DevicesUsage
+        HashMap<Long, DeviceUsageList> devices = new HashMap<>();
+
+        /* Get data from cursor and add */
+        cursor.moveToFirst();
+        if(cursor.getCount() >= 1) {
+            do {
+                EnergyUsageModel model = new EnergyUsageModel(cursor, true);
+                DeviceUsageList deviceUsageList = devices.get(model.getDeviceId());
+
+                if (deviceUsageList == null) {
+                    deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
+                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
+                }
+
+                deviceUsageList.add(model);
+            }
+            while (cursor.moveToNext());
+        }
+
+        ArrayList<DeviceUsageList> deviceUsageLists = new ArrayList<>();
+
+        deviceUsageLists.addAll(devices.values());
+
+        if(deviceUsageLists.size() > 0)
+            addDeviceUsage(deviceUsageLists);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {}
+
+
+    @Override
+    public void setDevices(LinkedHashMap<Long, DeviceModel> devices) {
+        mDevices = devices;
+    }
+
+    @Override
+    public void pullData(){
+
+        if(mDevices == null)
+            return;
+
+        //If no items are selected, clear te graph
+        for(boolean selected : getSelectedDialogItems())
+            if(selected) {
+                getLoaderManager().restartLoader(resolution.getMode(), null, this);
+                return;
+            }
+        clearDevices();
     }
 }

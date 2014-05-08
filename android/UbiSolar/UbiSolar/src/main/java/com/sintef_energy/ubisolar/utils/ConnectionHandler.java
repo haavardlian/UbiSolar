@@ -13,8 +13,8 @@ import com.android.volley.toolbox.Volley;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.sintef_energy.ubisolar.structs.Device;
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
+import com.sintef_energy.ubisolar.model.Device;
+import com.sintef_energy.ubisolar.model.DeviceUsage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +24,7 @@ import org.json.JSONTokener;
 /**
  * Created by thb on 17.03.14.
  */
+@Deprecated
 public class ConnectionHandler {
     String tag = "CONNECTION";
     private final static String BASE_URL = "http://78.91.2.176:8080/";
