@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import android.widget.ExpandableListView;
@@ -102,47 +103,49 @@ public class DeviceListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
 
         int childrenCount = getChildrenCount(groupPosition);
+
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.device_list_item, null);
         }
 
-        if(childrenCount > 0) {
+        TextView category = (TextView) convertView.findViewById(R.id.device_category);
+        ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
+        TextView counter = (TextView) convertView.findViewById(R.id.device_group_counter);
 
-            TextView category = (TextView) convertView.findViewById(R.id.device_category);
-            ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
-            TextView counter = (TextView) convertView.findViewById(R.id.device_group_counter);
+        //Set the icon to the right icon
+        switch (groupPosition) {
+            case 0:
+                icon.setImageResource(R.drawable.appliances);
+                break;
+            case 1:
+                icon.setImageResource(R.drawable.heat);
+                break;
+            case 2:
+                icon.setImageResource(R.drawable.home_entertainment);
+                break;
+            case 3:
+                //TODO Need lighting icon, default for now
+                icon.setImageResource(R.drawable.default_device);
+                break;
+            case 4:
+                icon.setImageResource(R.drawable.default_device);
+                break;
+            case 5:
+                icon.setImageResource(R.drawable.power_production);
+                break;
 
-            //Set the icon to the right icon
-            switch (groupPosition) {
-                case 0:
-                    icon.setImageResource(R.drawable.appliances);
-                    break;
-                case 1:
-                    icon.setImageResource(R.drawable.heat);
-                    break;
-                case 2:
-                    icon.setImageResource(R.drawable.home_entertainment);
-                    break;
-                case 3:
-                    //TODO Need lighting icon, default for now
-                    icon.setImageResource(R.drawable.default_device);
-                    break;
-                case 4:
-                    icon.setImageResource(R.drawable.default_device);
-                    break;
-                case 5:
-                    icon.setImageResource(R.drawable.power_production);
-                    break;
-            }
-
-            category.setText(categories[groupPosition]);
-            counter.setText(""+ childrenCount);
+        }
+        category.setText(categories[groupPosition]);
+        if(childrenCount < 1)
+            counter.setVisibility(View.INVISIBLE);
+        else {
+            counter.setText("" + childrenCount);
+            counter.setVisibility(View.VISIBLE);
         }
 
         return convertView;
-
     }
 
     public boolean hasStableIds() {
