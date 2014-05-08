@@ -6,7 +6,6 @@ import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
@@ -197,10 +196,10 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
             case R.id.device_delete:
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Delete device")
-                        .setMessage(Html.fromHtml("Are you sure you want to delete <b>" +
-                                mDevice.getName() + "</b> and all its usage?"))
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setTitle(getString(R.string.device_dialog_delete))
+                        .setMessage(Html.fromHtml(getString(R.string.device_delete_conf1) + " <b>" +
+                                mDevice.getName() + "</b> " + getString(R.string.device_delete_conf2)))
+                        .setPositiveButton(getString(R.string.device_ok), new DialogInterface.OnClickListener() {
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -211,7 +210,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
                             }
 
                         })
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton(getString(R.string.device_cancel), null)
                         .show();
 
                 this.expListAdapter.notifyDataSetChanged();

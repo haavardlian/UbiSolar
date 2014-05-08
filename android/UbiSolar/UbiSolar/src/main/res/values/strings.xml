@@ -51,6 +51,18 @@
     <string name="device_edit_title">Edit device</string>
     <string name="device_edit_save">Save</string>
 
+    <string name="device_edit_name">Name</string>
+    <string name="device_edit_description">Description</string>
+
+    <string name="device_edit">Edit</string>
+    <string name="device_delete">Delete</string>
+
+    <string name="device_dialog_delete">Delete device?</string>
+    <string name="device_delete_conf1">"Are you sure you want to delete"</string>
+    <string name="device_delete_conf2">"and all its usage data?"</string>
+    <string name="device_ok">OK</string>
+    <string name="device_cancel">Cancel</string>
+
     <string-array name="device_categories">
     <item>Appliances</item>
     <item>Heat</item>
@@ -162,4 +174,7 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="hello_world">Hello world!</string>
 
+    <!--Util-->
+    <string name="total_name">Total</string>
+    <string name="total_description">The total power used</string>
 </resources>
