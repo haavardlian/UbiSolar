@@ -104,7 +104,6 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         devices = new ArrayList<>();
         expListAdapter = new DeviceListAdapter(getActivity(), devices);
         setGroupIndicatorToRight();
-//        expListView.setGroupIndicator(getResources().getDrawable(R.drawable.device_statelist));
         expListView.setAdapter(expListAdapter);
 
         registerForContextMenu(expListView);

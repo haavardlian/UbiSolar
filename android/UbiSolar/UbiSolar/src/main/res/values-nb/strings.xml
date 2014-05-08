@@ -61,6 +61,16 @@
     <item>Produksjon</item>
     </string-array>
 
+    <string-array name="device_icons">
+        <item>@drawable/appliances</item>
+        <item>@drawable/heat</item>
+        <item>@drawable/home_entertainment</item>
+        <item>@drawable/default_device</item>
+        <item>@drawable/default_device</item>
+        <item>@drawable/power_production</item>
+    </string-array>
+
+
     <!-- Fragment usage -->
     <string name="usage_select_devices">Velg enheter</string>
     <string name="usage_share">Del</string>
