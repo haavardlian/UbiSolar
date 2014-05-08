@@ -52,9 +52,25 @@
     <string name="device_edit_title">Endre enhet</string>
     <string name="device_edit_save">Lagre</string>
 
+    <string name="device_edit_name">Navn</string>
+    <string name="device_edit_description">Beskrivelse</string>
+
+    <string name="device_toast_deleted">slettet</string>
+    <string name="device_toast_added">lagt til</string>
+    <string name="device_toast_edited">endret</string>
+
+    <string name="device_edit">Endre</string>
+    <string name="device_delete">Slett</string>
+
+    <string name="device_dialog_delete">Slett enhhet?</string>
+    <string name="device_delete_conf1">"Er du sikker på at du vil slette"</string>
+    <string name="device_delete_conf2">"og all forbruksdata knyttet til enheten?"</string>
+    <string name="device_ok">OK</string>
+    <string name="device_cancel">Avbryt</string>
+
     <string-array name="device_categories">
     <item>Hvitevarer</item>
-    <item>Varme</item>
+    <item>Oppvarming</item>
     <item>Underholdning</item>
     <item>Belysning</item>
     <item>Annet</item>
@@ -135,4 +151,8 @@
 
     <!-- Toast -->
     <string name="no_internet">Du trenger internettilkobling for å logge inn</string>
+
+    <!--Util-->
+    <string name="total_name">Total</string>
+    <string name="total_description">Den totale strømforbruken</string>b
 </resources>

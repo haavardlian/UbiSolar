@@ -120,7 +120,6 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
         TextView counter = (TextView) convertView.findViewById(R.id.device_group_counter);
 
         icon.setImageResource(icons.getResourceId(groupPosition,3));
-//        System.out.println(icons[groupPosition]);
         category.setText(categories[groupPosition]);
 
         if(childrenCount < 1)

@@ -20,6 +20,7 @@ import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.utils.Utils;
 
 /**
  * Created by pialindkjolen on 29.04.14.
@@ -108,10 +109,16 @@ public class EditDeviceDialog extends DialogFragment {
                         device.setName(name.getText().toString());
                         device.setCategory(categorySpinner.getSelectedItemPosition());
 
-                        if(newDevice)
+                        if(newDevice) {
                             devicePresenter.addDevice(device, getActivity().getContentResolver());
-                        else
+                            Utils.makeShortToast(getActivity(),
+                                    device.getName() + " " + getString(R.string.device_toast_added));
+                        }
+                        else {
                             devicePresenter.editDevice(getActivity().getContentResolver(), device);
+                            Utils.makeShortToast(getActivity(),
+                                    device.getName() + " " + getString(R.string.device_toast_edited));
+                        }
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
