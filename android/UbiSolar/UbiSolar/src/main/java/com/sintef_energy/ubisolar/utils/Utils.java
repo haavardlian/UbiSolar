@@ -7,6 +7,11 @@ import android.net.NetworkInfo;
 import android.os.StrictMode;
 import android.widget.Toast;
 
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+
 /**
  * Created by perok on 13.04.14.
  */
@@ -66,5 +71,18 @@ public class Utils {
         }
     }
 
+    public static void createTotal(ContentResolver contentResolver){
+        if(EnergyDataSource.getEnergyModelSize(contentResolver) == 0) {
+            PreferencesManager preferencesManager = PreferencesManager.getInstance();
+            DeviceModel device = new DeviceModel(
+                    1,
+                    Long.valueOf(preferencesManager.getKeyFacebookUid()),
+                    "Total",
+                    "The total power used",
+                    -1);
 
+            contentResolver.insert(
+                    EnergyContract.Devices.CONTENT_URI, device.getContentValues());
+        }
+    }
 }

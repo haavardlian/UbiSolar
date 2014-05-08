@@ -78,7 +78,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private int mActiveDateIndex = -1;
 
     private LinkedHashMap<Long, DeviceModel> mDevices;
-
     private ArrayList<Date> mDates = new ArrayList<>();
 
     /**

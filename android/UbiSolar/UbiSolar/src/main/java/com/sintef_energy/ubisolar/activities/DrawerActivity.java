@@ -184,6 +184,9 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
 
 
+        //Creates the Total usage device if it does not already exist.
+        Utils.createTotal(getContentResolver());
+
         /* Start developer mode after app has been setup
          * Lots of StrictMode violations are done in startup anyways. */
         Utils.developerMode(getContentResolver(), Global.DEVELOPER_MADE, false);

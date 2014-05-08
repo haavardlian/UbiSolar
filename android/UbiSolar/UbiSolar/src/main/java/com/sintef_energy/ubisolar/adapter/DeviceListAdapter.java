@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,20 +19,24 @@ import android.widget.ImageView;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
+import com.facebook.widget.WebDialog;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 
-public class DeviceListAdapter extends BaseExpandableListAdapter {
+public class DeviceListAdapter extends BaseExpandableListAdapter{
 
     private Activity context;
     private List<DeviceModel> devices;
     private String[] categories;
     public static final String TAG = DeviceListAdapter.class.getName();
 
+    private TypedArray icons;
+
     public DeviceListAdapter(Activity context, List<DeviceModel> devices) {
         this.context = context;
         this.devices = devices;
         this.categories = context.getResources().getStringArray(R.array.device_categories);
+        icons = context.getResources().obtainTypedArray(R.array.device_icons);
     }
 
     @Override
@@ -114,30 +119,10 @@ public class DeviceListAdapter extends BaseExpandableListAdapter {
         ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
         TextView counter = (TextView) convertView.findViewById(R.id.device_group_counter);
 
-        //Set the icon to the right icon
-        switch (groupPosition) {
-            case 0:
-                icon.setImageResource(R.drawable.appliances);
-                break;
-            case 1:
-                icon.setImageResource(R.drawable.heat);
-                break;
-            case 2:
-                icon.setImageResource(R.drawable.home_entertainment);
-                break;
-            case 3:
-                //TODO Need lighting icon, default for now
-                icon.setImageResource(R.drawable.default_device);
-                break;
-            case 4:
-                icon.setImageResource(R.drawable.default_device);
-                break;
-            case 5:
-                icon.setImageResource(R.drawable.power_production);
-                break;
-
-        }
+        icon.setImageResource(icons.getResourceId(groupPosition,3));
+//        System.out.println(icons[groupPosition]);
         category.setText(categories[groupPosition]);
+
         if(childrenCount < 1)
             counter.setVisibility(View.INVISIBLE);
         else {
@@ -153,6 +138,6 @@ public class DeviceListAdapter extends BaseExpandableListAdapter {
     }
 
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return true;
     }
 }

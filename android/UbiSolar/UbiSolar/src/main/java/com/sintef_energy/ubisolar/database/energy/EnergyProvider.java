@@ -133,11 +133,11 @@ public class EnergyProvider extends ContentProvider{
             case ENERGY_LIST_DELETE:
                 deleteData = true;
             case ENERGY_LIST:
-//                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
-//                if (TextUtils.isEmpty(sortOrder)) {
-//                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
-//                }
-                rawSql = generateRawDateSql("%Y-%m-%d %H", selection);
+                builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
+                if (TextUtils.isEmpty(sortOrder)) {
+                    sortOrder = EnergyContract.Energy.SORT_ORDER_DEFAULT;
+                }
+                //rawSql = generateRawDateSql("%Y-%m-%d %H", selection);
                 break;
             case ENERGY_ID:
                 builder.setTables(EnergyUsageModel.EnergyUsageEntry.TABLE_NAME);
