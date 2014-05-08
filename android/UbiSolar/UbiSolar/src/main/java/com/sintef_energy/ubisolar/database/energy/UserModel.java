@@ -33,7 +33,7 @@ public class UserModel extends User implements Parcelable {
     private static final String COMMA_SEP = ",";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + UserEntry.TABLE_NAME + " (" +
-                    UserEntry.COLUMN_USER_ID +  " LONG PRIMARY KEY," + COMMA_SEP +
+                    UserEntry.COLUMN_USER_ID +  " LONG PRIMARY KEY" + COMMA_SEP +
                     UserEntry.COLUMN_NAME + TEXT_TYPE +
                     " )";
 

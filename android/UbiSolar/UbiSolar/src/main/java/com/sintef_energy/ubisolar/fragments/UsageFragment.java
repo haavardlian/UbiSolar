@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.RadioGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.facebook.Session;
 import com.sintef_energy.ubisolar.IView.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
@@ -206,6 +207,12 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.usage, menu);
+
+        if(!Session.getActiveSession().isOpened()) {
+            MenuItem item = menu.findItem(R.id.share_usage);
+            item.setVisible(false);
+        }
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 

@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
@@ -47,12 +48,6 @@ public class YourDialog extends DialogFragment {
         view = inflater.inflate(R.layout.dialog_tip, null);
         builder.setView(view)
                 // Add action buttons
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        getDialog().cancel();
-                    }
-                })
                 .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
@@ -60,6 +55,15 @@ public class YourDialog extends DialogFragment {
                     }
                 })
                 .setTitle(tip.getName());
+
+        if(!Session.getActiveSession().isOpened()) {
+            builder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                RequestManager.getInstance().doFacebookRequest().postMessage(getTargetFragment(), tip.getDescription(), tip.getName());
+                }
+            });
+        }
 
         descriptionField = (TextView) view.findViewById(R.id.tipDialogDescription);
         ratingField = (RatingBar) view.findViewById(R.id.tipDialogRatingBar);

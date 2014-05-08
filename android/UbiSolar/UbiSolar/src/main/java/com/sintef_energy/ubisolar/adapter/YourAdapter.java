@@ -1,6 +1,7 @@
 package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
