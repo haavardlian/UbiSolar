@@ -54,6 +54,10 @@
     <string name="device_edit_name">Name</string>
     <string name="device_edit_description">Description</string>
 
+    <string name="device_toast_deleted">deleted</string>
+    <string name="device_toast_added">added</string>
+    <string name="device_toast_edited">edited</string>
+
     <string name="device_edit">Edit</string>
     <string name="device_delete">Delete</string>
 

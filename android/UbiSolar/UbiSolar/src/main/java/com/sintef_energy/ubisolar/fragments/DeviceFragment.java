@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import android.widget.ExpandableListView;
 
+import com.facebook.android.Util;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.DeviceListAdapter;
@@ -29,6 +30,7 @@ import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
+import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -207,6 +209,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
                                 builer.appendPath("" + mDevice.getId());
                                 getActivity().getContentResolver().delete(builer.build(), null, null);
                                 devices.remove(mDevice);
+                                Utils.makeShortToast(getActivity(),
+                                        mDevice.getName() + " " + getString(R.string.device_toast_deleted));
                             }
 
                         })

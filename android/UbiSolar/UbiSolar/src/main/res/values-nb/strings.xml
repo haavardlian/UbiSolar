@@ -55,6 +55,10 @@
     <string name="device_edit_name">Navn</string>
     <string name="device_edit_description">Beskrivelse</string>
 
+    <string name="device_toast_deleted">slettet</string>
+    <string name="device_toast_added">lagt til</string>
+    <string name="device_toast_edited">endret</string>
+
     <string name="device_edit">Endre</string>
     <string name="device_delete">Slett</string>
 
