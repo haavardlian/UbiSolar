@@ -13,11 +13,11 @@
             android:id="@+id/item_icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginLeft="18dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/device"
+            android:id="@+id/device_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
@@ -25,7 +25,18 @@
             android:layout_marginTop="8dp"
             android:layout_toRightOf="@id/item_icon"
             android:paddingLeft="25dp"
-            android:text="Test" />
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/device_group_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/counter_bg"
+            android:textColor="@color/counter_text_color" />
 
     </RelativeLayout>
 </LinearLayout>

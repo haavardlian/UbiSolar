@@ -94,9 +94,7 @@ public class AddResidenceDialog extends DialogFragment {
                         AddResidenceDialog.this.getDialog().cancel();
                     }
                 })
-                .setTitle(R.string.addDeviceDialog_title);
-
-
+                .setTitle(R.string.device_add_title);
 
         energyClassSpinner.setAdapter(energyClassAdapter);
 
