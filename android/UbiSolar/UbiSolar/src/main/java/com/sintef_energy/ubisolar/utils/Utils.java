@@ -79,7 +79,7 @@ public class Utils {
                     Long.valueOf(preferencesManager.getKeyFacebookUid()),
                     "Total",
                     "The total power used",
-                    0);
+                    -1);
 
             contentResolver.insert(
                     EnergyContract.Devices.CONTENT_URI, device.getContentValues());
