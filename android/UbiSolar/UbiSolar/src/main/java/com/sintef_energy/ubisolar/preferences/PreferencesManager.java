@@ -26,6 +26,7 @@ public class PreferencesManager {
 
     public static final String SELECTED_RESIDENCE = PreferencesManager.class.getName() + ".SELECTED_RESIDENCE";
 
+    public static final String SAVED_TIPS = PreferencesManager.class.getName() + ".SAVED_TIPS";
 
     public static final String NAV_DRAWER_USAGE = PreferencesManager.class.getName() + ".NAV_DRAWER_USAGE";
 
