@@ -6,23 +6,30 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.facebook.Request;
+import com.facebook.Response;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 /**
  * Created by baier on 3/21/14.
  */
-public class CompareFriendsListFragment extends Fragment {
+public class CompareFriendsListFragment extends Fragment/* implements LoaderManager.LoaderCallbacks<Cursor>*/{
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -60,22 +67,18 @@ public class CompareFriendsListFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        Log.d("ATTACHED", "yay");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_social_friends, container, false);
         friends = new ArrayList<>();
-        FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
+        friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
         final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
         friendsList.setAdapter(friendAdapter);
-
-        friends.add(new User("Beate"));
-        friends.add(new User("Håvi"));
-        friends.add(new User("Piai"));
-        friends.add(new User("Peri"));
-
-        friendAdapter.notifyDataSetChanged();
+        //RequestManager.getInstance().doFriendRequest().getAllUsers(friendAdapter, this);
 
         friendsList.setClickable(true);
         friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -84,12 +87,49 @@ public class CompareFriendsListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Fragment fragment = CompareFriendsFragment.newInstance(position, simAdapter);
+                Fragment fragment = CompareFriendsFragment.newInstance(position, friendAdapter.getItem(position));
                 addFragment(fragment, true, friends.get(position));
+
             }
         });
 
+        populateFriendList(friendAdapter);
         return view;
+    }
+
+    public void populateFriendList(final FriendAdapter friendAdapter) {
+        Request.Callback callback = new Request.Callback() {
+            @Override
+            public void onCompleted(Response response) {
+                if(response.getError() != null)
+                    return;
+                try {
+                    JSONArray friends = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                    friendAdapter.clear();
+                    for(int i = 0; i < friends.length(); i++) {
+                        JSONObject friend = friends.getJSONObject(i);
+                        if(friend.has("installed") && friend.getBoolean("installed"))
+                            friendAdapter.add(new User(friend.getLong("id"), friend.getString("name")));
+                    }
+
+                    friendAdapter.notifyDataSetChanged();
+                } catch(Exception e) {
+
+                }
+            }
+        };
+
+        RequestManager.getInstance().doFacebookRequest().getFriends(callback);
+    }
+
+
+    public void addFriend(User friend) {
+        Log.d("Adding friend:", friend.toString());
+        friendAdapter.add(friend);
+    }
+
+    public FriendAdapter getAdapter() {
+        return friendAdapter;
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -102,6 +142,7 @@ public class CompareFriendsListFragment extends Fragment {
             this.friendAdapter = friendAdapter;
             this.simAdapter = simAdapter;
         }
+
 
 
         @Override
@@ -131,14 +172,10 @@ public class CompareFriendsListFragment extends Fragment {
 
     public void addFragment(Fragment fragment, boolean addToBackStack, User user) {
         FragmentManager manager = getFragmentManager();
-        FragmentTransaction ft = manager.beginTransaction();
-
-        if (addToBackStack) {
-            ft.addToBackStack(user.getName());
-        }
-
-        ft.replace(R.id.container, fragment);
-        ft.commit();
+        manager.beginTransaction()
+               .replace(R.id.container, fragment, "Compare")
+               .addToBackStack(null)
+               .commit();
     }
 
     @Override
@@ -161,5 +198,38 @@ public class CompareFriendsListFragment extends Fragment {
     public void onDestroy(){
         super.onDestroy();
     }
+/*
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(
+                getActivity(),
+                EnergyContract.Users.CONTENT_URI,
+                EnergyContract.Users.PROJECTION_ALL,
+                null,
+                null,
+                UserModel.UserEntry._ID + " ASC"
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        friends.clear();
+
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0)
+            do {
+                UserModel model = new UserModel(cursor);
+                friends.add(model);
+            } while (cursor.moveToNext());
+
+        friendAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        friends.clear();
+    }
+*/
+
 
 }

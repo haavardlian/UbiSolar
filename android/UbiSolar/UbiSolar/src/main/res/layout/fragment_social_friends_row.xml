@@ -1,30 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="80dp"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:id="@+id/friend_list_row"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1">
 
 
-    <ImageView
+    <com.facebook.widget.ProfilePictureView
         android:id="@+id/social_profile_pic"
-        android:layout_width="40dp"
+        android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/profile"></ImageView>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"/>
 
 
     <TextView
         android:id="@+id/social_user_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         android:layout_toRightOf="@id/social_profile_pic"
         android:text="@string/social_user_name"
         android:textColor="#000"
-        android:textSize="22dp" />
+        android:textSize="20sp"
+        android:layout_alignTop="@+id/social_profile_pic"
+        android:layout_alignBottom="@+id/social_profile_pic"
+        android:gravity="center_vertical"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp" />
 
 </RelativeLayout>

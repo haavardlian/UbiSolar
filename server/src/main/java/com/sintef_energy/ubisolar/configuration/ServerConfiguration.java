@@ -17,7 +17,7 @@ public class ServerConfiguration extends Configuration {
     private DatabaseConfiguration database;
 
     public ServerConfiguration() {
-        database = new DatabaseConfiguration("jdbc:mysql://localhost/haavarhl_it2901", "haavarhl_it2901", "julebrus", DatabaseType.MYSQL);
+        database = new DatabaseConfiguration("jdbc:mysql://188.226.188.11/haavarhl_it2901", "haavarhl_it2901", "julebrus", DatabaseType.MYSQL);
     }
 
     public DatabaseConfiguration getDatabaseConfiguration() {

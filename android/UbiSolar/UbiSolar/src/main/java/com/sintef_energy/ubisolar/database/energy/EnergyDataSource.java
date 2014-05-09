@@ -386,4 +386,48 @@ public class EnergyDataSource {
         return true;
     }
 
+
+    /**
+     *  User operations
+     */
+
+    public static void  insertUser(ContentResolver resolver, UserModel model){
+        resolver.insert(EnergyContract.Users.CONTENT_URI, model.getContentValues());
+    }
+
+
+
+    public static ArrayList<UserModel> getAllUserModels(ContentResolver resolver){
+        ArrayList<UserModel> allUsers = new ArrayList<>();
+
+        Cursor cursor = resolver.query(
+                EnergyContract.Users.CONTENT_URI,
+                EnergyContract.Users.PROJECTION_ALL,
+                null,
+                null,
+                null
+        );
+
+        if(cursor == null){
+            cursor.close();
+            return null;
+        }
+        else if(cursor.getCount() < 1){
+            cursor.close();
+            return null;
+        }
+        else {
+
+        }
+
+        cursor.moveToFirst();
+        allUsers.add(new UserModel(cursor));
+
+        while (cursor.moveToNext())
+            allUsers.add(new UserModel(cursor));
+
+        cursor.close();
+        return allUsers;
+    }
+
 }

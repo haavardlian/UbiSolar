@@ -42,7 +42,7 @@ public class ResidenceModel extends Residence implements Parcelable {
     private static final String COMMA_SEP = ",";
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + ResidenceEntry.TABLE_NAME + " (" +
-                    ResidenceEntry.COLUMN_HOUSE_ID +  " STRING PRIMARY KEY," + COMMA_SEP +
+                    ResidenceEntry.COLUMN_HOUSE_ID +  " STRING PRIMARY KEY" + COMMA_SEP +
                     ResidenceEntry.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     ResidenceEntry.COLUMN_RESIDENTS + INTEGER_TYPE + COMMA_SEP +
                     ResidenceEntry.COLUMN_AREA + INTEGER_TYPE + COMMA_SEP +
