@@ -72,7 +72,7 @@ public class Utils {
     }
 
     public static void createTotal(ContentResolver contentResolver){
-        if(EnergyDataSource.getEnergyModelSize(contentResolver) == 0) {
+        if(EnergyDataSource.getDeviceModelSize(contentResolver) == 0) {
             PreferencesManager preferencesManager = PreferencesManager.getInstance();
             DeviceModel device = new DeviceModel(
                     1,

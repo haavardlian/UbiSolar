@@ -59,6 +59,28 @@ public class EnergyDataSource {
         return size;
     }
 
+    public static int getDeviceModelSize(ContentResolver resolver){
+        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
+        //ContentUris.appendId(builder, id);
+        Cursor cursor = resolver.query(
+                builder.build(),
+                EnergyContract.Devices.PROJECTION_ALL,
+                null,
+                null,
+                null
+        );
+
+        if(cursor == null){
+            return 0;
+        }
+
+        int size = cursor.getCount();
+
+        cursor.close();
+
+        return size;
+    }
+
     public static ArrayList<EnergyUsageModel> getEnergyModels(ContentResolver resolver, long from, long to){
 
         ArrayList<EnergyUsageModel> euModels = new ArrayList<>();
