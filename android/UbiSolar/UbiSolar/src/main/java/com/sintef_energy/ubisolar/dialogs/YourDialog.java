@@ -56,7 +56,7 @@ public class YourDialog extends DialogFragment {
                 })
                 .setTitle(tip.getName());
 
-        if(!Session.getActiveSession().isOpened()) {
+        if(Session.getActiveSession().isOpened()) {
             builder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
