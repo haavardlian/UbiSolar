@@ -19,7 +19,9 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 
+import com.sintef_energy.ubisolar.adapter.WallAdapter;
 import com.sintef_energy.ubisolar.model.User;
+import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.utils.Global;
 
 import org.json.JSONArray;
@@ -35,20 +37,16 @@ public class RequestFriendsProxy {
     private RequestQueue requestQueue;
     private ObjectMapper mapper;
 
-    private Context context;
-    private Activity activity;
-
     // package access constructor
-    RequestFriendsProxy(Activity activity, RequestQueue requestQueue) {
+    RequestFriendsProxy(RequestQueue requestQueue) {
         this.mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-        this.activity = activity;
         this.requestQueue = requestQueue;
     }
 
-    public void getAllUsers(final FriendAdapter adapter, final Fragment fragment) {
-        String url = Global.BASE_URL + "/facebookuser";
+    public void getWallUpdates(final WallAdapter adapter, long userId, final Fragment fragment) {
+        String url = Global.BASE_URL + "/user/" + userId + "/wall";
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(final JSONArray jsonArray) {
@@ -56,7 +54,7 @@ public class RequestFriendsProxy {
 
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        adapter.add(mapper.readValue(jsonArray.get(i).toString(), User.class));
+                        adapter.add(mapper.readValue(jsonArray.get(i).toString(), WallPost.class));
                         //Log.d(tag, adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");
@@ -68,7 +66,6 @@ public class RequestFriendsProxy {
                     @Override
                     public void run() {
                         adapter.notifyDataSetChanged();
-                        fragment.getActivity().setProgressBarIndeterminateVisibility(false);
                     }
                 });
 
@@ -77,26 +74,26 @@ public class RequestFriendsProxy {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                activity.runOnUiThread(new Runnable() {
+                fragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(activity.getApplicationContext(),
-                                context.getString(R.string.energy_saving_server_error), Toast.LENGTH_LONG).show();
+                        Toast.makeText(fragment.getActivity().getApplicationContext(),
+                                fragment.getString(R.string.energy_saving_server_error), Toast.LENGTH_LONG).show();
                     }
                 });
 
                 Log.e("REQUEST", "Error from server!!");
-
-                fragment.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fragment.getActivity().setProgressBarIndeterminateVisibility(false);
-                    }
-                });
             }
         });
 
         requestQueue.add(jsonRequest);
+
+        fragment.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
 
