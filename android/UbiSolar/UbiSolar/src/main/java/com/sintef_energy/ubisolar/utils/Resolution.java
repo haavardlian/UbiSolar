@@ -13,6 +13,7 @@ public class Resolution {
     public static final int DAYS = 1;
     public static final int WEEKS = 2;
     public static final int MONTHS = 3;
+    public static final int YEARS = 4;
 
     private int mode;
 
@@ -66,6 +67,14 @@ public class Resolution {
 
                 preLabel = "";
                 pieFormat = "MMMM";
+                break;
+            case YEARS:
+                resolutionFormat = "yyyy";
+                titleFormat = "";
+                compareFormat = "yyyy";
+
+                preLabel = "";
+                pieFormat = "yyyy";
                 break;
         }
     }

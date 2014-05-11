@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.devspark.progressfragment.ProgressFragment;
@@ -36,10 +37,14 @@ import org.achartengine.renderer.SimpleSeriesRenderer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import antistatic.spinnerwheel.AbstractWheel;
+import antistatic.spinnerwheel.OnWheelChangedListener;
+import antistatic.spinnerwheel.adapters.ArrayWheelAdapter;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
 public class UsageGraphPieFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
@@ -63,11 +68,13 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     private boolean[] mSelectedDialogItems;
 
     private TextView nameView;
-    private TextView descriptionView;
     private TextView powerUsageView;
-    private TextView usagePieLabel;
+    private TextView dateView;
 
     private LinkedHashMap<Long, DeviceModel> mDevices;
+    private AbstractWheel mDateWheel;
+    private ArrayWheelAdapter<String> mDateAdapter;
+    private ArrayList<Date> mDates;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -107,10 +114,11 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
         mChartView = null;
 
-        nameView = (TextView) mRootView.findViewById(R.id.pieDetailsName);
-        descriptionView = (TextView) mRootView.findViewById(R.id.pieDetailsDescription);
-        powerUsageView = (TextView) mRootView.findViewById(R.id.pieDetailsPowerUsage);
-        usagePieLabel = (TextView) mRootView.findViewById(R.id.usagePieLabel);
+//        nameView = (TextView) mRootView.findViewById(R.id.pieDetailsName);
+//        powerUsageView = (TextView) mRootView.findViewById(R.id.pieDetailsPowerUsage);
+        nameView = new TextView(getActivity());
+        powerUsageView = new TextView(getActivity());
+        dateView = (TextView) mRootView.findViewById(R.id.pieDateTitle);
 
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
@@ -126,7 +134,29 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             setupPieGraph();
         }
 
+        mDateWheel = (AbstractWheel) mRootView.findViewById(R.id.usage_date_wheel);
+
+        mDateWheel.addChangingListener(new OnWheelChangedListener() {
+            @Override
+            public void onChanged(AbstractWheel wheel, int oldValue, int newValue) {
+                for(DeviceUsageList deviceUsageList : mDeviceUsageList){
+                    deviceUsageList.calculateTotalUsage(
+                            formatDate(mDates.get(newValue),
+                                    resolution.getCompareFormat()) ,
+                            resolution.getCompareFormat(),
+                            newValue);
+
+                    dateView.setText(formatDate(mDates.get(newValue), resolution.getTitleFormat()) );
+
+                    clearDevices();
+                    populatePieChart();
+                }
+            }
+        });
+
         resolution = new Resolution(DEFAULT_RESOLUTION);
+
+        setupSegments();
         createPieGraph();
         updateDetails();
     }
@@ -163,9 +193,24 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         Log.v(TAG, " onDestroyView()");
     }
 
+    private void setupSegments(){
+        SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
+        segment.setTintColor(Color.DKGRAY);
+        segment.check(segment.getChildAt(getResolution() -1).getId());
+
+        segment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
+                setResolution(segment.indexOfChild(segment.findViewById(segment.getCheckedRadioButtonId())) +1);
+                pullData();
+            }
+        });
+    }
+
     private void setupPieGraph(){
-        mRenderer.setChartTitle(getResources().getString(R.string.usage_pie_graph_title));
-        mRenderer.setChartTitleTextSize(40);
+//        mRenderer.setChartTitle(getResources().getString(R.string.usage_pie_graph_title));
+//        mRenderer.setChartTitleTextSize(40);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
 
@@ -244,18 +289,39 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
      * @param usageList
      */
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList){
-        clearDevices();
+//        clearDevices();
 
         mDeviceUsageList = usageList;
-        setSelectedDate();
-        for(DeviceUsageList u : mDeviceUsageList)
-            u.calculateTotalUsage(formatDate(mSelectedDate, resolution.getPieFormat()) , resolution.getPieFormat());
+//        setSelectedDate();
 
-        populatePieChart();
+        mDates = new ArrayList<>();
+        ArrayList<String> wheelItems = new ArrayList<>();
 
-        if(mSelectedDate != null) {
-           usagePieLabel.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
+        for(DeviceUsageList deviceUsageList : mDeviceUsageList){
+            for(EnergyUsageModel u : deviceUsageList.getUsage())
+                if(!mDates.contains(u.toDate()))
+                    mDates.add(u.toDate());
         }
+
+        Collections.sort(mDates);
+
+        for(Date date : mDates){
+            String item = formatDate(date, resolution.getResolutionFormat());
+            wheelItems.add(item);
+        }
+
+        mDateAdapter =
+                new ArrayWheelAdapter<>(getActivity(), wheelItems.toArray(new String[wheelItems.size()]));
+        mDateAdapter.setItemResource(R.layout.wheel_text_centered);
+        mDateAdapter.setItemTextResource(R.id.text);
+        mDateWheel.setViewAdapter(mDateAdapter);
+        mDateWheel.setCurrentItem(wheelItems.size() -1);
+
+//        if(mSelectedDate != null) {
+//           usagePieLabel.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
+//        }
+
+
 
         setContentShown(true);
     }
@@ -275,7 +341,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     public void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
-        usagePieLabel.setText("");
         mChartView.repaint();
     }
 
@@ -285,14 +350,12 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             DeviceUsageList usageList = mDeviceUsageList.get(mSelected);
 
             nameView.setText(usageList.getDevice().getName());
-            descriptionView.setText(usageList.getDevice().getDescription());
             powerUsageView.setText(usageList.getTotalUsage() + " kWh (" + usageList.getPercentage() + "%)");
         }
     }
 
     private void clearDetails(){
         nameView.setText("");
-        descriptionView.setText("");
         powerUsageView.setText("");
     }
 
@@ -312,8 +375,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
                 Arrays.fill(mSelectedDialogItems, Boolean.TRUE);
                 mSelectedDialogItems[0] = false;
             }
-
-
         }
         return mSelectedDialogItems;
     }
@@ -390,6 +451,17 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             case Resolution.MONTHS:
                 builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
                 builder.appendPath(EnergyContract.Energy.Date.Month);
+
+                return new CursorLoader(
+                        getActivity(),
+                        builder.build(),
+                        null,
+                        sqlWhereDevices(),
+                        getSelectedDevicesIDs(),
+                        null);
+            case Resolution.YEARS:
+                builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
+                builder.appendPath(EnergyContract.Energy.Date.Year);
 
                 return new CursorLoader(
                         getActivity(),

@@ -119,9 +119,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 mFragmentSwap = true;
                 graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
                 graphView.setDevices(mDevices);
-                SegmentedGroup segment = (SegmentedGroup) getActivity().findViewById(R.id.usage_segment);
-                segment.check(segment.getChildAt(graphView.getResolution()).getId());
-//                graphView.pullData();
+                graphView.pullData();
             }
 
             @Override
@@ -131,9 +129,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         //BUG: onPageChangeListener does not set graphView the first time.
         //This is an ugly fix
         graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(mPager, 0);
-
-        SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
-        segment.check(segment.getChildAt(graphView.getResolution()).getId());
 
         return mRootView;
     }
@@ -164,22 +159,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
-        segment.setTintColor(Color.DKGRAY);
-
-        segment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                if(!mFragmentSwap) {
-                    SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
-                    graphView.setResolution(segment.indexOfChild(segment.findViewById(segment.getCheckedRadioButtonId())));
-                    graphView.pullData();
-                }
-                mFragmentSwap = false;
-            }
-        });
-
-                mDevices = new LinkedHashMap<>();
+        mDevices = new LinkedHashMap<>();
 
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
