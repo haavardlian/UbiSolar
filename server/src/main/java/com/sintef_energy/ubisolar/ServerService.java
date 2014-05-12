@@ -37,6 +37,7 @@ public class ServerService extends Service<ServerConfiguration> {
         environment.addResource(new TipsResource(dao));
         environment.addProvider(new OAuthProvider<User>(new Auth(), "SECRET"));
         environment.addResource(new DataGeneratorResource(dao));
-        environment.addResource(new FacebookUserResource(dao));
+        environment.addResource(new TimeResource());
+        environment.addResource(new FriendsResource(dao));
     }
 }

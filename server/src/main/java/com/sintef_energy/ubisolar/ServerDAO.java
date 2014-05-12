@@ -113,19 +113,11 @@ public interface ServerDAO {
     @SqlQuery("SELECT MAX(timestamp) AS timestamp FROM device_power_usage, device where device_id = device.id AND device.user_id = :user LIMIT 1")
     long getLastUpdatedTimeUsage(@Bind("user") long user);
 
-    @SqlQuery("SELECT * FROM facebook_user WHERE user_id = :user_id")
-    @Mapper(FacebookUserMapper.class)
-    FacebookUser getFacebookUserById(@Bind("user_id") long user_id);
+    @SqlQuery("SELECT * FROM wall WHERE user_id IN (:userIdList) ORDER BY timestamp DESC")
+    @Mapper(WallPostMapper.class)
+    List<WallPost> getWallPostsForFriends(@Bind("userIdList") String userIdList);
 
-    @SqlQuery("SELECT * FROM facebook_user")
-    @Mapper(FacebookUserMapper.class)
-    List<FacebookUser> getAllFacebookUsers();
-
-    @SqlQuery("DELETE FROM user WHERE user_id = :user_id")
-    int deleteFacebookUserById(@Bind("user_id") long user_id);
-
-    @SqlUpdate("INSERT INTO facebook_user (user_id, name) VALUES (:user.id, :user.name)")
-    int createFacebookUser(@BindBean("user") FacebookUser user);
-
+    @SqlUpdate("INSERT INTO wall (user_id, message, timestamp) VALUES (:post.userId, :post.message, :post.timestamp)")
+    int createWallPost(@BindBean("post") WallPost post);
 
 }
