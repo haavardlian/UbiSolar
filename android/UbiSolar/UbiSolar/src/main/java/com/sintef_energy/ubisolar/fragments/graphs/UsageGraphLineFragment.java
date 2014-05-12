@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.RadioGroup;
 
 import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.IView.IUsageView;
@@ -112,7 +113,13 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         super.onActivityCreated(mSavedState);
         setContentView(R.layout.fragment_usage_graph_line);
         mRootView = getContentView();
-        Log.v(TAG, "onActivityCreated()");
+
+        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
+        this.colors = new int[colorStringArray.length];
+
+        for (int i = 0; i < colorStringArray.length; i++) {
+            this.colors[i] = Color.parseColor(colorStringArray[i]);
+        }
 
         //ProgressFragment show progressbar
         setContentShown(false);
@@ -145,19 +152,28 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             mActiveUsageList = new ArrayList<>();
         }
         resolution = new Resolution(DEFAULT_RESOLUTION);
+
+        setupSegments();
         createLineGraph();
 
         AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
         asyncGraphCreator.execute(new ArrayList<DeviceUsageList>());
-
-        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
-        this.colors = new int[colorStringArray.length];
-
-        for (int i = 0; i < colorStringArray.length; i++) {
-            this.colors[i] = Color.parseColor(colorStringArray[i]);
-        }
-
         mSavedState = null;
+    }
+
+    private void setupSegments(){
+        SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
+        segment.setTintColor(Color.DKGRAY);
+        segment.check(segment.getChildAt(getResolution()).getId());
+
+        segment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
+                resolution.setFormat(segment.indexOfChild(segment.findViewById(segment.getCheckedRadioButtonId())));
+                pullData();
+            }
+        });
     }
 
     /*End lifecycle*/
@@ -551,12 +567,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             return null;
     }
 
-    @Override
-    public void setResolution(int mode) {
-        setActiveIndex(resolution.getMode(), mode);
-        resolution.setFormat(mode);
-    }
-
     private void setActiveIndex(int oldMode, int newMode){
         switch(oldMode){
             case Resolution.HOURS:
@@ -605,18 +615,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
     public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
         this.mSelectedDialogItems = mSelectedDialogItems;
-    }
-
-    @Override
-    public void setActiveIndex(int index) {
-        mActiveDateIndex = index;
-    }
-
-    @Override
-    public int getActiveIndex() {
-        if (mActiveDateIndex == 0)
-            return mDates.size();
-        return mActiveDateIndex;
     }
 
     @Override
@@ -794,7 +792,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     @Override
     public void pullData(){
 
-        //If no items are selected, clear te graph
+        //If no items are selected, clear the graph
         if(mDevices == null)
             return;
 

@@ -19,45 +19,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/fragment_usage_tabs" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true">
-
-        <info.hoang8f.android.segmented.SegmentedGroup
-            android:id="@+id/usage_segment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/usage_hour"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hours"
-                style="@style/RadioButton" />
-
-            <RadioButton
-                android:id="@+id/usage_days"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Days"
-                style="@style/RadioButton" />
-            <RadioButton
-                android:id="@+id/usage_weeks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Weeks"
-                style="@style/RadioButton" />
-            <RadioButton
-                android:id="@+id/usage_months"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Months"
-                style="@style/RadioButton" />
-        </info.hoang8f.android.segmented.SegmentedGroup>
-    </LinearLayout>
 </RelativeLayout>

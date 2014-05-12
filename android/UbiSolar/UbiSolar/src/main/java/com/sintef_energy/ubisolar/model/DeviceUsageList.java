@@ -69,14 +69,31 @@ public class DeviceUsageList implements Parcelable
         return totalUsage;
     }
 
-    public void calculateTotalUsage(String date, String format)
+
+    public void calculateTotalUsage(String date, String format, int activeIndex)
     {
+        boolean done = true;
         totalUsage = 0;
-        for(DeviceUsage usage : usageList) {
-            if (formatDate(((EnergyUsageModel)usage).toDate(), format).equals(date))
-            {
-                totalUsage += usage.getPowerUsage();
+
+        //Poorly optimized code to get the complete usage for a timespace
+
+        if(usageList.size() > activeIndex) {
+            if (formatDate(usageList.get(activeIndex).toDate(), format).equals(date)) {
+                totalUsage = (int) usageList.get(activeIndex).getPowerUsage();
+                return;
             }
+        }
+
+
+        for(int i = usageList.size()-1; i >= 0; i--){
+            if (formatDate(usageList.get(i).toDate(), format).equals(date))
+            {
+                totalUsage += usageList.get(i).getPowerUsage();
+                done = false;
+            }
+            if(done && totalUsage > 0)
+                break;
+            done = true;
         }
     }
 
