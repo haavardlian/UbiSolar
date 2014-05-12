@@ -258,7 +258,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             new String[]{DeviceModel.DeviceEntry._ID, DeviceModel.DeviceEntry.COLUMN_NAME},
             null,
             null,
-            DeviceModel.DeviceEntry.COLUMN_NAME + " ASC"
+            DeviceModel.DeviceEntry._ID + " ASC"
         );
     }
 
