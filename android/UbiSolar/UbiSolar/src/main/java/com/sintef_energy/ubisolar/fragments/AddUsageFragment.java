@@ -205,11 +205,12 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         /* Fill spinner with data*/
         mDeviceAdapter = new SimpleCursorAdapter(
                 getActivity(),
-                android.R.layout.simple_spinner_item,
+                R.layout.spinner_layout,
                 null,
                 new String[]{DeviceModel.DeviceEntry.COLUMN_NAME},
-                new int[]{android.R.id.text1},
+                new int[]{R.id.spinnerTarget},
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        mDeviceAdapter.setDropDownViewResource(R.layout.spinner_layout);
 
         spinnerDevice.setEnabled(false);
         spinnerDevice.setAdapter(mDeviceAdapter);
