@@ -31,7 +31,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.ObjectAnimator;
-import com.sintef_energy.ubisolar.R;
 
 
 /**
@@ -189,7 +188,7 @@ public abstract class AbstractWheelView extends AbstractWheel {
     }
 
     /**
-     * Sets the <code>alpha</code> of the {@link Paint} for drawing separators
+     * Sets the <code>alpha</code> of the {@link android.graphics.Paint} for drawing separators
      * spinnerwheel.
      * @param alpha alpha value from 0 to 255
      */
@@ -200,7 +199,7 @@ public abstract class AbstractWheelView extends AbstractWheel {
     }
 
     /**
-     * Sets the <code>coeff</code> of the {@link Paint} for drawing
+     * Sets the <code>coeff</code> of the {@link android.graphics.Paint} for drawing
      * the selector spinnerwheel.
      *
      * @param coeff Coefficient from 0 (selector is passive) to 1 (selector is active)
