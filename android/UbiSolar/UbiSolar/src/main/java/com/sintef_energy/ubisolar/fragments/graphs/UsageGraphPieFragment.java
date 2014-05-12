@@ -319,7 +319,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         mDateAdapter =
                 new ArrayWheelAdapter<>(getActivity(), wheelItems.toArray(new String[wheelItems.size()]));
         mDateAdapter.setItemResource(R.layout.wheel_text_centered);
-        mDateAdapter.setItemTextResource(R.id.text);
+        mDateAdapter.setItemTextResource(R.id.wheel_text);
         mDateWheel.setViewAdapter(mDateAdapter);
         mDateWheel.setCurrentItem(mActiveIndex);
 

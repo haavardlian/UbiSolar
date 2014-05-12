@@ -11,14 +11,6 @@ import com.facebook.Request;
 import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
-import com.google.gson.JsonObject;
-import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.fragments.CompareFriendsListFragment;
-import com.sintef_energy.ubisolar.model.User;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by Håvard on 07.05.14.

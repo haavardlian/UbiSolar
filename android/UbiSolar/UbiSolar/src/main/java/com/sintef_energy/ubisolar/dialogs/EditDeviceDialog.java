@@ -84,10 +84,11 @@ public class EditDeviceDialog extends DialogFragment {
         /*Fill spinner with categories*/
         categoryAdapter = new ArrayAdapter<>(
                 getActivity(),
-                android.R.layout.simple_spinner_item,
-                android.R.id.text1,
+                R.layout.spinner_layout,
+                R.id.spinnerTarget,
                 getResources().getStringArray(R.array.device_categories)
         );
+        categoryAdapter.setDropDownViewResource(R.layout.spinner_layout);
 
         categorySpinner.setAdapter(categoryAdapter);
 

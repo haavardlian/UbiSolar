@@ -34,9 +34,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
-
-import com.sintef_energy.ubisolar.R;
-
 import antistatic.spinnerwheel.adapters.WheelViewAdapter;
 
 import java.util.LinkedList;
@@ -273,7 +270,7 @@ public abstract class AbstractWheel extends View {
         }
 
         //required field that makes Parcelables from a Parcel
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
             }

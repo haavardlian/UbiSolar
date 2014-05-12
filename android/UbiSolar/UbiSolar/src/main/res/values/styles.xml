@@ -4,6 +4,17 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+
+
+        <!-- For the resting Spinner style -->
+        <item name="android:spinnerItemStyle">
+            @style/spinnerItemStyle
+        </item>
+
+        <!-- For each individual Spinner list item once clicked on -->
+        <item name="android:spinnerDropDownItemStyle">
+            @style/spinnerDropDownItemStyle
+        </item>
     </style>
 
     <style name="LoginFormContainer">
@@ -12,9 +23,16 @@
         <item name="android:padding">16dp</item>
     </style>
 
-    <style name="WheelDemoTheme.Light" parent="android:Theme.Light">
+    <style name="spinnerItemStyle">
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">@dimen/spinner_text</item>
+        <item name="android:textColor">#FFFFFF</item>
     </style>
-    <style name="WheelDemoTheme" parent="android:Theme">
+
+    <style name="spinnerDropDownItemStyle">
+        <item name="android:padding">20dp</item>
+        <item name="android:textSize">@dimen/spinner_text</item>
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 </resources>
 

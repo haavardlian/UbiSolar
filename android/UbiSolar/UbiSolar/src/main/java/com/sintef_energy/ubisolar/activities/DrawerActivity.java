@@ -12,6 +12,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,6 +37,8 @@ import com.facebook.model.GraphUser;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.drawer.DrawerItem;
 import com.sintef_energy.ubisolar.fragments.AddUsageFragment;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
@@ -278,11 +281,24 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
 
                 /* Request a sync operation */
-                //Bundle bundle = new Bundle();
-                //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); //Do sync regardless of settings
-                //bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
-                //ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); //Do sync regardless of settings
+                bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
+                ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
 
+                /* Update all -1 users to the current user id. */
+                AccountManager accountManager =
+                    (AccountManager) getApplicationContext().getSystemService(ACCOUNT_SERVICE);
+
+
+                ContentValues values = new ContentValues();
+                values.put(DeviceModel.DeviceEntry.COLUMN_USER_ID, accountManager.getUserData(mAccount, Global.DATA_FB_UID));
+                values.put(DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED, System.currentTimeMillis()/1000L);
+
+                getContentResolver().update(EnergyContract.Devices.CONTENT_URI,
+                        values,
+                        EnergyContract.Devices.COLUMN_USER_ID + "=?",
+                        new String[]{"-1"});
             }
             else {
                 Log.v(TAG, "Login failed");
@@ -480,6 +496,11 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 (AccountManager) getApplicationContext().getSystemService(ACCOUNT_SERVICE);
                 String token = accountManager.getUserData(mAccount, Global.DATA_AUTH_TOKEN);
                 String exprDate = accountManager.getUserData(mAccount, Global.DATA_EXPIRATION_DATE);
+
+                if(token == null){
+                    Log.v(TAG, "No account to login to.");
+                    return;
+                }
 
                 migrateFbTokenToSession(token, new Date(Long.valueOf(exprDate)));
             }

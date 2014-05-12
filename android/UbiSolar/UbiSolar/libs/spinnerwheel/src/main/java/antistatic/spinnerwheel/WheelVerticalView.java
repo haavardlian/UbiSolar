@@ -32,8 +32,6 @@ import android.view.MotionEvent;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 
-import com.sintef_energy.ubisolar.R;
-
 /**
  * Spinner wheel vertical view.
  *

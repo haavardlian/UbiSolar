@@ -37,16 +37,14 @@ repositories {
 
 dependencies {
     compile 'com.android.support:support-v4:+'
+    compile 'com.android.support:support-v13:+'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.mcxiaoke.volley:library-aar:1.0.+'
     compile 'com.fasterxml.jackson.core:jackson-core:2.1.4'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.1.4'
     compile 'com.github.johnkil.android-progressfragment:progressfragment-native:1.4.+'
     compile 'info.hoang8f:android-segmented:1.0.0'
-
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     compile project(':UbiSolar:libs:facebook')
-
-    compile 'com.android.support:support-v13:+'
-    compile 'com.google.code.gson:gson:2.2.4'
+    compile project(':spinnerwheel')
 }
