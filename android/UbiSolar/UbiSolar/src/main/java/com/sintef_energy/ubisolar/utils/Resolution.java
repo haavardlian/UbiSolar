@@ -43,7 +43,7 @@ public class Resolution {
             case WEEKS:
                 resolutionFormat = "w";
                 titleFormat = "MMMMM y";
-                compareFormat = "yyyyw";
+                compareFormat = "yw";
 
                 break;
             case MONTHS:

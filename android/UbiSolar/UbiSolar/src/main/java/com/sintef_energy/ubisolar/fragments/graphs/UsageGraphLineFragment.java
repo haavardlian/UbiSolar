@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -364,6 +365,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             int numberOfPoints = resolution.getTimeDiff(first, last);
 
             Calendar calendar = Calendar.getInstance();
+            calendar.setMinimalDaysInFirstWeek(0);
             calendar.setTime(first);
 
             //Create the labels for the dates
@@ -380,15 +382,19 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 series.clear();
                 y = 0;
 
-                //Add the usage
+                // Do to date incompatibilities between week converting on sqllite and java date object,
+                // data around the 1 week might be wrong.
                 for (EnergyUsageModel usage : usageList.getUsage()) {
                     while (y < mDates.size()) {
                         if (compareDates(usage.toDate(), mDates.get(y))) {
                             series.add(y * POINT_DISTANCE, usage.getPowerUsage());
                             max = Math.max(max, usage.getPowerUsage());
                             min = Math.min(min, usage.getPowerUsage());
+                            y++;
                             break;
                         }
+                        if(usage.toDate().before(mDates.get(y)))
+                            break;
                         y++;
                     }
                 }
@@ -523,6 +529,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         }
 
         private boolean compareDates(Date date1, Date date2) {
+            System.out.println(formatDate(date1, resolution.getCompareFormat())
+                    + " - " + formatDate(date2, resolution.getCompareFormat()));
+
+//            System.out.println(date1.toString() + " - " + date2.toString());
             return formatDate(date1, resolution.getCompareFormat())
                     .equals(formatDate(date2, resolution.getCompareFormat()));
         }
