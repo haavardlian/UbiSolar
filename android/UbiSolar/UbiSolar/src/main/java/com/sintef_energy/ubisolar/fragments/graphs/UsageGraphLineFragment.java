@@ -58,9 +58,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String STATE_euModels = "STATE_euModels";
 
-    private static final int POINT_DISTANCE = 15;
+    private static final int POINT_DISTANCE = 20;
     private static final int GRAPH_MARGIN = 20;
-    private static final int NUMBER_OF_POINTS = 9;
+    private static final int NUMBER_OF_POINTS = 4;
 
     private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     private XYMultipleSeriesRenderer mRenderer = new XYMultipleSeriesRenderer();
@@ -170,8 +170,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         segment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
-                resolution.setFormat(segment.indexOfChild(segment.findViewById(segment.getCheckedRadioButtonId())));
+                int index = radioGroup.indexOfChild(radioGroup.findViewById(i));
+                setActiveIndex(resolution.getMode(), index);
+                resolution.setFormat(index);
                 pullData();
             }
         });
@@ -401,12 +402,12 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 index++;
             }
 
+            if(mDates.size() <= 0)
+                return null;
 
             if (mActiveDateIndex >= mDates.size() || mActiveDateIndex < 0)
                 mActiveDateIndex = mDates.size() - 1;
-            
-            if(mActiveDateIndex < 0)
-                return null;
+
 
             setRange(min, max, mDates.size());
             setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
@@ -529,10 +530,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         }
 
         private boolean compareDates(Date date1, Date date2) {
-            System.out.println(formatDate(date1, resolution.getCompareFormat())
-                    + " - " + formatDate(date2, resolution.getCompareFormat()));
-
-//            System.out.println(date1.toString() + " - " + date2.toString());
             return formatDate(date1, resolution.getCompareFormat())
                     .equals(formatDate(date2, resolution.getCompareFormat()));
         }
