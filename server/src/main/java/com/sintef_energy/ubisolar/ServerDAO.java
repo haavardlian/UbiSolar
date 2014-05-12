@@ -112,4 +112,11 @@ public interface ServerDAO {
     @SqlQuery("SELECT MAX(timestamp) AS timestamp FROM device_power_usage, device where device_id = device.id AND device.user_id = :user LIMIT 1")
     long getLastUpdatedTimeUsage(@Bind("user") long user);
 
+    @SqlQuery("SELECT * FROM wall WHERE user_id IN (:userIdList) ORDER BY timestamp DESC")
+    @Mapper(WallPostMapper.class)
+    List<WallPost> getWallPostsForFriends(@Bind("userIdList") String userIdList);
+
+    @SqlUpdate("INSERT INTO wall (user_id, message, timestamp) VALUES (:post.userId, :post.message, :post.timestamp)")
+    int createWallPost(@BindBean("post") WallPost post);
+
 }
