@@ -170,7 +170,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
-                setResolution(segment.indexOfChild(segment.findViewById(segment.getCheckedRadioButtonId())));
+                resolution.setFormat(segment.indexOfChild(segment.findViewById(segment.getCheckedRadioButtonId())));
                 pullData();
             }
         });
@@ -567,12 +567,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             return null;
     }
 
-    @Override
-    public void setResolution(int mode) {
-        setActiveIndex(resolution.getMode(), mode);
-        resolution.setFormat(mode);
-    }
-
     private void setActiveIndex(int oldMode, int newMode){
         switch(oldMode){
             case Resolution.HOURS:
@@ -621,18 +615,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
     public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
         this.mSelectedDialogItems = mSelectedDialogItems;
-    }
-
-    @Override
-    public void setActiveIndex(int index) {
-        mActiveDateIndex = index;
-    }
-
-    @Override
-    public int getActiveIndex() {
-        if (mActiveDateIndex == 0)
-            return mDates.size();
-        return mActiveDateIndex;
     }
 
     @Override

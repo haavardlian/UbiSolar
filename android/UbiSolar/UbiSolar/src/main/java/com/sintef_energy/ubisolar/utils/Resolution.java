@@ -4,9 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by thb on 30.04.14.
- */
 public class Resolution {
 
     public static final int HOURS = 0;
@@ -22,10 +19,6 @@ public class Resolution {
     private String titleFormat;
     private String compareFormat;
 
-    //Pie graph formats
-    private String preLabel;
-    private String pieFormat;
-
     public Resolution(int mode){
         this.mode = mode;
         setFormat(mode);
@@ -34,47 +27,36 @@ public class Resolution {
 
     public void setFormat(int mode){
         this.mode = mode;
-        switch (mode)
-        {
+        switch (mode){
             case HOURS:
                 resolutionFormat = "HH";
                 titleFormat = "EEEE dd/MM";
                 compareFormat = "yyyyDDHH";
 
-                preLabel = "KL ";
-                pieFormat = "HH EEEE dd/MM";
                 break;
             case DAYS:
                 resolutionFormat = "dd";
                 titleFormat = "MMMM";
                 compareFormat = "yyyyDD";
 
-                preLabel = "";
-                pieFormat = "EEEE dd/MM";
                 break;
             case WEEKS:
                 resolutionFormat = "w";
                 titleFormat = "MMMMM y";
                 compareFormat = "yyyyw";
 
-                preLabel = "Week ";
-                pieFormat = "w y";
                 break;
             case MONTHS:
                 resolutionFormat = "MMMM";
                 titleFormat = "y";
                 compareFormat = "yyyyMM";
 
-                preLabel = "";
-                pieFormat = "MMMM";
                 break;
             case YEARS:
                 resolutionFormat = "yyyy";
                 titleFormat = "";
                 compareFormat = "yyyy";
 
-                preLabel = "";
-                pieFormat = "yyyy";
                 break;
         }
     }
@@ -89,14 +71,6 @@ public class Resolution {
 
     public String getCompareFormat() {
         return compareFormat;
-    }
-
-    public String getPreLabel(){
-        return preLabel;
-    }
-
-    public String getPieFormat(){
-        return pieFormat;
     }
 
 

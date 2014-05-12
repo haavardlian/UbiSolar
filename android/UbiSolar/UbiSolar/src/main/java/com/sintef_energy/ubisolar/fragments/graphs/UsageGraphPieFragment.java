@@ -76,6 +76,8 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     private ArrayWheelAdapter<String> mDateAdapter;
     private ArrayList<Date> mDates;
 
+    private int mActiveIndex = -1;
+
     /**
      * Returns a new instance of this fragment for the given section
      * number.
@@ -139,15 +141,17 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         mDateWheel.addChangingListener(new OnWheelChangedListener() {
             @Override
             public void onChanged(AbstractWheel wheel, int oldValue, int newValue) {
+                mActiveIndex = newValue;
+                mSelectedDate = mDates.get(mActiveIndex);
                 for(DeviceUsageList deviceUsageList : mDeviceUsageList){
+
                     deviceUsageList.calculateTotalUsage(
-                            formatDate(mDates.get(newValue),
+                            formatDate(mSelectedDate,
                                     resolution.getCompareFormat()) ,
                             resolution.getCompareFormat(),
-                            newValue);
+                            mActiveIndex);
 
-                    dateView.setText(formatDate(mDates.get(newValue), resolution.getTitleFormat()) );
-
+                    dateView.setText(formatDate(mSelectedDate, resolution.getTitleFormat()) );
                     clearDevices();
                     populatePieChart();
                 }
@@ -310,29 +314,28 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             wheelItems.add(item);
         }
 
+        mActiveIndex = getActiveIndex();
+
         mDateAdapter =
                 new ArrayWheelAdapter<>(getActivity(), wheelItems.toArray(new String[wheelItems.size()]));
         mDateAdapter.setItemResource(R.layout.wheel_text_centered);
         mDateAdapter.setItemTextResource(R.id.text);
         mDateWheel.setViewAdapter(mDateAdapter);
-        mDateWheel.setCurrentItem(wheelItems.size() -1);
+        mDateWheel.setCurrentItem(mActiveIndex);
 
-//        if(mSelectedDate != null) {
-//           usagePieLabel.setText(resolution.getPreLabel() + formatDate(mSelectedDate, resolution.getPieFormat()));
-//        }
+        for(DeviceUsageList deviceUsageList : mDeviceUsageList){
+            deviceUsageList.calculateTotalUsage(
+                    formatDate(mDates.get(mActiveIndex),
+                            resolution.getCompareFormat()) ,
+                    resolution.getCompareFormat(),
+                    mActiveIndex);
 
-
+            dateView.setText(formatDate(mDates.get(mActiveIndex), resolution.getTitleFormat()) );
+            clearDevices();
+            populatePieChart();
+        }
 
         setContentShown(true);
-    }
-
-    public void setSelectedDate(){
-        if(mSelectedDate == null) {
-            if (mDeviceUsageList != null) {
-                DeviceUsageList dul = mDeviceUsageList.get(mDeviceUsageList.size() - 1);
-                mSelectedDate = dul.get(dul.size() - 1).toDate();
-            }
-        }
     }
 
     /**
@@ -391,12 +394,17 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             return null;
     }
 
-    public void setActiveIndex(int index){
-        //TODO set selected date
-    }
-
     public int getActiveIndex(){
-        return 0;
+        if(mActiveIndex < 0)
+            return mDates.size() -1;
+
+        String date = formatDate(mSelectedDate, resolution.getCompareFormat());
+
+        for(int i = mDates.size() -1; i >= 0; i--)
+            if(formatDate(mDates.get(i), resolution.getCompareFormat()).equals(date))
+                return i;
+
+        return mDates.size() -1;
     }
 
     @Override
@@ -587,6 +595,5 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
                 getLoaderManager().restartLoader(resolution.getMode(), null, this);
                 return;
             }
-        clearDevices();
     }
 }
