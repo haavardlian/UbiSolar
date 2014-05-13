@@ -105,6 +105,11 @@
     <string name="usage_months">Månder</string>
     <string name="usage_years">År</string>
 
+    <!--Facebook Share-->
+    <string name="share_title">Del forbruk</string>
+    <string name="share_cancel">Avbryt</string>
+    <string name="share_post">Del på Facebook</string>
+    <string name="share_add_caption">Overskrift</string>
 
     <!--Other-->
     <string name="navigation_drawer_open">Open navigation drawer</string>

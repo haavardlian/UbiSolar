@@ -103,6 +103,12 @@
     <string name="usage_months">Months</string>
     <string name="usage_years">Years</string>
 
+    <!--Facebook Share-->
+    <string name="share_title">Share your progress</string>
+    <string name="share_cancel">Cancel</string>
+    <string name="share_post">Post to Facebook</string>
+    <string name="share_add_caption">Add a Caption</string>
+
     <!-- AddResidenceDialog -->
     <string-array name="energy_classes">
         <item>A</item>
