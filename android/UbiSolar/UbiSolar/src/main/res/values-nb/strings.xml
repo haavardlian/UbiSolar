@@ -92,11 +92,18 @@
     <string name="usage_share">Del</string>
     <string name="usage_line_graph_title">Strømforbruk</string>
     <string name="usage_pie_graph_title">Fordeling</string>
+    <string name="usage_no_content">Ingen data</string>
 
     <string-array name="fragment_usage_tabs">
-        <item>Graf</item>
-        <item>Diagram</item>
+        <item>Forbruk</item>
+        <item>Fordeling</item>
     </string-array>
+
+    <string name="usage_hours">Timer</string>
+    <string name="usage_days">Dager</string>
+    <string name="usage_weeks">Uker</string>
+    <string name="usage_months">Månder</string>
+    <string name="usage_years">År</string>
 
 
     <!--Other-->

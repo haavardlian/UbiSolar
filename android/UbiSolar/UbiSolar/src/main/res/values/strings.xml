@@ -69,7 +69,7 @@
 
     <string-array name="device_categories">
     <item>Appliances</item>
-    <item>Heat</item>
+    <item>Heating</item>
     <item>Home Entertainment</item>
     <item>Lighting</item>
     <item>Other</item>
@@ -93,9 +93,15 @@
     <string name="usage_no_content">No data</string>
 
     <string-array name="fragment_usage_tabs">
-        <item>Line chart</item>
-        <item>Pie chart</item>
+        <item>Usage</item>
+        <item>Distribution</item>
     </string-array>
+
+    <string name="usage_hours">Hours</string>
+    <string name="usage_days">Days</string>
+    <string name="usage_weeks">Weeks</string>
+    <string name="usage_months">Months</string>
+    <string name="usage_years">Years</string>
 
     <!-- AddResidenceDialog -->
     <string-array name="energy_classes">
