@@ -41,8 +41,22 @@
     <string name="addTipDialog_title">Create tip</string>
     <string name="addTipDialog_buttonText">Create</string>
 
-    <!-- AddUsageDialog -->
-    <string name="addUsageDialog_title">Add usage</string>
+    <!-- Add usage-->
+    <string name="add_usage_date">Date</string>
+    <string name="add_usage_date_description">Date of consumption</string>
+    <string name="add_usage_date_hint">Date of usage</string>
+    <string name="add_usage_device">Device</string>
+    <string name="add_usage_device_description">Register for device</string>
+    <string name="add_usage_device_hint">Select device</string>
+    <string name="add_usage_consumption">Consumption</string>
+    <string name="add_usage_description">Energy used</string>
+    <string name="add_usage_consumption_unit">kWh</string>
+
+    <string name="add_usage_add_button">Add usage</string>
+
+    <string name="add_usage_added">Usage added for device:</string>
+    <string name="add_usage_no_usage">Error: No usage added</string>
+    <string name="add_usage_no_device">Error: No device selected</string>
 
     <!-- Device -->
     <string name="device_add_title">Add device</string>

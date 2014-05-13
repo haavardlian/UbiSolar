@@ -42,8 +42,22 @@
     <string name="addTipDialog_title">Opprett tips</string>
     <string name="addTipDialog_buttonText">Opprett</string>
 
-    <!-- AddUsageDialog -->
-    <string name="addUsageDialog_title">Legg til forbruk</string>
+    <!-- Add usage-->
+    <string name="add_usage_date">Dato</string>
+    <string name="add_usage_date_description">Dato for forbruket</string>
+    <string name="add_usage_date_hint">Dato for forbruket</string>
+    <string name="add_usage_device">Enhet</string>
+    <string name="add_usage_device_description">Velg enhet</string>
+    <string name="add_usage_device_hint">Velg enhet</string>
+    <string name="add_usage_consumption">Forbruk</string>
+    <string name="add_usage_description">Strøm brukt for enhet</string>
+    <string name="add_usage_consumption_unit">kWh</string>
+
+    <string name="add_usage_add_button">Legg til forbruk</string>
+
+    <string name="add_usage_added">Forbruk lagt til for:</string>
+    <string name="add_usage_no_usage">Feil: forbruket ble ikke lagt til</string>
+    <string name="add_usage_no_device">Feil: Ingen enhet valgt</string>
 
     <!-- Device -->
     <string name="device_add_title">Legg til enhet</string>

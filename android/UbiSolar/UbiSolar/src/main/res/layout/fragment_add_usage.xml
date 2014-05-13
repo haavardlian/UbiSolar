@@ -16,22 +16,22 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Add energy consumption"
-                android:id="@+id/textView"
-                android:layout_gravity="center_horizontal" />
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
+                <!--android:text="Add energy consumption"-->
+                <!--android:id="@+id/textView"-->
+                <!--android:layout_gravity="center_horizontal" />-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="The device energy consumption up to a given date"
-                android:id="@+id/textView2"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="20dp"/>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+                <!--android:text="The device energy consumption up to a given date"-->
+                <!--android:id="@+id/textView2"-->
+                <!--android:layout_gravity="center_horizontal"-->
+                <!--android:paddingBottom="20dp"/>-->
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -54,7 +54,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_alignRight="@id/fragment_add_usage_spacer_date"
-                    android:text="Date"
+                    android:text="@string/add_usage_date"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView
@@ -64,7 +64,7 @@
                     android:layout_alignRight="@id/fragment_add_usage_spacer_date"
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/textDate"
-                    android:text="Date of consumption"
+                    android:text="@string/add_usage_date_description"
                     android:id="@+id/textDateSmall" />
 
                  <!-- BUTTON DATE -->
@@ -102,7 +102,7 @@
                         android:ems="10"
                         android:duplicateParentState="true"
                         android:text="xxxx"
-                        android:hint="Date of usage"
+                        android:hint="@string/add_usage_date_hint"
                         android:inputType="date" />
                 </RelativeLayout>
             </RelativeLayout>
@@ -135,7 +135,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:layout_alignRight="@id/fragment_add_usage_spacer_device"
-                    android:text="Device"
+                    android:text="@string/add_usage_device"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <TextView
@@ -145,7 +145,7 @@
                     android:layout_alignRight="@id/fragment_add_usage_spacer_device"
                     android:layout_alignParentLeft="true"
                     android:layout_below="@id/textDevice"
-                    android:text="Register for device"
+                    android:text="@string/add_usage_device_description"
                     android:id="@+id/textView3" />
 
                 <Spinner
@@ -156,7 +156,7 @@
                     android:layout_alignLeft="@id/fragment_add_usage_spacer_device"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
-                    android:hint="Choose device"
+                    android:hint="@string/add_usage_device_hint"
                     android:clickable="true" />
             </RelativeLayout>
 
@@ -188,7 +188,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_alignParentLeft="true"
                     android:layout_alignRight="@id/fragment_add_usage_spacer_consumption"
-                    android:text="Consumption"
+                    android:text="@string/add_usage_consumption"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
                 <ImageButton
@@ -224,14 +224,14 @@
                     android:layout_toRightOf="@+id/dialog_add_usage_usage_down"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:ems="10"
-                    android:hint="kWh"
+                    android:hint="@string/add_usage_consumption_unit"
                     android:inputType="numberDecimal" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Total energy used"
+                    android:text="@string/add_usage_description"
                     android:id="@+id/textView4"
                     android:layout_below="@+id/textUsage"
                     android:layout_alignParentLeft="true"
@@ -248,7 +248,7 @@
         android:layout_marginTop="10dp"
         android:layout_alignParentBottom="true"
         android:drawableStart="@android:drawable/ic_input_add"
-        android:text="Add device usage"
+        android:text="@string/add_usage_add_button"
         style="?android:attr/borderlessButtonStyle"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
