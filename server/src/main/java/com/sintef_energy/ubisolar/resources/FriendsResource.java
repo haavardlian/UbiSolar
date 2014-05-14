@@ -37,7 +37,7 @@ public class FriendsResource {
             intList.add(Integer.parseInt(strArray[i]));
         }
 
-        List<WallPost> feed = db.getWallPostsForFriends(friendIdList);
+        List<WallPost> feed = db.getWallPostsForFriends(intList);
 
         if(feed != null && feed.size() > 0) return feed;
         else throw new WebApplicationException(Response.status(Response.Status.NO_CONTENT).entity(new ArrayList<WallPost>()).build());
