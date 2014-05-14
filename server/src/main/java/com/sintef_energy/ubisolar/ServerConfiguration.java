@@ -1,4 +1,4 @@
-package com.sintef_energy.ubisolar.configuration;
+package com.sintef_energy.ubisolar;
 
 /**
  * Created by thb on 12.02.14.
@@ -6,21 +6,24 @@ package com.sintef_energy.ubisolar.configuration;
 import com.yammer.dropwizard.config.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class ServerConfiguration extends Configuration {
+
     @Valid
     @NotNull
-    @JsonProperty
-    private DatabaseConfiguration database;
+    @JsonProperty("database")
+    private DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
 
-    public ServerConfiguration() {
-        database = new DatabaseConfiguration();
-    }
-    
     public DatabaseConfiguration getDatabaseConfiguration() {
-        return database;
+        return databaseConfiguration;
     }
+
+    public void setDatabaseConfiguration(DatabaseConfiguration databaseConfiguration) {
+        this.databaseConfiguration = databaseConfiguration;
+    }
+
+
 }
