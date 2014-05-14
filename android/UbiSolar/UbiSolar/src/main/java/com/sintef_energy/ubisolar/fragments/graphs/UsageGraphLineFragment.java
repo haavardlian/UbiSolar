@@ -259,9 +259,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     private void setColors(XYMultipleSeriesRenderer renderer, int backgroundColor, int labelColor) {
-        renderer.setApplyBackgroundColor(true);
+        renderer.setApplyBackgroundColor(false);
         renderer.setBackgroundColor(backgroundColor);
-        renderer.setMarginsColor(backgroundColor);
+        renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
+        //renderer.setMarginsColor(backgroundColor);
         renderer.setLabelsColor(labelColor);
         renderer.setXLabelsColor(labelColor);
         renderer.setYLabelsColor(0, labelColor);
@@ -298,7 +299,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                     }
                 }
             });
-            layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT,
+            layout.addView(mChartView, new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT));
         } else {
             mChartView.repaint();
@@ -331,7 +333,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         protected void onPreExecute() {
             Log.v(TAG, "Starting Async graphView update");
 
-            setViewState(false);
+            setViewState(false, false);
 
             startTime = System.currentTimeMillis();
 
@@ -443,7 +445,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             if (mChartView != null)
                 mChartView.repaint();
 
-            setViewState(true);
+            if(abort)
+                setViewState(true, false);
+            else
+                setViewState(true, true);
         }
 
         /**
@@ -533,13 +538,15 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                     .equals(formatDate(date2, resolution.getCompareFormat()));
         }
 
-        /**
-         * Enables/ disables part of the view when data loades.
-         */
-        private void setViewState(boolean state) {
-            mChartView.setEnabled(state);
-            setContentShown(state);
-        }
+    }
+
+    /**
+     * Enables/ disables part of the view when data loades.
+     */
+    private void setViewState(boolean state, boolean isData) {
+        mChartView.setEnabled(state);
+        setContentShown(state);
+        setContentEmpty(!isData);
     }
 
     private void setLabels(String label) {
@@ -786,6 +793,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         if(deviceUsageLists.size() > 0)
             addDeviceUsage(deviceUsageLists);
+        else
+            setViewState(true, false);
     }
 
     @Override

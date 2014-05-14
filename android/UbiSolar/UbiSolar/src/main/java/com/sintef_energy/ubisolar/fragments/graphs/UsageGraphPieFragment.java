@@ -218,7 +218,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
 
-        mRenderer.setApplyBackgroundColor(true);
+        mRenderer.setApplyBackgroundColor(false);
         mRenderer.setBackgroundColor(Color.WHITE);
         mRenderer.setLabelsColor(Color.BLACK);
 
