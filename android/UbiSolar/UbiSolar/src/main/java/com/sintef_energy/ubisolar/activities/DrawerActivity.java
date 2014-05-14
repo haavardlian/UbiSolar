@@ -289,7 +289,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        //super.onSaveInstanceState(outState);
         Session session = Session.getActiveSession();
 
         Session.saveSession(session, outState);

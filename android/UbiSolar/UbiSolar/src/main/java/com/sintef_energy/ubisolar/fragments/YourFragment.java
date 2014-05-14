@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
 
@@ -42,7 +43,7 @@ public class YourFragment extends Fragment {
         ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
         yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row, new ArrayList<Tip>(), getFragmentManager());
         yourList.setAdapter(yourAdapter);
-
+        RequestManager.getInstance().doTipRequest().getSavedTips(yourAdapter, this);
         return rootView;
     }
 

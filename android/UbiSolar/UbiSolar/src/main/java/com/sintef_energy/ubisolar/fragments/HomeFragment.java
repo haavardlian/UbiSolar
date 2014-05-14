@@ -12,7 +12,6 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.WallAdapter;
 import com.sintef_energy.ubisolar.model.WallPost;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
@@ -67,7 +66,7 @@ public class HomeFragment extends DefaultTabFragment {
         friendsList.setAdapter(wallAdapter);
 
         if(Session.getActiveSession().isOpened())
-            RequestManager.getInstance().doFacebookRequest().populateFeed(wallAdapter, this);
+            RequestManager.getInstance().doFacebookRequest().populateWall(wallAdapter, this);
 
         return view;
     }

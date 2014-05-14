@@ -93,6 +93,8 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
             }
         });
 
+        setHasOptionsMenu(true);
+
         return mRoot;
     }
 
@@ -104,8 +106,8 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.add_tip, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_tip, menu);
     }
 
     @Override
