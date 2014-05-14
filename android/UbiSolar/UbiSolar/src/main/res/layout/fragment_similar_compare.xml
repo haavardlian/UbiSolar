@@ -68,7 +68,7 @@
                 android:layout_weight="2"
                 android:text="location:"
                 android:textAllCaps="true"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -93,7 +93,7 @@
                 android:layout_weight="2"
                 android:text="# of residents:"
                 android:textAllCaps="true"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -115,7 +115,7 @@
                 android:layout_weight="2"
                 android:text="area:"
                 android:textAllCaps="true"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -137,7 +137,7 @@
                 android:layout_weight="2"
                 android:text="Energy class:"
                 android:textAllCaps="true"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
