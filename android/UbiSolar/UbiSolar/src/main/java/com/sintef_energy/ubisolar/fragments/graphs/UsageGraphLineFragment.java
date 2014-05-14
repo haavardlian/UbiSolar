@@ -4,15 +4,18 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
@@ -261,7 +264,16 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private void setColors(XYMultipleSeriesRenderer renderer, int backgroundColor, int labelColor) {
         renderer.setApplyBackgroundColor(false);
         renderer.setBackgroundColor(backgroundColor);
-        renderer.setMarginsColor(Color.argb(0x00, 0x01, 0x01, 0x01));
+
+        TypedArray array = getActivity().getTheme().obtainStyledAttributes(new int[]{
+                android.R.attr.colorBackground,
+        });
+
+        int bgColor = array.getColor(0, 0xFF00FF);
+        array.recycle();
+
+        renderer.setMarginsColor(bgColor);
+
         //renderer.setMarginsColor(backgroundColor);
         renderer.setLabelsColor(labelColor);
         renderer.setXLabelsColor(labelColor);
