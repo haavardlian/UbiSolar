@@ -29,26 +29,26 @@
                 android:id="@+id/usage_hour"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hours"
+                android:text="@string/usage_hours"
                 style="@style/RadioButton" />
 
             <RadioButton
                 android:id="@+id/usage_days"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Days"
+                android:text="@string/usage_days"
                 style="@style/RadioButton" />
             <RadioButton
                 android:id="@+id/usage_weeks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Weeks"
+                android:text="@string/usage_weeks"
                 style="@style/RadioButton" />
             <RadioButton
                 android:id="@+id/usage_months"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Months"
+                android:text="@string/usage_months"
                 style="@style/RadioButton" />
         </info.hoang8f.android.segmented.SegmentedGroup>
     </LinearLayout>

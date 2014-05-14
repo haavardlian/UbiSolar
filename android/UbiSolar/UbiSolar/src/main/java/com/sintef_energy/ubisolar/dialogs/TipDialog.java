@@ -47,13 +47,13 @@ public class TipDialog extends DialogFragment {
         view = inflater.inflate(R.layout.dialog_tip, null);
         builder.setView(view)
                 // Add action buttons
-                .setPositiveButton("Add to your tips", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.energy_saving_move_tip), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         ((EnergySavingTabFragment)getTargetFragment().getTargetFragment()).getAdapter().getYourFragment().getAdapter().add(tip);
                     }
                 })
-                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.energy_saving_close), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         getDialog().cancel();
