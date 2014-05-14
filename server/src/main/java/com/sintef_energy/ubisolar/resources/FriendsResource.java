@@ -29,9 +29,15 @@ public class FriendsResource {
     @Path("wall/")
     public List<WallPost> getWallPosts(@QueryParam("friends") String friendIdList) {
 
-        List<WallPost> feed = db.getWallPostsForFriends(friendIdList);
 
-        System.out.println("SELECT * FROM wall WHERE user_id IN (" + friendIdList + ") ORDER BY timestamp DESC Returned " + feed.size() + " rows...");
+
+        String[] strArray = friendIdList.split(",");
+        ArrayList<Integer> intList = new ArrayList<Integer>();
+        for(int i = 0; i < strArray.length; i++) {
+            intList.add(Integer.parseInt(strArray[i]));
+        }
+
+        List<WallPost> feed = db.getWallPostsForFriends(friendIdList);
 
         if(feed != null && feed.size() > 0) return feed;
         else throw new WebApplicationException(Response.status(Response.Status.NO_CONTENT).entity(new ArrayList<WallPost>()).build());
