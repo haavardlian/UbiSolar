@@ -163,6 +163,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
                     return tipsFragment;
                 case 1:
                     yourFragment = YourFragment.newInstance(0);
+                    yourFragment.setTargetFragment(EnergySavingTabFragment.this, 0);
                     return yourFragment;
                 default:
                     return null;
