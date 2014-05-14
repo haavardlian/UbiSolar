@@ -122,13 +122,7 @@ public class RequestFriendsProxy {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
-                        fragment.getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(fragment.getActivity(), "An error occurred while publishing",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        });
+
 
                     }
                 });
