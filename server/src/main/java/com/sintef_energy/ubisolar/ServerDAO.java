@@ -5,7 +5,9 @@ import com.sintef_energy.ubisolar.structs.*;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.unstable.BindIn;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -113,9 +115,9 @@ public interface ServerDAO {
     @SqlQuery("SELECT MAX(timestamp) AS timestamp FROM device_power_usage, device where device_id = device.id AND device.user_id = :user LIMIT 1")
     long getLastUpdatedTimeUsage(@Bind("user") long user);
 
-    @SqlQuery("SELECT * FROM wall WHERE user_id IN (:userIdList) ORDER BY timestamp DESC")
+    @SqlQuery("SELECT * FROM wall WHERE user_id IN (<userIdList>) ORDER BY timestamp DESC")
     @Mapper(WallPostMapper.class)
-    List<WallPost> getWallPostsForFriends(@Bind("userIdList") String userIdList);
+    List<WallPost> getWallPostsForFriends(@BindIn("userIdList") List<Integer> userIdList);
 
     @SqlUpdate("INSERT INTO wall (user_id, message, timestamp) VALUES (:post.userId, :post.message, :post.timestamp)")
     int createWallPost(@BindBean("post") WallPost post);
