@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 
 import com.sintef_energy.ubisolar.model.User;
@@ -79,7 +80,8 @@ public class RequestFriendsProxy {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(activity.getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity.getApplicationContext(),
+                                context.getString(R.string.energy_saving_server_error), Toast.LENGTH_LONG).show();
                     }
                 });
 

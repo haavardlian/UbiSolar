@@ -11,6 +11,9 @@
     <!-- The Content Provider -->
     <string name="provider_authority_energy">com.sintef_energy.ubisolar.provider.energy</string>
 
+    <!--Drawer activity-->
+    <string name="drawer_log_in">Logg inn</string>
+    <string name="drawer_log_out">Logg ut</string>
 
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
@@ -42,8 +45,22 @@
     <string name="addTipDialog_title">Opprett tips</string>
     <string name="addTipDialog_buttonText">Opprett</string>
 
-    <!-- AddUsageDialog -->
-    <string name="addUsageDialog_title">Legg til forbruk</string>
+    <!-- Add usage-->
+    <string name="add_usage_date">Dato</string>
+    <string name="add_usage_date_description">Dato for forbruket</string>
+    <string name="add_usage_date_hint">Dato for forbruket</string>
+    <string name="add_usage_device">Enhet</string>
+    <string name="add_usage_device_description">Velg enhet</string>
+    <string name="add_usage_device_hint">Velg enhet</string>
+    <string name="add_usage_consumption">Forbruk</string>
+    <string name="add_usage_description">Strøm brukt for enhet</string>
+    <string name="add_usage_consumption_unit">kWh</string>
+
+    <string name="add_usage_add_button">Legg til forbruk</string>
+
+    <string name="add_usage_added">Forbruk lagt til for:</string>
+    <string name="add_usage_no_usage">Feil: forbruket ble ikke lagt til</string>
+    <string name="add_usage_no_device">Feil: Ingen enhet valgt</string>
 
     <!-- Device -->
     <string name="device_add_title">Legg til enhet</string>
@@ -92,12 +109,24 @@
     <string name="usage_share">Del</string>
     <string name="usage_line_graph_title">Strømforbruk</string>
     <string name="usage_pie_graph_title">Fordeling</string>
+    <string name="usage_no_content">Ingen data</string>
 
     <string-array name="fragment_usage_tabs">
-        <item>Graf</item>
-        <item>Diagram</item>
+        <item>Forbruk</item>
+        <item>Fordeling</item>
     </string-array>
 
+    <string name="usage_hours">Timer</string>
+    <string name="usage_days">Dager</string>
+    <string name="usage_weeks">Uker</string>
+    <string name="usage_months">Månder</string>
+    <string name="usage_years">År</string>
+
+    <!--Facebook Share-->
+    <string name="share_title">Del forbruk</string>
+    <string name="share_cancel">Avbryt</string>
+    <string name="share_post">Del på Facebook</string>
+    <string name="share_add_caption">Overskrift</string>
 
     <!--Other-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -142,12 +171,20 @@
 
 
     <!-- Fragment Energy saving tabs -->
-    <string name="fragment_energy_saving_tab_tips">Tips</string>
-    <string name="fragment_energy_saving_tab_your">Dine tips</string>
-    <string-array name="fragment_energy_saving_tabs">
+    <string name="energy_saving_tab_tips">Tips</string>
+    <string name="energy_saving_tab_your">Dine tips</string>
+
+    <string-array name="energy_saving_tabs">
         <item>Tips</item>
         <item>Dine tips</item>
     </string-array>
+
+    <string name="energy_saving_move_tip">Legg til i dine tips</string>
+    <string name="energy_saving_close">Lukk</string>
+
+    <string name="energy_saving_rating_changed">Vurdering endret</string>
+
+    <string name="energy_saving_server_error">Kunne ikke koble til serveren</string>
 
     <!-- Toast -->
     <string name="no_internet">Du trenger internettilkobling for å logge inn</string>

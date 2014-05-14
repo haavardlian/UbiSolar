@@ -11,6 +11,10 @@
     <!-- The Content Provider -->
     <string name="provider_authority_energy">com.sintef_energy.ubisolar.provider.energy</string>
 
+    <!--Drawer activity-->
+    <string name="drawer_log_in">Log in</string>
+    <string name="drawer_log_out">Log out</string>
+
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
         <item>Home</item>
@@ -41,8 +45,22 @@
     <string name="addTipDialog_title">Create tip</string>
     <string name="addTipDialog_buttonText">Create</string>
 
-    <!-- AddUsageDialog -->
-    <string name="addUsageDialog_title">Add usage</string>
+    <!-- Add usage-->
+    <string name="add_usage_date">Date</string>
+    <string name="add_usage_date_description">Date of consumption</string>
+    <string name="add_usage_date_hint">Date of usage</string>
+    <string name="add_usage_device">Device</string>
+    <string name="add_usage_device_description">Register for device</string>
+    <string name="add_usage_device_hint">Select device</string>
+    <string name="add_usage_consumption">Consumption</string>
+    <string name="add_usage_description">Energy used</string>
+    <string name="add_usage_consumption_unit">kWh</string>
+
+    <string name="add_usage_add_button">Add usage</string>
+
+    <string name="add_usage_added">Usage added for device:</string>
+    <string name="add_usage_no_usage">Error: No usage added</string>
+    <string name="add_usage_no_device">Error: No device selected</string>
 
     <!-- Device -->
     <string name="device_add_title">Add device</string>
@@ -69,7 +87,7 @@
 
     <string-array name="device_categories">
     <item>Appliances</item>
-    <item>Heat</item>
+    <item>Heating</item>
     <item>Home Entertainment</item>
     <item>Lighting</item>
     <item>Other</item>
@@ -93,9 +111,21 @@
     <string name="usage_no_content">No data</string>
 
     <string-array name="fragment_usage_tabs">
-        <item>Line chart</item>
-        <item>Pie chart</item>
+        <item>Usage</item>
+        <item>Distribution</item>
     </string-array>
+
+    <string name="usage_hours">Hours</string>
+    <string name="usage_days">Days</string>
+    <string name="usage_weeks">Weeks</string>
+    <string name="usage_months">Months</string>
+    <string name="usage_years">Years</string>
+
+    <!--Facebook Share-->
+    <string name="share_title">Share your progress</string>
+    <string name="share_cancel">Cancel</string>
+    <string name="share_post">Post to Facebook</string>
+    <string name="share_add_caption">Add a Caption</string>
 
     <!-- AddResidenceDialog -->
     <string-array name="energy_classes">
@@ -160,13 +190,20 @@
     <string name="compare_filter">Filter</string>
 
     <!-- Fragment Energy saving tabs -->
-    <string name="fragment_energy_saving_tab_tips">Tips</string>
-    <string name="fragment_energy_saving_tab_your">Your tips</string>
+    <string name="energy_saving_tab_tips">Tips</string>
+    <string name="energy_saving_tab_your">Your tips</string>
 
-    <string-array name="fragment_energy_saving_tabs">
+    <string-array name="energy_saving_tabs">
         <item>Tips</item>
         <item>Your tips</item>
     </string-array>
+
+    <string name="energy_saving_move_tip">Add to your tips</string>
+    <string name="energy_saving_close">Close</string>
+
+    <string name="energy_saving_rating_changed">Rating changed</string>
+
+    <string name="energy_saving_server_error">Unable to connect to the server</string>
 
     <!-- Toast -->
     <string name="no_internet">Internet connection required to log in</string>

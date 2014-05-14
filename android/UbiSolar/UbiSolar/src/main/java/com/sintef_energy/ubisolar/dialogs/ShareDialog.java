@@ -46,7 +46,7 @@ public class ShareDialog extends DialogFragment {
         view = inflater.inflate(R.layout.dialog_share, null);
         builder.setView(view)
                 // Add action buttons
-                .setPositiveButton("Post to Facebook", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.share_post), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         ByteArrayOutputStream image = new ByteArrayOutputStream();
@@ -55,13 +55,13 @@ public class ShareDialog extends DialogFragment {
 
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.share_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         getDialog().cancel();
                     }
                 })
-                .setTitle("Share your progress");
+                .setTitle(getString(R.string.share_title));
 
         image = (ImageView) view.findViewById(R.id.shareImage);
         image.setImageBitmap(bitmap);

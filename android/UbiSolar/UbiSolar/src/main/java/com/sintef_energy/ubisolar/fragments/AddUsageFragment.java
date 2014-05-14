@@ -109,7 +109,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 String text = mKwhField.getText().toString();
 
                 if(text.length() < 1){
-                    Utils.makeLongToast(getActivity().getApplicationContext(), "Error: No usage added");
+                    Utils.makeLongToast(getActivity().getApplicationContext(),
+                            getString(R.string.add_usage_no_usage));
                     return;
                 }
 
@@ -117,7 +118,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 int pos = spinnerDevice.getSelectedItemPosition();
 
                 if(pos == Spinner.INVALID_POSITION){
-                    Utils.makeLongToast(getActivity().getApplicationContext(), "Error: No device selected");
+                    Utils.makeLongToast(getActivity().getApplicationContext(),
+                            getString(R.string.add_usage_no_device));
                    return;
                 }
 
@@ -140,9 +142,9 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                     euModel.setDeleted(false);
 
                     if (mTotalEnergyPresenter.addEnergyData(getActivity().getContentResolver(), euModel) != null)
-                        Log.v(TAG, "Added object to database:\n" + euModel);
 
-                    Utils.makeLongToast(getActivity().getApplicationContext(), "Usage added for device: " + item.getString(
+                    Utils.makeLongToast(getActivity().getApplicationContext(),
+                            getString(R.string.add_usage_added) + " " + item.getString(
                             item.getColumnIndex(DeviceModel.DeviceEntry.COLUMN_NAME)));
 
                 } catch (ParseException e) {
@@ -258,7 +260,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             new String[]{DeviceModel.DeviceEntry._ID, DeviceModel.DeviceEntry.COLUMN_NAME},
             null,
             null,
-            DeviceModel.DeviceEntry.COLUMN_NAME + " ASC"
+            DeviceModel.DeviceEntry._ID + " ASC"
         );
     }
 

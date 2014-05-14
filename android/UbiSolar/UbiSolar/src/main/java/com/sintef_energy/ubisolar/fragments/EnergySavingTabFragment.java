@@ -133,7 +133,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         public TipsPagerAdapter(FragmentManager fm) {
             super(fm);
 
-            titles = getResources().getStringArray(R.array.fragment_energy_saving_tabs);
+            titles = getResources().getStringArray(R.array.energy_saving_tabs);
         }
 
         @Override
@@ -163,6 +163,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
                     return tipsFragment;
                 case 1:
                     yourFragment = YourFragment.newInstance(0);
+                    yourFragment.setTargetFragment(EnergySavingTabFragment.this, 0);
                     return yourFragment;
                 default:
                     return null;

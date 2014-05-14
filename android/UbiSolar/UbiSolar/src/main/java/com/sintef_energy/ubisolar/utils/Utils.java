@@ -1,5 +1,6 @@
 package com.sintef_energy.ubisolar.utils;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -7,6 +8,7 @@ import android.net.NetworkInfo;
 import android.os.StrictMode;
 import android.widget.Toast;
 
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
@@ -71,14 +73,14 @@ public class Utils {
         }
     }
 
-    public static void createTotal(ContentResolver contentResolver){
+    public static void createTotal(ContentResolver contentResolver, Activity activity){
         if(EnergyDataSource.getDeviceModelSize(contentResolver) == 0) {
             PreferencesManager preferencesManager = PreferencesManager.getInstance();
             DeviceModel device = new DeviceModel(
                     1,
                     Long.valueOf(preferencesManager.getKeyFacebookUid()),
-                    "Total",
-                    "The total power used",
+                    activity.getString(R.string.total_name),
+                    activity.getString(R.string.total_description),
                     -1);
 
             contentResolver.insert(

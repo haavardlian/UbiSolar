@@ -190,7 +190,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
 
         //Creates the Total usage device if it does not already exist.
-        Utils.createTotal(getContentResolver());
+        Utils.createTotal(getContentResolver(), this);
 
         /* Start developer mode after app has been setup
          * Lots of StrictMode violations are done in startup anyways. */
@@ -410,9 +410,9 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         //TODO use Strings
         if (Global.loggedIn) //TODO: if Session.GetActiveSession().isOpened?
-            item.setTitle("Log out");
+            item.setTitle(getString(R.string.drawer_log_out));
         else
-            item.setTitle("Log in");
+            item.setTitle(getString(R.string.drawer_log_in));
 
         mNavigationDrawerFragment.getNavDrawerListAdapter().notifyDataSetChanged();
     }
