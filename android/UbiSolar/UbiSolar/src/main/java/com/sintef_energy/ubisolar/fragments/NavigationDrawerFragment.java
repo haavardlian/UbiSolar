@@ -155,7 +155,7 @@ public class NavigationDrawerFragment extends Fragment {
         navDrawerItems.add(new DrawerItem(navMenuTitles[6]));
         //Socialize
         navDrawerItems.add(new DrawerHeader(navMenuTitles[7]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[8], "5"));
+        navDrawerItems.add(new DrawerItem(navMenuTitles[8]));
         //Settings
         navDrawerItems.add(new DrawerHeader(navMenuTitles[9]));
         navDrawerItems.add(new DrawerItem(navMenuTitles[10]));

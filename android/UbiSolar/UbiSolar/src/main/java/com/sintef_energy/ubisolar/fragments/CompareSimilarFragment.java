@@ -35,27 +35,10 @@ public class CompareSimilarFragment extends Fragment {
     private static final String ARG_POSITION = "position";
     private ProfilePictureView profilePicture;
 
-    public CompareSimilarFragment(SimilarAdapter simAdapter) {
-        this.simAdapter = simAdapter;
-    }
-
-    public CompareSimilarFragment() {
-
-    }
-
-
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareSimilarFragment newInstance(int position, SimilarAdapter simAdapter) {
-        CompareSimilarFragment fragment = new CompareSimilarFragment(simAdapter);
-        Bundle b = new Bundle();
-        b.putInt(ARG_POSITION, position);
-        fragment.setArguments(b);
-        return fragment;
-    }
-
     public static CompareSimilarFragment newInstance(int position) {
         CompareSimilarFragment fragment = new CompareSimilarFragment();
         Bundle b = new Bundle();
@@ -63,7 +46,6 @@ public class CompareSimilarFragment extends Fragment {
         fragment.setArguments(b);
         return fragment;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,8 +86,9 @@ public class CompareSimilarFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.compare, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.compare, menu);
     }
 
 

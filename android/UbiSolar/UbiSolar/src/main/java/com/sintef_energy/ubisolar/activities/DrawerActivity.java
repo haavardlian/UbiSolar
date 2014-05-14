@@ -56,10 +56,7 @@ import com.sintef_energy.ubisolar.utils.Global;
 
 import com.sintef_energy.ubisolar.utils.Utils;
 
-import java.util.ArrayList;
-
 import java.util.Date;
-import java.util.List;
 
 /**
  * The main activity.
@@ -81,7 +78,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     private CharSequence mTitle;
     private String[] titleNames;
 
-    /**
+    /*
      * Presenters
      */
     private TotalEnergyPresenter mTotalEnergyPresenter;
@@ -170,7 +167,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         //mAccount = CreateSyncAccount(this);
         startFacebookLogin(savedInstanceState);
 
-
         /*
         * DEVELOPER SETTINGS
         */
@@ -178,7 +174,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         // Extra logging for debug
         if(Global.DEVELOPER_MADE)
             Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
-
 
         //Creates the Total usage device if it does not already exist.
         Utils.createTotal(getContentResolver(), this);
@@ -231,7 +226,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mAccount = null;
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -240,25 +234,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         if(requestCode == LOGIN_CALL_ID){
             if(resultCode == Activity.RESULT_OK) {
                 Log.v(TAG, "Login was successful. Starting to attain session data.");
-                Session session = Session.getActiveSession();
-                //TODO use startFacebookLogin, as it does not start a view if not logged in.
-                /*
-                if (session == null) {
-                    // start Facebook Login
-                    // This will _only_ log in if the user is logged in from before.
-                    // To log in, the user must choose so himself from the menu.
-                    Session.openActiveSession(this, false, mFacebookSessionStatusCallback);
-                } else if (!session.isOpened() && !session.isClosed()) {
-                    session.openForPublish(new Session.OpenRequest(this)
-                            .setPermissions(FACEBOOK_READ_PERMISSIONS)
-                            .setCallback(mFacebookSessionStatusCallback));
 
-                    //session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
-                } else {// TODO: Not open login again..
-                    Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
-                }*/
                 startFacebookLogin(null);
 
+                // Find the account
                 Account[] accounts = getAccounts(getApplicationContext(), ACCOUNT_TYPE);
                 for(Account account : accounts){
                     if(account.name.equals(data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME))) {
@@ -357,14 +336,22 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     /**
      * Helper method to add fragments to the view.
+     *
+     * @param fragment
+     * @param animate
+     * @param addToBackStack
+     * @param tag
      */
     public void addFragment(Fragment fragment, boolean animate, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
-        if (animate) {/*
-            ft.setCustomAnimations(android.R.anim.fragment_from_right,
-                    R.anim.fragment_from_left, R.anim.fragment_from_right,
-                    R.anim.fragment_from_left);*/
+        if (animate) {
+            ft.setCustomAnimations(
+                    android.R.anim.slide_in_left,
+                    android.R.anim.slide_out_right,
+                    // Pop enter
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out);
         }
         if (addToBackStack) {
             ft.addToBackStack(tag);
@@ -502,8 +489,15 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
     }
 
+    /**
+     * This method should handle the migration process from a token with expire date
+     * from the AccountManager to a Facebook session
+     *
+     * TODO: Don't know if this is the correct way to do it, or even necessary at all
+     * @param token
+     * @param exprDate
+     */
     public void migrateFbTokenToSession(String token, Date exprDate) {
-        // TODO
         AccessToken accessToken = AccessToken.createFromExistingAccessToken(
                 token,
                 exprDate,

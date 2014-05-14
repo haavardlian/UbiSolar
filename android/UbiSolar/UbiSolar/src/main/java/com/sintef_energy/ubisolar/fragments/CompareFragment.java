@@ -69,7 +69,7 @@ public class CompareFragment extends DefaultTabFragment {
         simAdapter = new SimilarAdapter();
         // Initialize the ViewPager and set an adapter
         pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
-        MyPagerAdapter adapter = new MyPagerAdapter(getFragmentManager(), friendAdapter, simAdapter);
+        MyPagerAdapter adapter = new MyPagerAdapter(getFragmentManager(), simAdapter);
 
         pager.setAdapter(adapter);
         // Bind the tabs to the ViewPager
@@ -87,18 +87,14 @@ public class CompareFragment extends DefaultTabFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        pager.onSaveInstanceState();
-        outState.remove("android:support:fragments");
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
         private final String[] TITLES = { "Friends", "Similar profiles"};
-        private FriendAdapter friendAdapter;
         private SimilarAdapter simAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter simAdapter) {
+        public MyPagerAdapter(FragmentManager fm, SimilarAdapter simAdapter) {
             super(fm);
-            this.friendAdapter = friendAdapter;
             this.simAdapter = simAdapter;
         }
 
@@ -117,16 +113,12 @@ public class CompareFragment extends DefaultTabFragment {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    return CompareFriendsListFragment.newInstance(0, friendAdapter);
+                    return CompareFriendsListFragment.newInstance(0);
                 case 1:
-                    return CompareSimilarFragment.newInstance(1, simAdapter);
+                    return CompareSimilarFragment.newInstance(1);
                 default:
                     return null;
             }
         }
-
-
     }
-
-
 }
