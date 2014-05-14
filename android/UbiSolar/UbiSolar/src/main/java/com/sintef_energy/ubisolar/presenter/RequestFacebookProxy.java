@@ -88,9 +88,9 @@ public class RequestFacebookProxy {
                         if(response.getError() == null) {
                             try {
                                 String name = response.getGraphObject().getInnerJSONObject().getString("name");
-                                String old = textView.getText().toString();
-                                textView.setText(name + " " + old);
+                                textView.setText(name);
                             } catch (JSONException e) {
+                                textView.setText("Error");
                                 e.printStackTrace();
                             }
                         }

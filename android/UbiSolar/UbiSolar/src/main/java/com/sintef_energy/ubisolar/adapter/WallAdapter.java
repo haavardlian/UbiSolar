@@ -95,7 +95,7 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
             holder.date.setText(dateFormat.format(date));
             holder.time.setText(timeFormat.format(date));
 
-            RequestManager.getInstance().doFacebookRequest().getFacebookName(post.getUserId(), holder.message);
+            RequestManager.getInstance().doFacebookRequest().getFacebookName(post.getUserId(), holder.name);
 
         }
         return row;
