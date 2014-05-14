@@ -558,7 +558,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
                 if (deviceUsageList == null) {
                     deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
+                    devices.put(deviceUsageList.getDevice().getId(), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);

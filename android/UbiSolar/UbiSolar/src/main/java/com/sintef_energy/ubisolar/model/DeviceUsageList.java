@@ -8,6 +8,7 @@ import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -30,8 +31,7 @@ public class DeviceUsageList implements Parcelable
         usageList = new ArrayList<>();
     }
 
-    public DeviceUsageList(Parcel in)
-    {
+    public DeviceUsageList(Parcel in) {
         usageList = new ArrayList<>();
         readFromParcel(in);
     }
@@ -84,7 +84,6 @@ public class DeviceUsageList implements Parcelable
             }
         }
 
-
         for(int i = usageList.size()-1; i >= 0; i--){
             if (formatDate(usageList.get(i).toDate(), format).equals(date))
             {
@@ -110,10 +109,22 @@ public class DeviceUsageList implements Parcelable
         return device;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
     }
+
+    public static final Parcelable.Creator<DeviceUsageList> CREATOR = new Parcelable.Creator<DeviceUsageList>() {
+        public DeviceUsageList createFromParcel(Parcel in) {
+            return new DeviceUsageList(in);
+        }
+
+        public DeviceUsageList[] newArray(int size) {
+            return new DeviceUsageList[size];
+        }
+    };
+
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
@@ -127,8 +138,7 @@ public class DeviceUsageList implements Parcelable
         device = in.readParcelable(Device.class.getClassLoader());
         EnergyUsageModel[] u = (EnergyUsageModel[]) in.readParcelableArray(EnergyUsageModel.class.getClassLoader());
 
-        for(EnergyUsageModel um : u)
-            usageList.add(um);
+        usageList.addAll(Arrays.asList(u));
 
         totalUsage = in.readInt();
         percentage = in.readInt();

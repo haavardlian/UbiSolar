@@ -57,7 +57,7 @@ public class TipAdapter extends ArrayAdapter<Tip> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        TipHolder holder = null;
+        TipHolder holder;
 
         if(row == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();

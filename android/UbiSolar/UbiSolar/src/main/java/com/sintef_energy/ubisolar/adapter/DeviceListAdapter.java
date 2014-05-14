@@ -7,19 +7,15 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import com.facebook.widget.WebDialog;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 

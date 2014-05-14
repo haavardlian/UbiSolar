@@ -1,12 +1,12 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -34,7 +33,6 @@ import com.sintef_energy.ubisolar.utils.Utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by perok on 12.03.14.
@@ -153,7 +151,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 }
 
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
-                        getActivity().getApplicationContext().INPUT_METHOD_SERVICE);
+                        Application.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mKwhField.getWindowToken(), 0);
             }
         });

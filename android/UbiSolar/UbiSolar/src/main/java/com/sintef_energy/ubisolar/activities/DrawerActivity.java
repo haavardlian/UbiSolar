@@ -48,6 +48,7 @@ import com.sintef_energy.ubisolar.fragments.CompareFragment;
 
 import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
@@ -572,10 +573,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             //clear your preferences if saved
         }
 
+        /* UPDATE VIEW */
         changeNavdrawerSessionsView(false);
         mPrefManager.clearFacebookSessionData();
         Utils.makeLongToast(getApplicationContext(), getResources().getString(R.string.fb_logout));
 
+        /* REMOVE ACCOUNT */
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
 
@@ -586,6 +589,20 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 accountManager.removeAccount(account, null, new Handler());
             }
         }
+
+        /* REMOVE PREFERENCES*/
+        PreferencesManagerSync preferencesManagerSync;
+        try {
+            preferencesManagerSync = PreferencesManagerSync.getInstance();
+        }catch(IllegalStateException e){
+            preferencesManagerSync = PreferencesManagerSync.initializeInstance(getApplicationContext());
+        }
+
+        preferencesManagerSync.clearAll();
+
+        /* REMOVE DATA*/
+        getContentResolver().delete(EnergyContract.Devices.CONTENT_URI, null, null);
+        getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
    }
 
   private static Account[] getAccounts(Context context, String ACC_TYPE){

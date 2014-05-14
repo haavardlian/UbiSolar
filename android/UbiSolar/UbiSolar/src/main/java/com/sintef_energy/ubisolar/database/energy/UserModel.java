@@ -6,7 +6,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 
-import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.model.User;
 
 /**

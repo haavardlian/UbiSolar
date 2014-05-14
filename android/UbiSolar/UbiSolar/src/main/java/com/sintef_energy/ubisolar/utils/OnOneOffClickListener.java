@@ -16,7 +16,7 @@ import android.view.View;
  */
 public abstract class OnOneOffClickListener implements View.OnClickListener {
     private boolean clickable = true;
-    private Object sObject = new Object();
+    private final Object sObject = new Object();
 
     /**
      * Override onOneClick() instead.

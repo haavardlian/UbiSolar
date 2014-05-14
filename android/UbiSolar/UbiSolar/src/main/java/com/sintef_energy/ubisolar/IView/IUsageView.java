@@ -3,9 +3,7 @@ package com.sintef_energy.ubisolar.IView;
 import android.graphics.Bitmap;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.model.DeviceUsageList;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public interface IUsageView {

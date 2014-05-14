@@ -67,11 +67,7 @@ public class CompareSettingsDialog extends DialogFragment {
                 .setTitle(R.string.comparison_setting);
 
 
-        AlertDialog alertDialog = builder.create();
-
-
-        return alertDialog;
-
+        return builder.create();
     }
 }
 
