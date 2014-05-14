@@ -48,8 +48,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
 
     private TextView mTextDate;
     private EditText mKwhField;
-    private ImageButton mButtonKwhUp;
-    private ImageButton mButtonKwhDown;
+//    private ImageButton mButtonKwhUp;
+//    private ImageButton mButtonKwhDown;
     private Button mButtonAddUsage;
     private RelativeLayout mRelativeLayout;
 
@@ -96,8 +96,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mRelativeLayout = (RelativeLayout)view.findViewById(R.id.fragment_add_usage_rl_date);
         mTextDate = (TextView)view.findViewById(R.id.fragment_add_usage_text_date);
         mKwhField = (EditText)view.findViewById(R.id.dialog_add_usage_edittext_kwh);
-        mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
-        mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
+//        mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
+//        mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
         mButtonAddUsage = (Button)view.findViewById(R.id.btnAddUsage);
         final DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.setTargetFragment(this, 0);
@@ -174,35 +174,35 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             }
         });
 
-        mButtonKwhDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String temp = String.valueOf(mKwhField.getText());
-                Double value = 1.;
-
-                if(!temp.equals(""))
-                    value = Double.valueOf(temp);
-
-                if(value >= 1.)
-                    value--;
-                mKwhField.setText(String.valueOf(value));
-            }
-        });
-
-        mButtonKwhUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String temp = String.valueOf(mKwhField.getText());
-
-                Double value = 0.;
-
-                if(!temp.equals(""))
-                    value = Double.valueOf(temp);
-
-                value++;
-                mKwhField.setText(String.valueOf(value));
-            }
-        });
+//        mButtonKwhDown.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String temp = String.valueOf(mKwhField.getText());
+//                Double value = 1.;
+//
+//                if(!temp.equals(""))
+//                    value = Double.valueOf(temp);
+//
+//                if(value >= 1.)
+//                    value--;
+//                mKwhField.setText(String.valueOf(value));
+//            }
+//        });
+//
+//        mButtonKwhUp.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String temp = String.valueOf(mKwhField.getText());
+//
+//                Double value = 0.;
+//
+//                if(!temp.equals(""))
+//                    value = Double.valueOf(temp);
+//
+//                value++;
+//                mKwhField.setText(String.valueOf(value));
+//            }
+//        });
 
         /* Fill spinner with data*/
         mDeviceAdapter = new SimpleCursorAdapter(
