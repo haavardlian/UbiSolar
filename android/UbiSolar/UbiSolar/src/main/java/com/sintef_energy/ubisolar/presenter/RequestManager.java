@@ -69,7 +69,7 @@ public class RequestManager {
         return instance;
     }
 
-    public static RequestQueue newRequestQueue(Context context) {
+    private static RequestQueue newRequestQueue(Context context) {
         File cacheDir = new File(context.getCacheDir(), "def_cahce_dir");
         HttpStack stack;
         String userAgent = "volley/0";

@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 
 import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
@@ -30,7 +29,7 @@ public class CompareFriendsFragment extends Fragment {
     private ProfilePictureView friendPicture;
     private User friend;
 
-    public CompareFriendsFragment(User friend) {
+    private CompareFriendsFragment(User friend) {
         super();
         this.friend = friend;
     }

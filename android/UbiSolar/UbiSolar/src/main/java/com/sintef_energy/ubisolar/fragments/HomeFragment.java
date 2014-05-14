@@ -42,9 +42,6 @@ public class HomeFragment extends DefaultTabFragment {
         return fragment;
     }
 
-    public HomeFragment() {
-    }
-
     /**
      * The first call to a created fragment
      * @param activity

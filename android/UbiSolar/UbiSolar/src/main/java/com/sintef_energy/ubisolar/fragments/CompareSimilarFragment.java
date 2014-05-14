@@ -27,7 +27,7 @@ public class CompareSimilarFragment extends Fragment {
     /* The fragment argument representing the section number for this
      * fragment.
      */
-    public static final String TAG = CompareSimilarFragment.class.getName();
+    private static final String TAG = CompareSimilarFragment.class.getName();
 
     private SimilarAdapter simAdapter;
 

@@ -17,7 +17,7 @@ import com.sintef_energy.ubisolar.preferences.PreferencesManager;
  * Created by baier on 5/4/14.
  */
 public class CompareSettingsDialog extends DialogFragment {
-    PreferencesManager pref = PreferencesManager.getInstance();
+    private PreferencesManager pref = PreferencesManager.getInstance();
     private View view = null;
     private CheckBox area, location, residents, energy;
 

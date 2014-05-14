@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
@@ -95,13 +94,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     // constants
     /** The authority for the sync adapter's content provider */
-    public static String AUTHORITY_PROVIDER;
+    private static String AUTHORITY_PROVIDER;
 
     /** An account type for sync, in the form of a domain name*/
-    public static String ACCOUNT_TYPE;
+    private static String ACCOUNT_TYPE;
 
     // The account name
-    public static String ACCOUNT;
+    private static String ACCOUNT;
 
     // Instance fields
     private Account mAccount;
@@ -628,7 +627,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         AccountManager accountManager =
             (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
 
-        return accountManager.getAccountsByType(ACCOUNT_TYPE);
+        return accountManager.getAccountsByType(ACC_TYPE);
     }
 
     private static Account getAccount(Context context, String ACC_TYPE){

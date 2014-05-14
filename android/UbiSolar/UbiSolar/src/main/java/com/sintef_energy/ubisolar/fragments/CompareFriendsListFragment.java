@@ -15,7 +15,6 @@ import com.facebook.Request;
 import com.facebook.Response;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 

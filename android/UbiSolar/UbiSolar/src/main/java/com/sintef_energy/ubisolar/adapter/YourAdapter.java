@@ -22,11 +22,11 @@ import java.util.List;
  * Created by Håvard on 20.03.14.
  */
 public class YourAdapter extends ArrayAdapter<Tip> {
-    Context context;
-    FragmentManager fragmentManager;
-    int layoutResourceId;
-    List<Tip> data = null;
-    SharedPreferences sharedPreferences;
+    private Context context;
+    private FragmentManager fragmentManager;
+    private int layoutResourceId;
+    private List<Tip> data = null;
+    private SharedPreferences sharedPreferences;
 
     public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data, FragmentManager fragmentManager) {
         super(context, layoutResourceId);

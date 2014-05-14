@@ -31,9 +31,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
 
     // Constants
     // An account type, in the form of a domain name
-    public static String ACCOUNT_TYPE;
+    private static String ACCOUNT_TYPE;
     // The account name
-    public static String ACCOUNT;
+    private static String ACCOUNT;
 
     private FacebookSessionStatusCallback mFacebookSessionStatusCallback;
 

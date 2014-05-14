@@ -2,21 +2,15 @@ package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.facebook.Request;
-import com.facebook.Response;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.WallPost;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
-
-import org.json.JSONException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -31,9 +25,9 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
     private Context context;
     private int layoutResourceId;
     private List<WallPost> data = null;
-    String[] messages;
-    DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    private String[] messages;
+    private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     public WallAdapter(Context context, int layoutResourceId, ArrayList<WallPost> data) {
         super(context, layoutResourceId);

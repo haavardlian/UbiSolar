@@ -19,9 +19,9 @@ import java.util.List;
  */
 public class FriendAdapter extends ArrayAdapter<User> {
 
-    protected Context context;
-    protected int resource;
-    List<User> users = null;
+    private Context context;
+    private int resource;
+    private List<User> users = null;
 
     public FriendAdapter(Context context, int resource, List<User> users) {
         super(context, resource);

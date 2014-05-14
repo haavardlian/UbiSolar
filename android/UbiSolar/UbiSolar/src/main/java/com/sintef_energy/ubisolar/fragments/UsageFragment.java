@@ -43,7 +43,7 @@ import java.util.LinkedHashMap;
 
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final int LOADER_DEVICES = 0;
+    private static final int LOADER_DEVICES = 0;
 
     private static final String TAG = UsageFragment.class.getName();
 
@@ -56,9 +56,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private PreferencesManager mPreferenceManager;
     private boolean mFragmentSwap = false;
     private ScrollViewPager mPager;
-
-    public UsageFragment() {
-    }
 
     /**
      * Returns a new instance of this fragment for the given section

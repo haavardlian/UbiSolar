@@ -16,7 +16,7 @@ public class UserPresenter {
 
 
     private static final String TAG = UserPresenter.class.getName();
-    ArrayList<IUserView> userModelListeners;
+    private ArrayList<IUserView> userModelListeners;
 
 
     public UserPresenter(){}
