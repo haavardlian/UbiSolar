@@ -168,7 +168,7 @@
                 android:background="?android:attr/dividerVertical" />
 
             <RelativeLayout
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
@@ -191,37 +191,36 @@
                     android:text="@string/add_usage_consumption"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
-                <ImageButton
-                    android:id="@+id/dialog_add_usage_usage_down"
-                    android:layout_width="50dip"
-                    android:layout_height="?android:attr/listPreferredItemHeight"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignLeft="@id/fragment_add_usage_spacer_consumption"
-                    android:background="@null"
-                    android:cropToPadding="true"
-                    android:layout_centerVertical="true"
-                    android:scaleType="center"
-                    android:src="@android:drawable/arrow_down_float"
-                    android:contentDescription="Consumption down"/>
+                <!--<ImageButton-->
+                    <!--android:id="@+id/dialog_add_usage_usage_down"-->
+                    <!--android:layout_width="50dip"-->
+                    <!--android:layout_height="?android:attr/listPreferredItemHeight"-->
+                    <!--android:layout_alignParentTop="true"-->
+                    <!--android:layout_alignLeft="@id/fragment_add_usage_spacer_consumption"-->
+                    <!--android:background="@null"-->
+                    <!--android:cropToPadding="true"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:scaleType="center"-->
+                    <!--android:src="@android:drawable/arrow_down_float"-->
+                    <!--android:contentDescription="Consumption down"/>-->
 
-                <ImageButton
-                    android:id="@+id/dialog_add_usage_usage_up"
-                    android:layout_width="50dip"
-                    android:layout_height="?android:attr/listPreferredItemHeight"
-                    android:layout_alignParentRight="true"
-                    android:background="@null"
-                    android:scaleType="center"
-                    android:layout_centerVertical="true"
-                    android:src="@android:drawable/arrow_up_float"
-                    android:contentDescription="Consumption up"/>
+                <!--<ImageButton-->
+                    <!--android:id="@+id/dialog_add_usage_usage_up"-->
+                    <!--android:layout_width="50dip"-->
+                    <!--android:layout_height="?android:attr/listPreferredItemHeight"-->
+                    <!--android:layout_alignParentRight="true"-->
+                    <!--android:background="@null"-->
+                    <!--android:scaleType="center"-->
+                    <!--android:layout_centerVertical="true"-->
+                    <!--android:src="@android:drawable/arrow_up_float"-->
+                    <!--android:contentDescription="Consumption up"/>-->
 
                 <EditText
                     android:id="@+id/dialog_add_usage_edittext_kwh"
-                    android:layout_width="fill_parent"
+                    android:layout_width="100dp"
                     android:layout_height="?android:attr/listPreferredItemHeight"
                     android:layout_alignParentTop="true"
-                    android:layout_toLeftOf="@+id/dialog_add_usage_usage_up"
-                    android:layout_toRightOf="@+id/dialog_add_usage_usage_down"
+                    android:layout_alignParentRight="true"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:ems="10"
                     android:hint="@string/add_usage_consumption_unit"
