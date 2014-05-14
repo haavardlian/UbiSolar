@@ -14,6 +14,6 @@ import java.sql.SQLException;
 public class WallPostMapper implements ResultSetMapper<WallPost> {
     @Override
     public WallPost map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-        return new WallPost(r.getInt("id"), r.getLong("user_id"), r.getString("message"), r.getLong("timestamp"));
+        return new WallPost(r.getInt("id"), r.getLong("user_id"), r.getInt("message"), r.getLong("timestamp"));
     }
 }
