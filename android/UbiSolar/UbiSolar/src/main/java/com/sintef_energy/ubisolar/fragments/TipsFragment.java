@@ -16,12 +16,8 @@ import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
 
-/**
- * Created by Håvard on 22.03.2014.
- */
 public class TipsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
-    private ListView tipsView;
     private TipAdapter tipAdapter;
 
     public static TipsFragment newInstance(int position) {
@@ -34,6 +30,7 @@ public class TipsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ListView tipsView;
         View rootView = inflater.inflate(R.layout.fragment_tip_list, container, false);
         tipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
 

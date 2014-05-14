@@ -186,13 +186,20 @@
     <string name="compare_filter">Filter</string>
 
     <!-- Fragment Energy saving tabs -->
-    <string name="fragment_energy_saving_tab_tips">Tips</string>
-    <string name="fragment_energy_saving_tab_your">Your tips</string>
+    <string name="energy_saving_tab_tips">Tips</string>
+    <string name="energy_saving_tab_your">Your tips</string>
 
-    <string-array name="fragment_energy_saving_tabs">
+    <string-array name="energy_saving_tabs">
         <item>Tips</item>
         <item>Your tips</item>
     </string-array>
+
+    <string name="energy_saving_move_tip">Add to your tips</string>
+    <string name="energy_saving_close">Close</string>
+
+    <string name="energy_saving_rating_changed">Rating changed</string>
+
+    <string name="energy_saving_server_error">Unable to connect to the server</string>
 
     <!-- Toast -->
     <string name="no_internet">Internet connection required to log in</string>

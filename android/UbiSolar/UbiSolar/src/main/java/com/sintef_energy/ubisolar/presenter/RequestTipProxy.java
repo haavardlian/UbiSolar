@@ -14,11 +14,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.TipAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.JsonObjectRequestTweaked;
+import com.sintef_energy.ubisolar.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,7 +77,7 @@ public class RequestTipProxy {
                 fragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(fragment.getActivity().getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
+                        Utils.makeShortToast(fragment.getActivity(), fragment.getString(R.string.energy_saving_server_error));
                     }
                 });
 
@@ -153,20 +155,14 @@ public class RequestTipProxy {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
-                            fragment.getActivity().runOnUiThread(new Runnable() {
+                        fragment.getActivity().runOnUiThread(new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    try {
-                                        Toast.makeText(fragment.getActivity(), response.getString("message"),
-                                            Toast.LENGTH_SHORT).show();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
-
-
+                            @Override
+                            public void run() {
+                                Utils.makeShortToast(fragment.getActivity(),
+                                        fragment.getString(R.string.energy_saving_rating_changed));
+                            }
+                        });
                     }
                 },
                 new Response.ErrorListener() {

@@ -168,12 +168,20 @@
 
 
     <!-- Fragment Energy saving tabs -->
-    <string name="fragment_energy_saving_tab_tips">Tips</string>
-    <string name="fragment_energy_saving_tab_your">Dine tips</string>
-    <string-array name="fragment_energy_saving_tabs">
+    <string name="energy_saving_tab_tips">Tips</string>
+    <string name="energy_saving_tab_your">Dine tips</string>
+
+    <string-array name="energy_saving_tabs">
         <item>Tips</item>
         <item>Dine tips</item>
     </string-array>
+
+    <string name="energy_saving_move_tip">Legg til i dine tips</string>
+    <string name="energy_saving_close">Lukk</string>
+
+    <string name="energy_saving_rating_changed">Vurdering endret</string>
+
+    <string name="energy_saving_server_error">Kunne ikke koble til serveren</string>
 
     <!-- Toast -->
     <string name="no_internet">Du trenger internettilkobling for å logge inn</string>
