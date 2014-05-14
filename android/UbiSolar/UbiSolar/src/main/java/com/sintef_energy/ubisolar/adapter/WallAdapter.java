@@ -6,13 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.WallPost;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

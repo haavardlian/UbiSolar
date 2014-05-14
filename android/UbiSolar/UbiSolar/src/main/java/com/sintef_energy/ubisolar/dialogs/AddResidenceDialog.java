@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.ResidenceModel;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 

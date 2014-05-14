@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.presenter;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import com.facebook.HttpMethod;
@@ -12,7 +13,7 @@ import com.facebook.Session;
 import com.sintef_energy.ubisolar.adapter.WallAdapter;
 import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
-import org.apache.commons.lang3.StringUtils;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -94,7 +95,9 @@ public class RequestFacebookProxy {
                 try {
                     JSONArray friends = response.getGraphObject().getInnerJSONObject()
                             .getJSONArray("data");
+
                     ArrayList<String> friendIds = new ArrayList<>();
+
                     for(int i = 0; i < friends.length(); i++) {
                         JSONObject friend = friends.getJSONObject(i);
                         if(friend.has("installed") && friend.getBoolean("installed"))
@@ -102,8 +105,7 @@ public class RequestFacebookProxy {
                     }
                     RequestManager.getInstance().doFriendRequest().getWallUpdates(adapter,
                             Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()),
-                            fragment, StringUtils.join(friendIds, ','));
-
+                            fragment, TextUtils.join(",", friendIds));
                 } catch(Exception e) {
 
                 }

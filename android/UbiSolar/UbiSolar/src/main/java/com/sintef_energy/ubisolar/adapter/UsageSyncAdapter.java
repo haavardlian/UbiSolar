@@ -14,7 +14,6 @@ import android.util.Log;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.utils.Global;

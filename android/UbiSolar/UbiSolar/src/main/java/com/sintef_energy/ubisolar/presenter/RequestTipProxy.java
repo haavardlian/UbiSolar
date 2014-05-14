@@ -1,7 +1,6 @@
 package com.sintef_energy.ubisolar.presenter;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;

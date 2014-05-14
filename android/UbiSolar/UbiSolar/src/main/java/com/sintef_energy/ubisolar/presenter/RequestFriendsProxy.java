@@ -1,24 +1,22 @@
 package com.sintef_energy.ubisolar.presenter;
 
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 
 import com.sintef_energy.ubisolar.adapter.WallAdapter;
-import com.sintef_energy.ubisolar.model.TipRating;
-import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.JsonObjectRequestTweaked;

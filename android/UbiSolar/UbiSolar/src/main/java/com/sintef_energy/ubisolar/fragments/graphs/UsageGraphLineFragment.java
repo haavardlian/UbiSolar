@@ -343,8 +343,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             mDates.clear();
         }
 
+        @SafeVarargs
         @Override
-        protected Void doInBackground(ArrayList<DeviceUsageList>... dataUsageList) {
+        protected final Void doInBackground(final ArrayList<DeviceUsageList>... dataUsageList) {
             for (int i = 0; i < dataUsageList[0].size(); i++) {
                 mActiveUsageList.add(dataUsageList[0].get(i));
                 addSeries(dataUsageList[0].get(i).getDevice().getName(), true, false);
@@ -771,7 +772,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
                 if (deviceUsageList == null) {
                     deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
+                    devices.put(deviceUsageList.getDevice().getId(), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);
