@@ -28,14 +28,6 @@ public class DataGeneratorResource {
 
     public DataGeneratorResource(ServerDAO db) {
         this.db = db;
-
-        this.db.createRatingTable();
-        this.db.createUsageTable();
-        this.db.createSessionTable();
-        this.db.createTipTable();
-        this.db.createDeviceTable();
-        this.db.createDeviceTable();
-
     }
 
     private ArrayList<Device> generateDevices(long user) {
