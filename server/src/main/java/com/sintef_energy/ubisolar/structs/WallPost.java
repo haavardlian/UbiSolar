@@ -9,10 +9,10 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
 public class WallPost {
     private int id;
     private long userId;
-    private String message;
+    private int message;
     private long timestamp;
 
-    public WallPost(int id, long userId, String message, long timestamp) {
+    public WallPost(int id, long userId, int message, long timestamp) {
         this.id = id;
         this.userId = userId;
         this.message = message;
@@ -38,11 +38,11 @@ public class WallPost {
         this.userId = userId;
     }
 
-    public String getMessage() {
+    public int getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(int message) {
         this.message = message;
     }
 
