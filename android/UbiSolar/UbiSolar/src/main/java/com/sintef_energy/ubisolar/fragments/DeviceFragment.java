@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 
 import android.widget.ExpandableListView;
 
-import com.facebook.android.Util;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.DeviceListAdapter;

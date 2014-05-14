@@ -57,7 +57,7 @@ public class NewsFeedAdapter extends ArrayAdapter<NewsFeed> {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = convertView;
-            NewsHolder holder = null;
+            NewsHolder holder;
 
             if(row == null) {
                 LayoutInflater inflater = ((Activity)context).getLayoutInflater();

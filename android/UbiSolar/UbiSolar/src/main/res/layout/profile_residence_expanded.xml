@@ -14,7 +14,7 @@
         android:layout_row="0"
         android:src="@drawable/home" />
 
-    <GridLayout>
+    <GridLayout
         android:layout_row="1"
         android:layout_column="1">
 

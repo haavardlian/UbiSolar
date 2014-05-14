@@ -9,7 +9,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
@@ -22,7 +21,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.facebook.Session;
@@ -42,8 +40,6 @@ import com.sintef_energy.ubisolar.utils.ScrollViewPager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-
-import info.hoang8f.android.segmented.SegmentedGroup;
 
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -204,7 +200,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         switch (item.getItemId()) {
             case R.id.fragment_usage_menu_action_devices:
                 SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(
-                        new ArrayList<DeviceModel>(mDevices.values()),
+                        new ArrayList<>(mDevices.values()),
                         graphView.getSelectedDialogItems());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(fragmentManager, "selectDeviceDialog");

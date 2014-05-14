@@ -3,10 +3,7 @@ package com.sintef_energy.ubisolar.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v13.app.FragmentStatePagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,7 +103,7 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
 
                     friendAdapter.notifyDataSetChanged();
                 } catch(Exception e) {
-
+                    e.printStackTrace();
                 }
             }
         };

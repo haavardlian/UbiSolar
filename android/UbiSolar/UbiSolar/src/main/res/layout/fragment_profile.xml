@@ -34,7 +34,7 @@
             android:layout_marginLeft="10dp"
             android:layout_row="1" />
 
-        <GridLayout>
+        <GridLayout
             android:layout_row="1"
             android:layout_column="1">
 

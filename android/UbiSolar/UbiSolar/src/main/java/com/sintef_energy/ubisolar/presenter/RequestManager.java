@@ -1,6 +1,5 @@
 package com.sintef_energy.ubisolar.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,7 +15,6 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HttpClientStack;
 import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.HurlStack;
-import com.facebook.Session;
 
 import java.io.File;
 import java.util.concurrent.Executors;

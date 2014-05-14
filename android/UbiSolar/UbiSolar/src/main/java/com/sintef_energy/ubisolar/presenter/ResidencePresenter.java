@@ -2,7 +2,6 @@ package com.sintef_energy.ubisolar.presenter;
 
 import android.content.ContentResolver;
 import android.util.Log;
-import com.sintef_energy.ubisolar.IView.IDeviceView;
 import com.sintef_energy.ubisolar.IView.IResidenceView;
 import com.sintef_energy.ubisolar.database.energy.ResidenceModel;
 
