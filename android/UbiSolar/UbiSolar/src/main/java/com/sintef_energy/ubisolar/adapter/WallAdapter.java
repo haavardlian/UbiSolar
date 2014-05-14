@@ -81,7 +81,7 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
         if(!data.isEmpty()) {
             WallPost post = data.get(position);
             //TODO: Swap Friend with actual friend name
-            String message = "Friend" + " " +
+            String message = post.getUserId() + " " +
                     row.getResources().getStringArray(R.array.wall_post_messages)[post.getMessage()-1];
             holder.message.setText(message);
             holder.timestamp.setText(df.format(new Date(post.getTimestamp() * 1000)));

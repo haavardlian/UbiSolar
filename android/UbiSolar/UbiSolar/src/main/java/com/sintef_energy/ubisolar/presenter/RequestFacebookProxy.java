@@ -81,24 +81,28 @@ public class RequestFacebookProxy {
     public void getFriends(Request.Callback callback) {
         Bundle param = new Bundle();
         param.putString("fields", "name, installed");
-        new Request(Session.getActiveSession(), "me/friends", param, HttpMethod.GET, callback).executeAsync();
+        new Request(Session.getActiveSession(), "me/friends", param, HttpMethod.GET, callback)
+                .executeAsync();
     }
 
-    public void populateFeed(final WallAdapter adapter, final Fragment fragment) {
+    public void populateWall(final WallAdapter adapter, final Fragment fragment) {
         Request.Callback callback = new Request.Callback() {
             @Override
             public void onCompleted(Response response) {
                 if(response.getError() != null)
                     return;
                 try {
-                    JSONArray friends = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                    JSONArray friends = response.getGraphObject().getInnerJSONObject()
+                            .getJSONArray("data");
                     ArrayList<String> friendIds = new ArrayList<>();
                     for(int i = 0; i < friends.length(); i++) {
                         JSONObject friend = friends.getJSONObject(i);
                         if(friend.has("installed") && friend.getBoolean("installed"))
                             friendIds.add(friend.getString("id"));
                     }
-                    RequestManager.getInstance().doFriendRequest().getWallUpdates(adapter, Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()), fragment, StringUtils.join(friendIds, ','));
+                    RequestManager.getInstance().doFriendRequest().getWallUpdates(adapter,
+                            Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()),
+                            fragment, StringUtils.join(friendIds, ','));
 
                 } catch(Exception e) {
 

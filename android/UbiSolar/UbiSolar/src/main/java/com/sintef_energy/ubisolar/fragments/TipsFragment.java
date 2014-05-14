@@ -48,6 +48,8 @@ public class TipsFragment extends Fragment {
         //Get all tips from server asynchronously
         getActivity().setProgressBarIndeterminateVisibility(true);
         RequestManager.getInstance().doTipRequest().getAllTips(tipAdapter, this);
+
+
         return rootView;
     }
 
