@@ -2,10 +2,6 @@ package com.sintef_energy.ubisolar.activities;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
@@ -60,11 +56,9 @@ import com.sintef_energy.ubisolar.utils.Global;
 
 import com.sintef_energy.ubisolar.utils.Utils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import java.util.Date;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -99,18 +93,21 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     private PreferencesManager mPrefManager;
 
-    // Constants
-    // The authority for the sync adapter's content provider
-    public static String AUTHORITY;
-    // An account type, in the form of a domain name
+    // constants
+    /** The authority for the sync adapter's content provider */
+    public static String AUTHORITY_PROVIDER;
+
+    /** An account type for sync, in the form of a domain name*/
     public static String ACCOUNT_TYPE;
+
     // The account name
     public static String ACCOUNT;
+
     // Instance fields
     private Account mAccount;
+
     //Facebook permissions
     public static List<String> FACEBOOK_PERMISSIONS;
-
     static {
         FACEBOOK_PERMISSIONS = new ArrayList<>();
         FACEBOOK_PERMISSIONS.add("user_birthday");
@@ -175,7 +172,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
 
         /* Setup dummy account */
-        AUTHORITY = getResources().getString(R.string.provider_authority_energy);
+        AUTHORITY_PROVIDER = getResources().getString(R.string.provider_authority_energy);
         ACCOUNT_TYPE = getResources().getString(R.string.auth_account_type);
         ACCOUNT = getResources().getString(R.string.app_name);
 
@@ -237,7 +234,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         residencePresenter = null;
         mFacebookSessionStatusCallback = null;
         mPrefManager = null;
-        AUTHORITY = null;
+        AUTHORITY_PROVIDER = null;
         ACCOUNT_TYPE = null;
         ACCOUNT = null;
         mAccount = null;
@@ -252,9 +249,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         if(requestCode == LOGIN_CALL_ID){
             if(resultCode == Activity.RESULT_OK) {
-                Log.v(TAG, "Login success");
+                Log.v(TAG, "Login was successful. Starting to attain session data.");
                 Session session = Session.getActiveSession();
                 //TODO use startFacebookLogin, as it does not start a view if not logged in.
+                /*
                 if (session == null) {
                     // start Facebook Login
                     // This will _only_ log in if the user is logged in from before.
@@ -268,9 +266,16 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     //session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
                 } else {// TODO: Not open login again..
                     Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
-                }
+                }*/
+                startFacebookLogin(null);
 
-                mAccount = getAccount(getApplicationContext(), ACCOUNT_TYPE);
+                Account[] accounts = getAccounts(getApplicationContext(), ACCOUNT_TYPE);
+                for(Account account : accounts){
+                    if(account.name.equals(data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME))) {
+                        mAccount = account;
+                        break;
+                    }
+                }
 
                 if(mAccount == null){
                     Log.e(TAG, "Account creation somehow failed to make an account.");
@@ -278,18 +283,17 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 }
 
                 /* The same as ticking allow sync */
-                ContentResolver.setSyncAutomatically(mAccount, AUTHORITY, true);
+                ContentResolver.setSyncAutomatically(mAccount, AUTHORITY_PROVIDER, true);
 
                 /* Request a sync operation */
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); //Do sync regardless of settings
                 bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); //Force sync immediately
-                ContentResolver.requestSync(mAccount, AUTHORITY, bundle);
+                ContentResolver.requestSync(mAccount, AUTHORITY_PROVIDER, bundle);
 
                 /* Update all -1 users to the current user id. */
                 AccountManager accountManager =
                     (AccountManager) getApplicationContext().getSystemService(ACCOUNT_SERVICE);
-
 
                 ContentValues values = new ContentValues();
                 values.put(DeviceModel.DeviceEntry.COLUMN_USER_ID, accountManager.getUserData(mAccount, Global.DATA_FB_UID));
@@ -310,6 +314,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Session session = Session.getActiveSession();
+
         Session.saveSession(session, outState);
     }
 
@@ -350,7 +355,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 break;
         }
 
-        if(fragment != null) //todo: Add to backstack? Or add null?
+        if(fragment != null)
             addFragment(fragment, false, false, titleNames[position]);
             //fragmentManager.beginTransaction().replace(R.id.container, fragment).commit();
         else if(logout) {
@@ -582,28 +587,20 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
 
-        if(mAccount == null)
-            mAccount = getAccount(getApplicationContext(), ACCOUNT_TYPE);
-
-        if(mAccount == null) {
-            Log.e(TAG, "Performing logout but no account exists");
-            return;
-        }
-
-        accountManager.removeAccount(mAccount, new AccountManagerCallback<Boolean>() {
-            @Override
-            public void run(AccountManagerFuture<Boolean> booleanAccountManagerFuture) {
-                try {
-                    Log.v(TAG, "Account removal success: "+booleanAccountManagerFuture.getResult());
-                } catch (OperationCanceledException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (AuthenticatorException e) {
-                    e.printStackTrace();
-                }
+        Account[] accounts = accountManager.getAccounts();
+        for(Account account : accounts){
+            if(account.type.intern().equals(ACCOUNT_TYPE)){
+                Log.v(TAG, "Removing account: " + account.name + " for authority: " + AUTHORITY_PROVIDER);
+                accountManager.removeAccount(account, null, new Handler());
             }
-        }, new Handler());
+        }
+   }
+
+  private static Account[] getAccounts(Context context, String ACC_TYPE){
+        AccountManager accountManager =
+            (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+
+        return accountManager.getAccountsByType(ACCOUNT_TYPE);
     }
 
     private static Account getAccount(Context context, String ACC_TYPE){
@@ -614,7 +611,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         Account account = null;
 
-        if(accounts.length > 1){
+        if(accounts.length > 0){
             account = accounts[0];
         }
 
