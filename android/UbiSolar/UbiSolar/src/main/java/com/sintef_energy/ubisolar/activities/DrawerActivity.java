@@ -46,6 +46,7 @@ import com.sintef_energy.ubisolar.fragments.UsageFragment;
 
 import com.sintef_energy.ubisolar.fragments.CompareFragment;
 
+import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
@@ -264,14 +265,21 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 AccountManager accountManager =
                     (AccountManager) getApplicationContext().getSystemService(ACCOUNT_SERVICE);
 
+                String facebookUID = accountManager.getUserData(mAccount, Global.DATA_FB_UID);
+
                 ContentValues values = new ContentValues();
-                values.put(DeviceModel.DeviceEntry.COLUMN_USER_ID, accountManager.getUserData(mAccount, Global.DATA_FB_UID));
+                values.put(DeviceModel.DeviceEntry.COLUMN_USER_ID, facebookUID);
                 values.put(DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED, System.currentTimeMillis()/1000L);
 
                 getContentResolver().update(EnergyContract.Devices.CONTENT_URI,
                         values,
                         EnergyContract.Devices.COLUMN_USER_ID + "=?",
                         new String[]{"-1"});
+
+                //Publish a post saying you started using Wattitude
+                RequestManager.getInstance().doFriendRequest().createWallPost(
+                        new WallPost(0, Long.valueOf(facebookUID), 1, System.currentTimeMillis() / 1000),
+                        null);
             }
             else {
                 Log.v(TAG, "Login failed");

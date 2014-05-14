@@ -11,9 +11,17 @@
     <!-- The Content Provider -->
     <string name="provider_authority_energy">com.sintef_energy.ubisolar.provider.energy</string>
 
+
     <!--Drawer activity-->
     <string name="drawer_log_in">Log in</string>
     <string name="drawer_log_out">Log out</string>
+
+    <!-- Wall post messages -->
+    <string-array name="wall_post_messages">
+        <item>started using Wattitude</item>
+        <item>shared usage data</item>
+        <item>shared a power saving tip</item>
+    </string-array>
 
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">

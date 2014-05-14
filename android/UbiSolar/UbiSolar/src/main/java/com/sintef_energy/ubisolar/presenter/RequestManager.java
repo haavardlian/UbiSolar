@@ -39,6 +39,7 @@ public class RequestManager {
         mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
         mRequestTipProxy = new RequestTipProxy(mRequestQueue);
         mRequestFacebookProxy = new RequestFacebookProxy();
+        mRequestFriendsProxy = new RequestFriendsProxy(mRequestQueue);
     }
 
     public RequestTipProxy doTipRequest() {
@@ -52,6 +53,8 @@ public class RequestManager {
     public RequestFacebookProxy doFacebookRequest() {
         return mRequestFacebookProxy;
     }
+
+    public RequestFriendsProxy doFriendRequest() { return  mRequestFriendsProxy; }
 
     // This method should be called first to do singleton initialization
     public static synchronized RequestManager getInstance(Context context) {

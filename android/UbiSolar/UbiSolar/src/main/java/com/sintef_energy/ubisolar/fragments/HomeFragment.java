@@ -7,10 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.NewsFeedAdapter;
-import com.sintef_energy.ubisolar.model.NewsFeed;
+import com.sintef_energy.ubisolar.adapter.WallAdapter;
+import com.sintef_energy.ubisolar.model.WallPost;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
 
@@ -25,20 +28,12 @@ public class HomeFragment extends DefaultTabFragment {
     public static final String TAG = HomeFragment.class.getName();
 
     private View view;
-    private ArrayList<NewsFeed> newsFeed;
-    private NewsFeedAdapter newsFeedAdapter;
+    private ArrayList<WallPost> wallFeed;
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static HomeFragment newInstance(int sectionNumber, NewsFeedAdapter newsFeedAdapter) {
-        HomeFragment fragment = new HomeFragment(newsFeedAdapter);
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     public static HomeFragment newInstance(int sectionNumber) {
         HomeFragment fragment = new HomeFragment();
@@ -49,10 +44,6 @@ public class HomeFragment extends DefaultTabFragment {
     }
 
     public HomeFragment() {
-    }
-
-    public HomeFragment(NewsFeedAdapter newsFeedAdapter) {
-        this.newsFeedAdapter= newsFeedAdapter;
     }
 
     /**
@@ -70,25 +61,13 @@ public class HomeFragment extends DefaultTabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        newsFeed = new ArrayList<>();
-        NewsFeedAdapter newsFeedAdapter = new NewsFeedAdapter(getActivity(),R.layout.fragment_home_row, newsFeed);
+        wallFeed = new ArrayList<>();
+        WallAdapter wallAdapter = new WallAdapter(getActivity(),R.layout.fragment_home_row, wallFeed);
         final ListView friendsList = (ListView) view.findViewById(R.id.news_feed_list);
-        friendsList.setAdapter(newsFeedAdapter);
+        friendsList.setAdapter(wallAdapter);
 
-        newsFeed.add(new NewsFeed("Pia and 5 others started with Wattitude!"));
-        newsFeed.add(new NewsFeed("Harald shared a tip!"));
-        newsFeed.add(new NewsFeed("Kåre also started with Wattitude!"));
-        newsFeed.add(new NewsFeed("Pia shared her consumption"));
-        newsFeed.add(new NewsFeed("Beate shared her consumption"));
-        newsFeed.add(new NewsFeed("Håkon shared a tip!"));
-        newsFeed.add(new NewsFeed("Per and 1 other started with Wattitude!"));
-        newsFeed.add(new NewsFeed("Beate shared a tip!"));
-        newsFeed.add(new NewsFeed("Lars also started with Wattitude!"));
-        newsFeed.add(new NewsFeed("Per shared his consumption"));
-        newsFeed.add(new NewsFeed("Kristin shared her consumption"));
-        newsFeed.add(new NewsFeed("Håvard shared a tip!"));
-
-        newsFeedAdapter.notifyDataSetChanged();
+        if(Session.getActiveSession().isOpened())
+            RequestManager.getInstance().doFacebookRequest().populateFeed(wallAdapter, this);
 
         return view;
     }
