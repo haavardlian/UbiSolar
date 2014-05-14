@@ -18,6 +18,65 @@ import java.util.List;
 @RegisterMapper(TotalUsageMapper.class)
 @UseStringTemplate3StatementLocator
 public interface ServerDAO {
+    @SqlQuery("CREATE TABLE IF NOT EXISTS `device` (\n" +
+            "  `id` bigint(20) unsigned NOT NULL,\n" +
+            "  `name` varchar(32) NOT NULL,\n" +
+            "  `description` varchar(64) NOT NULL,\n" +
+            "  `category` int(11) NOT NULL DEFAULT '1',\n" +
+            "  `user_id` bigint(40) unsigned NOT NULL,\n" +
+            "  `last_updated` bigint(20) NOT NULL,\n" +
+            "  `deleted` bit(1) NOT NULL DEFAULT b'0',\n" +
+            "  PRIMARY KEY (`id`,`user_id`)\n" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8;")
+    void createDeviceTable();
+
+    @SqlQuery("CREATE TABLE IF NOT EXISTS `device_power_usage` (\n" +
+            "  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,\n" +
+            "  `device_id` bigint(20) unsigned NOT NULL,\n" +
+            "  `timestamp` bigint(20) NOT NULL,\n" +
+            "  `power_usage` double NOT NULL,\n" +
+            "  `deleted` bit(1) NOT NULL,\n" +
+            "  `last_updated` bigint(20) unsigned NOT NULL,\n" +
+            "  PRIMARY KEY (`id`,`device_id`)\n" +
+            ") ENGINE=InnoDB  DEFAULT CHARSET=latin1;")
+    void createUsageTable();
+
+    @SqlQuery("CREATE TABLE IF NOT EXISTS `wall` (\n" +
+            "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+            "  `user_id` bigint(20) unsigned NOT NULL,\n" +
+            "  `message` int(10) unsigned NOT NULL,\n" +
+            "  `timestamp` bigint(20) unsigned NOT NULL,\n" +
+            "  PRIMARY KEY (`id`)\n" +
+            ") ENGINE=InnoDB  DEFAULT CHARSET=latin1;")
+    void createWallTable();
+
+    @SqlQuery("CREATE TABLE IF NOT EXISTS `tip` (\n" +
+            "  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,\n" +
+            "  `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,\n" +
+            "  `description` text NOT NULL,\n" +
+            "  PRIMARY KEY (`id`)\n" +
+            ") ENGINE=InnoDB  DEFAULT CHARSET=latin1;")
+    void createTipTable();
+
+    @SqlQuery("CREATE TABLE IF NOT EXISTS `tip_rating` (\n" +
+            "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+            "  `tip_id` int(11) NOT NULL,\n" +
+            "  `rating` tinyint(4) NOT NULL,\n" +
+            "  `user_id` bigint(20) NOT NULL,\n" +
+            "  PRIMARY KEY (`id`),\n" +
+            "  UNIQUE KEY `tip_id` (`tip_id`,`user_id`)\n" +
+            ") ENGINE=InnoDB  DEFAULT CHARSET=latin1;")
+    void createRatingTable();
+
+    @SqlQuery("CREATE TABLE IF NOT EXISTS `session` (" +
+            "  `id` int(11) NOT NULL AUTO_INCREMENT," +
+            "  `token` varchar(512) NOT NULL," +
+            "  `expires` bigint(20) NOT NULL," +
+            "  PRIMARY KEY (`id`)," +
+            "  UNIQUE KEY `token` (`token`)" +
+            ") ENGINE=InnoDB  DEFAULT CHARSET=latin1;")
+    void createSessionTable();
+
     @SqlUpdate("INSERT INTO device (id, user_id, name, description, deleted, last_updated, category) VALUES (:device.id, :device.userId, :device.name, :device.description, :device.deleted, :device.lastUpdated, :device.category)")
     int createDevice(@BindBean("device") Device device);
 

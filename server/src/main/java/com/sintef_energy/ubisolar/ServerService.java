@@ -52,5 +52,12 @@ public class ServerService extends Service<ServerConfiguration> {
         environment.addResource(new DataGeneratorResource(dao));
         environment.addResource(new TimeResource());
         environment.addResource(new FriendsResource(dao));
+
+        dao.createWallTable();
+        dao.createUsageTable();
+        dao.createTipTable();
+        dao.createRatingTable();
+        dao.createDeviceTable();
+        dao.createSessionTable();
     }
 }
