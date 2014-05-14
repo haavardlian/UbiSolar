@@ -106,15 +106,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     // Instance fields
     private Account mAccount;
 
-    //Facebook permissions
-    public static List<String> FACEBOOK_PERMISSIONS;
-    static {
-        FACEBOOK_PERMISSIONS = new ArrayList<>();
-        FACEBOOK_PERMISSIONS.add("user_birthday");
-        FACEBOOK_PERMISSIONS.add("user_location");
-        FACEBOOK_PERMISSIONS.add("email");
-    }
-
     /** Number is random */
     private static final int LOGIN_CALL_ID = 231;
 
@@ -238,7 +229,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         ACCOUNT_TYPE = null;
         ACCOUNT = null;
         mAccount = null;
-        FACEBOOK_PERMISSIONS = null;
     }
 
 
@@ -260,7 +250,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     Session.openActiveSession(this, false, mFacebookSessionStatusCallback);
                 } else if (!session.isOpened() && !session.isClosed()) {
                     session.openForPublish(new Session.OpenRequest(this)
-                            .setPermissions(FACEBOOK_PERMISSIONS)
+                            .setPermissions(FACEBOOK_READ_PERMISSIONS)
                             .setCallback(mFacebookSessionStatusCallback));
 
                     //session.requestNewPublishPermissions(new Session.NewPermissionsRequest(this, Arrays.asList("publish_actions")));
@@ -519,7 +509,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 exprDate,
                 null, // How can we know this?
                 AccessTokenSource.FACEBOOK_APPLICATION_NATIVE, // How can we know this?
-                FACEBOOK_PERMISSIONS); //Arrays.asList(Constants.FB_APP_PERMISSIONS));
+                Global.FACEBOOK_PERMISSIONS); //Arrays.asList(Constants.FB_APP_PERMISSIONS));
 
         // Apply the new session
         Session.openActiveSessionWithAccessToken(getApplicationContext(), accessToken , new Session.StatusCallback() {
