@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
@@ -149,14 +150,19 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        /* Update UX on backstack change *//*
+        /* Update UX on backstack change */
         getFragmentManager().addOnBackStackChangedListener(
                 new FragmentManager.OnBackStackChangedListener() {
                     public void onBackStackChanged() {
                         // Update your UI here.
-                        getFragmentManager().
+                        int count = getFragmentManager().getBackStackEntryCount();
+
+                        if(count > 0)
+                            mNavigationDrawerFragment.setNavDrawerToggle(false);
+                        else
+                            mNavigationDrawerFragment.setNavDrawerToggle(true);
                     }
-                });*/
+               });
 
         /* Session data */
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
@@ -353,6 +359,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     public void addFragment(Fragment fragment, boolean animate, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
+
+        /*
+        for(int i = 0; i < manager.getBackStackEntryCount(); ++i) {
+            manager.popBackStack();
+        }*/
+
         FragmentTransaction ft = manager.beginTransaction();
         if (animate) {
             ft.setCustomAnimations(
@@ -362,11 +374,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     android.R.anim.fade_in,
                     android.R.anim.fade_out);
         }
+
+
         if (addToBackStack) {
             ft.addToBackStack(tag);
         }
-        //ft.add(R.id.container, fragment);
-        ft.replace(R.id.container, fragment);
+
+        ft.replace(R.id.container, fragment, tag);
         ft.commit();
     }
 
@@ -394,7 +408,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         DrawerItem item = (DrawerItem)mNavigationDrawerFragment.getNavDrawerItem(11);
 
-        //TODO use Strings
         if (Global.loggedIn) //TODO: if Session.GetActiveSession().isOpened?
             item.setTitle(getString(R.string.drawer_log_out));
         else
@@ -421,11 +434,17 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()){
+            case R.id.action_settings:
+                return true;
+            case android.R.id.home:
+                if(getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStack();
+                    return true;
+                }
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

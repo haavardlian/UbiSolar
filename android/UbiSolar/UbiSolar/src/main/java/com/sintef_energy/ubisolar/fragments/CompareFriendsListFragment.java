@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,6 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
     private static final String ARG_POSITION = "position";
     private View view;
     private FriendAdapter friendAdapter;
-    private SimilarAdapter simAdapter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -77,7 +77,7 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
                                     int position, long id) {
 
                 Fragment fragment = CompareFriendsFragment.newInstance(position, friendAdapter.getItem(position));
-                addFragment(fragment, true, friends.get(position));
+                addFragment(fragment, true, friends.get(position).getName());
 
             }
         });
@@ -115,12 +115,16 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
         return friendAdapter;
     }
 
-    public void addFragment(Fragment fragment, boolean addToBackStack, User user) {
+    public void addFragment(Fragment fragment, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
-        manager.beginTransaction()
-               .replace(R.id.container, fragment, "Compare")
-               .addToBackStack(null)
-               .commit();
+        FragmentTransaction ft = manager.beginTransaction();
+
+        ft.replace(R.id.container, fragment, "Compare");
+
+        if(addToBackStack)
+               ft.addToBackStack(tag);
+
+        ft.commit();
     }
 
     @Override

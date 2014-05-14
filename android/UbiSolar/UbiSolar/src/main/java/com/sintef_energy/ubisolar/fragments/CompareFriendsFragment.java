@@ -24,19 +24,14 @@ public class CompareFriendsFragment extends Fragment {
      */
     public static final String TAG = CompareFriendsFragment.class.getName();
 
-    private SimilarAdapter simAdapter;
-
     private View view;
     private static final String ARG_POSITION = "position";
     private ProfilePictureView profilePicture;
     private ProfilePictureView friendPicture;
     private User friend;
 
-    public CompareFriendsFragment(SimilarAdapter simAdapter) {
-        this.simAdapter = simAdapter;
-    }
-
     public CompareFriendsFragment(User friend) {
+        super();
         this.friend = friend;
     }
 
@@ -45,14 +40,6 @@ public class CompareFriendsFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareFriendsFragment newInstance(int position, SimilarAdapter simAdapter) {
-        CompareFriendsFragment fragment = new CompareFriendsFragment(simAdapter);
-        Bundle b = new Bundle();
-        b.putInt(ARG_POSITION, position);
-        fragment.setArguments(b);
-        return fragment;
-    }
-
     public static CompareFriendsFragment newInstance(int position, User user) {
         CompareFriendsFragment fragment = new CompareFriendsFragment(user);
         Bundle b = new Bundle();
