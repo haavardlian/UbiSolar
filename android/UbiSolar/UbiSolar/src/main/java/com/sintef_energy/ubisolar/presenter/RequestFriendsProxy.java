@@ -20,12 +20,15 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
 
 import com.sintef_energy.ubisolar.adapter.WallAdapter;
+import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.utils.Global;
+import com.sintef_energy.ubisolar.utils.JsonObjectRequestTweaked;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -45,17 +48,18 @@ public class RequestFriendsProxy {
         this.requestQueue = requestQueue;
     }
 
-    public void getWallUpdates(final WallAdapter adapter, long userId, final Fragment fragment) {
-        String url = Global.BASE_URL + "/user/" + userId + "/wall";
+    public void getWallUpdates(final WallAdapter adapter, long userId, final Fragment fragment, final String friendIds) {
+        String url = Global.BASE_URL + "/user/" + userId + "/friends/wall?friends=" + friendIds;
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(final JSONArray jsonArray) {
                 adapter.clear();
-
+                Log.d("WALL", "Got response");
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
                         adapter.add(mapper.readValue(jsonArray.get(i).toString(), WallPost.class));
-                        //Log.d(tag, adapter.getItem(i).toString());
+
+                        Log.d("WALL", adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");
                         Log.e("REQUEST", e.toString());
@@ -96,5 +100,40 @@ public class RequestFriendsProxy {
         });
     }
 
+    public void createWallPost(WallPost post, final Fragment fragment) {
+        String url = Global.BASE_URL + "/user/" + post.getUserId() + "/friends/wall";
+        JSONObject jsonObject;
+
+        try {
+            jsonObject = new JSONObject(mapper.writeValueAsString(post));
+        } catch (JsonProcessingException | JSONException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequestTweaked(Request.Method.PUT, url, jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(final JSONObject response) {
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        fragment.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(fragment.getActivity(), "An error occurred while publishing",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                });
+
+        requestQueue.add(jsonRequest);
+    }
 
 }

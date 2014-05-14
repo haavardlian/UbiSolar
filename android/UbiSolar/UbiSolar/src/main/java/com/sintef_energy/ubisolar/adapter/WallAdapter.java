@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.WallPost;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -79,8 +80,9 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
 
         if(!data.isEmpty()) {
             WallPost post = data.get(position);
-//            holder.name.setText(post.getId());
-            holder.message.setText(post.getMessage());
+            String message = PreferencesManager.getInstance().getFacebookName() + " " +
+                    row.getResources().getStringArray(R.array.wall_post_messages)[post.getMessage()];
+            holder.message.setText(message);
             holder.timestamp.setText(df.format(new Date(post.getTimestamp() * 1000)));
         }
         return row;

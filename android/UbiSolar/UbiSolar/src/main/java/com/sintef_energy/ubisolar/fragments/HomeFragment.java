@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.WallAdapter;
@@ -65,7 +66,8 @@ public class HomeFragment extends DefaultTabFragment {
         final ListView friendsList = (ListView) view.findViewById(R.id.news_feed_list);
         friendsList.setAdapter(wallAdapter);
 
-        RequestManager.getInstance().doFriendRequest().getWallUpdates(wallAdapter, Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()), this);
+        if(Session.getActiveSession().isOpened())
+            RequestManager.getInstance().doFacebookRequest().populateFeed(wallAdapter, this);
 
         return view;
     }
