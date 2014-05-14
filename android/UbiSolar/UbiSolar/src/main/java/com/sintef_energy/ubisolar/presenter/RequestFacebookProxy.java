@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -15,6 +16,7 @@ import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -78,6 +80,23 @@ public class RequestFacebookProxy {
         }).executeAsync();
     }
 
+    public void getFacebookName(long userId, final TextView textView) {
+        new Request(Session.getActiveSession(), "/" + userId, null, HttpMethod.GET,
+                new Request.Callback() {
+                    @Override
+                    public void onCompleted(Response response) {
+                        if(response.getError() == null) {
+                            try {
+                                String name = response.getGraphObject().getInnerJSONObject().getString("name");
+                                textView.setText(name);
+                            } catch (JSONException e) {
+                                textView.setText("Error");
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+        }).executeAsync();
+    }
 
     public void getFriends(Request.Callback callback) {
         Bundle param = new Bundle();

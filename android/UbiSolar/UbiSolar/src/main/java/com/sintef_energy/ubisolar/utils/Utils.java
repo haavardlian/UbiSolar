@@ -68,7 +68,6 @@ public class Utils {
             .detectLeakedSqlLiteObjects()
             .detectLeakedClosableObjects()
             .penaltyLog()
-            .penaltyDeath()
             .build());
         }
     }
