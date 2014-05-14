@@ -62,12 +62,17 @@ public class TipDialog extends DialogFragment {
                         SharedPreferences.Editor editor = sharedPref.edit();
 
                         Set<String> savedTips = sharedPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
+                        Set<String> returnSet = new HashSet<>(savedTips);
+
                         for(String s : savedTips) {
-                            if(Integer.valueOf(s) == tip.getId()) return;
+                            if(Integer.valueOf(s) == tip.getId()){
+                                editor.commit();
+                                return;
+                            }
                             Log.d("Saved tip id", s);
                         }
-                        savedTips.add(String.valueOf(tip.getId()));
-                        editor.putStringSet(PreferencesManager.SAVED_TIPS, savedTips);
+                        returnSet.add(String.valueOf(tip.getId()));
+                        editor.putStringSet(PreferencesManager.SAVED_TIPS, returnSet);
                         editor.commit();
                     }
                 })
