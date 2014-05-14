@@ -4,8 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
@@ -16,7 +20,12 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Håvard on 24.03.2014.
@@ -38,7 +47,7 @@ public class YourDialog extends DialogFragment {
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -52,6 +61,19 @@ public class YourDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         yourAdapter.remove(tip);
+                        yourAdapter.notifyDataSetChanged();
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                        SharedPreferences.Editor editor = sharedPref.edit();
+
+                        Set<String> savedTips = sharedPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
+                        ArrayList<String> savedTipsList = new ArrayList<String>(savedTips);
+                        for (int n = 0; n < savedTipsList.size(); n++) {
+                            String x = savedTipsList.get(n);
+                            if (Integer.valueOf(x) == tip.getId()) savedTipsList.remove(n);
+                            Log.d("Saved tip id", x);
+                        }
+                        editor.putStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>(savedTipsList));
+                        editor.commit();
                     }
                 })
                 .setTitle(tip.getName());

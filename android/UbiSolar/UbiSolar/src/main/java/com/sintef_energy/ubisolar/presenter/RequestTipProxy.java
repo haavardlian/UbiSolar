@@ -1,6 +1,9 @@
 package com.sintef_energy.ubisolar.presenter;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,8 +19,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.TipAdapter;
+import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.JsonObjectRequestTweaked;
 import com.sintef_energy.ubisolar.utils.Utils;
@@ -27,6 +32,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Håvard on 25.03.2014.
@@ -78,6 +85,66 @@ public class RequestTipProxy {
                     @Override
                     public void run() {
                         Utils.makeShortToast(fragment.getActivity(), fragment.getString(R.string.energy_saving_server_error));
+                    }
+                });
+
+                Log.e("REQUEST", "Error from server!!");
+
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        fragment.getActivity().setProgressBarIndeterminateVisibility(false);
+                    }
+                });
+            }
+        });
+
+        requestQueue.add(jsonRequest);
+    }
+
+    public void getSavedTips(final YourAdapter adapter, final Fragment fragment) {
+        String url = Global.BASE_URL + "/tips";
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(final JSONArray jsonArray) {
+                adapter.clear();
+
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(fragment.getActivity().getApplicationContext());
+
+                Set<String> savedTips = sharedPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
+
+                for(int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        Tip tip = mapper.readValue(jsonArray.get(i).toString(), Tip.class);
+
+                        for(String s : savedTips) {
+                            Log.d("Saved tip", s);
+                            if(Integer.valueOf(s) == tip.getId()) adapter.add(tip);
+                        }
+
+                    } catch (IOException | JSONException e) {
+                        Log.e("REQUEST", "Error in JSON Mapping:");
+                        Log.e("REQUEST", e.toString());
+                    }
+                }
+
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        fragment.getActivity().setProgressBarIndeterminateVisibility(false);
+                    }
+                });
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                fragment.getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(fragment.getActivity().getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
                     }
                 });
 

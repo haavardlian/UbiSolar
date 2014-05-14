@@ -46,7 +46,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     public void add(Tip object) {
         if(!data.contains(object)) {
             data.add(object);
-            notifyDataSetChanged();
         }
     }
 
@@ -62,7 +61,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     @Override
     public void clear() {
         data.clear();
-        notifyDataSetChanged();
     }
 
     @Override
