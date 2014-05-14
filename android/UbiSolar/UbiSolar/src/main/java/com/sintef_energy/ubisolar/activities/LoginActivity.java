@@ -22,10 +22,16 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Handles the generation of a Facebook session. Be it a token that has expired, or setup of
  * permissions.
  */
+
+
 public class LoginActivity extends AccountAuthenticatorActivity implements ILoginCallback{
     private static final String TAG = LoginActivity.class.getName();
 
@@ -37,7 +43,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
 
     private FacebookSessionStatusCallback mFacebookSessionStatusCallback;
 
-    boolean readyForLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +74,18 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
         }
 
         if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
-            session.openForRead(new Session.OpenRequest(this).setCallback(mFacebookSessionStatusCallback));
+            Log.v(TAG, "CREATED_TOKEN_LOADED");
+            //session.openForRead(new Session.OpenRequest(this).setCallback(mFacebookSessionStatusCallback));
+            Session.openActiveSession(this, false, mFacebookSessionStatusCallback);
         }
         else if (!session.isOpened() && !session.isClosed()) {
-            session.openForRead(new Session.OpenRequest(this).setCallback(mFacebookSessionStatusCallback));
+            Log.v(TAG, "Facebook in limbo. Setting up request");
+            Session.OpenRequest request = new Session.OpenRequest(this);
+            request.setPermissions(Global.FACEBOOK_READ_PERMISSIONS);
+            request.setCallback(mFacebookSessionStatusCallback);
+            session.openForRead(request);
         } else {
+            Log.v(TAG, "No session data. Opening login window if necessary");
             Session.openActiveSession(this, true, mFacebookSessionStatusCallback);
         }
      }
@@ -183,7 +195,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
     /**
      * Handles the login to FB
      */
-    private static class FacebookSessionStatusCallback implements Session.StatusCallback {
+    private class FacebookSessionStatusCallback implements Session.StatusCallback {
         private final String TAG = FacebookSessionStatusCallback.class.getName();
 
         private ILoginCallback mLoginCallback;
@@ -200,8 +212,11 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
 
             final Bundle data = new Bundle();
 
-            //User is logged in
-            if (session.isOpened()) {
+            // There is no publish rights
+            if(session.isOpened() && state == SessionState.OPENED && !session.getPermissions().contains("publish_stream")){
+                session.requestNewPublishPermissions(new Session.NewPermissionsRequest(LoginActivity.this, Global.FACEBOOK_PUBLISH_PERMISSIONS ));
+            }
+            else if (session.isOpened() && (state == SessionState.OPENED_TOKEN_UPDATED || state == SessionState.CREATED_TOKEN_LOADED)) {
 
                 Log.v(TAG, "Facebook logged in.");
 
@@ -235,12 +250,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
             }
             // Login failed
             else {
-                if (session.isClosed()) {
-                    Log.v(TAG, "Facebook logged out.");
-                } else
-                    Log.v(TAG, "Facebook status is fishy");
-
-                //mLoginCallback.loginFinished(null);
+                Log.v(TAG, "Facebook state lost in space.");
             }
         }
     }

@@ -42,22 +42,16 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
     private FriendAdapter friendAdapter;
     private SimilarAdapter simAdapter;
 
-
-
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareFriendsListFragment newInstance(int position, FriendAdapter friendAdapter) {
-        CompareFriendsListFragment fragment = new CompareFriendsListFragment(friendAdapter);
+    public static CompareFriendsListFragment newInstance(int position) {
+        CompareFriendsListFragment fragment = new CompareFriendsListFragment();
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
         return fragment;
-    }
-
-    public CompareFriendsListFragment(FriendAdapter friendAdapter) {
-        this.friendAdapter = friendAdapter;
     }
 
     /**
@@ -67,8 +61,6 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        Log.d("ATTACHED", "yay");
     }
 
     @Override
@@ -122,52 +114,8 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
         RequestManager.getInstance().doFacebookRequest().getFriends(callback);
     }
 
-
-    public void addFriend(User friend) {
-        Log.d("Adding friend:", friend.toString());
-        friendAdapter.add(friend);
-    }
-
     public FriendAdapter getAdapter() {
         return friendAdapter;
-    }
-
-    public class MyPagerAdapter extends FragmentStatePagerAdapter {
-
-        private final String[] TITLES = { "Friends", "Similar profiles"};
-        private FriendAdapter friendAdapter;
-        private SimilarAdapter simAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter simAdapter) {
-            super(fm);
-            this.friendAdapter = friendAdapter;
-            this.simAdapter = simAdapter;
-        }
-
-
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return TITLES[position];
-        }
-
-        @Override
-        public int getCount() {
-            return TITLES.length;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch(position) {
-                case 0:
-                    return CompareFriendsListFragment.newInstance(0, friendAdapter);
-                case 1:
-                    return CompareSimilarFragment.newInstance(1, simAdapter);
-                default:
-                    return null;
-            }
-        }
-
-
     }
 
     public void addFragment(Fragment fragment, boolean addToBackStack, User user) {

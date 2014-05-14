@@ -1,5 +1,8 @@
 package com.sintef_energy.ubisolar.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Håvard on 10.02.14.
  */
@@ -22,5 +25,24 @@ public class Global {
     public static final String DATA_EXPIRATION_DATE = "DATA_EXPIRATION_DATE";
     public static final String DATA_FB_UID = "DATA_DB_UID";
 
+    /** Read permissions */
+    public static List<String> FACEBOOK_READ_PERMISSIONS;
+    /** Publish permsissions*/
+    public static List<String> FACEBOOK_PUBLISH_PERMISSIONS;
+    /** A collection of read and publish permissions */
+    public static List<String> FACEBOOK_PERMISSIONS;
 
+    static {
+        FACEBOOK_READ_PERMISSIONS = new ArrayList<>();
+        FACEBOOK_READ_PERMISSIONS.add("user_birthday");
+        FACEBOOK_READ_PERMISSIONS.add("user_location");
+        FACEBOOK_READ_PERMISSIONS.add("email");
+
+        FACEBOOK_PUBLISH_PERMISSIONS = new ArrayList<>();
+        FACEBOOK_PUBLISH_PERMISSIONS.add("publish_stream");
+
+        FACEBOOK_PERMISSIONS = new ArrayList<>();
+        FACEBOOK_PERMISSIONS.addAll(FACEBOOK_READ_PERMISSIONS);
+        FACEBOOK_PERMISSIONS.addAll(FACEBOOK_PUBLISH_PERMISSIONS);
+    }
 }

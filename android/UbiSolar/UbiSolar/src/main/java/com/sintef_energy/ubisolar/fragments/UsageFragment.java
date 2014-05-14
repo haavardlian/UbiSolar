@@ -83,9 +83,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public void onCreate(Bundle bundle){
-        setHasOptionsMenu(true);
-
         super.onCreate(bundle);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -186,14 +185,13 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.usage, menu);
 
         if(!Session.getActiveSession().isOpened()) {
             MenuItem item = menu.findItem(R.id.share_usage);
             item.setVisible(false);
         }
-
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

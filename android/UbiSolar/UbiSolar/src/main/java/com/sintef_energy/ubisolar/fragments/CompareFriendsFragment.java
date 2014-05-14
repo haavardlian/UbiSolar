@@ -17,7 +17,6 @@ import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
-
 public class CompareFriendsFragment extends Fragment {
 
     /* The fragment argument representing the section number for this
