@@ -5,6 +5,7 @@ import com.sintef_energy.ubisolar.structs.*;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 import org.skife.jdbi.v2.unstable.BindIn;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
  * Created by haavard on 2/12/14.
  */
 @RegisterMapper(TotalUsageMapper.class)
+@UseStringTemplate3StatementLocator
 public interface ServerDAO {
     @SqlUpdate("INSERT INTO device (id, user_id, name, description) VALUES (:device.id, :device.userId, :device.name, :device.description)")
     int createDevice(@BindBean("device") Device device);
@@ -115,11 +117,11 @@ public interface ServerDAO {
     @SqlQuery("SELECT MAX(timestamp) AS timestamp FROM device_power_usage, device where device_id = device.id AND device.user_id = :user LIMIT 1")
     long getLastUpdatedTimeUsage(@Bind("user") long user);
 
-    @SqlQuery("SELECT * FROM wall WHERE user_id IN (\\<userIdList\\>) ORDER BY timestamp DESC")
+
+    @SqlQuery("SELECT * FROM wall WHERE user_id IN (<userIdList>) ORDER BY timestamp DESC")
     @Mapper(WallPostMapper.class)
-    List<WallPost> getWallPostsForFriends(@BindIn("userIdList") List<Integer> userIdList);
+    List<WallPost> getWallPostsForFriends(@BindIn("userIdList") List<String> userIdList);
 
     @SqlUpdate("INSERT INTO wall (user_id, message, timestamp) VALUES (:post.userId, :post.message, :post.timestamp)")
     int createWallPost(@BindBean("post") WallPost post);
-
 }
