@@ -6,13 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.WallPost;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -27,13 +24,16 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
     private Context context;
     private int layoutResourceId;
     private List<WallPost> data = null;
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    String[] messages;
+    DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    DateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     public WallAdapter(Context context, int layoutResourceId, ArrayList<WallPost> data) {
         super(context, layoutResourceId);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.data = data;
+        messages = context.getResources().getStringArray(R.array.wall_post_messages);
     }
 
     public Activity getActivity() {
@@ -63,34 +63,39 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        TipHolder holder = null;
+        WallItemHolder holder;
 
         if(row == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
 
-            holder = new TipHolder();
+            holder = new WallItemHolder();
+            holder.name = (TextView)row.findViewById(R.id.wall_item_name);
             holder.message = (TextView)row.findViewById(R.id.wall_item_text);
-            holder.timestamp = (TextView) row.findViewById(R.id.wall_item_date);
+            holder.date = (TextView) row.findViewById(R.id.wall_item_date);
+            holder.time = (TextView) row.findViewById(R.id.wall_item_time);
 
             row.setTag(holder);
         } else {
-            holder = (TipHolder)row.getTag();
+            holder = (WallItemHolder)row.getTag();
         }
 
         if(!data.isEmpty()) {
             WallPost post = data.get(position);
+            Date date = new Date(post.getTimestamp() * 1000);
             //TODO: Swap Friend with actual friend name
-            String message = post.getUserId() + " " +
-                    row.getResources().getStringArray(R.array.wall_post_messages)[post.getMessage()-1];
-            holder.message.setText(message);
-            holder.timestamp.setText(df.format(new Date(post.getTimestamp() * 1000)));
+            holder.name.setText(""+post.getUserId());
+            holder.message.setText(messages[post.getMessage()-1]);
+            holder.date.setText(dateFormat.format(date));
+            holder.time.setText(timeFormat.format(date));
         }
         return row;
     }
 
-    static class TipHolder {
+    static class WallItemHolder {
+        TextView name;
         TextView message;
-        TextView timestamp;
+        TextView date;
+        TextView time;
     }
 }

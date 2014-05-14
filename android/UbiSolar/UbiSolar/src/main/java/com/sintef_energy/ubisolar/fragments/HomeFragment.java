@@ -61,7 +61,7 @@ public class HomeFragment extends DefaultTabFragment {
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
         wallFeed = new ArrayList<>();
-        WallAdapter wallAdapter = new WallAdapter(getActivity(),R.layout.fragment_home_row, wallFeed);
+        WallAdapter wallAdapter = new WallAdapter(getActivity(),R.layout.wall_item, wallFeed);
         final ListView friendsList = (ListView) view.findViewById(R.id.news_feed_list);
         friendsList.setAdapter(wallAdapter);
 
