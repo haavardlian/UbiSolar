@@ -27,17 +27,17 @@ public class FriendsResource {
 
     @GET
     @Path("wall/")
-    public List<WallPost> getWallPosts(@QueryParam("friends") String friendIdList) {
+    public List<WallPost> getWallPosts(@QueryParam("friends") String friendIds) {
 
 
 
-        String[] strArray = friendIdList.split(",");
-        ArrayList<Integer> intList = new ArrayList<Integer>();
-        for(int i = 0; i < strArray.length; i++) {
-            intList.add(Integer.parseInt(strArray[i]));
+        ArrayList<String> friendList = new ArrayList<String>();
+        String[] friendIdArray = friendIds.split(",");
+        for(int i = 0; i < friendIdArray.length; i++) {
+            friendList.add(friendIdArray[i]);
         }
 
-        List<WallPost> feed = db.getWallPostsForFriends(intList);
+        List<WallPost> feed = db.getWallPostsForFriends(friendList);
 
         if(feed != null && feed.size() > 0) return feed;
         else throw new WebApplicationException(Response.status(Response.Status.NO_CONTENT).entity(new ArrayList<WallPost>()).build());
