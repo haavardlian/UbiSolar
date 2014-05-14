@@ -13,6 +13,7 @@
         android:layout_marginTop="5dp"
         android:layout_weight="0.1"
         android:clipChildren="false"
+        android:baselineAligned="true"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -29,8 +30,7 @@
                 android:layout_height="130dp"
                 android:layout_centerInParent="true"
                 android:layout_marginLeft="20dp"
-                android:layout_marginRight="0dp"
-                android:layout_weight="2" />
+                android:layout_marginRight="0dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -47,7 +47,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/userProfilePic"
                 android:layout_marginRight="15dp"
-                android:layout_weight="0.1"
                 android:background="@drawable/ic_action_refresh" />
 
         </RelativeLayout>
@@ -55,7 +54,6 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_alignParentRight="true"
             android:layout_gravity="top"
             android:layout_marginTop="10dp"
             android:layout_weight="2">
@@ -65,7 +63,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="20dp"
                 android:layout_alignParentRight="true"
-                android:layout_weight="2"
                 android:text="location:"
                 android:textAllCaps="true"
                 android:textSize="16sp"
@@ -77,11 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/location"
-                android:layout_weight="2"
-                android:text="Trondheim"
-
-
-                />
+                android:text="Trondheim"/>
 
             <TextView
                 android:id="@+id/residents"
@@ -90,7 +83,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/locationFill"
                 android:layout_marginTop="5dp"
-                android:layout_weight="2"
                 android:text="# of residents:"
                 android:textAllCaps="true"
                 android:textSize="16sp"
@@ -102,7 +94,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/residents"
-                android:layout_weight="2"
                 android:text="4" />
 
             <TextView
@@ -112,7 +103,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/residentsFill"
                 android:layout_marginTop="5dp"
-                android:layout_weight="2"
                 android:text="area:"
                 android:textAllCaps="true"
                 android:textSize="16sp"
@@ -124,7 +114,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/area"
-                android:layout_weight="2"
                 android:text="120 m^2" />
 
             <TextView
@@ -134,7 +123,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/areaFill"
                 android:layout_marginTop="5dp"
-                android:layout_weight="2"
                 android:text="Energy class:"
                 android:textAllCaps="true"
                 android:textSize="16sp"
@@ -152,11 +140,9 @@
         </RelativeLayout>
     </LinearLayout>
 
-
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:layout_weight=".1"
         android:paddingLeft="5dp">
@@ -172,9 +158,6 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:src="@drawable/graph" />
-
         </FrameLayout>
     </RelativeLayout>
-
-
 </LinearLayout>
