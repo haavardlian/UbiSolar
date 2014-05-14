@@ -38,6 +38,7 @@ public class CompareFragment extends DefaultTabFragment {
     private View mRoot;
     private FriendAdapter friendAdapter;
     private SimilarAdapter simAdapter;
+    private ViewPager pager;
 
     public static CompareFragment newInstance(int sectionNumber) {
         CompareFragment fragment = new CompareFragment();
@@ -67,8 +68,9 @@ public class CompareFragment extends DefaultTabFragment {
         friendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<User>());
         simAdapter = new SimilarAdapter();
         // Initialize the ViewPager and set an adapter
-        ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
+        pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
         MyPagerAdapter adapter = new MyPagerAdapter(getFragmentManager(), friendAdapter, simAdapter);
+
         pager.setAdapter(adapter);
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
@@ -79,6 +81,14 @@ public class CompareFragment extends DefaultTabFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    /*End lifecycle*/
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        pager.onSaveInstanceState();
+        outState.remove("android:support:fragments");
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
