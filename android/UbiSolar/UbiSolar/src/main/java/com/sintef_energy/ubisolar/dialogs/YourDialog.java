@@ -61,18 +61,7 @@ public class YourDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int i) {
                         yourAdapter.remove(tip);
                         yourAdapter.notifyDataSetChanged();
-                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-                        SharedPreferences.Editor editor = sharedPref.edit();
-
-                        Set<String> savedTips = sharedPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
-                        ArrayList<String> savedTipsList = new ArrayList<>(savedTips);
-                        for (int n = 0; n < savedTipsList.size(); n++) {
-                            String x = savedTipsList.get(n);
-                            if (Integer.valueOf(x) == tip.getId()) savedTipsList.remove(n);
-                            Log.d("Saved tip id", x);
-                        }
-                        editor.putStringSet(PreferencesManager.SAVED_TIPS, new HashSet<>(savedTipsList));
-                        editor.commit();
+                        PreferencesManager.getInstance().removeSubscribedTip(tip);
                     }
                 })
                 .setTitle(tip.getName());

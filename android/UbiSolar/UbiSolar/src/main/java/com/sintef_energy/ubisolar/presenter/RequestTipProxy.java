@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.presenter;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -108,18 +109,14 @@ public class RequestTipProxy {
             public void onResponse(final JSONArray jsonArray) {
                 adapter.clear();
 
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(fragment.getActivity().getApplicationContext());
-
-                Set<String> savedTips = sharedPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
+                Set<String> savedTips = PreferencesManager.getInstance().getSavedTips();
 
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
                         Tip tip = mapper.readValue(jsonArray.get(i).toString(), Tip.class);
 
-                        for(String s : savedTips) {
-                            Log.d("Saved tip", s);
-                            if(Integer.valueOf(s) == tip.getId()) adapter.add(tip);
-                        }
+                        for(String s : savedTips)
+                            if(Integer.valueOf(TextUtils.split(s, ",")[0]) == tip.getId()) adapter.add(tip);
 
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");
