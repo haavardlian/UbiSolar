@@ -5,7 +5,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
@@ -16,7 +19,11 @@ import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
 import com.sintef_energy.ubisolar.fragments.TipsFragment;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Håvard on 24.03.2014.
@@ -51,6 +58,22 @@ public class TipDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         ((EnergySavingTabFragment)getTargetFragment().getTargetFragment()).getAdapter().getYourFragment().getAdapter().add(tip);
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                        SharedPreferences.Editor editor = sharedPref.edit();
+
+                        Set<String> savedTips = sharedPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
+                        Set<String> returnSet = new HashSet<>(savedTips);
+
+                        for(String s : savedTips) {
+                            if(Integer.valueOf(s) == tip.getId()){
+                                editor.commit();
+                                return;
+                            }
+                            Log.d("Saved tip id", s);
+                        }
+                        returnSet.add(String.valueOf(tip.getId()));
+                        editor.putStringSet(PreferencesManager.SAVED_TIPS, returnSet);
+                        editor.commit();
                     }
                 })
                 .setNegativeButton(getString(R.string.energy_saving_close), new DialogInterface.OnClickListener() {

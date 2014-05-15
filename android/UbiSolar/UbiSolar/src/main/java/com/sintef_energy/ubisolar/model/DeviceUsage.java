@@ -12,7 +12,7 @@ public class DeviceUsage
     private long timestamp;
     private double powerUsage;
     private boolean deleted;
-    protected long lastUpdated;
+    private long lastUpdated;
 
     public DeviceUsage()
     {

@@ -46,7 +46,9 @@ import com.sintef_energy.ubisolar.fragments.UsageFragment;
 
 import com.sintef_energy.ubisolar.fragments.CompareFragment;
 
+import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
+import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
@@ -92,13 +94,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     // constants
     /** The authority for the sync adapter's content provider */
-    public static String AUTHORITY_PROVIDER;
+    private static String AUTHORITY_PROVIDER;
 
     /** An account type for sync, in the form of a domain name*/
-    public static String ACCOUNT_TYPE;
+    private static String ACCOUNT_TYPE;
 
     // The account name
-    public static String ACCOUNT;
+    private static String ACCOUNT;
 
     // Instance fields
     private Account mAccount;
@@ -147,14 +149,19 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        /* Update UX on backstack change *//*
+        /* Update UX on backstack change */
         getFragmentManager().addOnBackStackChangedListener(
                 new FragmentManager.OnBackStackChangedListener() {
                     public void onBackStackChanged() {
                         // Update your UI here.
-                        getFragmentManager().
+                        int count = getFragmentManager().getBackStackEntryCount();
+
+                        if(count > 0)
+                            mNavigationDrawerFragment.setNavDrawerToggle(false);
+                        else
+                            mNavigationDrawerFragment.setNavDrawerToggle(true);
                     }
-                });*/
+               });
 
         /* Session data */
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
@@ -264,14 +271,21 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 AccountManager accountManager =
                     (AccountManager) getApplicationContext().getSystemService(ACCOUNT_SERVICE);
 
+                String facebookUID = accountManager.getUserData(mAccount, Global.DATA_FB_UID);
+
                 ContentValues values = new ContentValues();
-                values.put(DeviceModel.DeviceEntry.COLUMN_USER_ID, accountManager.getUserData(mAccount, Global.DATA_FB_UID));
+                values.put(DeviceModel.DeviceEntry.COLUMN_USER_ID, facebookUID);
                 values.put(DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED, System.currentTimeMillis()/1000L);
 
                 getContentResolver().update(EnergyContract.Devices.CONTENT_URI,
                         values,
                         EnergyContract.Devices.COLUMN_USER_ID + "=?",
                         new String[]{"-1"});
+
+                //Publish a post saying you started using Wattitude
+                RequestManager.getInstance().doFriendRequest().createWallPost(
+                        new WallPost(0, Long.valueOf(facebookUID), 1, System.currentTimeMillis() / 1000),
+                        null);
             }
             else {
                 Log.v(TAG, "Login failed");
@@ -281,7 +295,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        //super.onSaveInstanceState(outState);
         Session session = Session.getActiveSession();
 
         Session.saveSession(session, outState);
@@ -344,6 +358,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      */
     public void addFragment(Fragment fragment, boolean animate, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
+
+        /*
+        for(int i = 0; i < manager.getBackStackEntryCount(); ++i) {
+            manager.popBackStack();
+        }*/
+
         FragmentTransaction ft = manager.beginTransaction();
         if (animate) {
             ft.setCustomAnimations(
@@ -353,11 +373,13 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     android.R.anim.fade_in,
                     android.R.anim.fade_out);
         }
+
+
         if (addToBackStack) {
             ft.addToBackStack(tag);
         }
-        //ft.add(R.id.container, fragment);
-        ft.replace(R.id.container, fragment);
+
+        ft.replace(R.id.container, fragment, tag);
         ft.commit();
     }
 
@@ -385,7 +407,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         DrawerItem item = (DrawerItem)mNavigationDrawerFragment.getNavDrawerItem(11);
 
-        //TODO use Strings
         if (Global.loggedIn) //TODO: if Session.GetActiveSession().isOpened?
             item.setTitle(getString(R.string.drawer_log_out));
         else
@@ -412,11 +433,17 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch(item.getItemId()){
+            case R.id.action_settings:
+                return true;
+            case android.R.id.home:
+                if(getFragmentManager().getBackStackEntryCount() > 0) {
+                    getFragmentManager().popBackStack();
+                    return true;
+                }
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -564,10 +591,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             //clear your preferences if saved
         }
 
+        /* UPDATE VIEW */
         changeNavdrawerSessionsView(false);
         mPrefManager.clearFacebookSessionData();
         Utils.makeLongToast(getApplicationContext(), getResources().getString(R.string.fb_logout));
 
+        /* REMOVE ACCOUNT */
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
 
@@ -578,13 +607,27 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 accountManager.removeAccount(account, null, new Handler());
             }
         }
+
+        /* REMOVE PREFERENCES*/
+        PreferencesManagerSync preferencesManagerSync;
+        try {
+            preferencesManagerSync = PreferencesManagerSync.getInstance();
+        }catch(IllegalStateException e){
+            preferencesManagerSync = PreferencesManagerSync.initializeInstance(getApplicationContext());
+        }
+
+        preferencesManagerSync.clearAll();
+
+        /* REMOVE DATA*/
+        getContentResolver().delete(EnergyContract.Devices.CONTENT_URI, null, null);
+        getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
    }
 
   private static Account[] getAccounts(Context context, String ACC_TYPE){
         AccountManager accountManager =
             (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
 
-        return accountManager.getAccountsByType(ACCOUNT_TYPE);
+        return accountManager.getAccountsByType(ACC_TYPE);
     }
 
     private static Account getAccount(Context context, String ACC_TYPE){

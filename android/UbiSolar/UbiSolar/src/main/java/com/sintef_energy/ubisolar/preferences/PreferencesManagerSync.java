@@ -66,4 +66,8 @@ public class PreferencesManagerSync {
         .clear()
         .commit();
     }
+
+    public void clearAll(){
+        remove(KEY_SYNC_TIMESTAMP);
+    }
 }

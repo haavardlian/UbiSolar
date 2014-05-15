@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.widget.ProfilePictureView;
@@ -20,9 +19,9 @@ import java.util.List;
  */
 public class FriendAdapter extends ArrayAdapter<User> {
 
-    protected Context context;
-    protected int resource;
-    List<User> users = null;
+    private Context context;
+    private int resource;
+    private List<User> users = null;
 
     public FriendAdapter(Context context, int resource, List<User> users) {
         super(context, resource);
@@ -65,7 +64,6 @@ public class FriendAdapter extends ArrayAdapter<User> {
             holder = new FriendHolder();
             holder.name = (TextView)row.findViewById(R.id.social_user_name);
             holder.profilePic = (ProfilePictureView)row.findViewById(R.id.social_profile_pic);
-
 
             row.setTag(holder);
         } else {

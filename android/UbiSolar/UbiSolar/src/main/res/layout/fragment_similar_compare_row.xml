@@ -17,7 +17,7 @@
         android:paddingTop="10dp"
         android:text="@string/comparison_setting"
         android:textColor="#000"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
     <CheckBox
         android:id="@+id/checkBox"

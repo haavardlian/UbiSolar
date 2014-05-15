@@ -1,6 +1,5 @@
 package com.sintef_energy.ubisolar.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,7 +15,6 @@ import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HttpClientStack;
 import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.HurlStack;
-import com.facebook.Session;
 
 import java.io.File;
 import java.util.concurrent.Executors;
@@ -39,6 +37,7 @@ public class RequestManager {
         mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
         mRequestTipProxy = new RequestTipProxy(mRequestQueue);
         mRequestFacebookProxy = new RequestFacebookProxy();
+        mRequestFriendsProxy = new RequestFriendsProxy(mRequestQueue);
     }
 
     public RequestTipProxy doTipRequest() {
@@ -52,6 +51,8 @@ public class RequestManager {
     public RequestFacebookProxy doFacebookRequest() {
         return mRequestFacebookProxy;
     }
+
+    public RequestFriendsProxy doFriendRequest() { return  mRequestFriendsProxy; }
 
     // This method should be called first to do singleton initialization
     public static synchronized RequestManager getInstance(Context context) {
@@ -68,7 +69,7 @@ public class RequestManager {
         return instance;
     }
 
-    public static RequestQueue newRequestQueue(Context context) {
+    private static RequestQueue newRequestQueue(Context context) {
         File cacheDir = new File(context.getCacheDir(), "def_cahce_dir");
         HttpStack stack;
         String userAgent = "volley/0";

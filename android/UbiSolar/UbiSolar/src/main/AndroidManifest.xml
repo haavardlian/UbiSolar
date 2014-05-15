@@ -54,8 +54,7 @@
             android:name="com.sintef_energy.ubisolar.services.UsageSyncService"
             android:exported="true"
             android:process=":sync" >
-            <intent-filter>
-com.sintef_energy.ubisolar.sync.provider  <!-- com.example.android.datasync.provider -->
+            <intent-filter> com.sintef_energy.ubisolar.sync.provider
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 

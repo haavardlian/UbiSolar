@@ -7,26 +7,13 @@ import android.os.Bundle;
 
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-import com.sintef_energy.ubisolar.dialogs.CompareSettingsDialog;
-import com.sintef_energy.ubisolar.dialogs.SelectDevicesDialog;
-import com.sintef_energy.ubisolar.dialogs.ShareDialog;
-import com.sintef_energy.ubisolar.model.User;
-
-import java.util.ArrayList;
 
 /**
  * Created by perok on 21.03.14.
@@ -36,9 +23,11 @@ public class CompareFragment extends DefaultTabFragment {
     private static final String TAG = CompareFragment.class.getName();
 
     private View mRoot;
-    private FriendAdapter friendAdapter;
-    private SimilarAdapter simAdapter;
     private ViewPager pager;
+
+    private MyPagerAdapter mAdapter;
+
+    private PagerSlidingTabStrip mTabs;
 
     public static CompareFragment newInstance(int sectionNumber) {
         CompareFragment fragment = new CompareFragment();
@@ -63,18 +52,23 @@ public class CompareFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
-        //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
-        friendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<User>());
-        simAdapter = new SimilarAdapter();
-        // Initialize the ViewPager and set an adapter
-        pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
-        MyPagerAdapter adapter = new MyPagerAdapter(getFragmentManager(), simAdapter);
+        if(mRoot == null)
+            mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
 
-        pager.setAdapter(adapter);
+        // Initialize the ViewPager and set an adapter
+        if(pager == null)
+            pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
+
+        if(mAdapter == null) {
+            mAdapter = new MyPagerAdapter(getFragmentManager());
+            pager.setAdapter(mAdapter);
+        }
+
         // Bind the tabs to the ViewPager
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
-        tabs.setViewPager(pager);
+        if(mTabs == null) {
+            mTabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
+            mTabs.setViewPager(pager);
+        }
         return mRoot;
     }
 
@@ -92,10 +86,8 @@ public class CompareFragment extends DefaultTabFragment {
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
         private final String[] TITLES = { "Friends", "Similar profiles"};
-        private SimilarAdapter simAdapter;
-        public MyPagerAdapter(FragmentManager fm, SimilarAdapter simAdapter) {
+        public MyPagerAdapter(FragmentManager fm) {
             super(fm);
-            this.simAdapter = simAdapter;
         }
 
 

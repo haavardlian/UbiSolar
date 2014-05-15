@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,7 +13,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,7 +26,6 @@ import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
 import com.sintef_energy.ubisolar.model.Device;
-import com.sintef_energy.ubisolar.model.DeviceUsage;
 import com.sintef_energy.ubisolar.model.DeviceUsageList;
 import com.sintef_energy.ubisolar.utils.Resolution;
 
@@ -261,9 +260,19 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     private void setColors(XYMultipleSeriesRenderer renderer, int backgroundColor, int labelColor) {
-        renderer.setApplyBackgroundColor(true);
+        renderer.setApplyBackgroundColor(false);
         renderer.setBackgroundColor(backgroundColor);
-        renderer.setMarginsColor(backgroundColor);
+
+        TypedArray array = getActivity().getTheme().obtainStyledAttributes(new int[]{
+                android.R.attr.colorBackground,
+        });
+
+        int bgColor = array.getColor(0, 0xFF00FF);
+        array.recycle();
+
+        renderer.setMarginsColor(bgColor);
+
+        //renderer.setMarginsColor(backgroundColor);
         renderer.setLabelsColor(labelColor);
         renderer.setXLabelsColor(labelColor);
         renderer.setYLabelsColor(0, labelColor);
@@ -300,7 +309,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                     }
                 }
             });
-            layout.addView(mChartView, new LayoutParams(LayoutParams.MATCH_PARENT,
+            layout.addView(mChartView, new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
                     LayoutParams.MATCH_PARENT));
         } else {
             mChartView.repaint();
@@ -333,7 +343,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         protected void onPreExecute() {
             Log.v(TAG, "Starting Async graphView update");
 
-            setViewState(false);
+            setViewState(false, false);
 
             startTime = System.currentTimeMillis();
 
@@ -345,8 +355,9 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             mDates.clear();
         }
 
+        @SafeVarargs
         @Override
-        protected Void doInBackground(ArrayList<DeviceUsageList>... dataUsageList) {
+        protected final Void doInBackground(final ArrayList<DeviceUsageList>... dataUsageList) {
             for (int i = 0; i < dataUsageList[0].size(); i++) {
                 mActiveUsageList.add(dataUsageList[0].get(i));
                 addSeries(dataUsageList[0].get(i).getDevice().getName(), true, false);
@@ -444,7 +455,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             if (mChartView != null)
                 mChartView.repaint();
 
-            setViewState(true);
+            if(abort)
+                setViewState(true, false);
+            else
+                setViewState(true, true);
         }
 
         /**
@@ -534,13 +548,15 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                     .equals(formatDate(date2, resolution.getCompareFormat()));
         }
 
-        /**
-         * Enables/ disables part of the view when data loades.
-         */
-        private void setViewState(boolean state) {
-            mChartView.setEnabled(state);
-            setContentShown(state);
-        }
+    }
+
+    /**
+     * Enables/ disables part of the view when data loades.
+     */
+    private void setViewState(boolean state, boolean isData) {
+        mChartView.setEnabled(state);
+        setContentShown(state);
+        setContentEmpty(!isData);
     }
 
     private void setLabels(String label) {
@@ -773,7 +789,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
                 if (deviceUsageList == null) {
                     deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
+                    devices.put(deviceUsageList.getDevice().getId(), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);
@@ -787,6 +803,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
         if(deviceUsageLists.size() > 0)
             addDeviceUsage(deviceUsageLists);
+        else
+            setViewState(true, false);
     }
 
     @Override

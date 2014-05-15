@@ -10,12 +10,12 @@ import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 /**
+ * HELPER DATA GENERATION!!! Avoid.
  * Created by perok on 29.04.14.
  */
 public class TestdataHelper {
 
-    public static final String TAG = TestdataHelper.class.getName();
-        /* HELPER DATA GENERATION!!! Avoid. */
+    private  static final String TAG = TestdataHelper.class.getName();
 
     public static void createDevices(ContentResolver cr)
     {

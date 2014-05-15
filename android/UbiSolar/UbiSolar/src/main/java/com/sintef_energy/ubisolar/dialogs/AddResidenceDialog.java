@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.ResidenceModel;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
@@ -31,7 +30,7 @@ public class AddResidenceDialog extends DialogFragment {
 
     private View view;
     private ArrayAdapter<String> energyClassAdapter;
-    public static final String TAG = AddResidenceDialog.class.getName();
+    private static final String TAG = AddResidenceDialog.class.getName();
 
     @Override
     public void onAttach(Activity activity) {
@@ -51,11 +50,9 @@ public class AddResidenceDialog extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        final long uid = Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid());
-
         view = inflater.inflate(R.layout.dialog_add_residence, null);
 
-                /*Set up view*/
+        /*Set up view*/
         nameField = (EditText) view.findViewById(R.id.dialog_add_residence_name);
         descriptionField = (EditText) view.findViewById(R.id.dialog_add_residence_description);
         residentsField = (EditText) view.findViewById(R.id.dialog_add_residence_residents);

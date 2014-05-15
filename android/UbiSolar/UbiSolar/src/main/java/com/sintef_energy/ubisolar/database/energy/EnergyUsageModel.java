@@ -8,7 +8,6 @@ import android.provider.BaseColumns;
 
 import com.sintef_energy.ubisolar.model.DeviceUsage;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**

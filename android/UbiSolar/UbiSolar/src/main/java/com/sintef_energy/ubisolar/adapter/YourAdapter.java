@@ -1,7 +1,6 @@
 package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,11 +22,11 @@ import java.util.List;
  * Created by Håvard on 20.03.14.
  */
 public class YourAdapter extends ArrayAdapter<Tip> {
-    Context context;
-    FragmentManager fragmentManager;
-    int layoutResourceId;
-    List<Tip> data = null;
-    SharedPreferences sharedPreferences;
+    private Context context;
+    private FragmentManager fragmentManager;
+    private int layoutResourceId;
+    private List<Tip> data = null;
+    private SharedPreferences sharedPreferences;
 
     public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data, FragmentManager fragmentManager) {
         super(context, layoutResourceId);
@@ -46,7 +45,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     public void add(Tip object) {
         if(!data.contains(object)) {
             data.add(object);
-            notifyDataSetChanged();
         }
     }
 
@@ -62,7 +60,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     @Override
     public void clear() {
         data.clear();
-        notifyDataSetChanged();
     }
 
     @Override

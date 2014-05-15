@@ -49,7 +49,7 @@ import info.hoang8f.android.segmented.SegmentedGroup;
 
 public class UsageGraphPieFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String TAG = UsageGraphLineFragment.class.getName();
+    private static final String TAG = UsageGraphLineFragment.class.getName();
 
     private final int DEFAULT_RESOLUTION = Resolution.MONTHS;
 
@@ -87,9 +87,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public UsageGraphPieFragment() {
     }
 
     @Override
@@ -218,7 +215,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
 
-        mRenderer.setApplyBackgroundColor(true);
+        mRenderer.setApplyBackgroundColor(false);
         mRenderer.setBackgroundColor(Color.WHITE);
         mRenderer.setLabelsColor(Color.BLACK);
 
@@ -558,7 +555,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
                 if (deviceUsageList == null) {
                     deviceUsageList = new DeviceUsageList(mDevices.get(model.getDeviceId()));
-                    devices.put(Long.valueOf(deviceUsageList.getDevice().getId()), deviceUsageList);
+                    devices.put(deviceUsageList.getDevice().getId(), deviceUsageList);
                 }
 
                 deviceUsageList.add(model);

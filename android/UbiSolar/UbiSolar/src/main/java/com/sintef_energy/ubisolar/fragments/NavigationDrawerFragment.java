@@ -377,6 +377,14 @@ public class NavigationDrawerFragment extends Fragment {
         return adapter;
     }
 
+    /**
+     * Hides or shows the original ActionBar. Used in conjunction with the back stack.
+     *
+     * @param state
+     */
+    public void setNavDrawerToggle(boolean state){
+        mDrawerToggle.setDrawerIndicatorEnabled(state);
+    }
 
     /**
      * Updated the usage nav drawer with the correct usage.

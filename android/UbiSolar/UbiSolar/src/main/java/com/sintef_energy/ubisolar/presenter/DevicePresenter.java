@@ -16,7 +16,7 @@ public class DevicePresenter {
     private static final String TAG = DevicePresenter.class.getName();
 
     /* The listeners */
-    ArrayList<IDeviceView> dmListeners;
+    private ArrayList<IDeviceView> dmListeners;
 
     public DevicePresenter(){}
 

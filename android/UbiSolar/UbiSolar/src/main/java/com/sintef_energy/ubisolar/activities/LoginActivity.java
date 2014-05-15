@@ -22,24 +22,18 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Handles the generation of a Facebook session. Be it a token that has expired, or setup of
  * permissions.
  */
-
-
 public class LoginActivity extends AccountAuthenticatorActivity implements ILoginCallback{
     private static final String TAG = LoginActivity.class.getName();
 
     // Constants
     // An account type, in the form of a domain name
-    public static String ACCOUNT_TYPE;
+    private static String ACCOUNT_TYPE;
     // The account name
-    public static String ACCOUNT;
+    private static String ACCOUNT;
 
     private FacebookSessionStatusCallback mFacebookSessionStatusCallback;
 

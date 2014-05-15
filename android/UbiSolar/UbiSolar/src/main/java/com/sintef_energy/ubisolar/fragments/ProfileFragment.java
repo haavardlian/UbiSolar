@@ -51,9 +51,6 @@ public class ProfileFragment extends DefaultTabFragment  {
         return fragment;
     }
 
-    public ProfileFragment() {
-    }
-
     /**
      * The first call to a created fragment
      * @param activity

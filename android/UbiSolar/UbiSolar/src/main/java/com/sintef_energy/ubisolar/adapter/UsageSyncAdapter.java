@@ -3,9 +3,7 @@ package com.sintef_energy.ubisolar.adapter;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
-import android.content.ContentProvider;
 import android.content.ContentProviderClient;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SyncResult;
@@ -16,7 +14,6 @@ import android.util.Log;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.utils.Global;
@@ -81,9 +78,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             /* STEP 1: SETUP FILES */
             Log.v(TAG, "Starting sync operation");
 
-            //ContentResolver., mPager2
-
-            PreferencesManager preferencesManager;
             PreferencesManagerSync prefManagerSyn;
             RequestManager requestManager;
             ArrayList<DeviceModel> serverDeviceModels;
@@ -92,12 +86,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             ArrayList<EnergyUsageModel> serverUsageModels;
             ArrayList<EnergyUsageModel> serverUsageModelsError;
             ArrayList<EnergyUsageModel> localUsageModels;
-
-            try {
-                preferencesManager = PreferencesManager.getInstance();
-            } catch (IllegalStateException ex) {
-                preferencesManager = PreferencesManager.initializeInstance(getContext().getApplicationContext());
-            }
 
             try {
                 prefManagerSyn = PreferencesManagerSync.getInstance();

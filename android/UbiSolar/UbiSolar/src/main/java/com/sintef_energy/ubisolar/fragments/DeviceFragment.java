@@ -20,15 +20,12 @@ import android.view.ViewGroup;
 
 import android.widget.ExpandableListView;
 
-import com.facebook.android.Util;
-import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.DeviceListAdapter;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 import com.sintef_energy.ubisolar.model.Device;
-import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Utils;
 
@@ -42,9 +39,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
      * The fragment argument representing the section number for this
      * fragment.
      */
-    public static final String TAG = DeviceFragment.class.getName();
+    private static final String TAG = DeviceFragment.class.getName();
     private View mRootview;
-    private DevicePresenter devicePresenter;
     private ExpandableListView expListView;
     private DeviceListAdapter expListAdapter;
     private ArrayList<DeviceModel> devices;
@@ -59,15 +55,11 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         return fragment;
     }
 
-    public DeviceFragment() {
-
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
+            //devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
              /*Line so we can delete test data easily*/
             //EnergyDataSource.deleteAll(getActivity().getContentResolver());
         } catch (ClassCastException e) {
