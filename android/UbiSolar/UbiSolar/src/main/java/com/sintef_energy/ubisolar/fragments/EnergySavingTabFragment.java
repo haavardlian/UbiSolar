@@ -93,7 +93,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
             }
         });
 
-        setHasOptionsMenu(true);
+
 
         return mRoot;
     }
@@ -104,25 +104,8 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         setRetainInstance(true);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.add_tip, menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-        /* Moved to deviceTab */
-            case R.id.menu_add_tip:
-                AddTipDialog dialog = new AddTipDialog();
-                dialog.setTargetFragment(this, 0);
-                dialog.show(getFragmentManager(), "addTipDialog");
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+
 
     public TipsPagerAdapter getAdapter() { return mPagerAdapter; }
 
