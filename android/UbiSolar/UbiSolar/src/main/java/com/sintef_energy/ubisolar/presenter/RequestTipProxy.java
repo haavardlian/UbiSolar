@@ -13,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.devspark.progressfragment.ProgressFragment;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,7 +103,7 @@ public class RequestTipProxy {
         requestQueue.add(jsonRequest);
     }
 
-    public void getSavedTips(final YourAdapter adapter, final Fragment fragment) {
+    public void getSavedTips(final YourAdapter adapter, final ProgressFragment fragment) {
         String url = Global.BASE_URL + "/tips";
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
@@ -129,6 +130,9 @@ public class RequestTipProxy {
                     public void run() {
                         adapter.notifyDataSetChanged();
                         fragment.getActivity().setProgressBarIndeterminateVisibility(false);
+                        fragment.setContentShown(true);
+                        if(adapter.getCount() > 0)
+                            fragment.setContentEmpty(false);
                     }
                 });
 
@@ -141,17 +145,13 @@ public class RequestTipProxy {
                     @Override
                     public void run() {
                         Toast.makeText(fragment.getActivity().getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
+                        fragment.getActivity().setProgressBarIndeterminateVisibility(false);
+                        fragment.setContentShown(true);
+                        fragment.setContentEmpty(true);
                     }
                 });
 
                 Log.e("REQUEST", "Error from server!!");
-
-                fragment.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fragment.getActivity().setProgressBarIndeterminateVisibility(false);
-                    }
-                });
             }
         });
 
