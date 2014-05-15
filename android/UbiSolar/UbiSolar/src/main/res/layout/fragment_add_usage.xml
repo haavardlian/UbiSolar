@@ -72,7 +72,6 @@
                     android:id="@+id/fragment_add_usage_rl_date"
                     android:layout_width="fill_parent"
                     android:layout_height="?android:attr/listPreferredItemHeight"
-                    style="?android:attr/editTextStyle"
                     android:focusable="true"
                     android:orientation="horizontal"
                     android:layout_alignParentRight="true"
@@ -93,7 +92,7 @@
                     <TextView
                         android:id="@+id/fragment_add_usage_text_date"
                         android:layout_width="match_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_height="match_parent"
                         android:layout_toLeftOf="@id/dialog_add_usage_button_calendar"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:focusable="false"
@@ -101,7 +100,6 @@
                         android:paddingLeft="12dp"
                         android:ems="10"
                         android:duplicateParentState="true"
-                        android:text="xxxx"
                         android:hint="@string/add_usage_date_hint"/>
                 </RelativeLayout>
             </RelativeLayout>
