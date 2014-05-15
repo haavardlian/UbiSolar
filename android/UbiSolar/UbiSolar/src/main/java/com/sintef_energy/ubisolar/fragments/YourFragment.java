@@ -35,22 +35,19 @@ public class YourFragment extends ProgressFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_your_list, container, false);
-        ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
-        yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row, new ArrayList<Tip>(), getFragmentManager());
-        yourList.setAdapter(yourAdapter);
-        return rootView;
-    }
-
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        RequestManager.getInstance().doTipRequest().getSavedTips(yourAdapter, this);
+        setContentView(R.layout.fragment_your_list);
         setEmptyText("You have no saved tips"); //TODO insert in xml/strings
         setContentEmpty(true);
         setContentShown(false);
+
+        View rootView =  getContentView();
+        ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
+        yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row, new ArrayList<Tip>(), getFragmentManager());
+        yourList.setAdapter(yourAdapter);
+
+        RequestManager.getInstance().doTipRequest().getSavedTips(yourAdapter, this);
     }
 
     public YourAdapter getAdapter() { return yourAdapter; }
