@@ -5,23 +5,36 @@ package com.sintef_energy.ubisolar;
  */
 import com.sintef_energy.ubisolar.auth.Auth;
 import com.sintef_energy.ubisolar.auth.User;
-import com.sintef_energy.ubisolar.configuration.ServerConfiguration;
 import com.sintef_energy.ubisolar.resources.*;
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.auth.oauth.OAuthProvider;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.db.DatabaseConfiguration;
+import com.yammer.dropwizard.hibernate.HibernateBundle;
 import com.yammer.dropwizard.jdbi.DBIFactory;
+import com.yammer.dropwizard.migrations.MigrationsBundle;
 import org.skife.jdbi.v2.DBI;
 
 public class ServerService extends Service<ServerConfiguration> {
+
     public static void main(String[] args) throws Exception {
         new ServerService().run(args);
     }
 
+
+
     @Override
     public void initialize(Bootstrap<ServerConfiguration> bootstrap) {
         bootstrap.setName("sintef_energy_server");
+        bootstrap.addBundle(new AssetsBundle());
+        bootstrap.addBundle(new MigrationsBundle<ServerConfiguration>() {
+            @Override
+            public DatabaseConfiguration getDatabaseConfiguration(ServerConfiguration configuration) {
+                return configuration.getDatabaseConfiguration();
+            }
+        });
     }
 
     @Override
@@ -35,8 +48,8 @@ public class ServerService extends Service<ServerConfiguration> {
         environment.addResource(new DeviceUsageResource(dao));
         environment.addResource(new SyncResource(dao));
         environment.addResource(new TipsResource(dao));
-        environment.addProvider(new OAuthProvider<User>(new Auth(), "SECRET"));
         environment.addResource(new DataGeneratorResource(dao));
-        environment.addResource(new FacebookUserResource(dao));
+        environment.addResource(new TimeResource());
+        environment.addResource(new FriendsResource(dao));
     }
 }

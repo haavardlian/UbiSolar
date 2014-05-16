@@ -4,11 +4,15 @@ import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.yammer.dropwizard.jersey.params.LongParam;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import java.util.Random;
 
 /**
@@ -19,38 +23,42 @@ import java.util.Random;
 @Path("user/{user}/")
 public class DataGeneratorResource {
     private ServerDAO db;
-    private ArrayList<Device> devices;
+
     long n = 125363;
+
     public DataGeneratorResource(ServerDAO db) {
         this.db = db;
-        this.devices = new ArrayList<Device>();
-
-
     }
 
-    private void generateDevices(ArrayList<Device> devices, long user) {
+    private ArrayList<Device> generateDevices(long user) {
         long time = System.currentTimeMillis();
+        ArrayList<Device> devices = new ArrayList<Device>();
+
         devices.add(new Device(time+1, user, "TV", "This is your TV", time/1000l, false, 1));
         devices.add(new Device(time+2, user, "Stove", "This is your Stove", time/1000l, false, 2));
         devices.add(new Device(time+3, user, "Fridge", "This is your Fridge", time/1000l, false, 3));
         devices.add(new Device(time+4, user, "Heater", "This is your Heater", time/1000l, false, 4));
 
+        return devices;
     }
 
     private ArrayList<DeviceUsage> generateUsage(Device d) {
         ArrayList<DeviceUsage> usage = new ArrayList<DeviceUsage>();
         Random r = new Random();
+
         long time = System.currentTimeMillis();
         double rangeMin = 5.0, rangeMax = 20.0;
+
         double random;
 
-        for(int i = 0; i < 1000; i++) {
+        for(int i = 0; i < 100; i++) {
             random = rangeMin + (rangeMax - rangeMin) * r.nextDouble();
             rangeMin = random - 5;
             rangeMax = random + 5;
             if(random < 0) random = -random;
-            usage.add(new DeviceUsage(n++, d.getId(), (time/1000L) - (i*3600), random, false, time));
+            usage.add(new DeviceUsage(n++, d.getId(), (time/1000L) - (i*172800), random, false, (time/1000L)));
         }
+
 
         return usage;
     }
@@ -59,10 +67,10 @@ public class DataGeneratorResource {
     @Path("generate/")
     public Response generateData(@PathParam("user") LongParam user) {
         ArrayList<DeviceUsage> usage;
-        this.generateDevices(this.devices, user.get());
-        db.createDevices(this.devices.iterator());
+        ArrayList<Device> devices = this.generateDevices(user.get());
+        db.createDevices(devices.iterator());
 
-        for(Device d : this.devices) {
+        for(Device d : devices) {
             usage = generateUsage(d);
 
             db.addUsageForDevices(usage.iterator());
@@ -71,7 +79,5 @@ public class DataGeneratorResource {
 
         return Response.status(Response.Status.OK).build();
     }
-
-
 
 }
