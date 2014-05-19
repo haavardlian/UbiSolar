@@ -13,12 +13,12 @@ public class Tip {
     private int numberOfRatings;
     private int averageRating;
 
-    public Tip(int id, String name, String description, int numberOfRatings, int averageRating) {
+    public Tip(int id, String name, String description, int numberOfRatings, float averageRating) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.numberOfRatings = numberOfRatings;
-        this.averageRating = averageRating;
+        this.averageRating = (int)averageRating;
     }
 
     public Tip() {

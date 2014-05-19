@@ -3,6 +3,9 @@ package com.sintef_energy.ubisolar.fragments;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -10,6 +13,7 @@ import android.widget.ListView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.TipAdapter;
+import com.sintef_energy.ubisolar.dialogs.AddTipDialog;
 import com.sintef_energy.ubisolar.dialogs.TipDialog;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
@@ -49,9 +53,30 @@ public class TipsFragment extends Fragment {
         getActivity().setProgressBarIndeterminateVisibility(true);
         RequestManager.getInstance().doTipRequest().getAllTips(tipAdapter, this);
 
-
+        setHasOptionsMenu(true);
         return rootView;
     }
 
     public TipAdapter getAdapter() { return this.tipAdapter; }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_tip, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        /* Moved to deviceTab */
+            case R.id.menu_add_tip:
+                AddTipDialog dialog = new AddTipDialog();
+                dialog.setTargetFragment(this, 0);
+                dialog.show(getFragmentManager(), "addTipDialog");
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }

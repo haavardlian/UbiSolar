@@ -12,12 +12,13 @@ import java.util.Date;
 public class DeviceUsage {
     private long id;
     private long deviceId;
-    private long timestamp;
     private Date datetime;
+    @JsonProperty
+    private long timestamp;
+    @JsonProperty
     private double powerUsage;
     private boolean deleted;
     private long lastUpdated;
-
 
     public DeviceUsage() {}
 
@@ -28,15 +29,6 @@ public class DeviceUsage {
         this.timestamp = timestamp;
         this.deleted = deleted;
         this.lastUpdated = lastUpdated;
-        this.datetime = new Date(timestamp);
-    }
-
-    public Date getDatetime() {
-        return new Date(this.timestamp * 1000);
-    }
-
-    public void setDatetime(Date datetime) {
-        this.lastUpdated = datetime.getTime();
     }
 
     public boolean isDeleted() {
@@ -69,7 +61,6 @@ public class DeviceUsage {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
-
     }
 
     public double getPowerUsage() {

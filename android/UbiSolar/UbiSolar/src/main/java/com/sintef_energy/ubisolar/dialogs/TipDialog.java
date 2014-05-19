@@ -58,22 +58,7 @@ public class TipDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         ((EnergySavingTabFragment)getTargetFragment().getTargetFragment()).getAdapter().getYourFragment().getAdapter().add(tip);
-                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-                        SharedPreferences.Editor editor = sharedPref.edit();
-
-                        Set<String> savedTips = sharedPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
-                        Set<String> returnSet = new HashSet<>(savedTips);
-
-                        for(String s : savedTips) {
-                            if(Integer.valueOf(s) == tip.getId()){
-                                editor.commit();
-                                return;
-                            }
-                            Log.d("Saved tip id", s);
-                        }
-                        returnSet.add(String.valueOf(tip.getId()));
-                        editor.putStringSet(PreferencesManager.SAVED_TIPS, returnSet);
-                        editor.commit();
+                        PreferencesManager.getInstance().addSubscribedTip(tip);
                     }
                 })
                 .setNegativeButton(getString(R.string.energy_saving_close), new DialogInterface.OnClickListener() {

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.dialogs.YourDialog;
 import com.sintef_energy.ubisolar.model.Tip;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,23 +94,23 @@ public class YourAdapter extends ArrayAdapter<Tip> {
         if(!data.isEmpty()) {
             Tip tip = data.get(position);
             holder.name.setText(tip.getName());
+            holder.checked.setChecked(PreferencesManager.getInstance().isTipImplemented(tip));
         }
 
 
         row.findViewById(R.id.yourTipsRowChecked).setOnClickListener(new View.OnClickListener() {
-
-            private boolean isChecked = false;
             @Override
             public void onClick(View view) {
-                isChecked = ! isChecked;
-                holder.checked.setChecked(isChecked);
+                CheckBox checkBox = (CheckBox) view;
+                boolean value = checkBox.isChecked();
+                PreferencesManager.getInstance().changeIsTipImplemented(data.get(position), value);
             }
         });
 
         row.findViewById(R.id.yourTipsRowName).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                YourDialog dialog = new YourDialog(YourAdapter.this.getItem(position), YourAdapter.this);
+                YourDialog dialog = new YourDialog(data.get(position), YourAdapter.this);
                 dialog.show(fragmentManager, "yourDialog");
             }
         });

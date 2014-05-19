@@ -3,6 +3,7 @@ package com.sintef_energy.ubisolar.presenter;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,6 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.devspark.progressfragment.ProgressFragment;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -101,25 +103,21 @@ public class RequestTipProxy {
         requestQueue.add(jsonRequest);
     }
 
-    public void getSavedTips(final YourAdapter adapter, final Fragment fragment) {
+    public void getSavedTips(final YourAdapter adapter, final ProgressFragment fragment) {
         String url = Global.BASE_URL + "/tips";
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(final JSONArray jsonArray) {
                 adapter.clear();
 
-                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(fragment.getActivity().getApplicationContext());
-
-                Set<String> savedTips = sharedPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
+                Set<String> savedTips = PreferencesManager.getInstance().getSavedTips();
 
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
                         Tip tip = mapper.readValue(jsonArray.get(i).toString(), Tip.class);
 
-                        for(String s : savedTips) {
-                            Log.d("Saved tip", s);
-                            if(Integer.valueOf(s) == tip.getId()) adapter.add(tip);
-                        }
+                        for(String s : savedTips)
+                            if(Integer.valueOf(TextUtils.split(s, ",")[0]) == tip.getId()) adapter.add(tip);
 
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");
@@ -132,6 +130,9 @@ public class RequestTipProxy {
                     public void run() {
                         adapter.notifyDataSetChanged();
                         fragment.getActivity().setProgressBarIndeterminateVisibility(false);
+                        fragment.setContentShown(true);
+                        if(adapter.getCount() > 0)
+                            fragment.setContentEmpty(false);
                     }
                 });
 
@@ -144,17 +145,13 @@ public class RequestTipProxy {
                     @Override
                     public void run() {
                         Toast.makeText(fragment.getActivity().getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
+                        fragment.getActivity().setProgressBarIndeterminateVisibility(false);
+                        fragment.setContentShown(true);
+                        fragment.setContentEmpty(true);
                     }
                 });
 
                 Log.e("REQUEST", "Error from server!!");
-
-                fragment.getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        fragment.getActivity().setProgressBarIndeterminateVisibility(false);
-                    }
-                });
             }
         });
 

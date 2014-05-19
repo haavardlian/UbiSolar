@@ -1,12 +1,12 @@
 package com.sintef_energy.ubisolar.fragments;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
@@ -17,9 +17,8 @@ import java.util.ArrayList;
 /**
  * Created by Håvard on 24.03.2014.
  */
-public class YourFragment extends Fragment {
+public class YourFragment extends ProgressFragment {
     private static final String ARG_POSITION = "position";
-    private int position;
     private YourAdapter yourAdapter;
 
     public static YourFragment newInstance(int position) {
@@ -33,18 +32,22 @@ public class YourFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        position = getArguments().getInt(ARG_POSITION);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_your_list, container, false);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setContentView(R.layout.fragment_your_list);
+        setEmptyText("You have no saved tips"); //TODO insert in xml/strings
+        setContentEmpty(true);
+        setContentShown(false);
+
+        View rootView =  getContentView();
         ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
         yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row, new ArrayList<Tip>(), getFragmentManager());
         yourList.setAdapter(yourAdapter);
+
         RequestManager.getInstance().doTipRequest().getSavedTips(yourAdapter, this);
-        return rootView;
     }
 
     public YourAdapter getAdapter() { return yourAdapter; }

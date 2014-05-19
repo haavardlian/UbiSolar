@@ -5,7 +5,10 @@ import com.sintef_energy.ubisolar.structs.*;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.unstable.BindIn;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,13 +16,16 @@ import java.util.List;
  * Created by haavard on 2/12/14.
  */
 @RegisterMapper(TotalUsageMapper.class)
+@UseStringTemplate3StatementLocator
 public interface ServerDAO {
-    @SqlUpdate("INSERT INTO device (id, user_id, name, description) VALUES (:device.id, :device.userId, :device.name, :device.description)")
+
+    @SqlUpdate("INSERT INTO device (id, user_id, name, description, deleted, last_updated, category) VALUES (:device.id, :device.userId, :device.name, :device.description, :device.deleted, :device.lastUpdated, :device.category)")
     int createDevice(@BindBean("device") Device device);
 
-    @SqlBatch("INSERT INTO device (id, user_id, name, description, last_updated, deleted) VALUES (:d.id, :d.userId, :d.name, :d.description, :d.lastUpdated, :d.deleted) ON DUPLICATE KEY UPDATE user_id = :d.userId, name = :d.name, description = :d.description, deleted = :d.deleted, last_updated = :d.lastUpdated")
-    int[] createDevices(@BindBean("d") Iterator<Device> device);
 
+    @SqlBatch("INSERT INTO device (id, user_id, name, description, last_updated, deleted, category) VALUES (:d.id, :d.userId, :d.name, :d.description, :d.lastUpdated, :d.deleted, :d.category) ON DUPLICATE KEY UPDATE user_id = :d.userId, name = :d.name, description = :d.description, deleted = :d.deleted, last_updated = :d.lastUpdated, category = :d.category")
+    int[] createDevices(@BindBean("d") Iterator<Device> device);
+    
     @SqlQuery("SELECT device_power_usage.id, device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
               "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
               "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.id AND " +
@@ -112,18 +118,11 @@ public interface ServerDAO {
     @SqlQuery("SELECT MAX(timestamp) AS timestamp FROM device_power_usage, device where device_id = device.id AND device.user_id = :user LIMIT 1")
     long getLastUpdatedTimeUsage(@Bind("user") long user);
 
-    @SqlQuery("SELECT * FROM facebook_user WHERE user_id = :user_id")
-    @Mapper(FacebookUserMapper.class)
-    FacebookUser getFacebookUserById(@Bind("user_id") long user_id);
 
-    @SqlQuery("SELECT * FROM facebook_user")
-    @Mapper(FacebookUserMapper.class)
-    List<FacebookUser> getAllFacebookUsers();
+    @SqlQuery("SELECT * FROM wall WHERE user_id IN (<userIdList>) ORDER BY timestamp DESC")
+    @Mapper(WallPostMapper.class)
+    List<WallPost> getWallPostsForFriends(@BindIn("userIdList") List<String> userIdList);
 
-    @SqlQuery("DELETE FROM user WHERE user_id = :user_id")
-    int deleteFacebookUserById(@Bind("user_id") long user_id);
-
-    @SqlUpdate("INSERT INTO facebook_user (user_id, name) VALUES (:user.id, :user.name)")
-    int createFacebookUser(@BindBean("user") FacebookUser user);
-
+    @SqlUpdate("INSERT INTO wall (user_id, message, timestamp) VALUES (:post.userId, :post.message, :post.timestamp)")
+    int createWallPost(@BindBean("post") WallPost post);
 }

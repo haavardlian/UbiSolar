@@ -2,8 +2,16 @@ package com.sintef_energy.ubisolar.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.sintef_energy.ubisolar.model.Tip;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Based on http://yakivmospan.wordpress.com/2014/03/11/best-practice-sharedpreferences/?utm_source=Android+Weekly&utm_campaign=60136c0692-Android_Weekly_94&utm_medium=email&utm_term=0_4eb677ad19-60136c0692-337821861
@@ -56,6 +64,78 @@ public class PreferencesManager {
         }
 
         return sInstance;
+    }
+
+    public Set<String> getSavedTips() {
+        return mPref.getStringSet(PreferencesManager.SAVED_TIPS, new HashSet<String>());
+    }
+
+    public void changeIsTipImplemented(Tip tip, boolean implemented) {
+        SharedPreferences.Editor editor = mPref.edit();
+
+        Set<String> savedTips = mPref.getStringSet(SAVED_TIPS, new HashSet<String>());
+        ArrayList<String> savedTipsList = new ArrayList<>(savedTips);
+        for (int n = 0; n < savedTipsList.size(); n++) {
+            String x = savedTipsList.get(n);
+            if (Integer.valueOf(TextUtils.split(x, ",")[0]) == tip.getId()){
+                savedTipsList.remove(n);
+                String newTip = tip.getId() + ",";
+                if(implemented) newTip += "1";
+                else newTip += "0";
+                savedTipsList.add(newTip);
+                Log.d("Tip changed to ", newTip);
+            }
+        }
+        editor.putStringSet(SAVED_TIPS, new HashSet<String>(savedTipsList));
+        editor.commit();
+    }
+
+    public boolean isTipImplemented(Tip tip) {
+        Set<String> savedTips = mPref.getStringSet(SAVED_TIPS, new HashSet<String>());
+
+        for(String s : savedTips) {
+            String tipArray[] = TextUtils.split(s, ",");
+            if(Integer.valueOf(tipArray[0]) == tip.getId()){
+                return tipArray[1].equals("1");
+            }
+
+        }
+        return false;
+    }
+
+    public void removeSubscribedTip(Tip tip) {
+        SharedPreferences.Editor editor = mPref.edit();
+
+        Set<String> savedTips = mPref.getStringSet(SAVED_TIPS, new HashSet<String>());
+        ArrayList<String> savedTipsList = new ArrayList<>(savedTips);
+        for (int n = 0; n < savedTipsList.size(); n++) {
+            String x = savedTipsList.get(n);
+            if (Integer.valueOf(TextUtils.split(x, ",")[0]) == tip.getId()){
+                savedTipsList.remove(n);
+                Log.d("Removed tip id", x);
+            }
+        }
+        editor.putStringSet(SAVED_TIPS, new HashSet<String>(savedTipsList));
+        editor.commit();
+    }
+
+    public void addSubscribedTip(Tip tip) {
+        SharedPreferences.Editor editor = mPref.edit();
+
+        Set<String> savedTips = mPref.getStringSet(SAVED_TIPS, new HashSet<String>());
+        Set<String> returnSet = new HashSet<>(savedTips);
+
+        for(String s : savedTips) {
+            if(Integer.valueOf(TextUtils.split(s, ",")[0]) == tip.getId()){
+                editor.commit();
+                return;
+            }
+
+        }
+        Log.d("Saved tip id", " " + tip.getId());
+        returnSet.add(String.valueOf(tip.getId()) + ",0");
+        editor.putStringSet(SAVED_TIPS, returnSet);
+        editor.commit();
     }
 
     public void setSelectedResidence(String value) {
