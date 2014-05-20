@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package com.sintef_energy.ubisolar.model;
 
 import android.os.Parcel;
