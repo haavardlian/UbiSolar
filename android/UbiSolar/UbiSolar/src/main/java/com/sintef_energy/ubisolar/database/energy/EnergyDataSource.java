@@ -272,8 +272,11 @@ public class EnergyDataSource {
     }
 
     public static int editDevice(ContentResolver contentResolver, DeviceModel dm){
-        return contentResolver.update(EnergyContract.Devices.CONTENT_URI, dm.getContentValues(),
-                DeviceModel.DeviceEntry._ID + "=?",new String[]{"" + dm.getId()});
+        return contentResolver.update(
+                EnergyContract.Devices.CONTENT_URI,
+                dm.getContentValues(),
+                DeviceModel.DeviceEntry._ID + "=?",
+                new String[]{"" + dm.getId()});
     }
 
     public static void getDevice(ContentResolver contentResolver, DeviceModel dm){

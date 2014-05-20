@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -89,8 +90,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.add_device, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_device, menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -134,8 +135,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         int width = dm.widthPixels;
 
-        expListView.setIndicatorBounds(width - getDipsFromPixel(35), width
-                - getDipsFromPixel(5));
+        expListView.setIndicatorBounds(width - getDipsFromPixel(35),
+                width - getDipsFromPixel(5));
     }
 
     public int getDipsFromPixel(float pixels) {
@@ -183,6 +184,11 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
         int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
         int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
+
+        /* child is -1 if parent is the one getting a long press */
+        if(child < 0)
+            return;
+
         Device device = expListAdapter.getChild(group, child);
 
         MenuInflater m = getActivity().getMenuInflater();
@@ -201,11 +207,9 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
         switch(item.getItemId()){
             case R.id.device_edit:
-                EditDeviceDialog editDeviceDialog =
-                        new EditDeviceDialog(mDevice, getString(R.string.device_edit_title));
+                EditDeviceDialog editDeviceDialog = new EditDeviceDialog(mDevice, getString(R.string.device_edit_title));
                 editDeviceDialog.show(getFragmentManager(), TAG);
-                break;
-            //TODO use Strings
+                return true;
             case R.id.device_delete:
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -216,9 +220,9 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Uri.Builder builer = EnergyContract.Devices.CONTENT_URI.buildUpon();
-                                builer.appendPath("" + mDevice.getId());
-                                getActivity().getContentResolver().delete(builer.build(), null, null);
+                                Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
+                                builder.appendPath("" + mDevice.getId());
+                                getActivity().getContentResolver().delete(builder.build(), null, null);
                                 devices.remove(mDevice);
                                 Utils.makeShortToast(getActivity(),
                                         mDevice.getName() + " " + getString(R.string.device_toast_deleted));
@@ -230,7 +234,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
                 this.expListAdapter.notifyDataSetChanged();
                 return true;
+            default:
+                return super.onContextItemSelected(item);
         }
-        return super.onContextItemSelected(item);
     }
 }
