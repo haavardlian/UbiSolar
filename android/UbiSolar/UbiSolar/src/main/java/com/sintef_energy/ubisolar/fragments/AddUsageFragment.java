@@ -55,7 +55,7 @@ import java.util.Calendar;
 
 public class AddUsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>, IDateCallback {
 
-    private Calendar mCurrentMonth;
+    private Calendar date;
     private View mRootView;
     private RelativeLayout mRelativeLayout;
 
@@ -88,11 +88,10 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mRootView = inflater.inflate(R.layout.fragment_add_usage, container, false);
 
         //Set the calendar
-        mCurrentMonth = Calendar.getInstance();
-        mCurrentMonth.set(Calendar.MINUTE, 0);
-        mCurrentMonth.set(Calendar.HOUR_OF_DAY, 0);
+        date = Calendar.getInstance();
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.HOUR_OF_DAY, 0);
 
-        /* Fetch view */
         mSpinnerDevice = (Spinner) mRootView.findViewById(R.id.dialog_add_usage_spinner);
         mRelativeLayout = (RelativeLayout) mRootView.findViewById(R.id.fragment_add_usage_rl_date);
         final TextView mTextDate = (TextView) mRootView.findViewById(R.id.fragment_add_usage_text_date);
@@ -115,29 +114,29 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 }
 
                 Double value = Double.valueOf(text);
-                int pos = mSpinnerDevice.getSelectedItemPosition();
+                int position = mSpinnerDevice.getSelectedItemPosition();
 
-                if(pos == Spinner.INVALID_POSITION){
+                if(position == Spinner.INVALID_POSITION){
                     Utils.makeLongToast(getActivity().getApplicationContext(),
                             getString(R.string.add_usage_no_device));
                    return;
                 }
 
                 Cursor item = mDeviceAdapter.getCursor();
-                item.moveToPosition(pos);
-                pos = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
+                item.moveToPosition(position);
+                position = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
 
                 try {
 
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
 
                     //If in the past, remove milliseconds resolution
-                    if (!isSameDay(mCurrentMonth, Calendar.getInstance()))
-                        mCurrentMonth.set(Calendar.MILLISECOND, 0);
+                    if (!isSameDay(date, Calendar.getInstance()))
+                        date.set(Calendar.MILLISECOND, 0);
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
                     euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
-                    euModel.setDeviceId(item.getLong(pos));
+                    euModel.setDeviceId(item.getLong(position));
                     euModel.setPowerUsage(value);
                     euModel.setDeleted(false);
 
@@ -157,9 +156,6 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 imm.hideSoftInputFromWindow(mKwhField.getWindowToken(), 0);
             }
         });
-
-        // Double clicks will make the app crash. So OnOneOffClickListener is used instead.
-        //TODO BUG: The textView within the relativeLayout swallows the onClick
         mRelativeLayout.setOnClickListener(new OnOneOffClickListener() {
             @Override
             public void onOneClick(View v) {
@@ -174,36 +170,6 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
             }
         });
 
-//        mButtonKwhDown.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String temp = String.valueOf(mKwhField.getText());
-//                Double value = 1.;
-//
-//                if(!temp.equals(""))
-//                    value = Double.valueOf(temp);
-//
-//                if(value >= 1.)
-//                    value--;
-//                mKwhField.setText(String.valueOf(value));
-//            }
-//        });
-//
-//        mButtonKwhUp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                String temp = String.valueOf(mKwhField.getText());
-//
-//                Double value = 0.;
-//
-//                if(!temp.equals(""))
-//                    value = Double.valueOf(temp);
-//
-//                value++;
-//                mKwhField.setText(String.valueOf(value));
-//            }
-//        });
-
         /* Fill spinner with data*/
         mDeviceAdapter = new SimpleCursorAdapter(
                 getActivity(),
@@ -217,8 +183,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mSpinnerDevice.setEnabled(false);
         mSpinnerDevice.setAdapter(mDeviceAdapter);
 
-        //mButtonAddUsage.setEnabled(false);
-
+        //Get devices from the database
         getLoaderManager().initLoader(0, null, this);
 
         updateDateText();
@@ -228,28 +193,28 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     private void updateDateText(){
         TextView dateView = (TextView) mRootView.findViewById(R.id.fragment_add_usage_text_date);
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
-        dateView.setText(formatter.format(mCurrentMonth.getTime()));
+        dateView.setText(formatter.format(date.getTime()));
     }
 
     /**
-     * Checks if two Calendar objects is on the same day or not.
+     * Checks if two dates is on the same day or not.
      *
-     * @param other
-     * @param that
+     * @param date1
+     * @param date2
      * @return
      */
-    private boolean isSameDay(Calendar other, Calendar that){
+    private boolean isSameDay(Calendar date1, Calendar date2){
 
-        return ((other.get(Calendar.YEAR) == that.get(Calendar.YEAR)) &&
-                (other.get(Calendar.MONTH) == that.get(Calendar.MONTH)) &&
-                (other.get(Calendar.DAY_OF_MONTH) == that.get(Calendar.DAY_OF_MONTH)));
+        return ((date1.get(Calendar.YEAR) == date2.get(Calendar.YEAR)) &&
+                (date1.get(Calendar.MONTH) == date2.get(Calendar.MONTH)) &&
+                (date1.get(Calendar.DAY_OF_MONTH) == date2.get(Calendar.DAY_OF_MONTH)));
     }
 
     @Override
     public void setDate(int year, int month, int day) {
-        mCurrentMonth.set(Calendar.YEAR, year);
-        mCurrentMonth.set(Calendar.MONTH, month);
-        mCurrentMonth.set(Calendar.DAY_OF_MONTH, day);
+        date.set(Calendar.YEAR, year);
+        date.set(Calendar.MONTH, month);
+        date.set(Calendar.DAY_OF_MONTH, day);
         updateDateText();
         mRelativeLayout.setEnabled(true);
     }
