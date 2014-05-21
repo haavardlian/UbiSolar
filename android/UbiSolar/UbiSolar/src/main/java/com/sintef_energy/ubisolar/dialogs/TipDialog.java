@@ -77,6 +77,7 @@ public class TipDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         ((EnergySavingTabFragment)getTargetFragment().getTargetFragment()).getAdapter().getYourFragment().getAdapter().add(tip);
+                        ((EnergySavingTabFragment)getTargetFragment().getTargetFragment()).getAdapter().getYourFragment().getAdapter().notifyDataSetChanged();
                         PreferencesManager.getInstance().addSubscribedTip(tip);
                     }
                 })

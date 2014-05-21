@@ -53,11 +53,12 @@ public class TipsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ListView tipsView;
+        setHasOptionsMenu(true);
+
         View rootView = inflater.inflate(R.layout.fragment_tip_list, container, false);
         tipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
 
-        tipsView = (ListView) rootView.findViewById(R.id.tipList);
+        ListView tipsView = (ListView) rootView.findViewById(R.id.tipList);
         tipsView.setAdapter(tipAdapter);
         tipsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -69,10 +70,8 @@ public class TipsFragment extends Fragment {
         });
 
         //Get all tips from server asynchronously
-        getActivity().setProgressBarIndeterminateVisibility(true);
         RequestManager.getInstance().doTipRequest().getAllTips(tipAdapter, this);
 
-        setHasOptionsMenu(true);
         return rootView;
     }
 

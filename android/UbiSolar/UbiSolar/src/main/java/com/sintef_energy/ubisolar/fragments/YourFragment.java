@@ -63,7 +63,7 @@ public class YourFragment extends ProgressFragment {
 
         View rootView =  getContentView();
         ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
-        yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row,
+        yourAdapter = new YourAdapter(this, R.layout.fragment_your_row,
                 new ArrayList<Tip>(), getFragmentManager());
         yourList.setAdapter(yourAdapter);
 

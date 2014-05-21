@@ -29,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.dialogs.YourDialog;
 import com.sintef_energy.ubisolar.model.Tip;
@@ -45,14 +46,16 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     private FragmentManager fragmentManager;
     private int layoutResourceId;
     private List<Tip> data = null;
+    private ProgressFragment fragment;
 
-    public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data,
+    public YourAdapter(ProgressFragment fragment, int layoutResourceId, ArrayList<Tip> data,
                        FragmentManager fragmentManager) {
-        super(context, layoutResourceId);
-        this.context = context;
+        super(fragment.getActivity(), layoutResourceId);
+        this.context = fragment.getActivity();
         this.layoutResourceId = layoutResourceId;
         this.data = data;
         this.fragmentManager = fragmentManager;
+        this.fragment = fragment;
     }
 
     public Activity getActivity() {
@@ -86,6 +89,13 @@ public class YourAdapter extends ArrayAdapter<Tip> {
 
     @Override
     public int getCount() {
+        int size = data.size();
+
+        if(size > 0)
+            fragment.setContentEmpty(false);
+        else
+            fragment.setContentEmpty(true);
+
         return data.size();
     }
 

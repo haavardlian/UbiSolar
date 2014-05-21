@@ -72,6 +72,7 @@ public class RequestTipProxy {
     }
 
     public void getAllTips(final TipAdapter adapter, final Fragment fragment) {
+        fragment.getActivity().setProgressBarIndeterminateVisibility(true);
         String url = Global.BASE_URL + "/tips";
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
