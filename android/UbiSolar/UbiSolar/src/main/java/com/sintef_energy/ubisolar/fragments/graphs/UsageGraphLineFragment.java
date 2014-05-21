@@ -65,13 +65,13 @@ import java.util.LinkedHashMap;
 import info.hoang8f.android.segmented.SegmentedGroup;
 
 public class UsageGraphLineFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
+    private static final String TAG = UsageGraphLineFragment.class.getName();
 
     private final int IMAGE_RENDER_WIDTH = 960;
     private final int IMAGE_RENDER_HEIGHT = 540;
 
     private final int DEFAULT_RESOLUTION = Resolution.DAYS;
 
-    private static final String TAG = UsageGraphLineFragment.class.getName();
     private static final String STATE_euModels = "STATE_euModels";
 
     private static final int POINT_DISTANCE = 20;
@@ -409,8 +409,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             }
 
             //return if there are no points
-            if(mDates.size() <= 0)
+            if(mDates.size() <= 0) {
+                abort = true;
                 return null;
+            }
 
             if (mActiveDateIndex >= mDates.size() || mActiveDateIndex < 0)
                 mActiveDateIndex = mDates.size() - 1;
@@ -557,7 +559,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     /**
-     * Enables/ disables part of the view when data loades.
+     * Enables/ disables part of the view when data loads.
      */
     private void setViewState(boolean state, boolean isData) {
         mChartView.setEnabled(state);

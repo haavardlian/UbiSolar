@@ -94,6 +94,7 @@
                     android:focusable="true"
                     android:clickable="true"
                     android:layout_alignParentRight="true"
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_alignLeft="@id/fragment_add_usage_spacer_date">
                     <!--TODO Padding or margin bottom/ top?-->
 

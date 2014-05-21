@@ -104,9 +104,6 @@ public class ProfileFragment extends DefaultTabFragment  {
         prefs = PreferencesManager.getInstance();
         setHasOptionsMenu(true);
 
-        //Dummy creation to be replaced when facebook login is 100%
-        //setDummyPrefs();
-
         mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         View onlineInlclude = mRootView.findViewById(R.id.fragment_profile_include_user);
@@ -164,8 +161,7 @@ public class ProfileFragment extends DefaultTabFragment  {
         super.onDestroy();
     }
 
-    private void setupList()
-    {
+    private void setupList()  {
         createGroupList();
         expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListView);
         final ResidenceListAdapter expListAdapter = new ResidenceListAdapter(getActivity(), residences);
