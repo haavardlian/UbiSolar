@@ -107,9 +107,14 @@ public class ProfileFragment extends DefaultTabFragment  {
         //Dummy creation to be replaced when facebook login is 100%
         //setDummyPrefs();
 
+        mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        View onlineInlclude = mRootView.findViewById(R.id.fragment_profile_include_user);
+        View offlineInlclude = mRootView.findViewById(R.id.fragment_profile_include_offline);
+
+        setupList();
+
         if(Global.loggedIn) {
-            mRootView = inflater.inflate(R.layout.fragment_profile, container, false);
-            setupList();
 
             name = (TextView) mRootView.findViewById(R.id.profile_name);
             name.setText(prefs.getFacebookName());
@@ -125,10 +130,13 @@ public class ProfileFragment extends DefaultTabFragment  {
             profilePicture.setVisibility(View.VISIBLE);
 
             Session.getActiveSession();
+
+            onlineInlclude.setVisibility(View.VISIBLE);
+            offlineInlclude.setVisibility(View.GONE);
         }
         else {
-            mRootView = inflater.inflate(R.layout.fragment_profile_offline, container, false);
-            setupList();
+            onlineInlclude.setVisibility(View.GONE);
+            offlineInlclude.setVisibility(View.VISIBLE);
         }
 
         Session.getActiveSession();
@@ -159,16 +167,12 @@ public class ProfileFragment extends DefaultTabFragment  {
     private void setupList()
     {
         createGroupList();
-        if(Global.loggedIn)
-            expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListView);
-        else
-            expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListViewOffline);
+        expListView = (ExpandableListView) mRootView.findViewById(R.id.residencesListView);
         final ResidenceListAdapter expListAdapter = new ResidenceListAdapter(getActivity(), residences);
         setGroupIndicatorToRight();
         expListView.setAdapter(expListAdapter);
         expListView.setOnChildClickListener(expListAdapter);
     }
-
 
     private void createGroupList() {
         residences = new ArrayList<>();

@@ -92,7 +92,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="?android:attr/listPreferredItemHeight"
                     android:focusable="true"
-                    android:orientation="horizontal"
+                    android:clickable="true"
                     android:layout_alignParentRight="true"
                     android:layout_alignLeft="@id/fragment_add_usage_spacer_date">
                     <!--TODO Padding or margin bottom/ top?-->
@@ -102,6 +102,7 @@
                         android:layout_width="50dip"
                         android:layout_height="50dip"
                         android:layout_alignParentRight="true"
+                        android:adjustViewBounds="true"
                         android:background="@null"
                         android:focusable="false"
                         android:duplicateParentState="true"
@@ -114,9 +115,8 @@
                         android:layout_height="match_parent"
                         android:layout_toLeftOf="@id/dialog_add_usage_button_calendar"
                         android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:gravity="center"
                         android:focusable="false"
-                        android:paddingTop="11dp"
-                        android:paddingLeft="12dp"
                         android:ems="10"
                         android:duplicateParentState="true"
                         android:hint="@string/add_usage_date_hint"/>

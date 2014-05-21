@@ -19,31 +19,20 @@
   ~ under the License.
   -->
 
-<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal">
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
 
     <TextView
         android:id="@+id/log_in_to_sync"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_column="0"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="30dp"
-        android:layout_row="0"
+        android:gravity="center"
+        android:padding="40dp"
         android:text="@string/log_in_to_sync"
         android:textColor="#a00"
         android:textSize="22sp" />
 
-
-    <ExpandableListView
-        android:id="@+id/residencesListViewOffline"
-        android:layout_width="match_parent"
-        android:layout_height="210dp"
-        android:layout_column="0"
-        android:layout_row="1" />
-
-
-</GridLayout>
+</RelativeLayout>
