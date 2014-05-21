@@ -18,7 +18,6 @@
  */
 package com.sintef_energy.ubisolar.fragments.graphs;
 
-import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -85,13 +84,12 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private ArrayList<DeviceUsageList> mActiveUsageList;
     private String mTitleLabel;
 
-    private int[] colors;
+    private int[] mColors;
     private int mColorIndex;
-
     private Bundle mSavedState;
     private View mRootView;
 
-    private Resolution resolution;
+    private Resolution mResolution;
 
     private boolean[] mSelectedDialogItems;
     private int mActiveDateIndex = -1;
@@ -107,23 +105,11 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         UsageGraphLineFragment fragment = new UsageGraphLineFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
-
-
         return fragment;
     }
 
     public UsageGraphLineFragment() {
 
-    }
-
-    /**
-     * The first call to a created fragment
-     *
-     * @param activity
-     */
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
     }
 
     @Override
@@ -132,16 +118,17 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         setContentView(R.layout.fragment_usage_graph_line);
         mRootView = getContentView();
 
+
+        //Loads the colors from strings
         String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
-        this.colors = new int[colorStringArray.length];
+        this.mColors = new int[colorStringArray.length];
 
         for (int i = 0; i < colorStringArray.length; i++) {
-            this.colors[i] = Color.parseColor(colorStringArray[i]);
+            this.mColors[i] = Color.parseColor(colorStringArray[i]);
         }
 
-        //ProgressFragment show progressbar
+        //ProgressFragment show progresswheel
         setContentShown(false);
-        setEmptyText(getResources().getString(R.string.usage_no_content));
 
         /* If the Fragment was destroyed inbetween (screen rotation),
             we need to recover the mSavedState first
@@ -166,42 +153,24 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         //Initialize new data
         else {
             mRenderer = setupLineGraph();
-
             mActiveUsageList = new ArrayList<>();
         }
-        resolution = new Resolution(DEFAULT_RESOLUTION);
 
+        //Configure and create graph
+        mResolution = new Resolution(DEFAULT_RESOLUTION);
         setupSegments();
         createLineGraph();
 
+        //Load the graph
         AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
         asyncGraphCreator.execute(new ArrayList<DeviceUsageList>());
         mSavedState = null;
-    }
-
-    private void setupSegments(){
-        SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
-        segment.setTintColor(Color.DKGRAY);
-        segment.check(segment.getChildAt(getResolution()).getId());
-
-        segment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                int index = radioGroup.indexOfChild(radioGroup.findViewById(i));
-                setActiveIndex(resolution.getMode(), index);
-                resolution.setFormat(index);
-                pullData();
-            }
-        });
     }
 
     /*End lifecycle*/
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        /* If onDestroyView() is called first, we can use the previously mSavedState but we can't call saveState() anymore */
-        /* If onSaveInstanceState() is called first, we don't have mSavedState, so we need to call saveState() */
-        /* => (?:) operator inevitable! */
         outState.putBundle("mSavedState", mSavedState != null ? mSavedState : saveState());
     }
 
@@ -217,7 +186,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
     private Bundle saveState() {
         Bundle state = new Bundle();
-
         ArrayList<Parcelable> usageModelState = new ArrayList<>();
 
         state.putParcelableArrayList(STATE_euModels, usageModelState);
@@ -248,22 +216,39 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         mChartView = null;
         mActiveUsageList = null;
         mTitleLabel = null;
-        colors = null;
+        mColors = null;
         mSavedState = null;
-        resolution = null;
+        mResolution = null;
         mSelectedDialogItems = null;
         mDates = null;
     }
 
     /**
-     * Configure Graph
+     * Creates the segments for selecting the data resolution
+     */
+    private void setupSegments(){
+        SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
+        segment.setTintColor(Color.DKGRAY);
+        segment.check(segment.getChildAt(getResolution()).getId());
+
+        segment.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int index = radioGroup.indexOfChild(radioGroup.findViewById(i));
+                setActiveIndex(mResolution.getMode(), index);
+                mResolution.setFormat(index);
+                pullData();
+            }
+        });
+    }
+
+    /**
+     * Configure the Graph
      */
     private XYMultipleSeriesRenderer setupLineGraph() {
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
 
-        renderer.setChartTitle(getResources().getString(R.string.usage_line_graph_title));
         renderer.setAxisTitleTextSize(25);
-        renderer.setChartTitleTextSize(40);
         renderer.setLabelsTextSize(15);
         renderer.setLegendTextSize(15);
         renderer.setPointSize(5);
@@ -277,6 +262,13 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         return renderer;
     }
 
+    /**
+     * Helper method for setting up the graph colors
+     *
+     * @param renderer
+     * @param backgroundColor
+     * @param labelColor
+     */
     private void setColors(XYMultipleSeriesRenderer renderer, int backgroundColor, int labelColor) {
         renderer.setApplyBackgroundColor(false);
         renderer.setBackgroundColor(backgroundColor);
@@ -285,45 +277,41 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 android.R.attr.colorBackground,
         });
 
+
         int bgColor = array.getColor(0, 0xFF00FF);
         array.recycle();
 
         renderer.setMarginsColor(bgColor);
 
-        //renderer.setMarginsColor(backgroundColor);
         renderer.setLabelsColor(labelColor);
         renderer.setXLabelsColor(labelColor);
         renderer.setYLabelsColor(0, labelColor);
     }
 
     /**
-     * Set up the ChartView with the dataset and renderer and add listeners.
+     * Set up the ChartView with datasets and listeners
      */
     private void createLineGraph() {
         if (mChartView == null) {
             LinearLayout layout = (LinearLayout) mRootView.findViewById(R.id.lineChartView);
-
             mChartView = ChartFactory.getLineChartView(getActivity(), mDataset, mRenderer);
 
+
+            //Logic to change title text to match the centered point
             mChartView.addPanListener(new PanListener() {
                 @Override
                 public void panApplied() {
-                    int activePoint = (int) (mRenderer.getXAxisMin() + mRenderer.getXAxisMax()) / 2;
-                    mActiveDateIndex = activePoint / POINT_DISTANCE;
+                    int centerPoint = (int) (mRenderer.getXAxisMin() + mRenderer.getXAxisMax()) / 2;
+                    mActiveDateIndex = centerPoint / POINT_DISTANCE;
 
-                    if (mActiveDateIndex < 0)
-                        return;
-
-                    if (mTitleLabel == null || mDates.size() < 1)
-                        return;
-
-                    if (mDates.size() == 1)
+                    if (mTitleLabel == null || mDates.size() <= 1 || mActiveDateIndex < 0)
                         return;
 
                     // If the center point does not match the label, swap it with the new label
-                    if (!mTitleLabel.equals(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()))) {
-                        mTitleLabel = formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat());
-                        setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
+                    String newTitle = formatDate(mDates.get(mActiveDateIndex), mResolution.getTitleFormat());
+                    if (!mTitleLabel.equals(newTitle)) {
+                        mTitleLabel = newTitle;
+                        updateLabels();
                     }
                 }
             });
@@ -336,31 +324,18 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     }
 
     /**
-     * All manupulation of new graph is done here..
+     * Async handling of data processing and graph drawing
      */
-    //TODO Rewrite to static and use WeakReference
     private class AsyncTaskRunner extends AsyncTask<ArrayList<DeviceUsageList>, Void, Void>{
-        /*ArrayList<DeviceUsageList> activeUsageList;
-        XYMultipleSeriesRenderer renderer;
-        XYMultipleSeriesDataset dataset;
-        ArrayList<Date> dates;*/
-
         double max;
         double min;
 
         boolean abort = false;
-
         long startTime = 0;
 
-        /**
-         * (non-Javadoc)
-         *
-         * @see android.os.AsyncTask#onPreExecute()
-         */
         @Override
         protected void onPreExecute() {
-            Log.v(TAG, "Starting Async graphView update");
-
+            //Hides the graph while processing
             setViewState(false, false);
 
             startTime = System.currentTimeMillis();
@@ -376,44 +351,45 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         @SafeVarargs
         @Override
         protected final Void doInBackground(final ArrayList<DeviceUsageList>... dataUsageList) {
+            int y = 0;
+            int index = 0;
+
             for (int i = 0; i < dataUsageList[0].size(); i++) {
                 mActiveUsageList.add(dataUsageList[0].get(i));
                 addSeries(dataUsageList[0].get(i).getDevice().getName(), true, false);
             }
 
-            int y = 0;
-            int index = 0;
-
-            //Abort if no data.
+            //Abort if there is no data
             if (mActiveUsageList.size() < 1) {
                 abort = true;
                 return null;
             }
 
+
+            //Logic to draw points that has no data, this is slow for low resolutions with many points.
             Date first = getFirstPoint().toDate();
             Date last = getLastPoint().toDate();
-            int numberOfPoints = resolution.getTimeDiff(first, last);
+            int numberOfPoints = mResolution.getTimeDiff(first, last);
 
             Calendar calendar = Calendar.getInstance();
-            calendar.setMinimalDaysInFirstWeek(0);
             calendar.setTime(first);
 
             //Create the labels for the dates
             for (int i = 0; i < numberOfPoints; i++) {
                 mDates.add(calendar.getTime());
-                mRenderer.addXTextLabel(y, formatDate(calendar.getTime(), resolution.getResolutionFormat()));
+                mRenderer.addXTextLabel(y, formatDate(calendar.getTime(), mResolution.getResolutionFormat()));
                 y += POINT_DISTANCE;
-                resolution.getNextPoint(calendar);
+                mResolution.getNextPoint(calendar);
             }
 
-            // Go through the datasets (each device)
+            // Go through the datasets for each device
             for (DeviceUsageList usageList : mActiveUsageList) {
                 XYSeries series = mDataset.getSeriesAt(index);
                 series.clear();
                 y = 0;
 
-                // Do to date incompatibilities between week converting on sqllite and java date object,
-                // data around the 1 week might be wrong.
+                // Because of date incompatibilities between week converting on sqllite and  the java date object,
+                // data around the 1 week might be wrong in the week view.
                 for (EnergyUsageModel usage : usageList.getUsage()) {
                     while (y < mDates.size()) {
                         if (compareDates(usage.toDate(), mDates.get(y))) {
@@ -423,6 +399,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                             y++;
                             break;
                         }
+                        //Quick fix to handle the date incompatibilities
                         if(usage.toDate().before(mDates.get(y)))
                             break;
                         y++;
@@ -431,6 +408,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 index++;
             }
 
+            //return if there are no points
             if(mDates.size() <= 0)
                 return null;
 
@@ -439,7 +417,8 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
 
             setRange(min, max, mDates.size());
-            setLabels(formatDate(mDates.get(mActiveDateIndex), resolution.getTitleFormat()));
+            mTitleLabel = formatDate(mDates.get(mActiveDateIndex), mResolution.getTitleFormat());
+            updateLabels();
             return null;
         }
 
@@ -450,8 +429,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
          */
         @Override
         protected void onProgressUpdate(Void... values) {
-            // Things to be done while execution of long running operation is in
-            // progress. For example updating ProgessDialog
         }
 
         /**
@@ -461,14 +438,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
          */
         @Override
         protected void onPostExecute(Void values) {
-            /*
-            // Set the new values
-            mActiveUsageList.addAll(activeUsageList);
-            mRenderer = renderer;
-            mDataset = dataset;
-            mDates = dates;*/
-
-            Log.v(TAG, "AsyncTask complete: Time: " + (System.currentTimeMillis() - startTime) + "milliseconds. Rendering the new ChartView");
 
             if (mChartView != null)
                 mChartView.repaint();
@@ -482,7 +451,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         /**
          * Define the series renderer for the mDataset and mRenderer
          *
-         * @param seriesName The name of the series
+         * @param seriesName The name of the series (Device name)
          */
         private void addSeries(String seriesName, boolean displayPoints, boolean displayPointValues) {
             XYSeries series = new XYSeries(seriesName);
@@ -490,7 +459,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
             XYSeriesRenderer seriesRenderer = new XYSeriesRenderer();
             seriesRenderer.setLineWidth(3);
-            seriesRenderer.setColor(colors[mColorIndex++ % colors.length]);
+            seriesRenderer.setColor(mColors[mColorIndex++ % mColors.length]);
             seriesRenderer.setShowLegendItem(true);
 
             mRenderer.addSeriesRenderer(seriesRenderer);
@@ -507,17 +476,20 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         }
 
         /**
-         * Defines the range for the renderer graph
+         * Defines the range and pan limits for the graph
          *
-         * @param minY
-         * @param maxY
-         * @param points
+         * @param minY The lowest value to display
+         * @param maxY The highest value to display
+         * @param points The total number of points to draw
          */
         private void setRange(double minY, double maxY, int points) {
             int end = points * POINT_DISTANCE;
             int start;
             int pointsToShow;
 
+
+            // if the amount of points is less than the desired amount of points at the screen
+            // reduce  the amount of points to display.
             if (NUMBER_OF_POINTS > points)
                 pointsToShow = points;
             else
@@ -535,10 +507,16 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
 
             mRenderer.setRange(new double[]{start - GRAPH_MARGIN,
                 start + (pointsToShow * POINT_DISTANCE), minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
+
             mRenderer.setPanLimits(new double[]{0 - GRAPH_MARGIN,
                 end + GRAPH_MARGIN, minY - GRAPH_MARGIN, maxY + GRAPH_MARGIN * 2});
         }
 
+
+        /**
+         * Get the earliest usage object in a set
+         * @return EnergyUsageModel
+         */
         private EnergyUsageModel getFirstPoint() {
             DeviceUsageList usage = mActiveUsageList.get(0);
 
@@ -550,6 +528,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             return usage.get(0);
         }
 
+        /**
+         * Get the last usage object in a set
+         * @return EnergyUsageModel
+         */
         private EnergyUsageModel getLastPoint() {
             DeviceUsageList usage = mActiveUsageList.get(mActiveUsageList.size() - 1);
 
@@ -561,9 +543,15 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             return usage.get(usage.size() - 1);
         }
 
+        /**
+         * Compares two dates using the resolution
+         * @param date1
+         * @param date2
+         * @return
+         */
         private boolean compareDates(Date date1, Date date2) {
-            return formatDate(date1, resolution.getCompareFormat())
-                    .equals(formatDate(date2, resolution.getCompareFormat()));
+            return formatDate(date1, mResolution.getCompareFormat())
+                    .equals(formatDate(date2, mResolution.getCompareFormat()));
         }
 
     }
@@ -577,13 +565,12 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         setContentEmpty(!isData);
     }
 
-    private void setLabels(String label) {
-        mRenderer.setXTitle(label);
-        mTitleLabel = label;
+    private void updateLabels() {
+        mRenderer.setXTitle(mTitleLabel);
     }
 
     /**
-     * Clears previous devices.
+     * Clears all data.
      */
     public void clearDevices() {
         mActiveUsageList.clear();
@@ -593,13 +580,12 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         mColorIndex = 0;
     }
 
-    public void addDeviceUsage(ArrayList<DeviceUsageList> usageList) {
-        clearDevices();
-
-        AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
-        asyncGraphCreator.execute(usageList);
-    }
-
+    /**
+     * Creates a string based on a dateobject and format
+     * @param date
+     * @param format
+     * @return String
+     */
     private String formatDate(Date date, String format) {
         SimpleDateFormat formatter = new SimpleDateFormat(format);
         if (date != null)
@@ -608,6 +594,11 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             return null;
     }
 
+    /**
+     * Changes the new index used to set the range when the resolution is changed
+     * @param oldMode The previous resolution
+     * @param newMode The new resolution
+     */
     private void setActiveIndex(int oldMode, int newMode){
         switch(oldMode){
             case Resolution.HOURS:
@@ -645,6 +636,12 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         }
     }
 
+    /**
+     * Returns a boolean array representing the selected devices.
+     * If the object is null, the first element will be selected by default
+     * @return boolean[]
+     */
+    @Override
     public boolean[] getSelectedDialogItems() {
         if (mSelectedDialogItems == null) {
             mSelectedDialogItems = new boolean[mDevices.size()];
@@ -654,6 +651,11 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         return mSelectedDialogItems;
     }
 
+    /**
+     * Sets the selected devices
+     * @param mSelectedDialogItems
+     */
+    @Override
     public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
         this.mSelectedDialogItems = mSelectedDialogItems;
     }
@@ -663,13 +665,23 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         setContentShown(!state);
     }
 
+    /**
+     * Returns the resolution
+     * If no resolution has been set, the default resolution is returned
+     * @return
+     */
     public int getResolution() {
-        if(resolution == null)
+        if(mResolution == null)
             return DEFAULT_RESOLUTION;
 
-        return resolution.getMode();
+        return mResolution.getMode();
     }
 
+    /**
+     * Creates an image of the graph
+     * @return Bitmap
+     */
+    @Override
     public Bitmap createImage() {
         Bitmap bitmap = Bitmap.createBitmap(IMAGE_RENDER_WIDTH, IMAGE_RENDER_HEIGHT, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -678,8 +690,36 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         return bitmap;
     }
 
-    //Database functionality
+    @Override
+    public void setDevices(LinkedHashMap<Long, DeviceModel> devices){
+        mDevices = devices;
+    }
 
+    /**
+     * Queries the database for data based on the selected devices and the resolution
+     */
+    @Override
+    public void pullData(){
+
+        //If no items are selected, clear the graph
+        if(mDevices == null)
+            return;
+
+        //If any items is selected query the database
+        for(boolean selected : getSelectedDialogItems())
+            if(selected) {
+                getLoaderManager().restartLoader(mResolution.getMode(), null, this);
+                return;
+            }
+        clearDevices();
+    }
+
+    /**
+     * Creates a query to the database
+     * @param mode Int deciding what query to make
+     * @param bundle
+     * @return Loader<Cursor>
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
         Uri.Builder builder;
@@ -730,6 +770,10 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         return null;
     }
 
+    /**
+     * Creates a string for the selected devices
+     * @return String
+     */
     private String sqlWhereDevices(){
         String where = "";
 
@@ -749,17 +793,13 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
             where += queries.get(i) + " OR ";
         where += queries.get(i);
 
-
-        //To get data points between two dates
-        String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
-                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
-//
-//        where += " AND " + betweenTime + " BETWEEN ? AND ? ";
-
         return where;
     }
 
-
+    /**
+     * Returns the IDs of the selected devices
+     * @return String[]
+     */
     private String[] getSelectedDevicesIDs() {
         boolean[] selectedItems = getSelectedDialogItems();
         ArrayList<String> queryValues = new ArrayList<>();
@@ -774,31 +814,21 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
                 i++;
             }
         }
-
-//        try {
-//            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
-//            Timestamp sqlDate1 = new java.sql.Timestamp(date1.getTime());
-//
-//            Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 14:00");
-//            Timestamp sqlDate2 = new java.sql.Timestamp(date2.getTime());
-//
-//            queryValues.add(sqlDate1.toString());
-//            queryValues.add(sqlDate2.toString());
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
-
         return queryValues.toArray(new String[queryValues.size()]);
     }
 
+    /**
+     * Create models with data from the database and populates the graph
+     * @param cursorLoader
+     * @param cursor
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
 
         //Hashmap containing all DevicesUsage
         HashMap<Long, DeviceUsageList> devices = new HashMap<>();
 
-        /* Get data from cursor and add */
+        //Populate the models with data from the database.
         cursor.moveToFirst();
         if(cursor.getCount() >= 1) {
             do {
@@ -816,35 +846,20 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         }
 
         ArrayList<DeviceUsageList> deviceUsageLists = new ArrayList<>();
-
         deviceUsageLists.addAll(devices.values());
 
-        if(deviceUsageLists.size() > 0)
-            addDeviceUsage(deviceUsageLists);
+        if(deviceUsageLists.size() > 0) {
+            clearDevices();
+
+            //Populates the graph
+            AsyncTaskRunner asyncGraphCreator = new AsyncTaskRunner();
+            asyncGraphCreator.execute(deviceUsageLists);
+        }
         else
             setViewState(true, false);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {}
-
-    public void setDevices(LinkedHashMap<Long, DeviceModel> devices){
-        mDevices = devices;
-    }
-
-    @Override
-    public void pullData(){
-
-        //If no items are selected, clear the graph
-        if(mDevices == null)
-            return;
-
-        for(boolean selected : getSelectedDialogItems())
-            if(selected) {
-                getLoaderManager().restartLoader(resolution.getMode(), null, this);
-                return;
-            }
-        clearDevices();
-    }
 
 }

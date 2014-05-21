@@ -50,19 +50,13 @@ import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.ArrayList;
 
-/**
- * Created by perok on 2/11/14.
- */
 public class DeviceFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
+
     private static final String TAG = DeviceFragment.class.getName();
     private View mRootview;
-    private ExpandableListView expListView;
-    private DeviceListAdapter expListAdapter;
-    private ArrayList<DeviceModel> devices;
+    private ExpandableListView mDeviceList;
+    private DeviceListAdapter mDeviceAdapter;
+    private ArrayList<DeviceModel> mDevices;
 
     private DeviceModel mDevice;
 
@@ -97,15 +91,13 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         setHasOptionsMenu(true);
 
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
+        mDeviceList = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
 
-        expListView = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
+        mDevices = new ArrayList<>();
+        mDeviceAdapter = new DeviceListAdapter(getActivity(), mDevices);
+        mDeviceList.setAdapter(mDeviceAdapter);
 
-        devices = new ArrayList<>();
-        expListAdapter = new DeviceListAdapter(getActivity(), devices);
-        setGroupIndicatorToRight();
-        expListView.setAdapter(expListAdapter);
-
-        registerForContextMenu(expListView);
+        registerForContextMenu(mDeviceList);
 
         return mRootview;
     }
@@ -113,26 +105,9 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
+        //Loads the devices from the database
         getLoaderManager().initLoader(0, null, this);
     }
-
-    private void setGroupIndicatorToRight() {
-        /* Get the screen width */
-        DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
-
-        expListView.setIndicatorBounds(width - getDipsFromPixel(35),
-                width - getDipsFromPixel(5));
-    }
-
-    public int getDipsFromPixel(float pixels) {
-        // Get the screen's density scale
-        final float scale = getResources().getDisplayMetrics().density;
-        // Convert the dps to pixels, based on density scale
-        return (int) (pixels * scale + 0.5f);
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(
@@ -147,41 +122,40 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        devices.clear();
+        mDevices.clear();
 
         cursor.moveToFirst();
         if (cursor.getCount() != 0)
             do {
                 DeviceModel model = new DeviceModel(cursor);
-                devices.add(model);
+                mDevices.add(model);
             } while (cursor.moveToNext());
 
-        expListAdapter.notifyDataSetChanged();
+        mDeviceAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        devices.clear();
+        mDevices.clear();
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
+    public void onCreateContextMenu(ContextMenu menu, View view,
                                     ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
+        super.onCreateContextMenu(menu, view, menuInfo);
         ExpandableListView.ExpandableListContextMenuInfo info = (ExpandableListView.ExpandableListContextMenuInfo) menuInfo;
         int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
         int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
+        Device device = mDeviceAdapter.getChild(group, child);
 
         /* child is -1 if parent is the one getting a long press */
         if(child < 0)
             return;
 
-        Device device = expListAdapter.getChild(group, child);
-
-        MenuInflater m = getActivity().getMenuInflater();
+        MenuInflater menuInflater = getActivity().getMenuInflater();
         menu.setHeaderTitle(device.getName());
         menu.setHeaderIcon(R.drawable.devices);
-        m.inflate(R.menu.device_menu, menu);
+        menuInflater.inflate(R.menu.device_menu, menu);
     }
 
     @Override
@@ -190,7 +164,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
                 (ExpandableListView.ExpandableListContextMenuInfo) item.getMenuInfo();
         int group = ExpandableListView.getPackedPositionGroup(info.packedPosition);
         int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
-        mDevice = expListAdapter.getChild(group, child);
+        mDevice = mDeviceAdapter.getChild(group, child);
 
         switch(item.getItemId()){
             case R.id.device_edit:
@@ -207,10 +181,10 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
-                                builder.appendPath("" + mDevice.getId());
-                                getActivity().getContentResolver().delete(builder.build(), null, null);
-                                devices.remove(mDevice);
+                                Uri.Builder builer = EnergyContract.Devices.CONTENT_URI.buildUpon();
+                                builer.appendPath("" + mDevice.getId());
+                                getActivity().getContentResolver().delete(builer.build(), null, null);
+                                mDevices.remove(mDevice);
                                 Utils.makeShortToast(getActivity(),
                                         mDevice.getName() + " " + getString(R.string.device_toast_deleted));
                             }
@@ -219,7 +193,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
                         .setNegativeButton(getString(R.string.device_cancel), null)
                         .show();
 
-                this.expListAdapter.notifyDataSetChanged();
+                this.mDeviceAdapter.notifyDataSetChanged();
                 return true;
             default:
                 return super.onContextItemSelected(item);

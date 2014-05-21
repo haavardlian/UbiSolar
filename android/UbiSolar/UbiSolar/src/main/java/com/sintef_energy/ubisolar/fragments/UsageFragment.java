@@ -19,7 +19,6 @@
 
 package com.sintef_energy.ubisolar.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
@@ -73,7 +72,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private IUsageView graphView;
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
     private PreferencesManager mPreferenceManager;
-    private boolean mFragmentSwap = false;
     private ScrollViewPager mPager;
 
     /**
@@ -86,11 +84,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
     }
 
     @Override
@@ -111,8 +104,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         // Initialize the ViewPager and set the adapter
         mPager.setAdapter(mUsageFragmentStatePageAdapter);
+
         // Makes the tabs non-swipeable. Having the tabs swipeable causes weird behavior because the
-        // graphs are also swipeable.
         mPager.setSwipeable(false);
 
         // Bind the tabs to the ViewPager
@@ -127,7 +120,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             @Override
             public void onPageSelected(int position) {
-                mFragmentSwap = true;
                 graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
                 graphView.setDevices(mDevices);
                 graphView.pullData();
@@ -144,28 +136,6 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         return mRootView;
     }
 
-    private static class GraphViewTouchListener implements View.OnTouchListener{
-
-        ScrollViewPager pager;
-
-        GraphViewTouchListener(ScrollViewPager pager){
-           this.pager = pager;
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            //We have a multitouch event
-            if(motionEvent.getPointerCount() > 1) {
-                pager.setSwipeable(false);
-                //requestDisallowInterceptTouchEvent ?
-                return true;
-            }
-
-            pager.setSwipeable(true);
-            return false;
-        }
-    }
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -177,10 +147,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         LoaderManager loaderManager = getLoaderManager();
 
-        if(loaderManager == null){
-            Log.e(TAG, "Unable to load the loader manager");
-        }
 
+        //Get devices
         if (mSavedState != null) {
             mDeviceUsageList = mSavedState.getParcelableArrayList("mDeviceUsageList");
             loaderManager.restartLoader(LOADER_DEVICES, null, this);
@@ -240,9 +208,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
     public void onDestroyView(){
         super.onDestroy();
-
         mSavedState = saveState();
-        Log.v(TAG, " onDestroyView()");
     }
 
     @Override
@@ -260,7 +226,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     }
 
     /**
-     * Everything is nulled out so the GC can collect the fragment instance.
+     * Clear all objects and references.
      */
     private void cleanUpReferences(){
         mRootView = null;
@@ -273,7 +239,11 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         mPager = null;
     }
 
-    public void selectedDevicesCallback(String[] selectedItems, boolean[] itemsSelected){
+    /**
+     * Selected items is returned from the device selection dialog
+     * @param itemsSelected
+     */
+    public void selectedDevicesCallback(boolean[] itemsSelected){
         graphView.setSelectedDialogItems(itemsSelected);
         graphView.pullData();
     }
@@ -305,17 +275,18 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {}
 
+    /**
+     * Adapter for fragment swapping
+     */
     private static class UsageFragmentStatePageAdapter extends FragmentStatePagerAdapter {
 
         private String titles[];
         private HashMap<Integer, Fragment> fragmentReferenceMap;
-        private ScrollViewPager mPager;
 
         public UsageFragmentStatePageAdapter(Fragment fragment, ScrollViewPager pager){
             super(fragment.getFragmentManager());
             titles = fragment.getResources().getStringArray(R.array.fragment_usage_tabs);
             fragmentReferenceMap = new HashMap<>();
-            mPager = pager;
         }
 
         @Override
@@ -331,11 +302,9 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             switch (position){
                 case 0:
                     fragment = UsageGraphLineFragment.newInstance();
-                    //fragment.getView().setOnTouchListener(new GraphViewTouchListener(mPager));
                     break;
                 case 1:
                     fragment = UsageGraphPieFragment.newInstance();
-                    //fragment.getView().setOnTouchListener(new GraphViewTouchListener(mPager));
                     break;
                 default:
                     return null;
@@ -361,6 +330,29 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
         public Fragment getFragment(int key) {
             return fragmentReferenceMap.get(key);
+        }
+    }
+
+    //Unfinished code for multifinger swiping
+    private static class GraphViewTouchListener implements View.OnTouchListener{
+
+        ScrollViewPager pager;
+
+        GraphViewTouchListener(ScrollViewPager pager){
+            this.pager = pager;
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            //We have a multitouch event
+            if(motionEvent.getPointerCount() > 1) {
+                pager.setSwipeable(false);
+                //requestDisallowInterceptTouchEvent ?
+                return true;
+            }
+
+            pager.setSwipeable(true);
+            return false;
         }
     }
 }
