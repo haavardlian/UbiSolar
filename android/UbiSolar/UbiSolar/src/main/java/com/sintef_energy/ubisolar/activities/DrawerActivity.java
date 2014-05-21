@@ -683,22 +683,22 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                                 if(null != user.getFirstName())
                                     mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
                                 else
-                                    mPrefManager.setFacebookName("Could not find Facebook name");
+                                    mPrefManager.setFacebookName("No data");
                                 if(user.getLocation() != null) {
                                     if (null != user.getLocation().getCity())
                                         mPrefManager.setFacebookLocation(user.getLocation().getCity());
                                     else
-                                        mPrefManager.setFacebookLocation("Could not find Facebook location");
+                                        mPrefManager.setFacebookLocation("No data");
 
                                     if (null != user.getLocation().getCountry())
                                         mPrefManager.setFacebookCountry(user.getLocation().getCountry());
                                     else
-                                        mPrefManager.setFacebookCountry("Could not find Facebook country");
+                                        mPrefManager.setFacebookCountry("No data");
                                 }
                                 if(null != user.getBirthday())
                                     mPrefManager.setFacebookAge(user.getBirthday());
                                 else
-                                    mPrefManager.setFacebookAge("Could not find Facebook age");
+                                    mPrefManager.setFacebookAge("No data");
 
                                 mPrefManager.setKeyFacebookUid(user.getId());
 

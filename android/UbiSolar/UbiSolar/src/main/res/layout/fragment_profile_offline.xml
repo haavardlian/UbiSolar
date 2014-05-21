@@ -32,7 +32,6 @@
         android:gravity="center"
         android:padding="40dp"
         android:text="@string/log_in_to_sync"
-        android:textColor="#a00"
         android:textSize="22sp" />
 
 </RelativeLayout>

@@ -55,40 +55,79 @@
         android:layout_marginLeft="10dp"/>
 
     <TextView
-        android:id="@+id/profile_age"
+        android:id="@+id/profile_age_text"
         android:layout_width="wrap_content"
-        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@id/view_split_name"
         android:layout_toRightOf="@id/profile_profile_picture"
-        android:paddingTop="10dp"
-        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:text="Your age:"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/profile_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/profile_age_text"
+        android:layout_toRightOf="@id/profile_profile_picture"
+        android:layout_alignLeft="@id/profile_age_text"
         android:text="@string/profile_age"
+        android:textColor="#000"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/profile_location_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/profile_age"
+        android:layout_toRightOf="@id/profile_profile_picture"
+        android:layout_alignLeft="@id/profile_age_text"
+        android:layout_marginTop="10dp"
+        android:text="Your location:"
+        android:textStyle="bold"
         android:textColor="#000"
         android:textSize="22sp" />
 
     <TextView
         android:id="@+id/profile_location"
         android:layout_width="wrap_content"
-        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:paddingTop="10dp"
-        android:layout_below="@id/profile_age"
+        android:layout_below="@id/profile_location_text"
         android:layout_toRightOf="@id/profile_profile_picture"
-        android:gravity="center"
+        android:layout_alignLeft="@id/profile_age_text"
         android:text="@string/profile_location"
+        android:textColor="#000"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/profile_country_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/profile_location"
+        android:layout_toRightOf="@id/profile_profile_picture"
+        android:layout_alignLeft="@id/profile_age_text"
+        android:layout_marginTop="10dp"
+        android:text="Your Country:"
+        android:textStyle="bold"
         android:textColor="#000"
         android:textSize="22sp" />
 
     <TextView
         android:id="@+id/profile_country"
         android:layout_width="wrap_content"
-        android:layout_height="?android:attr/listPreferredItemHeight"
-        android:layout_below="@id/profile_location"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profile_country_text"
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@id/profile_profile_picture"
-        android:paddingTop="10dp"
-        android:gravity="center"
+        android:layout_alignLeft="@id/profile_age_text"
         android:text="@string/profile_country"
         android:textColor="#000"
         android:textSize="22sp" />

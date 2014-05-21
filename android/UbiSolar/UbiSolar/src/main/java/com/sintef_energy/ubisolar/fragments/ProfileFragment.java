@@ -84,7 +84,7 @@ public class ProfileFragment extends DefaultTabFragment  {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.add_residence, menu);
+        //inflater.inflate(R.menu.add_residence, menu);
     }
 
     @Override
