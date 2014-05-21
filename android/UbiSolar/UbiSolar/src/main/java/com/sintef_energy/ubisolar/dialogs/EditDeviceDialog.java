@@ -40,15 +40,11 @@ import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Utils;
 
-/**
- * Created by pialindkjolen on 29.04.14.
- */
 public class EditDeviceDialog extends DialogFragment {
     public static final String TAG = EditDeviceDialog.class.getName();
 
-    private DevicePresenter devicePresenter;
-    private View view;
-    private TextView description, name;
+    private DevicePresenter mDevicePresenter;
+    private View mDeviceDialog;
     private Spinner categorySpinner;
     private DeviceModel device;
     private ArrayAdapter<String> categoryAdapter;
@@ -73,7 +69,7 @@ public class EditDeviceDialog extends DialogFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
+            mDevicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement " + TotalEnergyPresenter.class.getName());
         }
@@ -88,12 +84,12 @@ public class EditDeviceDialog extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        view = inflater.inflate(R.layout.dialog_edit_device, null);
+        mDeviceDialog = inflater.inflate(R.layout.dialog_edit_device, null);
 
         /*Set up views*/
-        name = (EditText) view.findViewById(R.id.device_edit_name);
-        description = (EditText) view.findViewById(R.id.device_edit_description);
-        categorySpinner = (Spinner) view.findViewById(R.id.device_edit_category);
+        final TextView name = (EditText) mDeviceDialog.findViewById(R.id.device_edit_name);
+       final  TextView description = (EditText) mDeviceDialog.findViewById(R.id.device_edit_description);
+        categorySpinner = (Spinner) mDeviceDialog.findViewById(R.id.device_edit_category);
 
 
         /*Fill spinner with categories*/
@@ -114,7 +110,7 @@ public class EditDeviceDialog extends DialogFragment {
             categorySpinner.setSelection(device.getCategory());
         }
 
-        builder.setView(view)
+        builder.setView(mDeviceDialog)
                 // Add action buttons
                 .setPositiveButton(R.string.device_edit_save, new DialogInterface.OnClickListener() {
 
@@ -126,12 +122,12 @@ public class EditDeviceDialog extends DialogFragment {
                         device.setCategory(categorySpinner.getSelectedItemPosition());
 
                         if(newDevice) {
-                            devicePresenter.addDevice(device, getActivity().getContentResolver());
+                            mDevicePresenter.addDevice(device, getActivity().getContentResolver());
                             Utils.makeShortToast(getActivity(),
                                     device.getName() + " " + getString(R.string.device_toast_added));
                         }
                         else {
-                            devicePresenter.editDevice(getActivity().getContentResolver(), device);
+                            mDevicePresenter.editDevice(getActivity().getContentResolver(), device);
                             Utils.makeShortToast(getActivity(),
                                     device.getName() + " " + getString(R.string.device_toast_edited));
                         }
