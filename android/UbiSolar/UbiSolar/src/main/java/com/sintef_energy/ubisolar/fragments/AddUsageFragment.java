@@ -53,26 +53,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-/**
- * Created by perok on 12.03.14.
- */
 public class AddUsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>, IDateCallback {
 
-    private static final String TAG = AddUsageFragment.class.getName();
-
-    private Calendar currentMonth;
-    private SimpleDateFormat formatter;
-
-    private TextView mTextDate;
-    private EditText mKwhField;
-//    private ImageButton mButtonKwhUp;
-//    private ImageButton mButtonKwhDown;
-    private Button mButtonAddUsage;
+    private Calendar mCurrentMonth;
+    private View mRootView;
     private RelativeLayout mRelativeLayout;
 
-    private Spinner spinnerDevice;
+    private Spinner mSpinnerDevice;
     private SimpleCursorAdapter mDeviceAdapter;
-
     private TotalEnergyPresenter mTotalEnergyPresenter;
 
     public static AddUsageFragment newInstance(int sectionNumber) {
@@ -97,26 +85,21 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-
-        View view = inflater.inflate(R.layout.fragment_add_usage, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_add_usage, container, false);
 
         //Set the calendar
-        currentMonth = Calendar.getInstance();
-        currentMonth.set(Calendar.MINUTE, 0);
-        currentMonth.set(Calendar.HOUR_OF_DAY, 0);
-
-
-        formatter = new SimpleDateFormat("dd/MM-yyyy");
+        mCurrentMonth = Calendar.getInstance();
+        mCurrentMonth.set(Calendar.MINUTE, 0);
+        mCurrentMonth.set(Calendar.HOUR_OF_DAY, 0);
 
         /* Fetch view */
-        spinnerDevice = (Spinner)view.findViewById(R.id.dialog_add_usage_spinner);
-        mRelativeLayout = (RelativeLayout)view.findViewById(R.id.fragment_add_usage_rl_date);
-        mTextDate = (TextView)view.findViewById(R.id.fragment_add_usage_text_date);
-        mKwhField = (EditText)view.findViewById(R.id.dialog_add_usage_edittext_kwh);
-//        mButtonKwhDown = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_down);
-//        mButtonKwhUp = (ImageButton)view.findViewById(R.id.dialog_add_usage_usage_up);
-        mButtonAddUsage = (Button)view.findViewById(R.id.btnAddUsage);
+        mSpinnerDevice = (Spinner) mRootView.findViewById(R.id.dialog_add_usage_spinner);
+        mRelativeLayout = (RelativeLayout) mRootView.findViewById(R.id.fragment_add_usage_rl_date);
+        final TextView mTextDate = (TextView) mRootView.findViewById(R.id.fragment_add_usage_text_date);
+        final TextView mKwhField = (EditText) mRootView.findViewById(R.id.dialog_add_usage_edittext_kwh);
         final DatePickerFragment datePicker = new DatePickerFragment();
+
+        Button mButtonAddUsage = (Button) mRootView.findViewById(R.id.btnAddUsage);
         datePicker.setTargetFragment(this, 0);
 
         /* Set up listeners */
@@ -132,7 +115,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 }
 
                 Double value = Double.valueOf(text);
-                int pos = spinnerDevice.getSelectedItemPosition();
+                int pos = mSpinnerDevice.getSelectedItemPosition();
 
                 if(pos == Spinner.INVALID_POSITION){
                     Utils.makeLongToast(getActivity().getApplicationContext(),
@@ -149,8 +132,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
 
                     //If in the past, remove milliseconds resolution
-                    if (!isSameDay(currentMonth, Calendar.getInstance()))
-                        currentMonth.set(Calendar.MILLISECOND, 0);
+                    if (!isSameDay(mCurrentMonth, Calendar.getInstance()))
+                        mCurrentMonth.set(Calendar.MILLISECOND, 0);
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
                     euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
@@ -231,19 +214,21 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                 CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         mDeviceAdapter.setDropDownViewResource(R.layout.spinner_layout);
 
-        spinnerDevice.setEnabled(false);
-        spinnerDevice.setAdapter(mDeviceAdapter);
+        mSpinnerDevice.setEnabled(false);
+        mSpinnerDevice.setAdapter(mDeviceAdapter);
 
         //mButtonAddUsage.setEnabled(false);
 
         getLoaderManager().initLoader(0, null, this);
 
         updateDateText();
-        return view;
+        return mRootView;
     }
 
     private void updateDateText(){
-        mTextDate.setText(formatter.format(currentMonth.getTime()));
+        TextView dateView = (TextView) mRootView.findViewById(R.id.fragment_add_usage_text_date);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
+        dateView.setText(formatter.format(mCurrentMonth.getTime()));
     }
 
     /**
@@ -262,9 +247,9 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
 
     @Override
     public void setDate(int year, int month, int day) {
-        currentMonth.set(Calendar.YEAR, year);
-        currentMonth.set(Calendar.MONTH, month);
-        currentMonth.set(Calendar.DAY_OF_MONTH, day);
+        mCurrentMonth.set(Calendar.YEAR, year);
+        mCurrentMonth.set(Calendar.MONTH, month);
+        mCurrentMonth.set(Calendar.DAY_OF_MONTH, day);
         updateDateText();
         mRelativeLayout.setEnabled(true);
     }
@@ -288,7 +273,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         // Only enable adding of data if we have devices to add data to.
         boolean enableAdding = (cursor.getCount() > 0);
 
-        spinnerDevice.setEnabled(enableAdding);
+        mSpinnerDevice.setEnabled(enableAdding);
     }
 
     @Override
