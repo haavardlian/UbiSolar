@@ -36,7 +36,7 @@
             android:layout_centerInParent="true"
             android:textSize="20sp"
             android:layout_alignParentTop="true"
-            android:text="Current Usage"/>
+            android:text="@string/home_current_usage"/>
 
         <ImageView
             android:id="@+id/wattometer"
@@ -62,7 +62,7 @@
         <TextView
             style="?android:attr/listSeparatorTextViewStyle"
             android:id="@+id/separator"
-            android:text="Newsfeed"
+            android:text="@string/home_news_feed"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"/>

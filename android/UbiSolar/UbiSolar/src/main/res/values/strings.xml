@@ -65,7 +65,6 @@
         <item>@drawable/social</item>
         <item>@drawable/profile</item>
         <item>@drawable/heat</item>
-        <!-- TODO: Icons for log out -->
     </string-array>
 
     <!-- AddTipDialog -->
@@ -127,7 +126,7 @@
         <item>@drawable/appliances</item>
         <item>@drawable/heat</item>
         <item>@drawable/home_entertainment</item>
-        <item>@drawable/default_device</item>
+        <item>@drawable/lighting</item>
         <item>@drawable/default_device</item>
         <item>@drawable/power_production</item>
     </string-array>
@@ -200,15 +199,8 @@
     <string name="friends_header_title">Friends</string>
 
     <!-- Fragment home -->
-    <string name="home_area_placeholder">3% higher </string>
-    <string name="home_residents_placeholder">7% lower </string>
-    <string name="home_size_placeholder">100% lower </string>
-    <string name="home_energy_placeholder">1% lower </string>
-    <string name="home_improved">You have improved by 5%!</string>
-    <string name="home_area">than people in your area</string>
-    <string name="home_residents">than equal # of residents</string>
-    <string name="home_size">than equal residence size</string>
-    <string name="home_energy">than same energy class</string>
+    <string name="home_current_usage">Current Usage</string>
+    <string name="home_news_feed">News Feed</string>
 
     <!-- Comparison settings -->
     <string name="comparison_setting">Comparison settings</string>

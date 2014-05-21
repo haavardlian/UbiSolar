@@ -20,9 +20,7 @@
 package com.sintef_energy.ubisolar.fragments;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.devspark.progressfragment.ProgressFragment;
@@ -36,12 +34,12 @@ import java.util.ArrayList;
 /**
  * Created by Håvard on 24.03.2014.
  */
-public class YourFragment extends ProgressFragment {
+public class YourTipFragment extends ProgressFragment {
     private static final String ARG_POSITION = "position";
     private YourAdapter yourAdapter;
 
-    public static YourFragment newInstance(int position) {
-        YourFragment fragment = new YourFragment();
+    public static YourTipFragment newInstance(int position) {
+        YourTipFragment fragment = new YourTipFragment();
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
@@ -56,14 +54,14 @@ public class YourFragment extends ProgressFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setContentView(R.layout.fragment_your_list);
+        setContentView(R.layout.fragment_your_tip_list);
         setEmptyText("You have no saved tips"); //TODO insert in xml/strings
         setContentEmpty(true);
         setContentShown(false);
 
         View rootView =  getContentView();
         ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
-        yourAdapter = new YourAdapter(this, R.layout.fragment_your_row,
+        yourAdapter = new YourAdapter(this, R.layout.fragment_your_tip_row,
                 new ArrayList<Tip>(), getFragmentManager());
         yourList.setAdapter(yourAdapter);
 

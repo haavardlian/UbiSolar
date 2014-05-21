@@ -26,9 +26,6 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -36,7 +33,6 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
-import com.sintef_energy.ubisolar.dialogs.AddTipDialog;
 
 /**
  * Created by perok on 21.03.14.
@@ -133,7 +129,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         private String[] titles;
         private YourAdapter yourAdapter;
         private TipsFragment tipsFragment;
-        private YourFragment yourFragment;
+        private YourTipFragment yourFragment;
         public TipsPagerAdapter(FragmentManager fm) {
             super(fm);
 
@@ -154,7 +150,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
             return tipsFragment;
         }
 
-        public YourFragment getYourFragment() {
+        public YourTipFragment getYourFragment() {
             return yourFragment;
         }
 
@@ -166,7 +162,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
                     tipsFragment.setTargetFragment(EnergySavingTabFragment.this, 0);
                     return tipsFragment;
                 case 1:
-                    yourFragment = YourFragment.newInstance(0);
+                    yourFragment = YourTipFragment.newInstance(0);
                     yourFragment.setTargetFragment(EnergySavingTabFragment.this, 0);
                     return yourFragment;
                 default:
