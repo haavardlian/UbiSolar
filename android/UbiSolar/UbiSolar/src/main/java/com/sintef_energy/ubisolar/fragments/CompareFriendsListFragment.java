@@ -52,10 +52,11 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
      */
     public static final String TAG = CompareFriendsListFragment.class.getName();
 
-    private ArrayList<User> friends;
     private static final String ARG_POSITION = "position";
-    private View view;
-    private FriendAdapter friendAdapter;
+
+    private ArrayList<User> mFriends;
+    private View mView;
+    private FriendAdapter mFriendAdapter;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -79,32 +80,56 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_social_friends, container, false);
-        friends = new ArrayList<>();
-        friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
-        final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
-        friendsList.setAdapter(friendAdapter);
-        //RequestManager.getInstance().doFriendRequest().getAllUsers(friendAdapter, this);
+        if(mView == null)
+            mView = inflater.inflate(R.layout.fragment_social_friends, container, false);
 
-        friendsList.setClickable(true);
-        friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        if(mFriends == null)
+            mFriends = new ArrayList<>();
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+        if(mFriendAdapter == null) {
+            mFriendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_friends_row, mFriends);
+            final ListView friendsList = (ListView) mView.findViewById(R.id.social_list);
+            friendsList.setAdapter(mFriendAdapter);
+            //RequestManager.getInstance().doFriendRequest().getAllUsers(mFriendAdapter, this);
 
-                Fragment fragment = CompareFriendsFragment.newInstance(position, friendAdapter.getItem(position));
-                addFragment(fragment, true, friends.get(position).getName());
+            friendsList.setClickable(true);
+            friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            }
-        });
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
 
-        populateFriendList(friendAdapter);
-        return view;
+                    Fragment fragment = CompareFriendsFragment.newInstance(position, mFriendAdapter.getItem(position));
+                    addFragment(fragment, true, mFriends.get(position).getName());
+
+                }
+            });
+        }
+
+        return mView;
+    }
+
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        populateFriendList(mFriendAdapter);
+
+        if (savedInstanceState != null) {
+            // Restore last state for checked position.
+        }
     }
 
     public void populateFriendList(final FriendAdapter friendAdapter) {
+        friendAdapter.clear();
+
         Request.Callback callback = new Request.Callback() {
             @Override
             public void onCompleted(Response response) {
@@ -130,7 +155,7 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
     }
 
     public FriendAdapter getAdapter() {
-        return friendAdapter;
+        return mFriendAdapter;
     }
 
     public void addFragment(Fragment fragment, boolean addToBackStack, String tag) {
@@ -145,14 +170,6 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
         ft.commit();
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-        }
-    }
 
     /*End lifecycle*/
     @Override
@@ -180,21 +197,21 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        friends.clear();
+        mFriends.clear();
 
         cursor.moveToFirst();
         if (cursor.getCount() != 0)
             do {
                 UserModel model = new UserModel(cursor);
-                friends.add(model);
+                mFriends.add(model);
             } while (cursor.moveToNext());
 
-        friendAdapter.notifyDataSetChanged();
+        mFriendAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        friends.clear();
+        mFriends.clear();
     }
 */
 
