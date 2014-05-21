@@ -22,7 +22,6 @@ package com.sintef_energy.ubisolar.adapter;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

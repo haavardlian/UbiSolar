@@ -457,6 +457,15 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     }
 
     @Override
+    public void onBackPressed() {
+        /* If there is fragments in the back stack, then pop first. Else behave like normal. */
+        if(getFragmentManager().getBackStackEntryCount() > 0)
+            getFragmentManager().popBackStack();
+        else
+            super.onBackPressed();
+    }
+
+    @Override
     public TotalEnergyPresenter getmTotalEnergyPresenter() {
         return mTotalEnergyPresenter;
     }
