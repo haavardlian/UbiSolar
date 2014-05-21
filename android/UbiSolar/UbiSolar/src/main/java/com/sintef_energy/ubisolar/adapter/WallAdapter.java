@@ -21,6 +21,7 @@ package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,19 +104,21 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
         if(!data.isEmpty()) {
             WallPost post = data.get(position);
             Date date = new Date(post.getTimestamp() * 1000);
-            //TODO: Swap Friend with actual friend name
             holder.message.setText(messages[post.getMessage()-1]);
             holder.date.setText(dateFormat.format(date));
             holder.time.setText(timeFormat.format(date));
-
-            RequestManager.getInstance().doFacebookRequest().getFacebookName(post.getUserId(), holder.name);
-
+            if(!holder.nameLoaded) {
+                RequestManager.getInstance().doFacebookRequest().getFacebookName(post.getUserId(),
+                        holder.name);
+                holder.nameLoaded = true;
+            }
         }
         return row;
     }
 
     static class WallItemHolder {
         TextView name;
+        boolean nameLoaded = false;
         TextView message;
         TextView date;
         TextView time;

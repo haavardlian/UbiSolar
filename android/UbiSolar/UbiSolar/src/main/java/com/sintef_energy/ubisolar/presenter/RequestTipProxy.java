@@ -163,7 +163,7 @@ public class RequestTipProxy {
                 fragment.getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(fragment.getActivity().getApplicationContext(), "Could not get data from server", Toast.LENGTH_LONG).show();
+                        Toast.makeText(fragment.getActivity().getApplicationContext(), fragment.getString(R.string.energy_saving_server_error), Toast.LENGTH_LONG).show();
                         fragment.getActivity().setProgressBarIndeterminateVisibility(false);
                         fragment.setContentShown(true);
                         fragment.setContentEmpty(true);
@@ -212,7 +212,7 @@ public class RequestTipProxy {
                         fragment.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(fragment.getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(fragment.getActivity(), fragment.getString(R.string.energy_saving_server_error), Toast.LENGTH_SHORT).show();
                             }
                         });
 
@@ -254,7 +254,7 @@ public class RequestTipProxy {
                         fragment.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(fragment.getActivity(), "An error occurred",
+                                Toast.makeText(fragment.getActivity(), fragment.getString(R.string.energy_saving_server_error),
                                         Toast.LENGTH_SHORT).show();
                             }
                         });

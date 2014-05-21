@@ -58,22 +58,21 @@ public class RequestFriendsProxy {
     RequestFriendsProxy(RequestQueue requestQueue) {
         this.mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+        mapper.setPropertyNamingStrategy(
+                PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
         this.requestQueue = requestQueue;
     }
 
-    public void getWallUpdates(final WallAdapter adapter, long userId, final Fragment fragment, final String friendIds) {
+    public void getWallUpdates(final WallAdapter adapter, long userId, final Fragment fragment,
+                               final String friendIds) {
         String url = Global.BASE_URL + "/user/" + userId + "/friends/wall?friends=" + friendIds;
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(final JSONArray jsonArray) {
                 adapter.clear();
-                Log.d("WALL", "Got response");
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
                         adapter.add(mapper.readValue(jsonArray.get(i).toString(), WallPost.class));
-
-                        Log.d("WALL", adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");
                         Log.e("REQUEST", e.toString());
@@ -96,7 +95,8 @@ public class RequestFriendsProxy {
                     @Override
                     public void run() {
                         Toast.makeText(fragment.getActivity().getApplicationContext(),
-                                fragment.getString(R.string.energy_saving_server_error), Toast.LENGTH_LONG).show();
+                                fragment.getString(R.string.energy_saving_server_error),
+                                Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -125,7 +125,8 @@ public class RequestFriendsProxy {
             return;
         }
 
-        JsonObjectRequest jsonRequest = new JsonObjectRequestTweaked(Request.Method.PUT, url, jsonObject,
+        JsonObjectRequest jsonRequest = new JsonObjectRequestTweaked(Request.Method.PUT, url,
+                jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {

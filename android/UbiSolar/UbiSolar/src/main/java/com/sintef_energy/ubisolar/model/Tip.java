@@ -82,6 +82,7 @@ public class Tip {
     }
 
     public String toString() {
-        return this.name + ": " + this.description + " | " + this.averageRating + ":" + this.numberOfRatings;
+        return this.name + ": " + this.description + " | " + this.averageRating + ":"
+                + this.numberOfRatings;
     }
 }

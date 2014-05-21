@@ -48,13 +48,15 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     private List<Tip> data = null;
     private SharedPreferences sharedPreferences;
 
-    public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data, FragmentManager fragmentManager) {
+    public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data,
+                       FragmentManager fragmentManager) {
         super(context, layoutResourceId);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.data = data;
         this.fragmentManager = fragmentManager;
-        this.sharedPreferences = context.getSharedPreferences("com.sintef_energy.ubisolar", Context.MODE_PRIVATE);
+        this.sharedPreferences = context.getSharedPreferences("com.sintef_energy.ubisolar",
+                Context.MODE_PRIVATE);
     }
 
     public Activity getActivity() {
