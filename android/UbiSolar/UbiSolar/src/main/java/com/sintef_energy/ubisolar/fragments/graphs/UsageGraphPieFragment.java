@@ -18,7 +18,6 @@
  */
 package com.sintef_energy.ubisolar.fragments.graphs;
 
-import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -28,7 +27,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
@@ -73,7 +71,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
     private View mRootView;
 
-    private int[] colors;
+    private int[] mColors;
     private CategorySeries mSeries = new CategorySeries("");
     private DefaultRenderer mRenderer = new DefaultRenderer();
     private GraphicalView mChartView;
@@ -81,13 +79,11 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     private Bundle mSavedState;
     private int mSelected = -1;
 
-    private Resolution resolution;
+    private Resolution mResolution;
     private Date mSelectedDate;
     private boolean[] mSelectedDialogItems;
 
-    private TextView nameView;
-    private TextView powerUsageView;
-    private TextView dateView;
+    private TextView mDateView;
 
     private LinkedHashMap<Long, DeviceModel> mDevices;
     private AbstractWheel mDateWheel;
@@ -108,40 +104,25 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        //Setup colors
-        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
-        this.colors = new int[colorStringArray.length];
-
-        for(int i = 0; i < colorStringArray.length; i++) {
-            this.colors[i] = Color.parseColor(colorStringArray[i]);
-        }
-
         super.onActivityCreated(savedInstanceState);
         setContentView(R.layout.fragment_usage_graph_pie);
         mRootView = getContentView();
+
+        //Setup colors
+        String colorStringArray[] = getResources().getStringArray(R.array.colorArray);
+        this.mColors = new int[colorStringArray.length];
+
+        for(int i = 0; i < colorStringArray.length; i++) {
+            this.mColors[i] = Color.parseColor(colorStringArray[i]);
+        }
         setContentShown(false);
-        setEmptyText(getResources().getString(R.string.usage_no_content));
-
         mChartView = null;
-
-//        nameView = (TextView) mRootView.findViewById(R.id.pieDetailsName);
-//        powerUsageView = (TextView) mRootView.findViewById(R.id.pieDetailsPowerUsage);
-        nameView = new TextView(getActivity());
-        powerUsageView = new TextView(getActivity());
-        dateView = (TextView) mRootView.findViewById(R.id.pieDateTitle);
 
         if(savedInstanceState != null && mSavedState == null)
             mSavedState = savedInstanceState.getBundle("mSavedState");
 
         if (mSavedState != null) {
-//            mDeviceUsageList = (ArrayList<DeviceUsageList>) mSavedState.getSerializable("mDeviceUsageList");
             mRenderer = (DefaultRenderer) mSavedState.getSerializable("mRenderer");
             mSeries = (CategorySeries) mSavedState.getSerializable("mSeries");
             mSelected = mSavedState.getInt("mSelected");
@@ -151,33 +132,11 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             setupPieGraph();
         }
 
-        mDateWheel = (AbstractWheel) mRootView.findViewById(R.id.usage_date_wheel);
-
-        mDateWheel.addChangingListener(new OnWheelChangedListener() {
-            @Override
-            public void onChanged(AbstractWheel wheel, int oldValue, int newValue) {
-                mActiveIndex = newValue;
-                mSelectedDate = mDates.get(mActiveIndex);
-                for(DeviceUsageList deviceUsageList : mDeviceUsageList){
-
-                    deviceUsageList.calculateTotalUsage(
-                            formatDate(mSelectedDate,
-                                    resolution.getCompareFormat()) ,
-                            resolution.getCompareFormat(),
-                            mActiveIndex);
-
-                    dateView.setText(formatDate(mSelectedDate, resolution.getTitleFormat()) );
-                    clearDevices();
-                    populatePieChart();
-                }
-            }
-        });
-
-        resolution = new Resolution(DEFAULT_RESOLUTION);
+        mResolution = new Resolution(DEFAULT_RESOLUTION);
 
         setupSegments();
+        setupDateWheel();
         createPieGraph();
-        updateDetails();
     }
 
     /*End lifecycle*/
@@ -200,18 +159,15 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     }
 
     @Override
-    public void onDestroy(){
-        super.onDestroy();
-   }
-
-    @Override
     public void onDestroyView(){
         super.onDestroy();
 
         mSavedState = saveState();
-        Log.v(TAG, " onDestroyView()");
     }
 
+    /**
+     * Creates the segments for selecting the data resolution
+     */
     private void setupSegments(){
         SegmentedGroup segment = (SegmentedGroup) mRootView.findViewById(R.id.usage_segment);
         segment.setTintColor(Color.DKGRAY);
@@ -227,9 +183,38 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         });
     }
 
+    /**
+     * Setup the datewheel for date selection
+     */
+    private void setupDateWheel(){
+        mDateView = (TextView) mRootView.findViewById(R.id.pieDateTitle);
+        mDateWheel = (AbstractWheel) mRootView.findViewById(R.id.usage_date_wheel);
+
+        mDateWheel.addChangingListener(new OnWheelChangedListener() {
+            @Override
+            public void onChanged(AbstractWheel wheel, int oldValue, int newValue) {
+                mActiveIndex = newValue;
+                mSelectedDate = mDates.get(mActiveIndex);
+                for(DeviceUsageList deviceUsageList : mDeviceUsageList){
+
+                    deviceUsageList.calculateTotalUsage(
+                            formatDate(mSelectedDate,
+                                    mResolution.getCompareFormat()) ,
+                            mResolution.getCompareFormat(),
+                            mActiveIndex);
+
+                    mDateView.setText(formatDate(mSelectedDate, mResolution.getTitleFormat()));
+                    clearDevices();
+                    populatePieChart();
+                }
+            }
+        });
+    }
+
+    /**
+     * Configures the pie graph
+     */
     private void setupPieGraph(){
-//        mRenderer.setChartTitle(getResources().getString(R.string.usage_pie_graph_title));
-//        mRenderer.setChartTitleTextSize(40);
         mRenderer.setLabelsTextSize(15);
         mRenderer.setLegendTextSize(15);
 
@@ -246,6 +231,9 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         mRenderer.setSelectableBuffer(10);
     }
 
+    /**
+     * Creates the pie graph
+     */
     private void createPieGraph(){
         if (mChartView == null) {
             LinearLayout layout = (LinearLayout) mRootView.findViewById(R.id.pieChartView);
@@ -261,12 +249,10 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
                             if(mRenderer.getSeriesRendererAt(i).isHighlighted() && i == seriesSelection.getPointIndex()){
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(false);
                                 mSelected = -1;
-                                clearDetails();
                             }
                             else if(i == seriesSelection.getPointIndex()){
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(true);
                                 mSelected = seriesSelection.getPointIndex();
-                                updateDetails();
                             }
                             else{
                                 mRenderer.getSeriesRendererAt(i).setHighlighted(false);
@@ -283,8 +269,10 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         }
     }
 
+    /**
+     * Populates the pie chart with data from the device usage list
+     */
     private void populatePieChart(){
-        clearDetails();
         double totalPowerUsage = 0;
 
         for(DeviceUsageList deviceUsageList : mDeviceUsageList)
@@ -297,22 +285,19 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             mSeries.add(deviceUsageList.getDevice().getName() + " - " + percentage + "%",
                     deviceUsageList.getTotalUsage());
             SimpleSeriesRenderer renderer = new SimpleSeriesRenderer();
-            renderer.setColor(colors[(mSeries.getItemCount() - 1) % colors.length]);
+            renderer.setColor(mColors[(mSeries.getItemCount() - 1) % mColors.length]);
             mRenderer.addSeriesRenderer(renderer);
         }
         mChartView.repaint();
     }
 
     /**
-     * Clears devices automatically before adding more data.
+     * Populates the datasets and updates the datewheel and labels
      * @param usageList
      */
     public void addDeviceUsage(ArrayList<DeviceUsageList> usageList){
-//        clearDevices();
 
         mDeviceUsageList = usageList;
-//        setSelectedDate();
-
         mDates = new ArrayList<>();
         ArrayList<String> wheelItems = new ArrayList<>();
 
@@ -325,7 +310,7 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         Collections.sort(mDates);
 
         for(Date date : mDates){
-            String item = formatDate(date, resolution.getResolutionFormat());
+            String item = formatDate(date, mResolution.getResolutionFormat());
             wheelItems.add(item);
         }
 
@@ -341,11 +326,11 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         for(DeviceUsageList deviceUsageList : mDeviceUsageList){
             deviceUsageList.calculateTotalUsage(
                     formatDate(mDates.get(mActiveIndex),
-                            resolution.getCompareFormat()) ,
-                    resolution.getCompareFormat(),
+                            mResolution.getCompareFormat()) ,
+                    mResolution.getCompareFormat(),
                     mActiveIndex);
 
-            dateView.setText(formatDate(mDates.get(mActiveIndex), resolution.getTitleFormat()) );
+            mDateView.setText(formatDate(mDates.get(mActiveIndex), mResolution.getTitleFormat()));
             clearDevices();
             populatePieChart();
         }
@@ -354,38 +339,28 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
     }
 
     /**
-     * Clears current devices.
+     * Clears device data
      */
-    public void clearDevices() {
+    private void clearDevices() {
         mRenderer.removeAllRenderers();
         mSeries.clear();
         mChartView.repaint();
     }
 
-    private void updateDetails(){
-        if(mSelected > -1 && mSelected < mDeviceUsageList.size()) {
-
-            DeviceUsageList usageList = mDeviceUsageList.get(mSelected);
-
-            nameView.setText(usageList.getDevice().getName());
-            powerUsageView.setText(usageList.getTotalUsage() + " kWh (" + usageList.getPercentage() + "%)");
-        }
+    private void setResolution(int mode){
+      mResolution.setFormat(mode);
     }
 
-    private void clearDetails(){
-        nameView.setText("");
-        powerUsageView.setText("");
-    }
-
-    public void setResolution(int mode){
-      resolution.setFormat(mode);
-    }
-
-    public int getResolution()
+    private int getResolution()
     {
-        return resolution.getMode();
+        return mResolution.getMode();
     }
 
+    /**
+     * By default all but the first device is selected
+     * @return boolean[]
+     */
+    @Override
     public boolean[] getSelectedDialogItems() {
         if(mSelectedDialogItems == null) {
             mSelectedDialogItems = new boolean[mDevices.size()];
@@ -397,6 +372,10 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         return mSelectedDialogItems;
     }
 
+    /*
+    Sets the selected devices
+     */
+    @Override
     public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
         this.mSelectedDialogItems = mSelectedDialogItems;
     }
@@ -409,24 +388,37 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             return null;
     }
 
-    public int getActiveIndex(){
+    /**
+     * Returns the selected wheel item
+     * @return int
+     */
+    private int getActiveIndex(){
         if(mActiveIndex < 0)
             return mDates.size() -1;
 
-        String date = formatDate(mSelectedDate, resolution.getCompareFormat());
+        String date = formatDate(mSelectedDate, mResolution.getCompareFormat());
 
         for(int i = mDates.size() -1; i >= 0; i--)
-            if(formatDate(mDates.get(i), resolution.getCompareFormat()).equals(date))
+            if(formatDate(mDates.get(i), mResolution.getCompareFormat()).equals(date))
                 return i;
 
         return mDates.size() -1;
     }
 
+    /**
+     * Hides content while loading
+     * @param state
+     */
     @Override
     public void setDataLoading(boolean state) {
         setContentShown(state);
     }
 
+    /**
+     * Creates an image of the graph
+     * @return Bitmap
+     */
+    @Override
     public Bitmap createImage(){
         Bitmap bitmap = Bitmap.createBitmap(mChartView.getWidth(), mChartView.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -435,7 +427,35 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         return bitmap;
     }
 
+    @Override
+    public void setDevices(LinkedHashMap<Long, DeviceModel> devices) {
+        mDevices = devices;
+    }
 
+    /**
+     * Queries the database for data based on the selected devices and the resolution
+     */
+    @Override
+    public void pullData(){
+
+        if(mDevices == null)
+            return;
+
+        //If no items are selected, clear te graph
+        for(boolean selected : getSelectedDialogItems())
+            if(selected) {
+                getLoaderManager().restartLoader(mResolution.getMode(), null, this);
+                return;
+            }
+        clearDevices();
+    }
+
+    /**
+     * Creates a query to the database
+     * @param mode Int deciding what query to make
+     * @param bundle
+     * @return Loader<Cursor>
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int mode, Bundle bundle) {
         Uri.Builder builder;
@@ -497,6 +517,10 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         return null;
     }
 
+    /**
+     * Creates a string for the selected devices
+     * @return String
+     */
     private String sqlWhereDevices(){
         String where = "";
 
@@ -517,15 +541,13 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
         where += queries.get(i);
 
 
-        //To get data points between two dates
-        String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
-                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
-//
-//        where += " AND " + betweenTime + " BETWEEN ? AND ? ";
-
         return where;
     }
 
+    /**
+     * Returns the IDs of the selected devices
+     * @return String[]
+     */
     private String[] getSelectedDevicesIDs() {
         boolean[] selectedItems = getSelectedDialogItems();
         ArrayList<String> queryValues = new ArrayList<>();
@@ -541,23 +563,14 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
             }
         }
 
-//        try {
-//            Date date1 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 11:00");
-//            Timestamp sqlDate1 = new java.sql.Timestamp(date1.getTime());
-//
-//            Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse("2014-05-02 14:00");
-//            Timestamp sqlDate2 = new java.sql.Timestamp(date2.getTime());
-//
-//            queryValues.add(sqlDate1.toString());
-//            queryValues.add(sqlDate2.toString());
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
-
         return queryValues.toArray(new String[queryValues.size()]);
     }
 
+    /**
+     * Create models with data from the database and populates the graph
+     * @param cursorLoader
+     * @param cursor
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor){
 
@@ -591,24 +604,4 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {}
-
-
-    @Override
-    public void setDevices(LinkedHashMap<Long, DeviceModel> devices) {
-        mDevices = devices;
-    }
-
-    @Override
-    public void pullData(){
-
-        if(mDevices == null)
-            return;
-
-        //If no items are selected, clear te graph
-        for(boolean selected : getSelectedDialogItems())
-            if(selected) {
-                getLoaderManager().restartLoader(resolution.getMode(), null, this);
-                return;
-            }
-    }
 }
