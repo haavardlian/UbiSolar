@@ -46,17 +46,14 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     private FragmentManager fragmentManager;
     private int layoutResourceId;
     private List<Tip> data = null;
-    private SharedPreferences sharedPreferences;
 
-    public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data, FragmentManager fragmentManager) {
+    public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data,
+                       FragmentManager fragmentManager) {
         super(context, layoutResourceId);
         this.context = context;
         this.layoutResourceId = layoutResourceId;
         this.data = data;
         this.fragmentManager = fragmentManager;
-
-        //TODO: Hva er dette godt for?
-        this.sharedPreferences = context.getSharedPreferences("com.sintef_energy.ubisolar", Context.MODE_PRIVATE);
     }
 
     public Activity getActivity() {
@@ -74,7 +71,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     public void remove(Tip object) {
         if(data.contains(object)) {
             data.remove(object);
-            sharedPreferences.edit().putInt("Tip"+object.getId(), 0).apply();
             notifyDataSetChanged();
         }
     }

@@ -135,7 +135,6 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             /* STEP 3: Get new data from local db */
             localDeviceModels = EnergyDataSource.getAllSyncDevices(getContext().getContentResolver(), lastTimestamp, uid);
             localUsageModels = EnergyDataSource.getAllSyncUsage(getContext().getContentResolver(), lastTimestamp, uid);
-            Log.v(TAG, "YOLOSWAG " + localUsageModels);
 
             /* STEP 4: DEVICE get backend */
             Log.v(TAG, "Time is: " + newTimestamp + ". Syncing for date: " + lastTimestamp + ". For UID: " + uid);

@@ -89,7 +89,8 @@ public class YourDialog extends DialogFragment {
             builder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
-                RequestManager.getInstance().doFacebookRequest().postMessage(getTargetFragment(), tip.getDescription(), tip.getName());
+                RequestManager.getInstance().doFacebookRequest().postMessage(getTargetFragment(),
+                        tip.getDescription(), tip.getName());
                 }
             });
         }
