@@ -248,11 +248,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
                     @Override
                     public void onCompleted(GraphUser user, Response response) {
                         if (response.getConnection() != null || response.getIsFromCache()) {
-
                             data.putString(Global.DATA_FB_UID, user.getId());
 
                             mLoginCallback.loginFinished(data);
-
                         } else {
                             Log.e(TAG, "No facebook data return on newMeRequest.");
                             mLoginCallback.loginFinished(null);
@@ -262,6 +260,11 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
                 }).executeAsync();
             }
             // Login failed
+            else if(session.getState() == SessionState.CLOSED_LOGIN_FAILED){
+                Log.v(TAG, "Facebook login failed, or window closed. Returning to app.");
+                //Go back to app
+                mLoginCallback.loginFinished(null);
+            }
             else {
                 Log.v(TAG, "Facebook state lost in space.");
             }
