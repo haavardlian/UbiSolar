@@ -40,40 +40,42 @@ import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Utils;
 
-/**
- * Created by pialindkjolen on 29.04.14.
- */
 public class EditDeviceDialog extends DialogFragment {
     public static final String TAG = EditDeviceDialog.class.getName();
 
-    private DevicePresenter devicePresenter;
-    private View view;
-    private TextView description, name;
-    private Spinner categorySpinner;
-    private DeviceModel device;
-    private ArrayAdapter<String> categoryAdapter;
-    private String title;
-    private boolean newDevice;
+    private DevicePresenter mDevicePresenter;
+    private DeviceModel mDevice;
+    private String mDialogTitle;
+    private boolean mNewDevice;
 
+    /**
+     * Constructor for editing a device
+     * @param device The device to edit
+     * @param title The Dialog title
+     */
     public EditDeviceDialog(DeviceModel device, String title){
-        this.device = device;
-        this.title = title;
-        newDevice = false;
+        this.mDevice = device;
+        this.mDialogTitle = title;
+        mNewDevice = false;
     }
 
+    /**
+     * Constructor for adding a device
+     * @param title The dialog title
+     */
     public EditDeviceDialog(String title){
-        this.title = title;
-        this.device = new DeviceModel();
-        device.setUserId(Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()));
-        device.setId(System.currentTimeMillis());
-        newDevice = true;
+        this.mDialogTitle = title;
+        this.mDevice = new DeviceModel();
+        mDevice.setUserId(Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()));
+        mDevice.setId(System.currentTimeMillis());
+        mNewDevice = true;
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
+            mDevicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement " + TotalEnergyPresenter.class.getName());
         }
@@ -83,57 +85,54 @@ public class EditDeviceDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View deviceDialog = inflater.inflate(R.layout.dialog_edit_device, null);
 
-        view = inflater.inflate(R.layout.dialog_edit_device, null);
-
-        /*Set up views*/
-        name = (EditText) view.findViewById(R.id.device_edit_name);
-        description = (EditText) view.findViewById(R.id.device_edit_description);
-        categorySpinner = (Spinner) view.findViewById(R.id.device_edit_category);
+        //Set up views
+        final TextView name = (EditText) deviceDialog.findViewById(R.id.device_edit_name);
+        final TextView description = (EditText) deviceDialog.findViewById(R.id.device_edit_description);
+        final Spinner categorySpinner = (Spinner) deviceDialog.findViewById(R.id.device_edit_category);
 
 
-        /*Fill spinner with categories*/
-        categoryAdapter = new ArrayAdapter<>(
+        //Fill spinner with categories
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
                 getActivity(),
                 R.layout.spinner_layout,
                 R.id.spinnerTarget,
                 getResources().getStringArray(R.array.device_categories)
         );
         categoryAdapter.setDropDownViewResource(R.layout.spinner_layout);
-
         categorySpinner.setAdapter(categoryAdapter);
 
         //Get the existing data for the model
-        if(device != null) {
-            name.setText(device.getName());
-            description.setText(device.getDescription());
-            categorySpinner.setSelection(device.getCategory());
+        if(mDevice != null) {
+            name.setText(mDevice.getName());
+            description.setText(mDevice.getDescription());
+            categorySpinner.setSelection(mDevice.getCategory());
         }
 
-        builder.setView(view)
+        builder.setView(deviceDialog)
                 // Add action buttons
                 .setPositiveButton(R.string.device_edit_save, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         /*Edit the deviceModel*/
-                        device.setDescription(description.getText().toString());
-                        device.setName(name.getText().toString());
-                        device.setCategory(categorySpinner.getSelectedItemPosition());
+                        mDevice.setDescription(description.getText().toString());
+                        mDevice.setName(name.getText().toString());
+                        mDevice.setCategory(categorySpinner.getSelectedItemPosition());
 
-                        if(newDevice) {
-                            devicePresenter.addDevice(device, getActivity().getContentResolver());
+                        if(mNewDevice) {
+                            mDevicePresenter.addDevice(mDevice, getActivity().getContentResolver());
                             Utils.makeShortToast(getActivity(),
-                                    device.getName() + " " + getString(R.string.device_toast_added));
+                                    mDevice.getName() + " " + getString(R.string.device_toast_added));
                         }
                         else {
-                            devicePresenter.editDevice(getActivity().getContentResolver(), device);
+                            mDevicePresenter.editDevice(getActivity().getContentResolver(), mDevice);
                             Utils.makeShortToast(getActivity(),
-                                    device.getName() + " " + getString(R.string.device_toast_edited));
+                                    mDevice.getName() + " " + getString(R.string.device_toast_edited));
                         }
                     }
                 })
@@ -142,7 +141,7 @@ public class EditDeviceDialog extends DialogFragment {
                         EditDeviceDialog.this.getDialog().cancel();
                     }
                 })
-                .setTitle(title);
+                .setTitle(mDialogTitle);
 
         return builder.create();
     }

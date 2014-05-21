@@ -56,7 +56,6 @@
         <item>@drawable/social</item>
         <item>@drawable/profile</item>
         <item>@drawable/heat</item>
- <!-- TODO: Icons for log out -->
     </string-array>
 
     <!-- AddTipDialog -->
@@ -81,6 +80,8 @@
     <string name="add_usage_no_device">Feil: Ingen enhet valgt</string>
 
     <!-- Device -->
+    <string name="device_new">Ny enhet</string>
+
     <string name="device_add_title">Legg til enhet</string>
     <string name="device_add_button">Legg til</string>
 
@@ -111,16 +112,6 @@
     <item>Annet</item>
     <item>Produksjon</item>
     </string-array>
-
-    <string-array name="device_icons">
-        <item>@drawable/appliances</item>
-        <item>@drawable/heat</item>
-        <item>@drawable/home_entertainment</item>
-        <item>@drawable/default_device</item>
-        <item>@drawable/default_device</item>
-        <item>@drawable/power_production</item>
-    </string-array>
-
 
     <!-- Fragment usage -->
     <string name="usage_select_devices">Velg enheter</string>
@@ -168,16 +159,8 @@
     <string name="friends_header_title">Venner</string>
 
     <!-- Fragment home -->
-    <string name="home_area_placeholder">3% bedre</string>
-    <string name="home_residents_placeholder">7% dårligere</string>
-    <string name="home_size_placeholder">100% dårligere </string>
-    <string name="home_energy_placeholder">1% dårligere</string>
-    <string name="home_improved">Du har forbedret deg med 5%!</string>
-
-    <string name="home_area"> enn folk i ditt område</string>
-    <string name="home_residents">enn folk med samme antall beboere</string>
-    <string name="home_size">enn samme areal</string>
-    <string name="home_energy">enn samme energiklasse</string>
+    <string name="home_current_usage">Forbruk</string>
+    <string name="home_news_feed">Oppdatering</string>
 
     <!-- Comparison settings-->
     <string name="comparison_setting">Sammenlikningsinnstillinger</string>
