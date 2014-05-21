@@ -81,6 +81,8 @@
     <string name="add_usage_no_device">Feil: Ingen enhet valgt</string>
 
     <!-- Device -->
+    <string name="device_new">Ny enhet</string>
+
     <string name="device_add_title">Legg til enhet</string>
     <string name="device_add_button">Legg til</string>
 

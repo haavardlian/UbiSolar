@@ -90,6 +90,8 @@
     <string name="add_usage_no_device">Error: No device selected</string>
 
     <!-- Device -->
+    <string name="device_new">New device</string>
+
     <string name="device_add_title">Add device</string>
     <string name="device_add_button">Add</string>
 
