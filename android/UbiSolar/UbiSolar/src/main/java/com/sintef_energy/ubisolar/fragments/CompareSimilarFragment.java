@@ -88,7 +88,7 @@ public class CompareSimilarFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
 
         profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
-        profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
+        //profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
         profilePicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;
