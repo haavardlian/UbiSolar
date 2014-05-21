@@ -248,9 +248,7 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     private XYMultipleSeriesRenderer setupLineGraph() {
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
 
-        renderer.setChartTitle(getResources().getString(R.string.usage_line_graph_title));
         renderer.setAxisTitleTextSize(25);
-        renderer.setChartTitleTextSize(40);
         renderer.setLabelsTextSize(15);
         renderer.setLegendTextSize(15);
         renderer.setPointSize(5);

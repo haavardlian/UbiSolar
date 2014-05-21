@@ -19,27 +19,19 @@
 
 package com.sintef_energy.ubisolar.dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.sintef_energy.ubisolar.IView.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
-import com.sintef_energy.ubisolar.presenter.DevicePresenter;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
 import java.util.ArrayList;
 
-/**
- * Created by perok on 19.03.14.
- */
 public class SelectDevicesDialog extends DialogFragment {
-    private DevicePresenter devicePresenter;
 
     private ArrayList<DeviceModel>  mDevices;
     private boolean[]               mSelectedItems;
@@ -61,17 +53,6 @@ public class SelectDevicesDialog extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        try {
-            devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement " + TotalEnergyPresenter.class.getName());
-        }
-    }
-
-    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
         //Get the data
         mDevices = this.getArguments().getParcelableArrayList(ARG_DEVICES);
@@ -83,9 +64,10 @@ public class SelectDevicesDialog extends DialogFragment {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setIcon(R.drawable.devices);
 
         builder.setTitle(R.string.usage_select_devices);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.device_ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ArrayList<Long> selectedDeviceIDs = new ArrayList<>();
 
@@ -106,7 +88,7 @@ public class SelectDevicesDialog extends DialogFragment {
         for(DeviceModel device : mDevices)
             deviceNames.add(device.getName());
 
-
+        //Load the options
         builder.setMultiChoiceItems(deviceNames.toArray(new String[deviceNames.size()]), mSelectedItems,
             new DialogInterface.OnMultiChoiceClickListener() {
                 @Override
