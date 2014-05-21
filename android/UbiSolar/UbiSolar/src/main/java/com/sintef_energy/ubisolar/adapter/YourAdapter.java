@@ -22,7 +22,6 @@ package com.sintef_energy.ubisolar.adapter;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.dialogs.YourDialog;
 import com.sintef_energy.ubisolar.model.Tip;
@@ -46,17 +46,16 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     private FragmentManager fragmentManager;
     private int layoutResourceId;
     private List<Tip> data = null;
-    private SharedPreferences sharedPreferences;
+    private ProgressFragment fragment;
 
-    public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data,
+    public YourAdapter(ProgressFragment fragment, int layoutResourceId, ArrayList<Tip> data,
                        FragmentManager fragmentManager) {
-        super(context, layoutResourceId);
-        this.context = context;
+        super(fragment.getActivity(), layoutResourceId);
+        this.context = fragment.getActivity();
         this.layoutResourceId = layoutResourceId;
         this.data = data;
         this.fragmentManager = fragmentManager;
-        this.sharedPreferences = context.getSharedPreferences("com.sintef_energy.ubisolar",
-                Context.MODE_PRIVATE);
+        this.fragment = fragment;
     }
 
     public Activity getActivity() {
@@ -74,7 +73,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     public void remove(Tip object) {
         if(data.contains(object)) {
             data.remove(object);
-            sharedPreferences.edit().putInt("Tip"+object.getId(), 0).apply();
             notifyDataSetChanged();
         }
     }
@@ -91,6 +89,13 @@ public class YourAdapter extends ArrayAdapter<Tip> {
 
     @Override
     public int getCount() {
+        int size = data.size();
+
+        if(size > 0)
+            fragment.setContentEmpty(false);
+        else
+            fragment.setContentEmpty(true);
+
         return data.size();
     }
 

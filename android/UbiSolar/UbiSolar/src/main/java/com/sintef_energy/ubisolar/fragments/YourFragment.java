@@ -63,12 +63,14 @@ public class YourFragment extends ProgressFragment {
 
         View rootView =  getContentView();
         ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
-        yourAdapter = new YourAdapter(getActivity(), R.layout.fragment_your_row,
+        yourAdapter = new YourAdapter(this, R.layout.fragment_your_row,
                 new ArrayList<Tip>(), getFragmentManager());
         yourList.setAdapter(yourAdapter);
 
         RequestManager.getInstance().doTipRequest().getSavedTips(yourAdapter, this);
     }
+
+    //TODO Bug: Ha onResume eller count() der man setter setContentShown om innhold har dukket opp.
 
     public YourAdapter getAdapter() { return yourAdapter; }
 }

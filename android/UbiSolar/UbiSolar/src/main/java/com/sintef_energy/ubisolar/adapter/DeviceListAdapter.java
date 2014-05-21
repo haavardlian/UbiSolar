@@ -19,8 +19,6 @@
 
 package com.sintef_energy.ubisolar.adapter;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -30,20 +28,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-
 import android.widget.ImageView;
-
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 
 public class DeviceListAdapter extends BaseExpandableListAdapter{
+    public static final String TAG = DeviceListAdapter.class.getName();
 
     private Activity context;
     private List<DeviceModel> devices;
     private String[] categories;
-    public static final String TAG = DeviceListAdapter.class.getName();
 
     private TypedArray icons;
 
@@ -56,16 +52,15 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
 
     @Override
     public DeviceModel getChild(int groupPosition, int childPosition) {
-        ArrayList<DeviceModel> children = new ArrayList<>();
+        int count = 0;
         for (DeviceModel deviceModel : devices){
-            if (deviceModel.getCategory() == groupPosition)
-                children.add(deviceModel);
+            if (deviceModel.getCategory() == groupPosition) {
+                if(count++ >= childPosition) // Found the child
+                    return deviceModel;
+            }
         }
-        return children.get(childPosition);
-    }
 
-    public String getDescription(int groupPosition) {
-        return devices.get(groupPosition).getDescription();
+        return null;
     }
 
     @Override
@@ -84,7 +79,7 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
         return childPosition;
     }
 
-    public View getChildView(final int groupPosition, final int childPosition,
+    public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
         final DeviceModel device = getChild(groupPosition, childPosition);
 
@@ -96,7 +91,6 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
 
         TextView nameView = (TextView) convertView.findViewById(R.id.device_name);
         nameView.setText(device.getName());
-        //TextView idView = (TextView) convertView.findViewById(R.id.deviceID);
 
         //Only show description if the device actually got a description
         if (device.getDescription().length() > 1){
@@ -104,11 +98,8 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
             descriptionView.setText(device.getDescription());
         }
 
-        //idView.setText("ID: " + device.getId());
         return convertView;
     }
-
-
 
     public String getGroup(int groupPosition) {
         return categories[groupPosition];
@@ -121,13 +112,12 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
     }
 
     public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
-
         int childrenCount = getChildrenCount(groupPosition);
 
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.device_list_item, null);
+            convertView = layoutInflater.inflate(R.layout.device_list_item, parent, false);
         }
 
         TextView category = (TextView) convertView.findViewById(R.id.device_category);

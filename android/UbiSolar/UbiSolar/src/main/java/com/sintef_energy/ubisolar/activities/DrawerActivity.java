@@ -61,12 +61,10 @@ import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
-
 import com.sintef_energy.ubisolar.fragments.CompareFragment;
 
 import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
-import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
@@ -377,11 +375,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     public void addFragment(Fragment fragment, boolean animate, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
 
-        /*
-        for(int i = 0; i < manager.getBackStackEntryCount(); ++i) {
-            manager.popBackStack();
-        }*/
-
         FragmentTransaction ft = manager.beginTransaction();
         if (animate) {
             ft.setCustomAnimations(
@@ -391,7 +384,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     android.R.anim.fade_in,
                     android.R.anim.fade_out);
         }
-
 
         if (addToBackStack) {
             ft.addToBackStack(tag);
@@ -465,6 +457,15 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     }
 
     @Override
+    public void onBackPressed() {
+        /* If there is fragments in the back stack, then pop first. Else behave like normal. */
+        if(getFragmentManager().getBackStackEntryCount() > 0)
+            getFragmentManager().popBackStack();
+        else
+            super.onBackPressed();
+    }
+
+    @Override
     public TotalEnergyPresenter getmTotalEnergyPresenter() {
         return mTotalEnergyPresenter;
     }
@@ -531,7 +532,14 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
                 migrateFbTokenToSession(token, new Date(Long.valueOf(exprDate)));
             }
+        } else if(session.isOpened()) {
+            session.addCallback(mFacebookSessionStatusCallback);
+            updatePreferenceWithFacebookData(session);
+            changeNavdrawerSessionsView(true);
+            Log.v(TAG, "startFacebookLogin: got active session.");
         }
+        else
+            Log.v(TAG, "startFacebookLogin: No session.");
     }
 
     /**
@@ -611,7 +619,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         /* UPDATE VIEW */
         changeNavdrawerSessionsView(false);
-        mPrefManager.clearFacebookSessionData();
         Utils.makeLongToast(getApplicationContext(), getResources().getString(R.string.fb_logout));
 
         /* REMOVE ACCOUNT */
@@ -627,21 +634,14 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
 
         /* REMOVE PREFERENCES*/
-        PreferencesManagerSync preferencesManagerSync;
-        try {
-            preferencesManagerSync = PreferencesManagerSync.getInstance();
-        }catch(IllegalStateException e){
-            preferencesManagerSync = PreferencesManagerSync.initializeInstance(getApplicationContext());
-        }
-
-        preferencesManagerSync.clearAll();
+        PreferencesManager.getInstance().clearSessionData();
 
         /* REMOVE DATA*/
-        getContentResolver().delete(EnergyContract.Devices.CONTENT_URI, null, null);
-        getContentResolver().delete(EnergyContract.Energy.CONTENT_URI, null, null);
+        getContentResolver().delete(EnergyContract.Devices.CONTENT_URI.buildUpon().appendPath(EnergyContract.DELETE).build(), null, null);
+        getContentResolver().delete(EnergyContract.Energy.CONTENT_URI.buildUpon().appendPath(EnergyContract.DELETE).build(), null, null);
    }
 
-  private static Account[] getAccounts(Context context, String ACC_TYPE){
+    private static Account[] getAccounts(Context context, String ACC_TYPE){
         AccountManager accountManager =
             (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
 
@@ -668,27 +668,14 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         return account;
     }
 
-    private class FacebookSessionStatusCallback implements Session.StatusCallback {
-        private final String TAG = FacebookSessionStatusCallback.class.getName();
 
-        // callback when session changes state
-        @Override
-        public void call(Session session, SessionState state, Exception exception) {
-            //User is logged in
-            if (session.isOpened()) {
-                Log.v(DrawerActivity.TAG, "Facebook logged in.");
-
-                Toast.makeText(getBaseContext(), getResources().getString(R.string.fb_login), Toast.LENGTH_LONG).show();
-                changeNavdrawerSessionsView(true);
-
-                /* How to do the callback?
-                 * isNetworkOn: Only request the user data when user logs in
-                 * Handle the response or user object: Can get cached data
-                 * -> Is it needed? Data should only be fetched, when the possibility for new data is there.
-                 *  Don't need to store cached data.
-                 *
-                 */
-                if(Utils.isNetworkOn(getApplicationContext()))
+    /**
+     * Performs a newMeRequest and updates the PreferenceManager with the new data.
+     *
+     * @param session Session to use.
+     */
+    private void updatePreferenceWithFacebookData(Session session){
+        if(Utils.isNetworkOn(getApplicationContext()))
                     Request.newMeRequest(session, new Request.GraphUserCallback() {
                         @Override
                         public void onCompleted(GraphUser user, Response response) {
@@ -722,6 +709,30 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                             }
                         }
                     }).executeAsync();
+    }
+
+    private class FacebookSessionStatusCallback implements Session.StatusCallback {
+        private final String TAG = FacebookSessionStatusCallback.class.getName();
+
+        // callback when session changes state
+        @Override
+        public void call(Session session, SessionState state, Exception exception) {
+            //User is logged in
+            if (session.isOpened()) {
+                Log.v(DrawerActivity.TAG, "Facebook logged in.");
+                Log.v(DrawerActivity.TAG, "Current permissions: " + session.getPermissions());
+
+                Toast.makeText(getBaseContext(), getResources().getString(R.string.fb_login), Toast.LENGTH_LONG).show();
+                changeNavdrawerSessionsView(true);
+
+                /* How to do the callback?
+                 * isNetworkOn: Only request the user data when user logs in
+                 * Handle the response or user object: Can get cached data
+                 * -> Is it needed? Data should only be fetched, when the possibility for new data is there.
+                 *  Don't need to store cached data.
+                 */
+                updatePreferenceWithFacebookData(session);
+
            }
             // User is logged out
             else if (session.isClosed()) {

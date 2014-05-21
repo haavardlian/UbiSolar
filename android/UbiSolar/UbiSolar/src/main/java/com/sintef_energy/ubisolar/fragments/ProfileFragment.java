@@ -93,7 +93,6 @@ public class ProfileFragment extends DefaultTabFragment  {
             case R.id.menu_add_residence:
                 AddResidenceDialog addResidenceDialog = new AddResidenceDialog();
                 addResidenceDialog.show(getFragmentManager(), "addResidence");
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

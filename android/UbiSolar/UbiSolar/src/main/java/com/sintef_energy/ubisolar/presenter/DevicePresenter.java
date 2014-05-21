@@ -23,9 +23,8 @@ import android.content.ContentResolver;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.IView.IDeviceView;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
-import java.util.ArrayList;
 
 /**
  * Created by pialindkjolen on 05.03.14.
@@ -35,28 +34,30 @@ public class DevicePresenter {
     private static final String TAG = DevicePresenter.class.getName();
 
     /* The listeners */
-    private ArrayList<IDeviceView> dmListeners;
+    //private ArrayList<IDeviceView> dmListeners;
 
-    public DevicePresenter(){}
-
-    /* Listeners */
+    /* Listeners
     public void registerListener(IDeviceView view){
         this.dmListeners.add(view);
     }
 
     public void unregisterListener(IDeviceView view){
         this.dmListeners.remove(view);
-    }
+    }*/
 
     public void addDevice(DeviceModel device, ContentResolver contentResolver){
+        String uid = PreferencesManager.getInstance().getKeyFacebookUid();
+        device.setUserId(Long.valueOf(uid));
         device.updateLastUpdate();
         EnergyDataSource.insertDevice(contentResolver, device);
         //this.dmModels.add(device);
     }
 
-    public void editDevice(ContentResolver contentResolver, DeviceModel dm) {
-        //TODO: Add support for actually checking that the update went fine.
+    public boolean editDevice(ContentResolver contentResolver, DeviceModel dm) {
+        //TODO: Add support for actually handling if the update fails.
+        String uid = PreferencesManager.getInstance().getKeyFacebookUid();
+        dm.setUserId(Long.valueOf(uid));
         dm.updateLastUpdate();
-        EnergyDataSource.editDevice(contentResolver, dm);
+        return EnergyDataSource.editDevice(contentResolver, dm) == 1;
     }
 }

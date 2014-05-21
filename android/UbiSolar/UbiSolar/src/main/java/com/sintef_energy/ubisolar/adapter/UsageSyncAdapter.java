@@ -33,7 +33,7 @@ import android.util.Log;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.utils.Global;
 
@@ -97,7 +97,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             /* STEP 1: SETUP FILES */
             Log.v(TAG, "Starting sync operation");
 
-            PreferencesManagerSync prefManagerSyn;
+            PreferencesManager prefManagerSyn;
             RequestManager requestManager;
             ArrayList<DeviceModel> serverDeviceModels;
             ArrayList<DeviceModel> serverDeviceModelsError;
@@ -107,9 +107,9 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             ArrayList<EnergyUsageModel> localUsageModels;
 
             try {
-                prefManagerSyn = PreferencesManagerSync.getInstance();
+                prefManagerSyn = PreferencesManager.getInstance();
             } catch (IllegalStateException ex) {
-                prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext().getApplicationContext());
+                prefManagerSyn = PreferencesManager.initializeInstance(getContext().getApplicationContext());
             }
 
             try {
@@ -119,7 +119,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             }
 
             /* STEP 2: Init */
-            long lastTimestamp = prefManagerSyn.getSyncTimestamp();
+            long lastTimestamp = prefManagerSyn.getLastSyncTimestamp();
             long newTimestamp = System.currentTimeMillis() / 1000L;
             long uid = Long.valueOf(accUid);
 
@@ -133,8 +133,8 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             // Must also fix ask for currenTime on server and use correct offset
 
             /* STEP 3: Get new data from local db */
-            localDeviceModels = EnergyDataSource.getAllSyncDevices(getContext().getContentResolver(), lastTimestamp);
-            localUsageModels = EnergyDataSource.getAllSyncUsage(getContext().getContentResolver(), lastTimestamp);
+            localDeviceModels = EnergyDataSource.getAllSyncDevices(getContext().getContentResolver(), lastTimestamp, uid);
+            localUsageModels = EnergyDataSource.getAllSyncUsage(getContext().getContentResolver(), lastTimestamp, uid);
 
             /* STEP 4: DEVICE get backend */
             Log.v(TAG, "Time is: " + newTimestamp + ". Syncing for date: " + lastTimestamp + ". For UID: " + uid);
@@ -216,8 +216,8 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             if(deleteUsageModels.size() > 0)
                 deleteUsageSuccess = EnergyDataSource.batchDeleteUsageSyncOp(getContext().getContentResolver(), deleteUsageModels);
 
-            /* STEP Update time */
-            prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestamp);
+            /* STEP Update time TODO: Only set if everything was success */
+            prefManagerSyn.setLastSyncTimestamp(newTimestamp);
 
             /* SEND UPDATED */
             //Send the new usage to the navdrawer
@@ -228,11 +228,21 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                 LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(i);
             }
 
-            Log.v(TAG, "Synchronization complete."
-                    + "\nAdded DevicesModels to local DB: " + nDevice
-                    + "\nAdded EnergyUsageModels to local DB: " + nUsage
-                    + "\nDeviceModels deletion state: " + deleteSuccess
-                    + "\nEnergyUsageModels deletion state: " + deleteUsageSuccess);
+            StringBuilder builder = new StringBuilder();
+            builder.append("Synchronization complete.");
+            builder.append("\nAdded DevicesModels to local DB: "); builder.append(nDevice);
+            builder.append("\nAdded EnergyUsageModels to local DB: "); builder.append(nUsage);
+
+            if(localDeviceModels != null){
+                builder.append("\nAdded DeviceModels to server: "); builder.append(localDeviceModels.size());
+                //builder.append("\n\tError #: " + serverDeviceModelsError.size());
+            }
+            if(localUsageModels != null){builder.append("\nAdded EnergyUsageModel to server: "); builder.append(localUsageModels.size());}
+
+            builder.append("\nDeviceModels deletion state: "); builder.append(deleteSuccess);
+            builder.append("\nEnergyUsageModels deletion state: "); builder.append(deleteUsageSuccess);
+
+            Log.v(TAG, builder.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -56,7 +56,6 @@ public class CompareFragment extends DefaultTabFragment {
         return fragment;
     }
 
-
     /**
      * The first call to a created fragment
      * @param activity
@@ -67,7 +66,6 @@ public class CompareFragment extends DefaultTabFragment {
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

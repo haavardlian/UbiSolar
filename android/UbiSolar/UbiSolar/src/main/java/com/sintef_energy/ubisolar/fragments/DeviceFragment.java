@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,8 +70,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.add_device, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_device, menu);
     }
 
     @Override
@@ -86,8 +87,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
@@ -108,7 +108,6 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         //Loads the devices from the database
         getLoaderManager().initLoader(0, null, this);
     }
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(
@@ -149,6 +148,10 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         int child = ExpandableListView.getPackedPositionChild(info.packedPosition);
         Device device = mDeviceAdapter.getChild(group, child);
 
+        /* child is -1 if parent is the one getting a long press */
+        if(child < 0)
+            return;
+
         MenuInflater menuInflater = getActivity().getMenuInflater();
         menu.setHeaderTitle(device.getName());
         menu.setHeaderIcon(R.drawable.devices);
@@ -165,10 +168,9 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
         switch(item.getItemId()){
             case R.id.device_edit:
-                EditDeviceDialog editDeviceDialog =
-                        new EditDeviceDialog(mDevice, getString(R.string.device_edit_title));
+                EditDeviceDialog editDeviceDialog = new EditDeviceDialog(mDevice, getString(R.string.device_edit_title));
                 editDeviceDialog.show(getFragmentManager(), TAG);
-                break;
+                return true;
             case R.id.device_delete:
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
@@ -193,7 +195,8 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
                 this.mDeviceAdapter.notifyDataSetChanged();
                 return true;
+            default:
+                return super.onContextItemSelected(item);
         }
-        return super.onContextItemSelected(item);
     }
 }

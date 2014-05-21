@@ -21,7 +21,6 @@ package com.sintef_energy.ubisolar.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -59,6 +58,9 @@ public class PreferencesManager {
 
     /** Facebook uid is also the UID used on the app server. */
     public static final String KEY_FACEBOOK_UID = PreferencesManager.class.getName() + ".KEY_FACEBOOK_UID";
+
+    /** The last timestamp that data was synced */
+    public static final String KEY_LAST_SYNC_TIMESTAMP = PreferencesManager.class.getName() + ".KEY_LAST_SYNC_TIMESTAMP";
 
     private static PreferencesManager sInstance;
     private final SharedPreferences mPref;
@@ -229,6 +231,10 @@ public class PreferencesManager {
                 .putBoolean(COMPARISON_ENERGY_CHECKED, value)
                 .apply();
     }
+    public void setLastSyncTimestamp(long timestamp){
+        mPref.edit().putLong(KEY_LAST_SYNC_TIMESTAMP, timestamp)
+                .apply();
+    }
 
     public void setNavDrawerUsage(int num){
         mPref.edit()
@@ -290,7 +296,11 @@ public class PreferencesManager {
         return mPref.getInt(NAV_DRAWER_USAGE, -1);
     }
 
-    public void clearFacebookSessionData(){
+    public long getLastSyncTimestamp(){
+        return mPref.getLong(KEY_LAST_SYNC_TIMESTAMP, 0);
+    }
+
+    public void clearSessionData(){
         remove(KEY_ACCESS_TOKEN);
         remove(KEY_ACCESS_TOKEN_EXPIRES);
         remove(FACEBOOK_NAME);
@@ -298,6 +308,7 @@ public class PreferencesManager {
         remove(FACEBOOK_LOCATION);
         remove(FACEBOOK_COUNTRY);
         remove(KEY_FACEBOOK_UID);
+        remove(KEY_LAST_SYNC_TIMESTAMP);
     }
     /**
      * Removes a given key
