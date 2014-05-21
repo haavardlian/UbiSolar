@@ -95,14 +95,9 @@ public class SelectDevicesDialog extends DialogFragment {
                     }
                 }
 
-                String[] array = new String[selectedDeviceIDs.size()];
-
-                for(int i = 0; i < array.length; i++)
-                    array[i]  = String.valueOf(selectedDeviceIDs.get(i));
-
                 //Perform callback
                 UsageFragment target = (UsageFragment)getTargetFragment();
-                target.selectedDevicesCallback(array, mSelectedItems);
+                target.selectedDevicesCallback(mSelectedItems);
             }
         });
 
