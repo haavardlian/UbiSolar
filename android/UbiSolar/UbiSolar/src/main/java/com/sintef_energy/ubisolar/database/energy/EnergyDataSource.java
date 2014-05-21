@@ -298,7 +298,8 @@ public class EnergyDataSource {
      * @param timestamp
      * @return
      */
-    public static ArrayList<DeviceModel> getAllSyncDevices(ContentResolver resolver, long timestamp){
+    public static ArrayList<DeviceModel> getAllSyncDevices(ContentResolver resolver, long timestamp,
+                                                           long uid){
         ArrayList<DeviceModel> deviceModels = new ArrayList<>();
 
         Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
@@ -307,8 +308,9 @@ public class EnergyDataSource {
         Cursor cursor = resolver.query(
                 builder.build(),
                 EnergyContract.Devices.PROJECTION_ALL,
-                DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED + " >= ?",
-                new String[]{""+timestamp},
+                DeviceModel.DeviceEntry.COLUMN_USER_ID + " =? AND " +
+                        DeviceModel.DeviceEntry.COLUMN_LAST_UPDATED + " >= ?",
+                new String[]{"" + uid, "" + timestamp},
                 null
         );
 
@@ -333,17 +335,38 @@ public class EnergyDataSource {
         return deviceModels;
      }
 
-    public static ArrayList<EnergyUsageModel> getAllSyncUsage(ContentResolver resolver, long timestamp){
+    /**
+     *
+     * Gets all the usage data for the given uid.
+     *
+     * @param resolver Instance of ContentResolver
+     * @param timestamp From when to fetch data
+     * @param uid Current user id
+     * @return null if something went wrong, else ArrayList<EnergyUsageModel>
+     */
+    public static ArrayList<EnergyUsageModel> getAllSyncUsage(ContentResolver resolver, long timestamp,
+                                                              long uid){
         ArrayList<EnergyUsageModel> deviceModels = new ArrayList<>();
 
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
         builder.appendPath(EnergyContract.DELETE); //Get deleted data also
 
+        //String usage = EnergyUsageModel.EnergyUsageEntry.TABLE_NAME;
+        //String device = DeviceModel.DeviceEntry.TABLE_NAME;
+
+        //Query also checks that the device id for the usage is for the current user
         Cursor cursor = resolver.query(
                 builder.build(),
                 EnergyContract.Energy.PROJECTION_ALL,
-                EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED + " >= ?",
-                new String[]{""+timestamp},
+                //TODO: nested queries is bad. Look at https://github.com/android/platform_packages_providers_contactsprovider/blob/master/src/com/android/providers/contacts/ContactsProvider2.java
+                //usage + "." + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + " = " + device + "." + DeviceModel.DeviceEntry._ID +
+                //        " AND " + device + "." + DeviceModel.DeviceEntry.COLUMN_USER_ID + " =? " +
+
+                //"(SELECT " + DeviceModel.DeviceEntry.COLUMN_USER_ID + " FROM " + DeviceModel.DeviceEntry.TABLE_NAME +
+                //        " WHERE " + DeviceModel.DeviceEntry.COLUMN_USER_ID + " =?) = " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID +
+                //" AND " +// usage + "." +
+                        EnergyUsageModel.EnergyUsageEntry.COLUMN_LAST_UPDATED + " >= ?",
+                new String[]{"" + timestamp},
                 null
         );
 

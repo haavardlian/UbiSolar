@@ -46,7 +46,6 @@ import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
 import com.sintef_energy.ubisolar.dialogs.EditDeviceDialog;
 import com.sintef_energy.ubisolar.model.Device;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Utils;
 
 import java.util.ArrayList;
@@ -76,23 +75,11 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        try {
-            //devicePresenter = ((IPresenterCallback) getActivity()).getDevicePresenter();
-             /*Line so we can delete test data easily*/
-            //EnergyDataSource.deleteAll(getActivity().getContentResolver());
-        } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString() + " must implement " +
-                    TotalEnergyPresenter.class.getName());
-        }
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.add_device, menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
@@ -106,8 +93,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
         mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
@@ -123,6 +109,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
 
         return mRootview;
     }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);

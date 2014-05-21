@@ -66,7 +66,6 @@ public class EnergyProvider extends ContentProvider{
     private static final int ENERGY_MONTH_LIST = 7;
     private static final int ENERGY_YEAR_LIST = 8;
 
-
     private static ContentValues deleteValues;
 
     private static final UriMatcher URI_MATCHER;

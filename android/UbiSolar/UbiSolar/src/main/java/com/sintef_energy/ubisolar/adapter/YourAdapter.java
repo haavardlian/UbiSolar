@@ -54,6 +54,8 @@ public class YourAdapter extends ArrayAdapter<Tip> {
         this.layoutResourceId = layoutResourceId;
         this.data = data;
         this.fragmentManager = fragmentManager;
+
+        //TODO: Hva er dette godt for?
         this.sharedPreferences = context.getSharedPreferences("com.sintef_energy.ubisolar", Context.MODE_PRIVATE);
     }
 

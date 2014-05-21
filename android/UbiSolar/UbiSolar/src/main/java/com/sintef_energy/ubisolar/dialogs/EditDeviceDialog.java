@@ -55,8 +55,6 @@ public class EditDeviceDialog extends DialogFragment {
     private String title;
     private boolean newDevice;
 
-
-
     public EditDeviceDialog(DeviceModel device, String title){
         this.device = device;
         this.title = title;
@@ -76,7 +74,6 @@ public class EditDeviceDialog extends DialogFragment {
         super.onAttach(activity);
         try {
             devicePresenter = ((IPresenterCallback) activity).getDevicePresenter();
-
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement " + TotalEnergyPresenter.class.getName());
         }

@@ -69,5 +69,7 @@ public class YourFragment extends ProgressFragment {
         RequestManager.getInstance().doTipRequest().getSavedTips(yourAdapter, this);
     }
 
+    //TODO Bug: Ha onResume eller count() der man setter setContentShown om innhold har dukket opp.
+
     public YourAdapter getAdapter() { return yourAdapter; }
 }

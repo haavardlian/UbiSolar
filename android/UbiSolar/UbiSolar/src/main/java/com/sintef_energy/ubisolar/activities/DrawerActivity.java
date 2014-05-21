@@ -61,12 +61,10 @@ import com.sintef_energy.ubisolar.fragments.HomeFragment;
 import com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment;
 import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
-
 import com.sintef_energy.ubisolar.fragments.CompareFragment;
 
 import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
-import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
@@ -377,11 +375,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     public void addFragment(Fragment fragment, boolean animate, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
 
-        /*
-        for(int i = 0; i < manager.getBackStackEntryCount(); ++i) {
-            manager.popBackStack();
-        }*/
-
         FragmentTransaction ft = manager.beginTransaction();
         if (animate) {
             ft.setCustomAnimations(
@@ -391,7 +384,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     android.R.anim.fade_in,
                     android.R.anim.fade_out);
         }
-
 
         if (addToBackStack) {
             ft.addToBackStack(tag);
@@ -611,7 +603,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         /* UPDATE VIEW */
         changeNavdrawerSessionsView(false);
-        mPrefManager.clearFacebookSessionData();
+        mPrefManager.clearSessionData();
         Utils.makeLongToast(getApplicationContext(), getResources().getString(R.string.fb_logout));
 
         /* REMOVE ACCOUNT */
@@ -627,14 +619,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
 
         /* REMOVE PREFERENCES*/
-        PreferencesManagerSync preferencesManagerSync;
-        try {
-            preferencesManagerSync = PreferencesManagerSync.getInstance();
-        }catch(IllegalStateException e){
-            preferencesManagerSync = PreferencesManagerSync.initializeInstance(getApplicationContext());
-        }
-
-        preferencesManagerSync.clearAll();
+        PreferencesManager.getInstance().clearSessionData();
 
         /* REMOVE DATA*/
         getContentResolver().delete(EnergyContract.Devices.CONTENT_URI, null, null);
