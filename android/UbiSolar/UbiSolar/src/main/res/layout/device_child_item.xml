@@ -5,39 +5,24 @@
     android:padding="10dp">
 
     <ListView
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     </ListView>
 
     <TextView
+        android:id="@+id/device_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/deviceName"/>
-
-    <!--<TextView
-        android:id="@+id/deviceID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="id"
         android:paddingLeft="25dp"
-        android:enabled="false"/>-->
+        android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/deviceDescription"
+        android:id="@+id/device_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/deviceName"
-        android:paddingLeft="25dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_below="@id/device_name"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="25dp" />
 
-
-    <TextView
-        android:id="@+id/powerUsage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Power consumtion: 15%"
-        android:layout_below="@id/deviceDescription"
-        android:paddingLeft="25dp"
-        android:layout_marginTop="8dp" />
 </RelativeLayout>

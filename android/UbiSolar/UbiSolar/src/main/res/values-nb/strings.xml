@@ -11,22 +11,24 @@
     <!-- The Content Provider -->
     <string name="provider_authority_energy">com.sintef_energy.ubisolar.provider.energy</string>
 
+    <!--Drawer activity-->
+    <string name="drawer_log_in">Logg inn</string>
+    <string name="drawer_log_out">Logg ut</string>
 
     <!-- Title fragment menu -->
     <string-array name="nav_drawer_items">
-        <item>Home</item>
-        <item>Analyze</item>
-        <item>Your usage</item>
-        <item>Compare to others</item>
-        <item>Manage</item>
-        <item>Manage devices</item>
-        <item>Add usage</item>
-        <item>Socialize</item>
-        <item>Exchange tips</item>
-        <item>Settings</item>
-        <item>Profile</item>
-        <item>Comparison settings</item>
-        <item>Log in</item>
+        <item>Hjem</item>
+        <item>Analyse</item>
+        <item>Ditt forbruk</item>
+        <item>Sammenlign med andre</item>
+        <item>Administrasjon</item>
+        <item>Enhetsadministrering</item>
+        <item>Legg til forbruk</item>
+        <item>Sosialt</item>
+        <item>Tips</item>
+        <item>Innstillinger</item>
+        <item>Profil</item>
+        <item>Logg inn</item>
     </string-array>
     <string-array name="nav_drawer_icons">
         <item>@drawable/home</item>
@@ -40,77 +42,154 @@
     </string-array>
 
     <!-- AddTipDialog -->
-    <string name="addTipDialog_title">Create tip</string>
-    <string name="addTipDialog_buttonText">Create</string>
+    <string name="addTipDialog_title">Opprett tips</string>
+    <string name="addTipDialog_buttonText">Opprett</string>
 
-    <!-- AddUsageDialog -->
-    <string name="addUsageDialog_title">Add usage</string>
+    <!-- Add usage-->
+    <string name="add_usage_date">Dato</string>
+    <string name="add_usage_date_description">Dato for forbruket</string>
+    <string name="add_usage_date_hint">Dato for forbruket</string>
+    <string name="add_usage_device">Enhet</string>
+    <string name="add_usage_device_description">Velg enhet</string>
+    <string name="add_usage_device_hint">Velg enhet</string>
+    <string name="add_usage_consumption">Forbruk</string>
+    <string name="add_usage_description">Strøm brukt for enhet</string>
+    <string name="add_usage_consumption_unit">kWh</string>
 
-    <!-- AddDeviceDialog -->
-    <string name="addDeviceDialog_title">Add device</string>
+    <string name="add_usage_add_button">Legg til forbruk</string>
+
+    <string name="add_usage_added">Forbruk lagt til for:</string>
+    <string name="add_usage_no_usage">Feil: forbruket ble ikke lagt til</string>
+    <string name="add_usage_no_device">Feil: Ingen enhet valgt</string>
+
+    <!-- Device -->
+    <string name="device_add_title">Legg til enhet</string>
+    <string name="device_add_button">Legg til</string>
+
+    <string name="device_edit_title">Endre enhet</string>
+    <string name="device_edit_save">Lagre</string>
+
+    <string name="device_edit_name">Navn</string>
+    <string name="device_edit_description">Beskrivelse</string>
+
+    <string name="device_toast_deleted">slettet</string>
+    <string name="device_toast_added">lagt til</string>
+    <string name="device_toast_edited">endret</string>
+
+    <string name="device_edit">Endre</string>
+    <string name="device_delete">Slett</string>
+
+    <string name="device_dialog_delete">Slett enhhet?</string>
+    <string name="device_delete_conf1">"Er du sikker på at du vil slette"</string>
+    <string name="device_delete_conf2">"og all forbruksdata knyttet til enheten?"</string>
+    <string name="device_ok">OK</string>
+    <string name="device_cancel">Avbryt</string>
+
     <string-array name="device_categories">
-    <item>Appliances</item>
-    <item>Heat</item>
-    <item>Home Entertainment</item>
-    <item>Lighting</item>
-    <item>Other</item>
-    <item>Producing</item>
+    <item>Hvitevarer</item>
+    <item>Oppvarming</item>
+    <item>Underholdning</item>
+    <item>Belysning</item>
+    <item>Annet</item>
+    <item>Produksjon</item>
     </string-array>
-    <string name="addDeviceDialog_buttonText">Add</string>
 
-    <!-- EditDeviceDialog -->
-    <string name="editDeviceDialog_title">Edit device</string>
-    <string name="editDeviceDialog_buttonText">Save</string>
+    <string-array name="device_icons">
+        <item>@drawable/appliances</item>
+        <item>@drawable/heat</item>
+        <item>@drawable/home_entertainment</item>
+        <item>@drawable/default_device</item>
+        <item>@drawable/default_device</item>
+        <item>@drawable/power_production</item>
+    </string-array>
+
 
     <!-- Fragment usage -->
     <string name="usage_select_devices">Velg enheter</string>
     <string name="usage_share">Del</string>
-    <string name="usage_line_graph_title">Strøm forbruk</string>
+    <string name="usage_line_graph_title">Strømforbruk</string>
     <string name="usage_pie_graph_title">Fordeling</string>
+    <string name="usage_no_content">Ingen data</string>
 
     <string-array name="fragment_usage_tabs">
-        <item>Graf</item>
-        <item>Diagram</item>
+        <item>Forbruk</item>
+        <item>Fordeling</item>
     </string-array>
 
+    <string name="usage_hours">Timer</string>
+    <string name="usage_days">Dager</string>
+    <string name="usage_weeks">Uker</string>
+    <string name="usage_months">Månder</string>
+    <string name="usage_years">År</string>
+
+    <!--Facebook Share-->
+    <string name="share_title">Del forbruk</string>
+    <string name="share_cancel">Avbryt</string>
+    <string name="share_post">Del på Facebook</string>
+    <string name="share_add_caption">Overskrift</string>
 
     <!--Other-->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Innstillinger</string>
 
     <!-- Fragment profile-->
-    <string name="profile_username">Username</string>
-    <string name="profile_name">Name</string>
-    <string name="profile_age">Age</string>
-    <string name="profile_country">Country</string>
-    <string name="profile_location">Location</string>
-    <string name="profile_postcode">Postal code</string>
-    <string name="profile_anon">Anonymous</string>
+    <string name="profile_username">Brukernavn</string>
+    <string name="profile_name">Navn</string>
+    <string name="profile_age">Alder</string>
+    <string name="profile_country">Land</string>
+    <string name="profile_location">Område</string>
+    <string name="profile_postcode">Postnummer</string>
+    <string name="profile_anon">Anonym</string>
     <string name="superscript2"><sup><small>2</small></sup></string>
-    <string name="get_started">Log in to share your profile</string>
-    <string name="action_forgot_password">Have you forgotten your password?</string>
+    <string name="get_started">Logg inn for å dele din profil</string>
+    <string name="action_forgot_password">Glemt passordet ditt?</string>
 
     <!-- Fragment social-->
-    <string name="social_user_name">User\'s name</string>
-    <string name="user_name">You</string>
-    <string name="friend_name">Your friend</string>
-    <string name="friends_header_title">Friends</string>
+    <string name="social_user_name">Brukerens navn</string>
+    <string name="friends_header_title">Venner</string>
+
+    <!-- Fragment home -->
+    <string name="home_area_placeholder">3% bedre</string>
+    <string name="home_residents_placeholder">7% dårligere</string>
+    <string name="home_size_placeholder">100% dårligere </string>
+    <string name="home_energy_placeholder">1% dårligere</string>
+    <string name="home_improved">Du har forbedret deg med 5%!</string>
+
+    <string name="home_area"> enn folk i ditt område</string>
+    <string name="home_residents">enn folk med samme antall beboere</string>
+    <string name="home_size">enn samme areal</string>
+    <string name="home_energy">enn samme energiklasse</string>
 
     <!-- Comparison settings-->
-    <string name="comp_header">Comparison of savings</string>
-    <string name="comp_setting_header">Select what you want to compare:</string>
-    <string name="comparison_setting">Comparison setting</string>
+    <string name="comparison_setting">Sammenlikningsinnstillinger</string>
+    <string name="location_comparison_setting">Område</string>
+    <string name="res_comparison_setting">Antall beboere</string>
+    <string name="area_comparison_setting">Areal</string>
+    <string name="energy_comparison_setting">Energiklasse</string>
+    <string name="compare_filter">Filtrer</string>
 
 
     <!-- Fragment Energy saving tabs -->
-    <string name="fragment_energy_saving_tab_tips">Tips</string>
-    <string name="fragment_energy_saving_tab_your">Your</string>
-    <string-array name="fragment_energy_saving_tabs">
+    <string name="energy_saving_tab_tips">Tips</string>
+    <string name="energy_saving_tab_your">Dine tips</string>
+
+    <string-array name="energy_saving_tabs">
         <item>Tips</item>
-        <item>Yours</item>
+        <item>Dine tips</item>
     </string-array>
 
+    <string name="energy_saving_move_tip">Legg til i dine tips</string>
+    <string name="energy_saving_close">Lukk</string>
+
+    <string name="energy_saving_rating_changed">Vurdering endret</string>
+
+    <string name="energy_saving_server_error">Kunne ikke koble til serveren</string>
+
     <!-- Toast -->
-    <string name="no_internet">Internet connection required to log in</string>
+    <string name="no_internet">Du trenger internettilkobling for å logge inn</string>
+
+    <!--Util-->
+    <string name="total_name">Total</string>
+    <string name="total_description">Den totale strømforbruken</string>b
 </resources>

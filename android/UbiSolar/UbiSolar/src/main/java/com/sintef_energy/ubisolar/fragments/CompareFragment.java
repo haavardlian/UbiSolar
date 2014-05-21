@@ -14,11 +14,6 @@ import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
-import com.sintef_energy.ubisolar.model.User;
-
-import java.util.ArrayList;
 
 /**
  * Created by perok on 21.03.14.
@@ -28,8 +23,11 @@ public class CompareFragment extends DefaultTabFragment {
     private static final String TAG = CompareFragment.class.getName();
 
     private View mRoot;
-    private FriendAdapter friendAdapter;
-    private SimilarAdapter simAdapter;
+    private ViewPager pager;
+
+    private MyPagerAdapter mAdapter;
+
+    private PagerSlidingTabStrip mTabs;
 
     public static CompareFragment newInstance(int sectionNumber) {
         CompareFragment fragment = new CompareFragment();
@@ -51,37 +49,45 @@ public class CompareFragment extends DefaultTabFragment {
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
-        //mTabHost = (TabHost) mRoot.findViewById(android.R.id.tabhost);
-        friendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_row, new ArrayList<User>());
-        simAdapter = new SimilarAdapter();
-        // Initialize the ViewPager and set an adapter
-        ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
-        pager.setAdapter(new MyPagerAdapter(getFragmentManager(), friendAdapter, simAdapter));
-        // Bind the tabs to the ViewPager
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
-        tabs.setViewPager(pager);
+        if(mRoot == null)
+            mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
 
+        // Initialize the ViewPager and set an adapter
+        if(pager == null)
+            pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
+
+        if(mAdapter == null) {
+            mAdapter = new MyPagerAdapter(getFragmentManager());
+            pager.setAdapter(mAdapter);
+        }
+
+        // Bind the tabs to the ViewPager
+        if(mTabs == null) {
+            mTabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
+            mTabs.setViewPager(pager);
+        }
         return mRoot;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setRetainInstance(true);
+    }
+
+    /*End lifecycle*/
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
         private final String[] TITLES = { "Friends", "Similar profiles"};
-        private FriendAdapter friendAdapter;
-        private SimilarAdapter simAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter simAdapter) {
+        public MyPagerAdapter(FragmentManager fm) {
             super(fm);
-            this.friendAdapter = friendAdapter;
-            this.simAdapter = simAdapter;
         }
 
 
@@ -99,14 +105,12 @@ public class CompareFragment extends DefaultTabFragment {
         public Fragment getItem(int position) {
             switch(position) {
                 case 0:
-                    return CompareFriendsListFragment.newInstance(0, friendAdapter);
+                    return CompareFriendsListFragment.newInstance(0);
                 case 1:
-                    return CompareSimilarFragment.newInstance(1, simAdapter);
+                    return CompareSimilarFragment.newInstance(1);
                 default:
                     return null;
             }
         }
-
-
     }
 }

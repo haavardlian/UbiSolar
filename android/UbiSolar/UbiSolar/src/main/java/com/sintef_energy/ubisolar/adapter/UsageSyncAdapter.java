@@ -5,17 +5,18 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.preferences.PreferencesManagerSync;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
-import com.sintef_energy.ubisolar.utils.Utils;
+import com.sintef_energy.ubisolar.utils.Global;
 
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ import java.util.ArrayList;
  * Synchronization is based on delete bits and timestamp.
  *
  * Step 1: Init files
- * Check for network. END if no net.
+ * Redundant: Check for network. END if no net. (SyncAdapter runs only when net is present)
  *
  * Step 2: get time and uid
  * Get last frontend sync timestamp
@@ -67,15 +68,16 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             //TODO:Get the auth token for the current account
             //String authToken = mAccountManager.blockingGetAuthToken(account, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS, true);
 
-            /* STEP 1: SETUP FILES */
-            Log.v(TAG, "Starting sync operation");
+            String accUid = mAccountManager.getUserData(account, Global.DATA_FB_UID);
 
-            if(!Utils.isNetworkOn(getContext())){
-                Log.v(TAG, "Sync aborted. No network connection.");
+            if(accUid == null){
+                Log.v(TAG, "No FB UID for sync account. Aborting");
                 return;
             }
 
-            PreferencesManager preferencesManager;
+            /* STEP 1: SETUP FILES */
+            Log.v(TAG, "Starting sync operation");
+
             PreferencesManagerSync prefManagerSyn;
             RequestManager requestManager;
             ArrayList<DeviceModel> serverDeviceModels;
@@ -86,33 +88,30 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             ArrayList<EnergyUsageModel> localUsageModels;
 
             try {
-                preferencesManager = PreferencesManager.getInstance();
-            } catch (IllegalStateException ex) {
-                preferencesManager = PreferencesManager.initializeInstance(getContext());
-            }
-
-            try {
                 prefManagerSyn = PreferencesManagerSync.getInstance();
             } catch (IllegalStateException ex) {
-                prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext());
+                prefManagerSyn = PreferencesManagerSync.initializeInstance(getContext().getApplicationContext());
             }
 
             try {
                 requestManager = RequestManager.getInstance();
             } catch (IllegalStateException ex) {
-                requestManager = RequestManager.getInstance(getContext());
+                requestManager = RequestManager.getInstance(getContext().getApplicationContext());
             }
 
             /* STEP 2: Init */
             long lastTimestamp = prefManagerSyn.getSyncTimestamp();
             long newTimestamp = System.currentTimeMillis() / 1000L;
-            long uid = Long.valueOf(preferencesManager.getKeyFacebookUid());
+            long uid = Long.valueOf(accUid);
 
             //If user is not authorized with an id, end.
             if (uid < 0) {
                 Log.v(TAG, "No user id. Sync aborted");
                 return;
             }
+
+            //TODO Set all timestamps through Date object with GMT timezone
+            // Must also fix ask for currenTime on server and use correct offset
 
             /* STEP 3: Get new data from local db */
             localDeviceModels = EnergyDataSource.getAllSyncDevices(getContext().getContentResolver(), lastTimestamp);
@@ -200,6 +199,15 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
 
             /* STEP Update time */
             prefManagerSyn.setBackendDeviceSyncTimestamp(newTimestamp);
+
+            /* SEND UPDATED */
+            //Send the new usage to the navdrawer
+            if(serverUsageModels != null && serverUsageModels.size() > 0) {
+                Log.v(TAG, "Broadcasting usage update: " + serverUsageModels.size());
+                Intent i = new Intent(Global.BROADCAST_NAV_DRAWER);
+                i.putExtra(Global.DATA_B_NAV_DRAWER_USAGE, serverUsageModels.size());
+                LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(i);
+            }
 
             Log.v(TAG, "Synchronization complete."
                     + "\nAdded DevicesModels to local DB: " + nDevice

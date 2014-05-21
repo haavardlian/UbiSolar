@@ -38,13 +38,33 @@ public class EnergyDataSource {
     }
 
     public static int getEnergyModelSize(ContentResolver resolver){
-        ArrayList<EnergyUsageModel> euModels = new ArrayList<>();
-
         Uri.Builder builder = EnergyContract.Energy.CONTENT_URI.buildUpon();
         //ContentUris.appendId(builder, id);
         Cursor cursor = resolver.query(
                 builder.build(),
                 EnergyContract.Energy.PROJECTION_ALL,
+                null,
+                null,
+                null
+        );
+
+        if(cursor == null){
+            return 0;
+        }
+
+        int size = cursor.getCount();
+
+        cursor.close();
+
+        return size;
+    }
+
+    public static int getDeviceModelSize(ContentResolver resolver){
+        Uri.Builder builder = EnergyContract.Devices.CONTENT_URI.buildUpon();
+        //ContentUris.appendId(builder, id);
+        Cursor cursor = resolver.query(
+                builder.build(),
+                EnergyContract.Devices.PROJECTION_ALL,
                 null,
                 null,
                 null
@@ -70,8 +90,8 @@ public class EnergyDataSource {
         Cursor cursor = resolver.query(
                 builder.build(),
                 EnergyContract.Energy.PROJECTION_ALL,
-                EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " >= " + from +
-                    " AND " + EnergyUsageModel.EnergyUsageEntry.COLUMN_DATETIME + " <= " + to,
+                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " >= " + from +
+                    " AND " + EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + " <= " + to,
                 null,
                 null
         );
@@ -232,8 +252,8 @@ public class EnergyDataSource {
         return n;
     }
 
-    public static void editDevice(ContentResolver contentResolver, DeviceModel dm){
-        int i = contentResolver.update(EnergyContract.Devices.CONTENT_URI, dm.getContentValues(),
+    public static int editDevice(ContentResolver contentResolver, DeviceModel dm){
+        return contentResolver.update(EnergyContract.Devices.CONTENT_URI, dm.getContentValues(),
                 DeviceModel.DeviceEntry._ID + "=?",new String[]{"" + dm.getId()});
     }
 
@@ -386,6 +406,50 @@ public class EnergyDataSource {
         }
 
         return true;
+    }
+
+
+    /**
+     *  User operations
+     */
+
+    public static void  insertUser(ContentResolver resolver, UserModel model){
+        resolver.insert(EnergyContract.Users.CONTENT_URI, model.getContentValues());
+    }
+
+
+
+    public static ArrayList<UserModel> getAllUserModels(ContentResolver resolver){
+        ArrayList<UserModel> allUsers = new ArrayList<>();
+
+        Cursor cursor = resolver.query(
+                EnergyContract.Users.CONTENT_URI,
+                EnergyContract.Users.PROJECTION_ALL,
+                null,
+                null,
+                null
+        );
+
+        if(cursor == null){
+            cursor.close();
+            return null;
+        }
+        else if(cursor.getCount() < 1){
+            cursor.close();
+            return null;
+        }
+        else {
+
+        }
+
+        cursor.moveToFirst();
+        allUsers.add(new UserModel(cursor));
+
+        while (cursor.moveToNext())
+            allUsers.add(new UserModel(cursor));
+
+        cursor.close();
+        return allUsers;
     }
 
 }

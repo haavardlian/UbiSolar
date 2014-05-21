@@ -10,7 +10,7 @@ import android.util.Log;
  */
 public class EnergyOpenHelper extends SQLiteOpenHelper{
     private static final String DATABASE_NAME = "energy.db";
-	private static final int DATABASE_VERSION = 13;
+	private static final int DATABASE_VERSION = 15;
 
 	public EnergyOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
 		super(context, DATABASE_NAME, factory, DATABASE_VERSION);
@@ -25,6 +25,8 @@ public class EnergyOpenHelper extends SQLiteOpenHelper{
         database.execSQL("PRAGMA foreign_keys=ON;"); //Activate foreign keys in sqlite
 		database.execSQL(DeviceModel.SQL_CREATE_ENTRIES);
         database.execSQL(EnergyUsageModel.SQL_CREATE_ENTRIES);
+        database.execSQL(ResidenceModel.SQL_CREATE_ENTRIES);
+        database.execSQL(UserModel.SQL_CREATE_ENTRIES);
 	}
 
 	@Override
@@ -34,6 +36,8 @@ public class EnergyOpenHelper extends SQLiteOpenHelper{
                         + newVersion + ", which will destroy all old data");
         db.execSQL(DeviceModel.SQL_DELETE_ENTRIES);
         db.execSQL(EnergyUsageModel.SQL_DELETE_ENTRIES);
+        db.execSQL(ResidenceModel.SQL_DELETE_ENTRIES);
+        db.execSQL(UserModel.SQL_DELETE_ENTRIES);
         onCreate(db);
 	}
 }

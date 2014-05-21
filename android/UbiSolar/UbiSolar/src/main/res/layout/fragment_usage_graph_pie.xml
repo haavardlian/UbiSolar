@@ -1,66 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/pieChartView"
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"></LinearLayout>
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:orientation="horizontal">
+    </LinearLayout>
 
+    <antistatic.spinnerwheel.WheelHorizontalView
+        android:id="@+id/usage_date_wheel"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_weight="1"/>
+    
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="3">
 
         <TextView
+        android:id="@+id/pieDateTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+
+        <!--<TextView-->
+        <!--android:id="@+id/pieDetailsName"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:text="test"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:textSize="20dp"-->
+        <!--android:textStyle="bold"-->
+        <!--android:layout_marginLeft="30dp"/>-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/pieDetailsPowerUsage"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:text="test2"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:textSize="20dp"-->
+        <!--android:layout_marginRight="30dp"/>-->
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/usagePieLabel"
-            android:layout_centerInParent="true" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true">
 
-        <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/usageButtonLeft"-->
-        <!--android:text="L"-->
-        <!--android:layout_alignParentLeft="true"/>-->
+            <info.hoang8f.android.segmented.SegmentedGroup
+                android:id="@+id/usage_segment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
 
-        <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/usageButtonRight"-->
-        <!--android:text="R"-->
-        <!--android:layout_alignParentRight="true"/>-->
+                <RadioButton
+                    android:id="@+id/usage_days"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/usage_days"
+                    style="@style/RadioButton" />
 
+                <RadioButton
+                    android:id="@+id/usage_weeks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/usage_weeks"
+                    style="@style/RadioButton" />
+                <RadioButton
+                    android:id="@+id/usage_months"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/usage_months"
+                    style="@style/RadioButton" />
+                <RadioButton
+                    android:id="@+id/usage_years"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/usage_years"
+                    style="@style/RadioButton" />
+            </info.hoang8f.android.segmented.SegmentedGroup>
+        </LinearLayout>
     </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/pieDetailsName"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/pieDetailsDescription"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/pieDetailsPowerUsage"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp" />
-    </LinearLayout>
 </LinearLayout>

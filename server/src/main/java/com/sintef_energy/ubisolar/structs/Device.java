@@ -26,7 +26,8 @@ public class Device {
 
     }
 
-    public Device(long id, long userId, String name, String description, long lastUpdated, boolean deleted, int category) {
+    public Device(long id, long userId, String name, String description, long lastUpdated, boolean deleted,
+                  int category) {
         this.id = id;
         this.userId = userId;
         this.name = name;

@@ -27,7 +27,7 @@ public class TotalUsageResource {
 
 
 
-    @GET
+    //@GET
     @Path("{interval}/")
     @Timed
     public List<TotalUsage> getPowerUsage(@PathParam("user") IntParam user, @PathParam("interval") String interval) {
@@ -36,12 +36,13 @@ public class TotalUsageResource {
         else throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    @PUT
+    //@PUT
     @Timed
     public Response addPowerUsage(@PathParam("user") IntParam user, @Valid TotalUsage usage) {
         int result = db.addTotalUsageForUser(usage);
 
-        if(result == 1) return  Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Usage added")).build();
+        if(result == 1) return  Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage("Usage added")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 }

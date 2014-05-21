@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 
-import com.sintef_energy.ubisolar.R;
-
 /**
  *
  * @author perok
@@ -37,7 +35,7 @@ public class TabListener<T extends Fragment> implements android.app.ActionBar.Ta
 
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
 
-        Fragment preInitializedFragment = (Fragment) mActivity.getFragmentManager().findFragmentByTag(mTag);
+        Fragment preInitializedFragment = mActivity.getFragmentManager().findFragmentByTag(mTag);
 
         // Check if the fragment is already initialized
         if (mFragment == null && preInitializedFragment == null) {

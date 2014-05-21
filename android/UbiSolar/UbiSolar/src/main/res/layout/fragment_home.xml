@@ -1,94 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:weightSum="1">
-
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="20dp"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:text="3% higher than people in your area"
-            android:id="@+id/textView" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:text="7% lower than equal # of residents"
-            android:id="@+id/textView2" />
+            android:layout_centerInParent="true"
+            android:textSize="20sp"
+            android:layout_alignParentTop="true"
+            android:text="Current Usage"/>
+
+        <ImageView
+            android:id="@+id/wattometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/wattometer"/>
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:text="1% lower than same energy class"
-            android:id="@+id/textView3" />
+            android:text="50kWh"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            android:textSize="15sp"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <TextView
+            style="?android:attr/listSeparatorTextViewStyle"
+            android:id="@+id/separator"
+            android:text="Newsfeed"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="20dp"
-            android:paddingTop="10dp"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:text="100% lower than equal residence size"
-            android:id="@+id/textView4" />
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="3dp"
-            android:background="#d8d8d8" />
-
-        <TextView
-            android:layout_width="fill_parent"
+        <ListView
+            android:id="@+id/news_feed_list"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="20dp"
-            android:paddingTop="10dp"
-            android:textSize="24dp"
-            android:textStyle="bold"
-            android:text="You have improved by 5%!"
-            android:id="@+id/textView5" />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="3dp"
-            android:background="#d8d8d8" />
-
-
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/comp_settings_list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:dividerHeight="3dp"
-        android:layout_marginTop="260dp">
-
-    </ListView>
-</RelativeLayout>
+            android:dividerHeight="2dp"
+            android:layout_below="@id/separator">
+        </ListView>
+    </RelativeLayout>
+</LinearLayout>

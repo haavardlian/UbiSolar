@@ -1,7 +1,7 @@
 package com.sintef_energy.ubisolar.resources;
 
-import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.sintef_energy.ubisolar.ServerDAO;
+import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.sintef_energy.ubisolar.structs.TotalUsage;
 import com.yammer.dropwizard.jersey.params.IntParam;
@@ -27,7 +27,8 @@ public class DeviceUsageResource {
 
     @GET
     @Path("/total/{interval}/")
-    public List<TotalUsage> getTotalDeviceUsage(@PathParam("user") IntParam user, @PathParam("interval") String interval) {
+    public List<TotalUsage> getTotalDeviceUsage(@PathParam("user") IntParam user,
+                                                @PathParam("interval") String interval) {
         List<TotalUsage> totalUsage = null;
 
         if(interval.equals("yearly"))
@@ -63,7 +64,8 @@ public class DeviceUsageResource {
         if(device.get() == usage.getDeviceId()) result  = db.addUsageForDevice(usage);
         else result = 0;
 
-        if(result == 1) return  Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Usage added")).build();
+        if(result == 1) return  Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage("Usage added")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 }

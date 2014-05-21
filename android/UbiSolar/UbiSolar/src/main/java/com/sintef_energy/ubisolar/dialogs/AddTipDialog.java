@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.fragments.TipsFragment;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
@@ -42,7 +43,9 @@ public class AddTipDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         Tip tip = new Tip(0, nameField.getText().toString(), descriptionField.getText().toString(), 0, 0);
 
-                        RequestManager.getInstance().doTipRequest().createTip(tip);
+                        RequestManager.getInstance().doTipRequest().createTip(tip, getTargetFragment());
+                        ((TipsFragment) getTargetFragment()).getAdapter().add(tip);
+                        ((TipsFragment) getTargetFragment()).getAdapter().notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -52,15 +55,9 @@ public class AddTipDialog extends DialogFragment {
                 })
                 .setTitle(R.string.addTipDialog_title);
 
-
-
         nameField = (EditText) view.findViewById(R.id.createTipDialogName);
         descriptionField = (EditText) view.findViewById(R.id.createTipDialogDescription);
 
-
-        AlertDialog alertDialog = builder.create();
-
-        return alertDialog;
-
+        return builder.create();
     }
 }

@@ -5,52 +5,49 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v13.app.FragmentStatePagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.facebook.Request;
+import com.facebook.Response;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.FriendAdapter;
-import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 import com.sintef_energy.ubisolar.model.User;
+import com.sintef_energy.ubisolar.presenter.RequestManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 /**
  * Created by baier on 3/21/14.
  */
-public class CompareFriendsListFragment extends Fragment {
+public class CompareFriendsListFragment extends Fragment/* implements LoaderManager.LoaderCallbacks<Cursor>*/{
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
-    public static final String TAG = CompareFragment.class.getName();
+    public static final String TAG = CompareFriendsListFragment.class.getName();
 
     private ArrayList<User> friends;
     private static final String ARG_POSITION = "position";
     private View view;
     private FriendAdapter friendAdapter;
-    private SimilarAdapter simAdapter;
-
-
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static CompareFriendsListFragment newInstance(int position, FriendAdapter friendAdapter) {
-        CompareFriendsListFragment fragment = new CompareFriendsListFragment(friendAdapter);
+    public static CompareFriendsListFragment newInstance(int position) {
+        CompareFriendsListFragment fragment = new CompareFriendsListFragment();
         Bundle b = new Bundle();
         b.putInt(ARG_POSITION, position);
         fragment.setArguments(b);
         return fragment;
-    }
-
-    public CompareFriendsListFragment(FriendAdapter friendAdapter) {
-        this.friendAdapter = friendAdapter;
     }
 
     /**
@@ -65,17 +62,11 @@ public class CompareFriendsListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_social_friends, container, false);
-        friends = new ArrayList<User>();
-        FriendAdapter friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
+        friends = new ArrayList<>();
+        friendAdapter = new FriendAdapter(getActivity(),R.layout.fragment_social_friends_row, friends);
         final ListView friendsList = (ListView) view.findViewById(R.id.social_list);
         friendsList.setAdapter(friendAdapter);
-
-        friends.add(new User("Beate", getActivity().getResources().getDrawable(R.drawable.profile)));
-        friends.add(new User("Håvi", getActivity().getResources().getDrawable(R.drawable.heat)));
-        friends.add(new User("Piai", getActivity().getResources().getDrawable(R.drawable.profile)));
-        friends.add(new User("Peri", getActivity().getResources().getDrawable(R.drawable.profile)));
-
-        friendAdapter.notifyDataSetChanged();
+        //RequestManager.getInstance().doFriendRequest().getAllUsers(friendAdapter, this);
 
         friendsList.setClickable(true);
         friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -84,60 +75,54 @@ public class CompareFriendsListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 
-                Fragment fragment = CompareFriendsFragment.newInstance(position, simAdapter);
-                addFragment(fragment, true, friends.get(position));
+                Fragment fragment = CompareFriendsFragment.newInstance(position, friendAdapter.getItem(position));
+                addFragment(fragment, true, friends.get(position).getName());
+
             }
         });
 
+        populateFriendList(friendAdapter);
         return view;
     }
 
-    public class MyPagerAdapter extends FragmentStatePagerAdapter {
+    public void populateFriendList(final FriendAdapter friendAdapter) {
+        Request.Callback callback = new Request.Callback() {
+            @Override
+            public void onCompleted(Response response) {
+                if(response.getError() != null)
+                    return;
+                try {
+                    JSONArray friends = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                    friendAdapter.clear();
+                    for(int i = 0; i < friends.length(); i++) {
+                        JSONObject friend = friends.getJSONObject(i);
+                        if(friend.has("installed") && friend.getBoolean("installed"))
+                            friendAdapter.add(new User(friend.getLong("id"), friend.getString("name")));
+                    }
 
-        private final String[] TITLES = { "Friends", "Similar profiles"};
-        private FriendAdapter friendAdapter;
-        private SimilarAdapter simAdapter;
-        public MyPagerAdapter(FragmentManager fm, FriendAdapter friendAdapter, SimilarAdapter simAdapter) {
-            super(fm);
-            this.friendAdapter = friendAdapter;
-            this.simAdapter = simAdapter;
-        }
-
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return TITLES[position];
-        }
-
-        @Override
-        public int getCount() {
-            return TITLES.length;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch(position) {
-                case 0:
-                    return CompareFriendsListFragment.newInstance(0, friendAdapter);
-                case 1:
-                    return CompareSimilarFragment.newInstance(1, simAdapter);
-                default:
-                    return null;
+                    friendAdapter.notifyDataSetChanged();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
+        };
 
-
+        RequestManager.getInstance().doFacebookRequest().getFriends(callback);
     }
 
-    public void addFragment(Fragment fragment, boolean addToBackStack, User user) {
+    public FriendAdapter getAdapter() {
+        return friendAdapter;
+    }
+
+    public void addFragment(Fragment fragment, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
 
-        if (addToBackStack) {
-            ft.addToBackStack(user.getName());
-        }
+        ft.replace(R.id.container, fragment, "Compare");
 
-        ft.replace(R.id.container, fragment);
+        if(addToBackStack)
+               ft.addToBackStack(tag);
+
         ft.commit();
     }
 
@@ -161,5 +146,38 @@ public class CompareFriendsListFragment extends Fragment {
     public void onDestroy(){
         super.onDestroy();
     }
+/*
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(
+                getActivity(),
+                EnergyContract.Users.CONTENT_URI,
+                EnergyContract.Users.PROJECTION_ALL,
+                null,
+                null,
+                UserModel.UserEntry._ID + " ASC"
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        friends.clear();
+
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0)
+            do {
+                UserModel model = new UserModel(cursor);
+                friends.add(model);
+            } while (cursor.moveToNext());
+
+        friendAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        friends.clear();
+    }
+*/
+
 
 }

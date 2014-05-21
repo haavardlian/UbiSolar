@@ -38,7 +38,7 @@ public class NavDrawerListAdapter extends ArrayAdapter<Item> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return getItem(position).getView(mInflater, convertView);
+        return getItem(position).getView(mInflater, convertView, parent);
     }
 
     @Override

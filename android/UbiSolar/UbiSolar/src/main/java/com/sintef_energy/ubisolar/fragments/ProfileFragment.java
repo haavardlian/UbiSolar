@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
@@ -14,11 +17,10 @@ import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.ResidenceListAdapter;
+import com.sintef_energy.ubisolar.dialogs.AddResidenceDialog;
 import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -33,7 +35,7 @@ public class ProfileFragment extends DefaultTabFragment  {
     private View mRootView;
     private ExpandableListView expListView;
     private ArrayList<Residence> residences;
-    PreferencesManager prefs;
+    private PreferencesManager prefs;
 
     private TextView name, location, age, country;
     private ProfilePictureView profilePicture;
@@ -49,9 +51,6 @@ public class ProfileFragment extends DefaultTabFragment  {
         return fragment;
     }
 
-    public ProfileFragment() {
-    }
-
     /**
      * The first call to a created fragment
      * @param activity
@@ -61,12 +60,31 @@ public class ProfileFragment extends DefaultTabFragment  {
         super.onAttach(activity);
         //Callback to activity
         ((DrawerActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
-        //((DrawerActivity) activity).publishStory();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_residence, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.menu_add_residence:
+                AddResidenceDialog addResidenceDialog = new AddResidenceDialog();
+                addResidenceDialog.show(getFragmentManager(), "addResidence");
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         prefs = PreferencesManager.getInstance();
+        setHasOptionsMenu(true);
 
         //Dummy creation to be replaced when facebook login is 100%
         //setDummyPrefs();
@@ -86,20 +104,18 @@ public class ProfileFragment extends DefaultTabFragment  {
             profilePicture = (ProfilePictureView) mRootView.findViewById(R.id.profile_profile_picture);
             profilePicture.setProfileId(prefs.getKeyFacebookUid());
             profilePicture.setPresetSize(ProfilePictureView.LARGE);
-            profilePicture.setVisibility(0);
+            profilePicture.setVisibility(View.VISIBLE);
 
             Session.getActiveSession();
         }
         else {
             mRootView = inflater.inflate(R.layout.fragment_profile_offline, container, false);
             setupList();
-
         }
 
         Session.getActiveSession();
         return mRootView;
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -137,11 +153,11 @@ public class ProfileFragment extends DefaultTabFragment  {
 
 
     private void createGroupList() {
-        residences = new ArrayList<Residence>();
-        residences.add(new Residence("Huset", "Stadsing Dahls gate", 6, 140, 7015,'A'));
-        residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G'));
-        residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B'));
-        residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D'));
+        residences = new ArrayList<>();
+        residences.add(new Residence("Huset", "Stadsing Dahls gate", 6, 140, 7015,'A',736583709));
+        residences.add(new Residence("Hytta", "På fjellet", 2, 40, 4903,'G',736583709));
+        residences.add(new Residence("Kontoret","NTNU", 1, 15, 7018, 'B',736583709));
+        residences.add(new Residence("Spaniahuset", "Barcelona", 3, 80, 14390, 'D',736583709));
     }
 
     private void setGroupIndicatorToRight() {
@@ -160,14 +176,4 @@ public class ProfileFragment extends DefaultTabFragment  {
         // Convert the dps to pixels, based on density scale
         return (int) (pixels * scale + 0.5f);
     }
-
-    private void setDummyPrefs() {
-        prefs.setFacebookName("Lars Erik Græsdal-Knutrud");
-        prefs.setFacebookLocation("Trondheim");
-        prefs.setFacebookAge("09/01/1991");
-        prefs.setFacebookCountry("Norway");
-        prefs.setKeyFacebookUid("736583709");
-    }
-
-
 }

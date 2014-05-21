@@ -15,10 +15,7 @@ public class Device
     protected boolean deleted;
     protected long lastUpdated;
 
-    public Device()
-    {
-
-    }
+    public Device() {}
 
     public Device(long id, long userId, String name, String description, int category, boolean deleted, long lastUpdated) {
         this.id = id;

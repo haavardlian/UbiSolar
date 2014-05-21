@@ -6,7 +6,6 @@ import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,9 +18,6 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.dialogs.AddTipDialog;
-import com.sintef_energy.ubisolar.model.Tip;
-
-import java.util.ArrayList;
 
 /**
  * Created by perok on 21.03.14.
@@ -97,6 +93,8 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
             }
         });
 
+
+
         return mRoot;
     }
 
@@ -106,25 +104,8 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         setRetainInstance(true);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.add_tip, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-        /* Moved to deviceTab */
-            case R.id.menu_add_tip:
-                AddTipDialog dialog = new AddTipDialog();
-                dialog.setTargetFragment(this, 0);
-                dialog.show(getFragmentManager(), "addTipDialog");
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+
 
     public TipsPagerAdapter getAdapter() { return mPagerAdapter; }
 
@@ -137,7 +118,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         public TipsPagerAdapter(FragmentManager fm) {
             super(fm);
 
-            titles = getResources().getStringArray(R.array.fragment_energy_saving_tabs);
+            titles = getResources().getStringArray(R.array.energy_saving_tabs);
         }
 
         @Override
@@ -167,11 +148,11 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
                     return tipsFragment;
                 case 1:
                     yourFragment = YourFragment.newInstance(0);
+                    yourFragment.setTargetFragment(EnergySavingTabFragment.this, 0);
                     return yourFragment;
                 default:
                     return null;
             }
         }
-
     }
 }

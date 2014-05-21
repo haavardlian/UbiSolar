@@ -2,6 +2,7 @@ package com.sintef_energy.ubisolar.drawer;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
@@ -13,6 +14,8 @@ import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 public class DrawerItem implements Item {
     private String         str1;
     private String         str2;
+
+    private DrawerHolder holder;
 
     public DrawerItem(String title, String count) {
         this.str1 = title;
@@ -29,27 +32,49 @@ public class DrawerItem implements Item {
     }
 
     @Override
-    public View getView(LayoutInflater inflater, View convertView) {
+    public View getView(LayoutInflater inflater, View convertView, ViewGroup parent) {
         View view;
+        holder = new DrawerHolder();
+
         if (convertView == null) {
-            view = (View) inflater.inflate(R.layout.drawer_list_item, null);
+            view = inflater.inflate(R.layout.drawer_list_item, parent, false);
             // Do some initialization
         } else {
             view = convertView;
         }
 
-        TextView text1 = (TextView) view.findViewById(R.id.title);
-        TextView text2 = (TextView) view.findViewById(R.id.counter);
-        text1.setText(str1);
-        if(str2 != null)
-            text2.setText(str2);
-        else
-            text2.setVisibility(View.GONE);
+        holder.text = (TextView) view.findViewById(R.id.title);
+        holder.count = (TextView) view.findViewById(R.id.device_group_counter);
+        holder.text.setText(str1);
+
+        setCount(str2);
 
         return view;
     }
 
     public void setTitle(String str1) {
         this.str1 = str1;
+    }
+
+    public void setCount(String str){
+        str2 = str;
+
+        if(holder == null)
+            return;
+
+        if(holder.count == null)
+            return;
+
+        if(str != null && str.length() > 0) {
+            holder.count.setVisibility(View.VISIBLE);
+            holder.count.setText(str);
+        }
+        else
+            holder.count.setVisibility(View.GONE);
+    }
+
+    static class DrawerHolder{
+        TextView text;
+        TextView count;
     }
 }

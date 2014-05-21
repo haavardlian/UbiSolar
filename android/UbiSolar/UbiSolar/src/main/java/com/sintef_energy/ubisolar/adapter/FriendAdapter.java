@@ -2,16 +2,16 @@ package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.User;
+
 import java.util.List;
 
 /**
@@ -19,9 +19,9 @@ import java.util.List;
  */
 public class FriendAdapter extends ArrayAdapter<User> {
 
-    protected Context context;
-    protected int resource;
-    List<User> users = null;
+    private Context context;
+    private int resource;
+    private List<User> users = null;
 
     public FriendAdapter(Context context, int resource, List<User> users) {
         super(context, resource);
@@ -34,7 +34,6 @@ public class FriendAdapter extends ArrayAdapter<User> {
     @Override
     public void add(User object) {
         users.add(object);
-        notifyDataSetChanged();
     }
 
     @Override
@@ -56,7 +55,7 @@ public class FriendAdapter extends ArrayAdapter<User> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        FriendHolder holder = null;
+        FriendHolder holder;
 
         if(row == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
@@ -64,7 +63,7 @@ public class FriendAdapter extends ArrayAdapter<User> {
 
             holder = new FriendHolder();
             holder.name = (TextView)row.findViewById(R.id.social_user_name);
-            holder.profilePic = (ImageView)row.findViewById(R.id.social_profile_pic);
+            holder.profilePic = (ProfilePictureView)row.findViewById(R.id.social_profile_pic);
 
             row.setTag(holder);
         } else {
@@ -74,14 +73,14 @@ public class FriendAdapter extends ArrayAdapter<User> {
         if(!users.isEmpty()) {
             User user = users.get(position);
             holder.name.setText(user.getName());
-            holder.profilePic.setImageDrawable(user.getProfilePic());
+            holder.profilePic.setProfileId(String.valueOf(user.getUserId()));
         }
         return row;
     }
 
     static class FriendHolder {
         TextView name;
-        ImageView profilePic;
+        ProfilePictureView profilePic;
     }
 
 }

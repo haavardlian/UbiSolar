@@ -1,11 +1,7 @@
 package com.sintef_energy.ubisolar.resources;
 
 import com.sintef_energy.ubisolar.ServerDAO;
-import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
-import com.sintef_energy.ubisolar.structs.Tip;
-import com.sintef_energy.ubisolar.structs.TipRating;
 import com.sintef_energy.ubisolar.structs.WallPost;
-import com.yammer.dropwizard.jersey.params.IntParam;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -40,7 +36,8 @@ public class FriendsResource {
         List<WallPost> feed = db.getWallPostsForFriends(friendList);
 
         if(feed != null && feed.size() > 0) return feed;
-        else throw new WebApplicationException(Response.status(Response.Status.NO_CONTENT).entity(new ArrayList<WallPost>()).build());
+        else throw new WebApplicationException(Response.status(Response.Status.NO_CONTENT).entity(
+                new ArrayList<WallPost>()).build());
     }
 
     @PUT

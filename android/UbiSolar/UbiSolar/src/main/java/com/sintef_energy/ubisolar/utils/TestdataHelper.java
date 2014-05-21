@@ -1,29 +1,21 @@
 package com.sintef_energy.ubisolar.utils;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
-import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.model.Device;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Random;
-
 /**
+ * HELPER DATA GENERATION!!! Avoid.
  * Created by perok on 29.04.14.
  */
 public class TestdataHelper {
 
-    public static final String TAG = TestdataHelper.class.getName();
-        /* HELPER DATA GENERATION!!! Avoid. */
+    private  static final String TAG = TestdataHelper.class.getName();
 
     public static void createDevices(ContentResolver cr)
     {
@@ -34,7 +26,8 @@ public class TestdataHelper {
         addDevice(cr, "Oven", "Kitchen", 2);
     }
 
-    private static void addDevice(ContentResolver cr, String name, String description, int category) {
+    private static void addDevice(ContentResolver contentResolver,
+                                  String name, String description, int category) {
         PreferencesManager preferencesManager = PreferencesManager.getInstance();
         DeviceModel device = new DeviceModel(
                 System.currentTimeMillis(),
@@ -45,7 +38,7 @@ public class TestdataHelper {
                 false,
                 System.currentTimeMillis() / 1000L);
 
-        cr.insert(
+        contentResolver.insert(
                 EnergyContract.Devices.CONTENT_URI, device.getContentValues());
 
         //mDevices.put(device.getDeviceId(), device);

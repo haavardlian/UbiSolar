@@ -1,9 +1,6 @@
 package com.sintef_energy.ubisolar.structs;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.json.JsonSnakeCase;
-
-import java.util.Date;
 
 /**
  * Created by haavard on 2/19/14.
@@ -16,7 +13,6 @@ public class DeviceUsage {
     private double powerUsage;
     private boolean deleted;
     private long lastUpdated;
-
 
     public DeviceUsage() {}
 

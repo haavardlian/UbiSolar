@@ -55,7 +55,8 @@ public class TipsResource {
     public Response createRating(@Valid TipRating rating) {
         int result = db.createRating(rating);
         System.out.println("Changed: " + result);
-        if(result > 0) return Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Rating created")).build();
+        if(result > 0) return Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage("Rating created")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 
@@ -63,7 +64,8 @@ public class TipsResource {
     public Response createTip(@Valid Tip tip) {
         int result = db.createTip(tip);
 
-        if(result == 1) return Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Tip created")).build();
+        if(result == 1) return Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage("Tip created")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 }

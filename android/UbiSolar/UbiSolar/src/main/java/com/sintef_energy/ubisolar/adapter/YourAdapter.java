@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,26 +11,23 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.dialogs.YourDialog;
 import com.sintef_energy.ubisolar.model.Tip;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Håvard on 20.03.14.
  */
 public class YourAdapter extends ArrayAdapter<Tip> {
-    Context context;
-    FragmentManager fragmentManager;
-    int layoutResourceId;
-    List<Tip> data = null;
-    SharedPreferences sharedPreferences;
-    List<String> list;
+    private Context context;
+    private FragmentManager fragmentManager;
+    private int layoutResourceId;
+    private List<Tip> data = null;
+    private SharedPreferences sharedPreferences;
 
     public YourAdapter(Context context, int layoutResourceId, ArrayList<Tip> data, FragmentManager fragmentManager) {
         super(context, layoutResourceId);
@@ -50,10 +46,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     public void add(Tip object) {
         if(!data.contains(object)) {
             data.add(object);
-            Gson gson = new Gson();
-            String json = gson.toJson(object, Tip.class);
-            
-            notifyDataSetChanged();
         }
     }
 
@@ -69,7 +61,6 @@ public class YourAdapter extends ArrayAdapter<Tip> {
     @Override
     public void clear() {
         data.clear();
-        notifyDataSetChanged();
     }
 
     @Override
@@ -103,23 +94,23 @@ public class YourAdapter extends ArrayAdapter<Tip> {
         if(!data.isEmpty()) {
             Tip tip = data.get(position);
             holder.name.setText(tip.getName());
+            holder.checked.setChecked(PreferencesManager.getInstance().isTipImplemented(tip));
         }
 
 
         row.findViewById(R.id.yourTipsRowChecked).setOnClickListener(new View.OnClickListener() {
-
-            private boolean isChecked = false;
             @Override
             public void onClick(View view) {
-                isChecked = ! isChecked;
-                holder.checked.setChecked(isChecked);
+                CheckBox checkBox = (CheckBox) view;
+                boolean value = checkBox.isChecked();
+                PreferencesManager.getInstance().changeIsTipImplemented(data.get(position), value);
             }
         });
 
         row.findViewById(R.id.yourTipsRowName).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                YourDialog dialog = new YourDialog(YourAdapter.this.getItem(position), YourAdapter.this);
+                YourDialog dialog = new YourDialog(data.get(position), YourAdapter.this);
                 dialog.show(fragmentManager, "yourDialog");
             }
         });

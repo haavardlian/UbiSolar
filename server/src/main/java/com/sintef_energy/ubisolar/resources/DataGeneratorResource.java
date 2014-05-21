@@ -21,6 +21,7 @@ public class DataGeneratorResource {
     private ServerDAO db;
 
     long n = 125363;
+
     public DataGeneratorResource(ServerDAO db) {
         this.db = db;
     }
@@ -40,8 +41,10 @@ public class DataGeneratorResource {
     private ArrayList<DeviceUsage> generateUsage(Device d) {
         ArrayList<DeviceUsage> usage = new ArrayList<DeviceUsage>();
         Random r = new Random();
+
         long time = System.currentTimeMillis();
         double rangeMin = 5.0, rangeMax = 20.0;
+
         double random;
 
         for(int i = 0; i < 100; i++) {
@@ -51,6 +54,7 @@ public class DataGeneratorResource {
             if(random < 0) random = -random;
             usage.add(new DeviceUsage(n++, d.getId(), (time/1000L) - (i*172800), random, false, (time/1000L)));
         }
+
 
         return usage;
     }
@@ -68,10 +72,7 @@ public class DataGeneratorResource {
             db.addUsageForDevices(usage.iterator());
         }
 
-
         return Response.status(Response.Status.OK).build();
     }
-
-
 
 }

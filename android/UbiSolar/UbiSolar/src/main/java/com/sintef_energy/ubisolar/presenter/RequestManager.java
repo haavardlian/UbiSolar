@@ -1,6 +1,5 @@
 package com.sintef_energy.ubisolar.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -27,14 +26,20 @@ public class RequestManager {
 
     private static RequestManager instance;
     private RequestTipProxy mRequestTipProxy;
+    private RequestFacebookProxy mRequestFacebookProxy;
     private RequestSyncProxy mRequestSyncProxy;
-    private RequestQueue mRequestQueue;
 
-    private RequestManager(Activity activity) {
-        mRequestQueue = newRequestQueue(activity.getApplicationContext());
-        mRequestTipProxy = new RequestTipProxy(activity, mRequestQueue);
+    private RequestQueue mRequestQueue;
+    private RequestFriendsProxy mRequestFriendsProxy;
+
+    private RequestManager(Context context) {
+        mRequestQueue = newRequestQueue(context);
         mRequestSyncProxy = new RequestSyncProxy(mRequestQueue);
+        mRequestTipProxy = new RequestTipProxy(mRequestQueue);
+        mRequestFacebookProxy = new RequestFacebookProxy();
+        mRequestFriendsProxy = new RequestFriendsProxy(mRequestQueue);
     }
+
     public RequestTipProxy doTipRequest() {
         return mRequestTipProxy;
     }
@@ -43,11 +48,16 @@ public class RequestManager {
         return mRequestSyncProxy;
     }
 
+    public RequestFacebookProxy doFacebookRequest() {
+        return mRequestFacebookProxy;
+    }
+
+    public RequestFriendsProxy doFriendRequest() { return  mRequestFriendsProxy; }
+
     // This method should be called first to do singleton initialization
-    public static synchronized RequestManager getInstance(Activity activity) {
-        if (instance == null) {
-            instance = new RequestManager(activity);
-        }
+    public static synchronized RequestManager getInstance(Context context) {
+        if(instance == null)
+            instance = new RequestManager(context);
         return instance;
     }
 
@@ -59,7 +69,7 @@ public class RequestManager {
         return instance;
     }
 
-    public static RequestQueue newRequestQueue(Context context) {
+    private static RequestQueue newRequestQueue(Context context) {
         File cacheDir = new File(context.getCacheDir(), "def_cahce_dir");
         HttpStack stack;
         String userAgent = "volley/0";

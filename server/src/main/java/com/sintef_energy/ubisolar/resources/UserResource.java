@@ -24,16 +24,17 @@ public class UserResource {
         this.db = db;
     }
 
-    @PUT
+    //@PUT
     public Response createUser(@Valid Token token) {
         int userID = db.createUser(token.getToken());
 
-        if(userID != 0) return Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage(""+userID)).build();
+        if(userID != 0) return Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage(""+userID)).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 
     @Path("{id}/token")
-    @GET
+    //@GET
     public SimpleToken getAccessToken(@PathParam("id") IntParam id) {
         SimpleToken token = db.getAccessToken(id.get());
 

@@ -1,8 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#cccc">
+    android:background="#cccc"
+    android:orientation="vertical">
 
 
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,9 +10,9 @@
         android:id="@+id/navigation_drawer_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/list_background"
         android:choiceMode="singleChoice"
         android:divider="@android:drawable/divider_horizontal_dark"
         android:listSelector="@android:drawable/list_selector_background"
-        android:background="@color/list_background"
         tools:context="com.sintef_energy.ubisolar.fragments.NavigationDrawerFragment" />
 </LinearLayout>

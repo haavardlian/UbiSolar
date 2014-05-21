@@ -1,7 +1,7 @@
 package com.sintef_energy.ubisolar.resources;
 
-import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.ServerDAO;
+import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 import com.yammer.metrics.annotation.Timed;
@@ -30,7 +30,8 @@ public class DevicesResource {
     public Response createDeviceForUser(@PathParam("user") IntParam user, @Valid Device device) {
         int result = db.createDevice(device);
 
-        if(result == 1) return  Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Device created")).build();
+        if(result == 1) return  Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage("Device created")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 

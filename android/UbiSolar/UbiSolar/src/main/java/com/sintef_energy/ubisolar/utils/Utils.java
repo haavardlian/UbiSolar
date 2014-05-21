@@ -1,11 +1,18 @@
 package com.sintef_energy.ubisolar.utils;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.StrictMode;
 import android.widget.Toast;
+
+import com.sintef_energy.ubisolar.R;
+import com.sintef_energy.ubisolar.database.energy.DeviceModel;
+import com.sintef_energy.ubisolar.database.energy.EnergyContract;
+import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 /**
  * Created by perok on 13.04.14.
@@ -14,6 +21,10 @@ public class Utils {
 
     public static void makeShortToast(Context c, String text){
         Toast.makeText(c, text, Toast.LENGTH_SHORT).show();
+    }
+
+    public static void makeLongToast(Context c, String text){
+        Toast.makeText(c, text, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -28,8 +39,6 @@ public class Utils {
 
         return (networkInfo != null && networkInfo.isConnected());
     }
-
-
 
     /**
      * Debug with strict mode
@@ -59,10 +68,22 @@ public class Utils {
             .detectLeakedSqlLiteObjects()
             .detectLeakedClosableObjects()
             .penaltyLog()
-            .penaltyDeath()
             .build());
         }
     }
 
+    public static void createTotal(ContentResolver contentResolver, Activity activity){
+        if(EnergyDataSource.getDeviceModelSize(contentResolver) == 0) {
+            PreferencesManager preferencesManager = PreferencesManager.getInstance();
+            DeviceModel device = new DeviceModel(
+                    1,
+                    Long.valueOf(preferencesManager.getKeyFacebookUid()),
+                    activity.getString(R.string.total_name),
+                    activity.getString(R.string.total_description),
+                    -1);
 
+            contentResolver.insert(
+                    EnergyContract.Devices.CONTENT_URI, device.getContentValues());
+        }
+    }
 }

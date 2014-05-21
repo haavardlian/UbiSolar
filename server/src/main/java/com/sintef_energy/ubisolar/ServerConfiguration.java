@@ -3,8 +3,9 @@ package com.sintef_energy.ubisolar;
 /**
  * Created by thb on 12.02.14.
  */
-import com.yammer.dropwizard.config.Configuration;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 
 import javax.validation.Valid;

@@ -5,17 +5,26 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.YourAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
+import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Håvard on 24.03.2014.
@@ -37,7 +46,7 @@ public class YourDialog extends DialogFragment {
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -47,19 +56,24 @@ public class YourDialog extends DialogFragment {
         view = inflater.inflate(R.layout.dialog_tip, null);
         builder.setView(view)
                 // Add action buttons
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        getDialog().cancel();
-                    }
-                })
                 .setNegativeButton("Remove", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         yourAdapter.remove(tip);
+                        yourAdapter.notifyDataSetChanged();
+                        PreferencesManager.getInstance().removeSubscribedTip(tip);
                     }
                 })
                 .setTitle(tip.getName());
+
+        if(Session.getActiveSession().isOpened()) {
+            builder.setPositiveButton("Share", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                RequestManager.getInstance().doFacebookRequest().postMessage(getTargetFragment(), tip.getDescription(), tip.getName());
+                }
+            });
+        }
 
         descriptionField = (TextView) view.findViewById(R.id.tipDialogDescription);
         ratingField = (RatingBar) view.findViewById(R.id.tipDialogRatingBar);
@@ -73,7 +87,7 @@ public class YourDialog extends DialogFragment {
                 ratingBar.setRating(v);
                 tip.setAverageRating((int)v);
                 TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
-                RequestManager.getInstance().doTipRequest().createRating(rating);
+                RequestManager.getInstance().doTipRequest().createRating(rating, getTargetFragment());
             }
         });
         return builder.create();

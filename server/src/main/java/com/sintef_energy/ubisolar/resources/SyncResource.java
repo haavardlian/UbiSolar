@@ -25,7 +25,7 @@ public class SyncResource {
         this.db = db;
     }
 
-    @GET
+    //@GET
     @Path("/device/newest")
     public long getLastEditedDeviceTime(@PathParam("user") LongParam user) {
         long latest = db.getLastUpdatedTimeDevice(user.get());
@@ -67,7 +67,7 @@ public class SyncResource {
     }
 
 
-    @GET
+    //@GET
     @Path("/usage/newest")
     public long getLastEditedUsageTime(@PathParam("user") IntParam user) {
         long latest = db.getLastUpdatedTimeUsage(user.get());
@@ -77,7 +77,8 @@ public class SyncResource {
 
     @GET
     @Path("/usage/{timestamp}")
-    public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp, @PathParam("user") LongParam userID) {
+    public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp,
+                                             @PathParam("user") LongParam userID) {
         List<DeviceUsage> usage = db.getUpdatedUsage(userID.get(), timestamp.get());
         if(usage != null && !usage.isEmpty())
             return usage;
