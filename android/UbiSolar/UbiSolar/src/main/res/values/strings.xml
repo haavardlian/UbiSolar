@@ -67,10 +67,6 @@
         <item>@drawable/heat</item>
     </string-array>
 
-    <!-- AddTipDialog -->
-    <string name="addTipDialog_title">Create tip</string>
-    <string name="addTipDialog_buttonText">Create</string>
-
     <!-- Add usage-->
     <string name="add_usage_date">Date</string>
     <string name="add_usage_date_description">Date of consumption</string>
@@ -131,7 +127,7 @@
         <item>@drawable/power_production</item>
     </string-array>
 
-    <!-- Fragment usage -->
+    <!-- usage -->
     <string name="usage_select_devices">Select Devices</string>
     <string name="usage_share">Share</string>
     <string name="usage_line_graph_title">Power overview</string>
@@ -210,9 +206,24 @@
     <string name="energy_comparison_setting">Energy class</string>
     <string name="compare_filter">Filter</string>
 
-    <!-- Fragment Energy saving tabs -->
+    <!-- tips -->
     <string name="energy_saving_tab_tips">Tips</string>
     <string name="energy_saving_tab_your">Your tips</string>
+
+    <string name="energy_saving_create_tip">Create tip</string>
+
+    <string name="energy_saving_add_title">Create tip</string>
+    <string name="energy_saving_add_confirm">Create</string>
+    <string name="energy_saving_add_name">Title</string>
+    <string name="energy_saving_add_description">Description</string>
+
+    <string name="energy_saving_add_confirm_message">Tip created</string>
+    <string name="energy_saving_add_empty_name">Name cannot be empty</string>
+    <string name="energy_saving_add_empty_description">Description cannot be empty</string>
+
+    <string name="energy_saving_your_tip_remove">Remove</string>
+    <string name="energy_saving_your_tip_share">Share</string>
+
 
     <string-array name="energy_saving_tabs">
         <item>Tips</item>
@@ -223,7 +234,6 @@
     <string name="energy_saving_close">Close</string>
 
     <string name="energy_saving_rating_changed">Rating changed</string>
-
     <string name="energy_saving_server_error">Unable to connect to the server</string>
 
     <!-- Toast -->

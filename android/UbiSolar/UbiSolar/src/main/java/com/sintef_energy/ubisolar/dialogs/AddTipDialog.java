@@ -28,19 +28,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.fragments.TipsFragment;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
-/**
- * Created by Håvard on 20.03.14.
- */
 public class AddTipDialog extends DialogFragment {
-    private View view = null;
-    private TextView nameField, descriptionField;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -49,17 +44,23 @@ public class AddTipDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setIcon(R.drawable.power_savers);
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        view = inflater.inflate(R.layout.dialog_add_tip, null);
+        View view = inflater.inflate(R.layout.dialog_add_tip, null);
+
+        final EditText nameField = (EditText) view.findViewById(R.id.createTipDialogName);
+        final EditText descriptionField = (EditText) view.findViewById(R.id.createTipDialogDescription);
+
         builder.setView(view)
                 // Add action buttons
-                .setPositiveButton(R.string.addTipDialog_buttonText, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.energy_saving_add_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
+
                         Tip tip = new Tip(0, nameField.getText().toString(), descriptionField.getText().toString(), 0, 0);
 
                         RequestManager.getInstance().doTipRequest().createTip(tip, getTargetFragment());
@@ -72,10 +73,7 @@ public class AddTipDialog extends DialogFragment {
                         AddTipDialog.this.getDialog().cancel();
                     }
                 })
-                .setTitle(R.string.addTipDialog_title);
-
-        nameField = (EditText) view.findViewById(R.id.createTipDialogName);
-        descriptionField = (EditText) view.findViewById(R.id.createTipDialogDescription);
+                .setTitle(R.string.energy_saving_add_title);
 
         return builder.create();
     }

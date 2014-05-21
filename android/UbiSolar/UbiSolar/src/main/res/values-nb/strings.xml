@@ -58,10 +58,6 @@
         <item>@drawable/heat</item>
     </string-array>
 
-    <!-- AddTipDialog -->
-    <string name="addTipDialog_title">Opprett tips</string>
-    <string name="addTipDialog_buttonText">Opprett</string>
-
     <!-- Add usage-->
     <string name="add_usage_date">Dato</string>
     <string name="add_usage_date_description">Dato for forbruket</string>
@@ -171,16 +167,30 @@
     <string name="compare_filter">Filtrer</string>
 
 
-    <!-- Fragment Energy saving tabs -->
+    <!-- Tips -->
     <string name="energy_saving_tab_tips">Tips</string>
     <string name="energy_saving_tab_your">Dine tips</string>
 
+    <string name="energy_saving_create_tip">Lag tips</string>
+
+    <string name="energy_saving_add_title">Opprett tips</string>
+    <string name="energy_saving_add_confirm">Opprett</string>
+    <string name="energy_saving_add_name">Tittel</string>
+    <string name="energy_saving_add_description">Beksrivelse</string>
+
+    <string name="energy_saving_add_confirm_message">Tips opprettet</string>
+    <string name="energy_saving_add_empty_name">Tittel feltet må fylles ut</string>
+    <string name="energy_saving_add_empty_description">Beskrivelses feltet må fylles ut</string>
+
+    <string name="energy_saving_your_tip_remove">Fjern</string>
+    <string name="energy_saving_your_tip_share">Del</string>
+
     <string-array name="energy_saving_tabs">
         <item>Tips</item>
-        <item>Dine tips</item>
+        <item>Mine tips</item>
     </string-array>
 
-    <string name="energy_saving_move_tip">Legg til i dine tips</string>
+    <string name="energy_saving_move_tip">Legg til i mine tips</string>
     <string name="energy_saving_close">Lukk</string>
 
     <string name="energy_saving_rating_changed">Vurdering endret</string>

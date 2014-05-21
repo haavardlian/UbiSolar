@@ -25,7 +25,7 @@ import android.widget.ListView;
 
 import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.YourAdapter;
+import com.sintef_energy.ubisolar.adapter.YourTipAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
@@ -36,7 +36,7 @@ import java.util.ArrayList;
  */
 public class YourTipFragment extends ProgressFragment {
     private static final String ARG_POSITION = "position";
-    private YourAdapter yourAdapter;
+    private YourTipAdapter yourAdapter;
 
     public static YourTipFragment newInstance(int position) {
         YourTipFragment fragment = new YourTipFragment();
@@ -61,7 +61,7 @@ public class YourTipFragment extends ProgressFragment {
 
         View rootView =  getContentView();
         ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
-        yourAdapter = new YourAdapter(this, R.layout.fragment_your_tip_row,
+        yourAdapter = new YourTipAdapter(this, R.layout.fragment_your_tip_row,
                 new ArrayList<Tip>(), getFragmentManager());
         yourList.setAdapter(yourAdapter);
 
@@ -70,5 +70,5 @@ public class YourTipFragment extends ProgressFragment {
 
     //TODO Bug: Ha onResume eller count() der man setter setContentShown om innhold har dukket opp.
 
-    public YourAdapter getAdapter() { return yourAdapter; }
+    public YourTipAdapter getAdapter() { return yourAdapter; }
 }

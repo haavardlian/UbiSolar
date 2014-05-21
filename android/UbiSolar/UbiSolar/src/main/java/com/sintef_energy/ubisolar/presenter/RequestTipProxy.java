@@ -20,8 +20,6 @@
 package com.sintef_energy.ubisolar.presenter;
 
 import android.app.Fragment;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -39,7 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.TipAdapter;
-import com.sintef_energy.ubisolar.adapter.YourAdapter;
+import com.sintef_energy.ubisolar.adapter.YourTipAdapter;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
@@ -52,7 +50,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -123,7 +120,7 @@ public class RequestTipProxy {
         requestQueue.add(jsonRequest);
     }
 
-    public void getSavedTips(final YourAdapter adapter, final ProgressFragment fragment) {
+    public void getSavedTips(final YourTipAdapter adapter, final ProgressFragment fragment) {
         String url = Global.BASE_URL + "/tips";
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
@@ -194,17 +191,15 @@ public class RequestTipProxy {
                     @Override
                     public void onResponse(final JSONObject response) {
 
-                            fragment.getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        Toast.makeText(fragment.getActivity(), response.getString("message"),
-                                            Toast.LENGTH_LONG).show();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            });
+                        fragment.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Toast.makeText(fragment.getActivity(),
+                                        fragment.getString(R.string.energy_saving_add_confirm_message),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 },
                 new Response.ErrorListener() {
@@ -213,7 +208,9 @@ public class RequestTipProxy {
                         fragment.getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(fragment.getActivity(), fragment.getString(R.string.energy_saving_server_error), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(fragment.getActivity(),
+                                        fragment.getString(R.string.energy_saving_server_error),
+                                        Toast.LENGTH_SHORT).show();
                             }
                         });
 

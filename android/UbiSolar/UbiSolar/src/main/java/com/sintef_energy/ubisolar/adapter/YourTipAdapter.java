@@ -31,25 +31,22 @@ import android.widget.TextView;
 
 import com.devspark.progressfragment.ProgressFragment;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.dialogs.YourDialog;
+import com.sintef_energy.ubisolar.dialogs.YourTipDialog;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Håvard on 20.03.14.
- */
-public class YourAdapter extends ArrayAdapter<Tip> {
+public class YourTipAdapter extends ArrayAdapter<Tip> {
     private Context context;
     private FragmentManager fragmentManager;
     private int layoutResourceId;
     private List<Tip> data = null;
     private ProgressFragment fragment;
 
-    public YourAdapter(ProgressFragment fragment, int layoutResourceId, ArrayList<Tip> data,
-                       FragmentManager fragmentManager) {
+    public YourTipAdapter(ProgressFragment fragment, int layoutResourceId, ArrayList<Tip> data,
+                          FragmentManager fragmentManager) {
         super(fragment.getActivity(), layoutResourceId);
         this.context = fragment.getActivity();
         this.layoutResourceId = layoutResourceId;
@@ -136,7 +133,7 @@ public class YourAdapter extends ArrayAdapter<Tip> {
         row.findViewById(R.id.yourTipsRowName).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                YourDialog dialog = new YourDialog(data.get(position), YourAdapter.this);
+                YourTipDialog dialog = new YourTipDialog(data.get(position), YourTipAdapter.this);
                 dialog.show(fragmentManager, "yourDialog");
             }
         });

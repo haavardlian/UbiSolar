@@ -32,7 +32,7 @@ import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.YourAdapter;
+import com.sintef_energy.ubisolar.adapter.YourTipAdapter;
 
 /**
  * Created by perok on 21.03.14.
@@ -127,7 +127,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
     public class TipsPagerAdapter extends FragmentStatePagerAdapter {
 
         private String[] titles;
-        private YourAdapter yourAdapter;
+        private YourTipAdapter yourAdapter;
         private TipsFragment tipsFragment;
         private YourTipFragment yourFragment;
         public TipsPagerAdapter(FragmentManager fm) {
