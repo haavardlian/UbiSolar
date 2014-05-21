@@ -328,50 +328,47 @@ public class EnergyProvider extends ContentProvider{
         int updateCount;
         String idStr;
         String where;
+        String table;
 
         switch (URI_MATCHER.match(uri)) {
             case DEVICES_LIST:
-                updateCount = db.update(
-                        DeviceModel.DeviceEntry.TABLE_NAME,
-                        values,
-                        selection,
-                        selectionArgs);
+                table = DeviceModel.DeviceEntry.TABLE_NAME;
                 break;
             case DEVICES_ID:
                 idStr = uri.getLastPathSegment();
                 where = EnergyContract.Devices._ID + " = " + idStr;
-                if (!TextUtils.isEmpty(selection)) {
-                    where += " AND " + selection;
-                }
-                updateCount = db.update(
-                        DeviceModel.DeviceEntry.TABLE_NAME,
-                        values,
-                        where,
-                        selectionArgs);
+                if (!TextUtils.isEmpty(selection))
+                    selection = where + " AND " + selection;
+                else
+                    selection = where;
+
+                table = DeviceModel.DeviceEntry.TABLE_NAME;
                 break;
             case ENERGY_LIST:
-                updateCount = db.update(
-                        EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
-                        values,
-                        selection,
-                        selectionArgs);
+                table = EnergyUsageModel.EnergyUsageEntry.TABLE_NAME;
                 break;
             case ENERGY_ID:
                 idStr = uri.getLastPathSegment();
                 where = EnergyContract.Energy._ID + " = " + idStr;
-                if (!TextUtils.isEmpty(selection)) {
-                    where += " AND " + selection;
-                }
-                updateCount = db.update(
-                        EnergyUsageModel.EnergyUsageEntry.TABLE_NAME,
-                        values,
-                        where,
-                        selectionArgs);
+                if (!TextUtils.isEmpty(selection))
+                    selection = where + " AND " + selection;
+                else
+                    selection = where;
+
+                table = EnergyUsageModel.EnergyUsageEntry.TABLE_NAME;
                 break;
             default:
                 // no support for updating photos or entities!
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
+
+        updateCount = db.updateWithOnConflict(
+                        table,
+                        values,
+                        selection,
+                        selectionArgs,
+                        SQLiteDatabase.CONFLICT_REPLACE);
+
         // notify all listeners of changes:
         if (updateCount > 0 && !isInBatchMode()) {
             getContext().getContentResolver().notifyChange(uri, null);
@@ -381,10 +378,9 @@ public class EnergyProvider extends ContentProvider{
     }
 
     /*
-    * For fast insert. ApplyBatch or bulkInsert?
-    * http://stackoverflow.com/questions/5596354/insertion-of-thousands-of-contact-entries-using-applybatch-is-slow
-    * */
-
+     * For fast insert. ApplyBatch or bulkInsert?
+     * http://stackoverflow.com/questions/5596354/insertion-of-thousands-of-contact-entries-using-applybatch-is-slow
+     */
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         final SQLiteDatabase db = mHelper.getWritableDatabase();
