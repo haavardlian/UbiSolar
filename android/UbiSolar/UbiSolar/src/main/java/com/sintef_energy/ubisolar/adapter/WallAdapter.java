@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.WallPost;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
@@ -95,6 +96,7 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
             holder.message = (TextView)row.findViewById(R.id.wall_item_text);
             holder.date = (TextView) row.findViewById(R.id.wall_item_date);
             holder.time = (TextView) row.findViewById(R.id.wall_item_time);
+            holder.profilePic = (ProfilePictureView) row.findViewById(R.id.wall_item_pic);
 
             row.setTag(holder);
         } else {
@@ -107,6 +109,7 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
             holder.message.setText(messages[post.getMessage()-1]);
             holder.date.setText(dateFormat.format(date));
             holder.time.setText(timeFormat.format(date));
+            holder.profilePic.setProfileId(String.valueOf(post.getUserId()));
             if(!holder.nameLoaded) {
                 RequestManager.getInstance().doFacebookRequest().getFacebookName(post.getUserId(),
                         holder.name);
@@ -117,6 +120,7 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
     }
 
     static class WallItemHolder {
+        ProfilePictureView profilePic;
         TextView name;
         boolean nameLoaded = false;
         TextView message;
