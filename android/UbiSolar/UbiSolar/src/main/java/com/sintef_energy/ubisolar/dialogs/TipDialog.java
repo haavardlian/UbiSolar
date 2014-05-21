@@ -24,10 +24,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RatingBar;
@@ -41,15 +38,9 @@ import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
-import java.util.HashSet;
-import java.util.Set;
-
-/**
- * Created by Håvard on 24.03.2014.
- */
 public class TipDialog extends DialogFragment {
 
-    private View view = null;
+    private View view;
     private Tip tip;
     private TextView descriptionField;
     private RatingBar ratingField;
@@ -76,8 +67,11 @@ public class TipDialog extends DialogFragment {
                 .setPositiveButton(getString(R.string.energy_saving_move_tip), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        ((EnergySavingTabFragment)getTargetFragment().getTargetFragment()).getAdapter().getYourFragment().getAdapter().add(tip);
-                        ((EnergySavingTabFragment)getTargetFragment().getTargetFragment()).getAdapter().getYourFragment().getAdapter().notifyDataSetChanged();
+                        ((EnergySavingTabFragment)getTargetFragment().getTargetFragment())
+                                .getAdapter().getYourFragment().getAdapter().add(tip);
+
+                        ((EnergySavingTabFragment)getTargetFragment().getTargetFragment())
+                                .getAdapter().getYourFragment().getAdapter().notifyDataSetChanged();
                         PreferencesManager.getInstance().addSubscribedTip(tip);
                     }
                 })

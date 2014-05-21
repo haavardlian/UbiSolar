@@ -22,7 +22,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/menu_add_tip"
-        android:title="Create tip"
-        android:icon="@android:drawable/ic_input_add"
+        android:title="@string/energy_saving_create_tip"
         android:showAsAction="ifRoom"/>
 </menu>

@@ -47,6 +47,4 @@
         android:checked="false"
         android:clickable="true"
         android:enabled="true" />
-
-
 </RelativeLayout>

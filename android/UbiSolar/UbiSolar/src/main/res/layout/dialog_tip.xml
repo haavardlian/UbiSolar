@@ -32,7 +32,6 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque convallis, libero id placerat tristique, eros justo imperdiet nibh, eget scelerisque odio nisi eu orci"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <RatingBar
@@ -45,5 +44,4 @@
         android:layout_below="@+id/tipDialogDescription"
         android:numStars="5"
         android:stepSize="1" />
-
 </RelativeLayout>
