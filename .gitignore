@@ -32,3 +32,7 @@ proguard/
 # # Gradle files
 .gradle/
 build/
+
+# Server
+*.log
+logs/
