@@ -428,8 +428,6 @@ public class NavigationDrawerFragment extends Fragment {
 
             String action = intent.getAction();
 
-            Log.v(TAG, "DataBroadcastReceiver update!: ");
-
             if(action.equals(Global.BROADCAST_NAV_DRAWER)){
                 if(intent.hasExtra(Global.DATA_B_NAV_DRAWER_USAGE)) {
                     int value = intent.getIntExtra(Global.DATA_B_NAV_DRAWER_USAGE, -1);
