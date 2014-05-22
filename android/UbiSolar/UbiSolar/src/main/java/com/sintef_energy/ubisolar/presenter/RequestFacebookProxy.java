@@ -30,6 +30,7 @@ import com.facebook.Request;
 import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NewsFeedAdapter;
 import com.sintef_energy.ubisolar.model.NewsFeedPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
@@ -61,7 +62,8 @@ public class RequestFacebookProxy {
 
                         if (response.getError() == null) {
                             Toast.makeText(fragment.getActivity(),
-                                    "Posted to Facebook", Toast.LENGTH_SHORT).show();
+                                    fragment.getString(R.string.facebook_posted),
+                                    Toast.LENGTH_SHORT).show();
 
                             RequestManager.getInstance().doFriendRequest().createWallPost(
                                     new NewsFeedPost(0,
@@ -70,7 +72,8 @@ public class RequestFacebookProxy {
                                             System.currentTimeMillis()/1000), fragment);
                         } else
                             Toast.makeText(fragment.getActivity(),
-                                    "Error posting to Facebook", Toast.LENGTH_SHORT).show();
+                                    fragment.getString(R.string.facebook_error),
+                                    Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -92,8 +95,18 @@ public class RequestFacebookProxy {
                                     Long.valueOf(PreferencesManager
                                             .getInstance().getKeyFacebookUid()), 3,
                                     System.currentTimeMillis()/1000), fragment);
+                    fragment.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(fragment.getActivity(),
+                                    fragment.getString(R.string.facebook_posted),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } else
-                    Log.d("FACEBOOK", "Error");
+                    Toast.makeText(fragment.getActivity(),
+                        fragment.getString(R.string.facebook_error),
+                        Toast.LENGTH_SHORT).show();
 
             }
         }).executeAsync();
@@ -145,7 +158,7 @@ public class RequestFacebookProxy {
                             Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()),
                             fragment, TextUtils.join(",", friendIds));
                 } catch(Exception e) {
-
+                    e.printStackTrace();
                 }
             }
         };
