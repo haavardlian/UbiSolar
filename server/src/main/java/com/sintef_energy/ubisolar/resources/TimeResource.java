@@ -14,6 +14,10 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public class TimeResource {
 
+    /**
+     * Returns the current time on the server
+     * @return Current time in milliseconds since 1. Jan 1970
+     */
     @GET
     public long getCurrentTime() {
         return System.currentTimeMillis();

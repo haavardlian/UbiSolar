@@ -8,30 +8,30 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 import org.skife.jdbi.v2.unstable.BindIn;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by haavard on 2/12/14.
+ * Created by Håvard on 2/12/14.
+ *
+ * An interface used by JDBI to to bind methods to SQL queries
  */
 @RegisterMapper(TotalUsageMapper.class)
 @UseStringTemplate3StatementLocator
 public interface ServerDAO {
 
-    @SqlUpdate("INSERT INTO device (id, user_id, name, description, deleted, last_updated, category) VALUES " +
-            "(:device.id, :device.userId, :device.name, :device.description, :device.deleted, :device.lastUpdated, :device.category)")
+    @SqlUpdate("INSERT INTO device (id, user_id, name, description, deleted, last_updated, category) VALUES (:device.id, :device.userId, :device.name, :device.description, :device.deleted, :device.lastUpdated, :device.category)")
     int createDevice(@BindBean("device") Device device);
 
-    @SqlBatch("INSERT INTO device (id, user_id, name, description, last_updated, deleted, category) VALUES " +
-            "(:d.id, :d.userId, :d.name, :d.description, :d.lastUpdated, :d.deleted, :d.category)" +
-            "ON DUPLICATE KEY UPDATE user_id = :d.userId, name = :d.name, description = :d.description," +
-            "deleted = :d.deleted, last_updated = :d.lastUpdated, category = :d.category")
+
+    @SqlBatch("INSERT INTO device (id, user_id, name, description, last_updated, deleted, category) VALUES (:d.id, :d.userId, :d.name, :d.description, :d.lastUpdated, :d.deleted, :d.category) ON DUPLICATE KEY UPDATE user_id = :d.userId, name = :d.name, description = :d.description, deleted = :d.deleted, last_updated = :d.lastUpdated, category = :d.category")
     int[] createDevices(@BindBean("d") Iterator<Device> device);
     
-    @SqlQuery("SELECT device_power_usage.id, device.user_id, timestamp, SUM(device_power_usage.power_usage) " +
-            "AS power_usage, YEAR(timestamp) AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp)" +
-            "AS day, HOUR(timestamp) AS hour FROM device_power_usage, device WHERE " +
-            "device_power_usage.device_id = device.id AND device.user_id = :userId GROUP BY year")
+    @SqlQuery("SELECT device_power_usage.id, device.user_id, timestamp, SUM(device_power_usage.power_usage) AS power_usage, YEAR(timestamp) " +
+              "AS year, MONTH(timestamp) AS month, WEEK(timestamp) AS week, DAY(timestamp) AS day, HOUR(timestamp) AS " +
+              "hour FROM device_power_usage, device WHERE device_power_usage.device_id = device.id AND " +
+              "device.user_id = :userId GROUP BY year")
     @Mapper(TotalUsageMapper.class)
     List<TotalUsage> getTotalDevicesUsageYearly(@Bind("userId") int userId);
 
@@ -64,13 +64,10 @@ public interface ServerDAO {
     @Mapper(DeviceUsageMapper.class)
     List<DeviceUsage> getUsageForDevice(@Bind("device_id") int device_id);
 
-    @SqlUpdate("INSERT INTO device_power_usage (device_id, timestamp, power_usage, deleted, last_updated) VALUES " +
-            "(:usage.deviceId, :usage.timestamp, :usage.powerUsage, :usage.deleted, :usage.lastUpdated)")
+    @SqlUpdate("INSERT INTO device_power_usage (device_id, timestamp, power_usage, deleted, last_updated) VALUES (:usage.deviceId, :usage.timestamp, :usage.powerUsage, :usage.deleted, :usage.lastUpdated)")
     int addUsageForDevice(@BindBean("usage") DeviceUsage usage);
 
-    @SqlBatch("INSERT INTO device_power_usage (id, device_id, power_usage, timestamp, deleted, last_updated) VALUES " +
-            "(:u.id, :u.deviceId, :u.powerUsage, :u.timestamp, :u.deleted, :u.lastUpdated) ON DUPLICATE KEY UPDATE " +
-            "device_id = :u.deviceId, power_usage = :u.powerUsage, timestamp = :u.timestamp, deleted = :u.deleted, last_updated = :u.lastUpdated")
+    @SqlBatch("INSERT INTO device_power_usage (id, device_id, power_usage, timestamp, deleted, last_updated) VALUES (:u.id, :u.deviceId, :u.powerUsage, :u.timestamp, :u.deleted, :u.lastUpdated) ON DUPLICATE KEY UPDATE device_id = :u.deviceId, power_usage = :u.powerUsage, timestamp = :u.timestamp, deleted = :u.deleted, last_updated = :u.lastUpdated")
     int[] addUsageForDevices(@BindBean("u") Iterator<DeviceUsage> u);
 
     @SqlQuery("SELECT * FROM total_power_usage WHERE user_id = :user_id")
@@ -80,8 +77,7 @@ public interface ServerDAO {
     @SqlUpdate("INSERT INTO total_power_usage (user_id, timestamp, power_usage) VALUES(:usage.userId, :usage.datetime, :usage.powerUsage)")
     int addTotalUsageForUser(@BindBean("usage") TotalUsage usage);
 
-    @SqlQuery("SELECT tip.*, (SELECT AVG(rating) FROM tip_rating WHERE tip_id=tip.id) AS average_rating," +
-            "(SELECT COUNT(rating) FROM tip_rating WHERE tip_id=tip.id) AS n_ratings FROM tip")
+    @SqlQuery("SELECT tip.*, (SELECT AVG(rating) FROM tip_rating WHERE tip_id=tip.id) AS average_rating, (SELECT COUNT(rating) FROM tip_rating WHERE tip_id=tip.id) AS n_ratings FROM tip")
     @Mapper(TipMapper.class)
     List<Tip> getAllTips();
 
@@ -96,8 +92,7 @@ public interface ServerDAO {
     @Mapper(TipRatingMapper.class)
     List<TipRating> getRatingsForTip(@Bind("id") int id);
 
-    @SqlUpdate("INSERT INTO tip_rating (tip_id, rating, user_id) VALUES (:rating.tipId, :rating.rating, :rating.userId)" +
-            "ON DUPLICATE KEY UPDATE rating = :rating.rating")
+    @SqlUpdate("INSERT INTO tip_rating (tip_id, rating, user_id) VALUES (:rating.tipId, :rating.rating, :rating.userId) ON DUPLICATE KEY UPDATE rating = :rating.rating")
     int createRating(@BindBean("rating") TipRating rating);
 
     @SqlUpdate("INSERT INTO user (access_token) VALUES (:access_token)")
@@ -111,20 +106,18 @@ public interface ServerDAO {
     @SqlQuery("SELECT id FROM user WHERE access_token = :access_token")
     int getUserId(@Bind("access_token") String access_token);
 
-    @SqlQuery("SELECT * FROM device WHERE user_id = :userID AND last_updated > :timestamp and deleted = 0")
+    @SqlQuery("SELECT * FROM device WHERE user_id = :userID AND last_updated > :timestamp")
     @Mapper(DeviceMapper.class)
     List<Device> getUpdatedDevices(@Bind("userID") long userID, @Bind("timestamp") long timestamp);
 
-    @SqlQuery("SELECT * FROM device_power_usage, device WHERE timestamp > :timestamp AND device_id = device.id " +
-            "AND device.user_id = :userId AND device_power_usage.deleted = 0")
+    @SqlQuery("SELECT * FROM device_power_usage, device WHERE timestamp > :timestamp AND device_id = device.id AND device.user_id = :userId")
     @Mapper(DeviceUsageMapper.class)
     List<DeviceUsage> getUpdatedUsage(@Bind("userId") long userId, @Bind("timestamp") long timestamp);
 
-    @SqlQuery("SELECT MAX(last_updated) AS timestamp FROM device WHERE user_id = :user and deleted = 0 LIMIT 1")
+    @SqlQuery("SELECT MAX(last_updated) AS timestamp FROM device WHERE user_id = :user LIMIT 1")
     long getLastUpdatedTimeDevice(@Bind("user") long user);
 
-    @SqlQuery("SELECT MAX(timestamp) AS timestamp FROM device_power_usage, device where device_id = device.id AND " +
-            "device.user_id = :user AND device_power_usage.deleted = 0 LIMIT 1")
+    @SqlQuery("SELECT MAX(timestamp) AS timestamp FROM device_power_usage, device where device_id = device.id AND device.user_id = :user LIMIT 1")
     long getLastUpdatedTimeUsage(@Bind("user") long user);
 
 

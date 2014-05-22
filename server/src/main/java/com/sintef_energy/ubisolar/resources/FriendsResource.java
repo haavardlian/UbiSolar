@@ -21,6 +21,11 @@ public class FriendsResource {
         this.db = db;
     }
 
+    /**
+     * Get wall post created by a users friends
+     * @param friendIds A list of friend ids
+     * @return A list of wall posts created by friends
+     */
     @GET
     @Path("wall/")
     public List<WallPost> getWallPosts(@QueryParam("friends") String friendIds) {
@@ -40,6 +45,11 @@ public class FriendsResource {
                 new ArrayList<WallPost>()).build());
     }
 
+    /**
+     * Create a post
+     * @param post The post
+     * @return A success or error code
+     */
     @PUT
     @Path("wall/")
     public Response postToWall(@Valid WallPost post) {

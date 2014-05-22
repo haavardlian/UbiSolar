@@ -4,6 +4,8 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
 
 /**
  * Created by haavard on 2/19/14.
+ *
+ * Class to hold info about usage for devices
  */
 @JsonSnakeCase
 public class DeviceUsage {

@@ -5,6 +5,8 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
 
 /**
  * Created by haavard on 2/19/14.
+ *
+ * Contains info about a device
  */
 @JsonSnakeCase
 public class Device {

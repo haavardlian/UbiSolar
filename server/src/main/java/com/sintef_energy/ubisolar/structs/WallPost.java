@@ -4,6 +4,8 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
 
 /**
  * Created by Håvard on 09.05.2014.
+ *
+ * Contains a wall post
  */
 @JsonSnakeCase
 public class WallPost {

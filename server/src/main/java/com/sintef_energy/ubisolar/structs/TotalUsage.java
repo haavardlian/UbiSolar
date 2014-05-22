@@ -7,6 +7,8 @@ import java.util.Date;
 
 /**
  * Created by haavard on 2/19/14.
+ *
+ * Usage for total
  */
 @JsonSnakeCase
 public class TotalUsage {

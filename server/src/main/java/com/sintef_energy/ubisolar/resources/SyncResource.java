@@ -33,6 +33,12 @@ public class SyncResource {
         return latest;
     }
 
+    /**
+     * Get devices changed after given timestamp
+     * @param timestamp The timestamp to check for devices after
+     * @param userID The user to check for
+     * @return A list of devices edited after the given timestamp
+     */
     @GET
     @Path("/device/{timestamp}")
     public List<Device> getNewDevices(@PathParam("timestamp") LongParam timestamp, @PathParam("user") LongParam userID) {
@@ -43,6 +49,11 @@ public class SyncResource {
             throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
+    /**
+     * Creates or updates devices
+     * @param devices A list of devices
+     * @return A success code or a list of devices that was not modified/created.
+     */
     @PUT
     @Path("/device/")
     public Response syncDevices(@Valid ArrayList<Device> devices) {
@@ -75,6 +86,12 @@ public class SyncResource {
         return latest;
     }
 
+    /**
+     * Get usage elements changed after given timestamp
+     * @param timestamp The timestamp to check for usage elements after
+     * @param userID The user to check for
+     * @return A list of usage elements edited after the given timestamp
+     */
     @GET
     @Path("/usage/{timestamp}")
     public List<DeviceUsage> getUpdatedUsage(@PathParam("timestamp") LongParam timestamp,
@@ -86,6 +103,11 @@ public class SyncResource {
             throw new WebApplicationException(Response.Status.NO_CONTENT);
     }
 
+    /**
+     * Creates or updates usage
+     * @param usage A list of usage
+     * @return A success code or a list of usage that was not modified/created.
+     */
     @PUT
     @Path("/usage/")
     public Response syncUsage(@Valid ArrayList<DeviceUsage> usage) {
