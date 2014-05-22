@@ -30,8 +30,8 @@ import com.facebook.Request;
 import com.facebook.RequestAsyncTask;
 import com.facebook.Response;
 import com.facebook.Session;
-import com.sintef_energy.ubisolar.adapter.WallAdapter;
-import com.sintef_energy.ubisolar.model.WallPost;
+import com.sintef_energy.ubisolar.adapter.NewsFeedAdapter;
+import com.sintef_energy.ubisolar.model.NewsFeedPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 import org.json.JSONArray;
@@ -64,7 +64,7 @@ public class RequestFacebookProxy {
                                     "Posted to Facebook", Toast.LENGTH_SHORT).show();
 
                             RequestManager.getInstance().doFriendRequest().createWallPost(
-                                    new WallPost(0,
+                                    new NewsFeedPost(0,
                                             Long.valueOf(PreferencesManager
                                                     .getInstance().getKeyFacebookUid()), 2,
                                             System.currentTimeMillis()/1000), fragment);
@@ -88,7 +88,7 @@ public class RequestFacebookProxy {
                 if(response.getError() == null) {
                     Log.d("FACEBOOK", "Message posted");
                     RequestManager.getInstance().doFriendRequest().createWallPost(
-                            new WallPost(0,
+                            new NewsFeedPost(0,
                                     Long.valueOf(PreferencesManager
                                             .getInstance().getKeyFacebookUid()), 3,
                                     System.currentTimeMillis()/1000), fragment);
@@ -124,7 +124,7 @@ public class RequestFacebookProxy {
                 .executeAsync();
     }
 
-    public void populateWall(final WallAdapter adapter, final Fragment fragment) {
+    public void populateWall(final NewsFeedAdapter adapter, final Fragment fragment) {
         Request.Callback callback = new Request.Callback() {
             @Override
             public void onCompleted(Response response) {

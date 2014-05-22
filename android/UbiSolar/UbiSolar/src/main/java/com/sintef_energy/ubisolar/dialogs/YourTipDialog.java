@@ -19,7 +19,6 @@
 
 package com.sintef_energy.ubisolar.dialogs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -39,22 +38,15 @@ import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 /**
- * Created by Håvard on 24.03.2014.
+ * Dialog displaying the option to remove or share a tip under your tips
  */
 public class YourTipDialog extends DialogFragment {
-    private View view = null;
     private Tip tip;
-    private YourTipAdapter yourAdapter;
-    private TextView descriptionField;
-    private RatingBar ratingField;
+    private YourTipAdapter yourTipAdapter;
 
-    public YourTipDialog(Tip tip, YourTipAdapter yourAdapter) {
+    public YourTipDialog(Tip tip, YourTipAdapter yourTipAdapter) {
         this.tip = tip;
-        this.yourAdapter = yourAdapter;
-    }
-
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+        this.yourTipAdapter = yourTipAdapter;
     }
 
     @Override
@@ -66,15 +58,15 @@ public class YourTipDialog extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        view = inflater.inflate(R.layout.dialog_tip, null);
+        View view = inflater.inflate(R.layout.dialog_tip, null);
         builder.setView(view)
                 // Add action buttons
                 .setNegativeButton(getString(R.string.energy_saving_your_tip_remove),
                         new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
-                        yourAdapter.remove(tip);
-                        yourAdapter.notifyDataSetChanged();
+                        yourTipAdapter.remove(tip);
+                        yourTipAdapter.notifyDataSetChanged();
                         PreferencesManager.getInstance().removeSubscribedTip(tip);
                     }
                 })
@@ -91,8 +83,8 @@ public class YourTipDialog extends DialogFragment {
             });
         }
 
-        descriptionField = (TextView) view.findViewById(R.id.tipDialogDescription);
-        ratingField = (RatingBar) view.findViewById(R.id.tipDialogRatingBar);
+        TextView descriptionField = (TextView) view.findViewById(R.id.tipDialogDescription);
+        RatingBar ratingField = (RatingBar) view.findViewById(R.id.tipDialogRatingBar);
 
         descriptionField.setText(tip.getDescription());
         ratingField.setRating(tip.getAverageRating());

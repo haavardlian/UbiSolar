@@ -35,8 +35,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sintef_energy.ubisolar.R;
 
-import com.sintef_energy.ubisolar.adapter.WallAdapter;
-import com.sintef_energy.ubisolar.model.WallPost;
+import com.sintef_energy.ubisolar.adapter.NewsFeedAdapter;
+import com.sintef_energy.ubisolar.model.NewsFeedPost;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.JsonObjectRequestTweaked;
 
@@ -63,7 +63,7 @@ public class RequestFriendsProxy {
         this.requestQueue = requestQueue;
     }
 
-    public void getWallUpdates(final WallAdapter adapter, long userId, final Fragment fragment,
+    public void getWallUpdates(final NewsFeedAdapter adapter, long userId, final Fragment fragment,
                                final String friendIds) {
         String url = Global.BASE_URL + "/user/" + userId + "/friends/wall?friends=" + friendIds;
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
@@ -72,7 +72,7 @@ public class RequestFriendsProxy {
                 adapter.clear();
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        adapter.add(mapper.readValue(jsonArray.get(i).toString(), WallPost.class));
+                        adapter.add(mapper.readValue(jsonArray.get(i).toString(), NewsFeedPost.class));
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");
                         Log.e("REQUEST", e.toString());
@@ -114,7 +114,7 @@ public class RequestFriendsProxy {
         });
     }
 
-    public void createWallPost(WallPost post, final Fragment fragment) {
+    public void createWallPost(NewsFeedPost post, final Fragment fragment) {
         String url = Global.BASE_URL + "/user/" + post.getUserId() + "/friends/wall";
         JSONObject jsonObject;
 

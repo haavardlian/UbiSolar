@@ -34,69 +34,79 @@ import com.sintef_energy.ubisolar.model.User;
 import java.util.List;
 
 /**
- * Created by baier on 3/21/14.
+ * Adapter managing the list of friends used for comparison
  */
 public class FriendAdapter extends ArrayAdapter<User> {
 
-    private Context context;
-    private int resource;
-    private List<User> users = null;
+    private Context mContext;
+    private int mResource;
+    private List<User> mUsers;
 
+    /**
+     * Constructor
+     * @param context The parent activity
+     * @param resource
+     * @param users List of users to populate the view
+     */
     public FriendAdapter(Context context, int resource, List<User> users) {
         super(context, resource);
 
-        this.context = context;
-        this.resource = resource;
-        this.users = users;
+        this.mContext = context;
+        this.mResource = resource;
+        this.mUsers = users;
     }
 
     @Override
     public void add(User object) {
-        users.add(object);
+        mUsers.add(object);
     }
 
     @Override
     public void clear() {
-        users.clear();
+        mUsers.clear();
         notifyDataSetChanged();
     }
 
     @Override
     public User getItem(int position) {
-        return users.get(position);
+        return mUsers.get(position);
     }
 
     @Override
     public int getCount() {
-        return users.size();
+        return mUsers.size();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
         FriendHolder holder;
 
-        if(row == null) {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            row = inflater.inflate(resource, parent, false);
+        //Get the views
+        if(convertView == null) {
+            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+            convertView = inflater.inflate(mResource, parent, false);
 
             holder = new FriendHolder();
-            holder.name = (TextView)row.findViewById(R.id.social_user_name);
-            holder.profilePic = (ProfilePictureView)row.findViewById(R.id.social_profile_pic);
+            holder.name = (TextView)convertView.findViewById(R.id.social_user_name);
+            holder.profilePic = (ProfilePictureView)convertView.findViewById(R.id.social_profile_pic);
 
-            row.setTag(holder);
+            convertView.setTag(holder);
         } else {
-            holder = (FriendHolder)row.getTag();
+            holder = (FriendHolder)convertView.getTag();
         }
 
-        if(!users.isEmpty()) {
-            User user = users.get(position);
+        //Populate the views
+        if(!mUsers.isEmpty()) {
+            User user = mUsers.get(position);
             holder.name.setText(user.getName());
             holder.profilePic.setProfileId(String.valueOf(user.getUserId()));
         }
-        return row;
+        return convertView;
     }
 
+    /**
+     * Static class to hold information
+     */
     static class FriendHolder {
         TextView name;
         ProfilePictureView profilePic;

@@ -33,10 +33,8 @@ import android.view.ViewGroup;
 
 import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.adapter.SimilarAdapter;
 
 import com.sintef_energy.ubisolar.dialogs.CompareSettingsDialog;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 /**
  * Created by baier on 4/1/14.
@@ -47,8 +45,6 @@ public class CompareSimilarFragment extends Fragment {
      * fragment.
      */
     private static final String TAG = CompareSimilarFragment.class.getName();
-
-    private SimilarAdapter simAdapter;
 
     private View view;
     private static final String ARG_POSITION = "position";

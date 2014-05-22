@@ -22,20 +22,20 @@ package com.sintef_energy.ubisolar.model;
 /**
  * Created by Håvard on 09.05.2014.
  */
-public class WallPost {
+public class NewsFeedPost {
     private int id;
     private long userId;
     private  int message;
     private long timestamp;
 
-    public WallPost(int id, long userId, int message, long timestamp) {
+    public NewsFeedPost(int id, long userId, int message, long timestamp) {
         this.id = id;
         this.userId = userId;
         this.message = message;
         this.timestamp = timestamp;
     }
 
-    public WallPost() {
+    public NewsFeedPost() {
     }
 
     public int getId() {

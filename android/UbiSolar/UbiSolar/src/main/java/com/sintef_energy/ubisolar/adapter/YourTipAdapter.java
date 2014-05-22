@@ -38,109 +38,115 @@ import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter for managing and populating the list of tips
+ */
 public class YourTipAdapter extends ArrayAdapter<Tip> {
-    private Context context;
-    private FragmentManager fragmentManager;
-    private int layoutResourceId;
-    private List<Tip> data = null;
-    private ProgressFragment fragment;
+    private Context mContext;
+    private FragmentManager mFragmentManager;
+    private int mLayoutResourceId;
+    private List<Tip> mTips;
+    private ProgressFragment mFragment;
 
-    public YourTipAdapter(ProgressFragment fragment, int layoutResourceId, ArrayList<Tip> data,
+    public YourTipAdapter(ProgressFragment fragment, int layoutResourceId, ArrayList<Tip> tips,
                           FragmentManager fragmentManager) {
         super(fragment.getActivity(), layoutResourceId);
-        this.context = fragment.getActivity();
-        this.layoutResourceId = layoutResourceId;
-        this.data = data;
-        this.fragmentManager = fragmentManager;
-        this.fragment = fragment;
+        this.mContext = fragment.getActivity();
+        this.mLayoutResourceId = layoutResourceId;
+        this.mTips = tips;
+        this.mFragmentManager = fragmentManager;
+        this.mFragment = fragment;
     }
 
     public Activity getActivity() {
-        return (Activity) context;
+        return (Activity) mContext;
     }
 
     @Override
     public void add(Tip object) {
-        if(!data.contains(object)) {
-            data.add(object);
+        if(!mTips.contains(object)) {
+            mTips.add(object);
         }
     }
 
     @Override
     public void remove(Tip object) {
-        if(data.contains(object)) {
-            data.remove(object);
+        if(mTips.contains(object)) {
+            mTips.remove(object);
             notifyDataSetChanged();
         }
     }
 
     @Override
     public void clear() {
-        data.clear();
+        mTips.clear();
     }
 
     @Override
     public Tip getItem(int position) {
-        return data.get(position);
+        return mTips.get(position);
     }
 
     @Override
     public int getCount() {
-        int size = data.size();
+        int size = mTips.size();
 
         if(size > 0)
-            fragment.setContentEmpty(false);
+            mFragment.setContentEmpty(false);
         else
-            fragment.setContentEmpty(true);
+            mFragment.setContentEmpty(true);
 
-        return data.size();
+        return mTips.size();
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        final TipHolder holder;
+        TipHolder holder;
 
-        if(row == null) {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
+        //Load the views
+        if(convertView == null) {
+            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+            convertView = inflater.inflate(mLayoutResourceId, parent, false);
 
             holder = new TipHolder();
-            holder.name = (TextView)row.findViewById(R.id.yourTipsRowName);
-            holder.checked = (CheckBox) row.findViewById(R.id.yourTipsRowChecked);
+            holder.name = (TextView)convertView.findViewById(R.id.yourTipsRowName);
+            holder.checked = (CheckBox) convertView.findViewById(R.id.yourTipsRowChecked);
 
-            row.setTag(holder);
+            convertView.setTag(holder);
         } else {
-            holder = (TipHolder)row.getTag();
+            holder = (TipHolder)convertView.getTag();
         }
 
-        if(!data.isEmpty()) {
-            Tip tip = data.get(position);
+        //Populate views
+        if(!mTips.isEmpty()) {
+            Tip tip = mTips.get(position);
             holder.name.setText(tip.getName());
             holder.checked.setChecked(PreferencesManager.getInstance().isTipImplemented(tip));
         }
 
-
-        row.findViewById(R.id.yourTipsRowChecked).setOnClickListener(new View.OnClickListener() {
+        convertView.findViewById(R.id.yourTipsRowChecked).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CheckBox checkBox = (CheckBox) view;
                 boolean value = checkBox.isChecked();
-                PreferencesManager.getInstance().changeIsTipImplemented(data.get(position), value);
+                PreferencesManager.getInstance().changeIsTipImplemented(mTips.get(position), value);
             }
         });
 
-        row.findViewById(R.id.yourTipsRowName).setOnClickListener(new View.OnClickListener() {
+        convertView.findViewById(R.id.yourTipsRowName).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                YourTipDialog dialog = new YourTipDialog(data.get(position), YourTipAdapter.this);
-                dialog.show(fragmentManager, "yourDialog");
+                YourTipDialog dialog = new YourTipDialog(mTips.get(position), YourTipAdapter.this);
+                dialog.show(mFragmentManager, "yourDialog");
             }
         });
 
-        return row;
+        return convertView;
     }
 
+    /**
+     * Class for holding the views
+     */
     static class TipHolder {
         TextView name;
         CheckBox checked;

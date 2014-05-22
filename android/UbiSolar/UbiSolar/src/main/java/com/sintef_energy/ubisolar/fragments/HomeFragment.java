@@ -29,8 +29,8 @@ import android.widget.ListView;
 import com.facebook.Session;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.WallAdapter;
-import com.sintef_energy.ubisolar.model.WallPost;
+import com.sintef_energy.ubisolar.adapter.NewsFeedAdapter;
+import com.sintef_energy.ubisolar.model.NewsFeedPost;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
@@ -65,8 +65,8 @@ public class HomeFragment extends DefaultTabFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Load the wall items
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        ArrayList<WallPost> wallFeed = new ArrayList<>();
-        WallAdapter wallAdapter = new WallAdapter(getActivity(),R.layout.home_wall_item, wallFeed);
+        ArrayList<NewsFeedPost> wallFeed = new ArrayList<>();
+        NewsFeedAdapter wallAdapter = new NewsFeedAdapter(getActivity(),R.layout.home_wall_item, wallFeed);
         final ListView friendsList = (ListView) view.findViewById(R.id.news_feed_list);
         friendsList.setAdapter(wallAdapter);
 

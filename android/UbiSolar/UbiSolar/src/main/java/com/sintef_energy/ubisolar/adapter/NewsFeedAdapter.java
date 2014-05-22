@@ -21,7 +21,6 @@ package com.sintef_energy.ubisolar.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,7 @@ import android.widget.TextView;
 
 import com.facebook.widget.ProfilePictureView;
 import com.sintef_energy.ubisolar.R;
-import com.sintef_energy.ubisolar.model.WallPost;
+import com.sintef_energy.ubisolar.model.NewsFeedPost;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.text.DateFormat;
@@ -40,71 +39,73 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Håvard on 20.03.14.
+ * Adapter for managing and populating the homepage news feed
  */
-public class WallAdapter extends ArrayAdapter<WallPost> {
-    private Context context;
-    private int layoutResourceId;
-    private List<WallPost> data = null;
-    private String[] messages;
-    private DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-    private DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+public class NewsFeedAdapter extends ArrayAdapter<NewsFeedPost> {
+    private Context mContext;
+    private int mLayoutResourceId;
+    private List<NewsFeedPost> mNewsFeed;
 
-    public WallAdapter(Context context, int layoutResourceId, ArrayList<WallPost> data) {
+    public NewsFeedAdapter(Context context, int layoutResourceId, ArrayList<NewsFeedPost> newsFeed) {
         super(context, layoutResourceId);
-        this.context = context;
-        this.layoutResourceId = layoutResourceId;
-        this.data = data;
-        messages = context.getResources().getStringArray(R.array.wall_post_messages);
+        this.mContext = context;
+        this.mLayoutResourceId = layoutResourceId;
+        this.mNewsFeed = newsFeed;
     }
 
     public Activity getActivity() {
-        return (Activity) context;
+        return (Activity) mContext;
     }
 
     @Override
-    public void add(WallPost object) {
-        data.add(object);
+    public void add(NewsFeedPost object) {
+        mNewsFeed.add(object);
     }
 
     @Override
     public void clear() {
-        data.clear();
+        mNewsFeed.clear();
     }
 
     @Override
-    public WallPost getItem(int position) {
-        return data.get(position);
+    public NewsFeedPost getItem(int position) {
+        return mNewsFeed.get(position);
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return mNewsFeed.size();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
-        WallItemHolder holder;
+        NewsFeedPostHolder holder;
 
-        if(row == null) {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
+        String[] messages =  mContext.getResources().getStringArray(R.array.wall_post_messages);
 
-            holder = new WallItemHolder();
-            holder.name = (TextView)row.findViewById(R.id.wall_item_name);
-            holder.message = (TextView)row.findViewById(R.id.wall_item_text);
-            holder.date = (TextView) row.findViewById(R.id.wall_item_date);
-            holder.time = (TextView) row.findViewById(R.id.wall_item_time);
-            holder.profilePic = (ProfilePictureView) row.findViewById(R.id.wall_item_pic);
+        //Load the views
+        if(convertView == null) {
+            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+            convertView = inflater.inflate(mLayoutResourceId, parent, false);
 
-            row.setTag(holder);
+            holder = new NewsFeedPostHolder();
+            holder.name = (TextView)convertView.findViewById(R.id.wall_item_name);
+            holder.message = (TextView)convertView.findViewById(R.id.wall_item_text);
+            holder.date = (TextView) convertView.findViewById(R.id.wall_item_date);
+            holder.time = (TextView) convertView.findViewById(R.id.wall_item_time);
+            holder.profilePic = (ProfilePictureView) convertView.findViewById(R.id.wall_item_pic);
+
+            convertView.setTag(holder);
         } else {
-            holder = (WallItemHolder)row.getTag();
+            holder = (NewsFeedPostHolder)convertView.getTag();
         }
 
-        if(!data.isEmpty()) {
-            WallPost post = data.get(position);
+        //Populate the views
+        if(!mNewsFeed.isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            DateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+            NewsFeedPost post = mNewsFeed.get(position);
             Date date = new Date(post.getTimestamp() * 1000);
             holder.message.setText(messages[post.getMessage()-1]);
             holder.date.setText(dateFormat.format(date));
@@ -119,10 +120,13 @@ public class WallAdapter extends ArrayAdapter<WallPost> {
                 holder.nameLoaded = true;
             }
         }
-        return row;
+        return convertView;
     }
 
-    static class WallItemHolder {
+    /**
+     * Holder for holding the news feed views
+     */
+    static class NewsFeedPostHolder {
         boolean profilePicLoaded = false;
         ProfilePictureView profilePic;
         TextView name;
