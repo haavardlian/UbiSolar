@@ -37,7 +37,11 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.Residence;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
-public class ResidenceListAdapter extends BaseExpandableListAdapter implements ExpandableListView.OnChildClickListener{
+/**
+ * Adapter managing the residence list
+ */
+public class ResidenceListAdapter extends BaseExpandableListAdapter implements
+        ExpandableListView.OnChildClickListener{
 
     private Activity context;
     private List<Residence> residences;

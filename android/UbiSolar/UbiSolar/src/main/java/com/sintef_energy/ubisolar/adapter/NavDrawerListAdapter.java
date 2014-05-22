@@ -30,18 +30,16 @@ import com.sintef_energy.ubisolar.drawer.Item;
 import java.util.List;
 
 /**
- * Created by perok on 20.03.14.
+ * Adapter for managing the navigation drawer
  */
 public class NavDrawerListAdapter extends ArrayAdapter<Item> {
     private LayoutInflater mInflater;
-    private List<Item> items;
-    public enum RowType {
-        LIST_ITEM, HEADER_ITEM
-    }
+    private List<Item> mItems;
+    public enum RowType { LIST_ITEM, HEADER_ITEM }
 
     public NavDrawerListAdapter(Context context, List<Item> items) {
         super(context, 0, items);
-        this.items = items;
+        this.mItems = items;
         mInflater = LayoutInflater.from(context);
     }
 
@@ -62,12 +60,12 @@ public class NavDrawerListAdapter extends ArrayAdapter<Item> {
 
     @Override
     public Item getItem(int position) {
-        return items.get(position);
+        return mItems.get(position);
     }
 
     @Override
     public boolean isEnabled(int position) {
-        if(items.get(position).getViewType() == RowType.HEADER_ITEM.ordinal())
+        if(mItems.get(position).getViewType() == RowType.HEADER_ITEM.ordinal())
             return false;
         else
             return true;

@@ -34,20 +34,20 @@ import android.widget.TextView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 
+/**
+ * Adapter managing the the devices
+ */
 public class DeviceListAdapter extends BaseExpandableListAdapter{
     public static final String TAG = DeviceListAdapter.class.getName();
 
-    private Activity context;
+    private Activity mContext;
     private List<DeviceModel> devices;
-    private String[] categories;
-
-    private TypedArray icons;
+    private String[] mCategories;
 
     public DeviceListAdapter(Activity context, List<DeviceModel> devices) {
-        this.context = context;
+        this.mContext = context;
         this.devices = devices;
-        this.categories = context.getResources().getStringArray(R.array.device_categories);
-        icons = context.getResources().obtainTypedArray(R.array.device_icons);
+        this.mCategories = context.getResources().getStringArray(R.array.device_categories);
     }
 
     @Override
@@ -55,11 +55,10 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
         int count = 0;
         for (DeviceModel deviceModel : devices){
             if (deviceModel.getCategory() == groupPosition) {
-                if(count++ >= childPosition) // Found the child
+                if(count++ >= childPosition)
                     return deviceModel;
             }
         }
-
         return null;
     }
 
@@ -79,11 +78,12 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
         return childPosition;
     }
 
+    @Override
     public View getChildView(int groupPosition, int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
-        final DeviceModel device = getChild(groupPosition, childPosition);
 
-        LayoutInflater inflater = context.getLayoutInflater();
+        DeviceModel device = getChild(groupPosition, childPosition);
+        LayoutInflater inflater = mContext.getLayoutInflater();
 
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.device_child_item, parent, false);
@@ -92,7 +92,7 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
         TextView nameView = (TextView) convertView.findViewById(R.id.device_name);
         nameView.setText(device.getName());
 
-        //Only show description if the device actually got a description
+        //Only show description if the field is not empty
         if (device.getDescription().length() > 1){
             TextView descriptionView = (TextView) convertView.findViewById(R.id.device_description);
             descriptionView.setText(device.getDescription());
@@ -101,32 +101,39 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
         return convertView;
     }
 
+    @Override
     public String getGroup(int groupPosition) {
-        return categories[groupPosition];
+        return mCategories[groupPosition];
     }
 
-    public int getGroupCount() { return categories.length; }
+    @Override
+    public int getGroupCount() { return mCategories.length; }
 
+    @Override
     public long getGroupId(int groupPosition) {
         return groupPosition;
     }
 
+    @Override
     public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
         int childrenCount = getChildrenCount(groupPosition);
 
         if (convertView == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) context
+            LayoutInflater layoutInflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.device_list_item, parent, false);
         }
 
+        //Populate the fields
         TextView category = (TextView) convertView.findViewById(R.id.device_category);
         ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
         TextView counter = (TextView) convertView.findViewById(R.id.device_group_counter);
 
-        icon.setImageResource(icons.getResourceId(groupPosition,3));
-        category.setText(categories[groupPosition]);
+        TypedArray icons = mContext.getResources().obtainTypedArray(R.array.device_icons);
+        icon.setImageResource(icons.getResourceId(groupPosition, 3));
+        category.setText(mCategories[groupPosition]);
 
+        //Sets or hides the device counter if it is empty
         if(childrenCount < 1)
             counter.setVisibility(View.INVISIBLE);
         else {
@@ -137,10 +144,12 @@ public class DeviceListAdapter extends BaseExpandableListAdapter{
         return convertView;
     }
 
+    @Override
     public boolean hasStableIds() {
         return true;
     }
 
+    @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }

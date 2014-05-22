@@ -63,7 +63,7 @@ import com.sintef_energy.ubisolar.fragments.ProfileFragment;
 import com.sintef_energy.ubisolar.fragments.UsageFragment;
 import com.sintef_energy.ubisolar.fragments.CompareFragment;
 
-import com.sintef_energy.ubisolar.model.WallPost;
+import com.sintef_energy.ubisolar.model.NewsFeedPost;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
@@ -300,7 +300,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
                 //Publish a post saying you started using Wattitude
                 RequestManager.getInstance().doFriendRequest().createWallPost(
-                        new WallPost(0, Long.valueOf(facebookUID), 1, System.currentTimeMillis() / 1000),
+                        new NewsFeedPost(0, Long.valueOf(facebookUID), 1, System.currentTimeMillis() / 1000),
                         null);
             }
             else {

@@ -35,70 +35,74 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Håvard on 20.03.14.
+ * Adapter for managing tips
  */
 public class TipAdapter extends ArrayAdapter<Tip> {
-    private Context context;
-    private int layoutResourceId;
-    private List<Tip> data = null;
+    private Context mContext;
+    private int mLayoutResourceId;
+    private List<Tip> mTips;
 
-    public TipAdapter(Context context, int layoutResourceId, ArrayList<Tip> data) {
+    public TipAdapter(Context context, int layoutResourceId, ArrayList<Tip> tips) {
         super(context, layoutResourceId);
-        this.context = context;
-        this.layoutResourceId = layoutResourceId;
-        this.data = data;
+        this.mContext = context;
+        this.mLayoutResourceId = layoutResourceId;
+        this.mTips = tips;
     }
 
     public Activity getActivity() {
-        return (Activity) context;
+        return (Activity) mContext;
     }
 
     @Override
     public void add(Tip object) {
-        data.add(object);
+        mTips.add(object);
     }
 
     @Override
     public void clear() {
-        data.clear();
+        mTips.clear();
     }
 
     @Override
     public Tip getItem(int position) {
-        return data.get(position);
+        return mTips.get(position);
     }
 
     @Override
     public int getCount() {
-        return data.size();
+        return mTips.size();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
         TipHolder holder;
 
-        if(row == null) {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
+        //Load the views
+        if(convertView == null) {
+            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+            convertView = inflater.inflate(mLayoutResourceId, parent, false);
 
             holder = new TipHolder();
-            holder.name = (TextView)row.findViewById(R.id.tipRowName);
-            holder.rating = (RatingBar)row.findViewById(R.id.tipRowRating);
+            holder.name = (TextView)convertView.findViewById(R.id.tipRowName);
+            holder.rating = (RatingBar)convertView.findViewById(R.id.tipRowRating);
 
-            row.setTag(holder);
+            convertView.setTag(holder);
         } else {
-            holder = (TipHolder)row.getTag();
+            holder = (TipHolder)convertView.getTag();
         }
 
-        if(!data.isEmpty()) {
-            Tip tip = data.get(position);
+        //Populate the views
+        if(!mTips.isEmpty()) {
+            Tip tip = mTips.get(position);
             holder.name.setText(tip.getName());
             holder.rating.setRating(tip.getAverageRating());
         }
-        return row;
+        return convertView;
     }
 
+    /**
+     * Static class for holding the tip row views
+     */
     static class TipHolder {
         TextView name;
         RatingBar rating;
