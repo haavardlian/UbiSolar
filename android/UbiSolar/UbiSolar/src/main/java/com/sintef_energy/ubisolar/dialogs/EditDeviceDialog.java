@@ -40,6 +40,9 @@ import com.sintef_energy.ubisolar.presenter.DevicePresenter;
 import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 import com.sintef_energy.ubisolar.utils.Utils;
 
+/**
+ * Dialog for creating and editing devices
+ */
 public class EditDeviceDialog extends DialogFragment {
     public static final String TAG = EditDeviceDialog.class.getName();
 
@@ -50,6 +53,7 @@ public class EditDeviceDialog extends DialogFragment {
 
     /**
      * Constructor for editing a device
+     *
      * @param device The device to edit
      * @param title The Dialog title
      */

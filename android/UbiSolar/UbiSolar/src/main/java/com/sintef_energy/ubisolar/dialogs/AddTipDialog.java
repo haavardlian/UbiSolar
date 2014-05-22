@@ -34,6 +34,9 @@ import com.sintef_energy.ubisolar.fragments.TipsFragment;
 import com.sintef_energy.ubisolar.model.Tip;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
+/**
+ * Dialog for adding tips
+ */
 public class AddTipDialog extends DialogFragment {
 
     @Override

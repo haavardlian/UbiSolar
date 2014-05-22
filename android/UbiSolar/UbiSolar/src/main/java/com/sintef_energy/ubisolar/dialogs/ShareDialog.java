@@ -36,17 +36,13 @@ import com.sintef_energy.ubisolar.presenter.RequestManager;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Created by Håvard on 30.04.14.
+ * Dialog for sharing graph images on facebook
  */
 public class ShareDialog extends DialogFragment {
-
-    private ImageView image;
-    private EditText caption;
-    private Bitmap bitmap;
-    private View view;
+    private Bitmap mImage;
 
     public ShareDialog(Bitmap bitmap) {
-        this.bitmap = bitmap;
+        this.mImage = bitmap;
     }
 
     @Override
@@ -57,15 +53,18 @@ public class ShareDialog extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        view = inflater.inflate(R.layout.dialog_share, null);
+        View view = inflater.inflate(R.layout.dialog_share, null);
+        final EditText caption = (EditText) view.findViewById(R.id.shareCaption);
+
         builder.setView(view)
                 // Add action buttons
                 .setPositiveButton(getString(R.string.share_post), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         ByteArrayOutputStream image = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, image);
-                        RequestManager.getInstance().doFacebookRequest().postPicture(getTargetFragment(), caption.getText().toString(), image.toByteArray());
+                        mImage.compress(Bitmap.CompressFormat.PNG, 100, image);
+                        RequestManager.getInstance().doFacebookRequest().postPicture(getTargetFragment(),
+                                caption.getText().toString(), image.toByteArray());
 
                     }
                 })
@@ -77,13 +76,9 @@ public class ShareDialog extends DialogFragment {
                 })
                 .setTitle(getString(R.string.share_title));
 
-        image = (ImageView) view.findViewById(R.id.shareImage);
-        image.setImageBitmap(bitmap);
-
-        caption = (EditText) view.findViewById(R.id.shareCaption);
+        ImageView image = (ImageView) view.findViewById(R.id.shareImage);
+        image.setImageBitmap(mImage);
 
         return builder.create();
-
     }
-
 }

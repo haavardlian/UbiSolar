@@ -33,12 +33,9 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
 /**
- * Created by baier on 5/4/14.
+ * Dialog to allow the user to filter on parameters
  */
 public class CompareSettingsDialog extends DialogFragment {
-    private PreferencesManager pref = PreferencesManager.getInstance();
-    private View view = null;
-    private CheckBox area, location, residents, energy;
 
     @Override
     public void onAttach(Activity activity) {
@@ -47,23 +44,24 @@ public class CompareSettingsDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final PreferencesManager preferenceManager = PreferencesManager.getInstance();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        view = inflater.inflate(R.layout.dialog_filter_compare, null);
+        View view = inflater.inflate(R.layout.dialog_filter_compare, null);
 
-        area = (CheckBox) view.findViewById(R.id.areaCheckBox);
-        location = (CheckBox) view.findViewById(R.id.locationCheckBox);
-        energy = (CheckBox) view.findViewById(R.id.energyCheckBox);
-        residents = (CheckBox) view.findViewById(R.id.resCheckBox);
+        final CheckBox area = (CheckBox) view.findViewById(R.id.areaCheckBox);
+        final CheckBox location = (CheckBox) view.findViewById(R.id.locationCheckBox);
+        final CheckBox energy = (CheckBox) view.findViewById(R.id.energyCheckBox);
+        final CheckBox residents = (CheckBox) view.findViewById(R.id.resCheckBox);
 
-        area.setChecked(pref.getComparisonAreaChecked());
-        location.setChecked(pref.getComparisonLocationChecked());
-        energy.setChecked(pref.getComparisonEnergyChecked());
-        residents.setChecked(pref.getComparisonResidentsChecked());
+        area.setChecked(preferenceManager.getComparisonAreaChecked());
+        location.setChecked(preferenceManager.getComparisonLocationChecked());
+        energy.setChecked(preferenceManager.getComparisonEnergyChecked());
+        residents.setChecked(preferenceManager.getComparisonResidentsChecked());
 
 
         builder.setView(view)
@@ -71,10 +69,10 @@ public class CompareSettingsDialog extends DialogFragment {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        pref.setComparisonAreaChecked(area.isChecked());
-                        pref.setComparisonEnergyChecked(energy.isChecked());
-                        pref.setComparisonResidentsChecked(residents.isChecked());
-                        pref.setComparisonLocationChecked(location.isChecked());
+                        preferenceManager.setComparisonAreaChecked(area.isChecked());
+                        preferenceManager.setComparisonEnergyChecked(energy.isChecked());
+                        preferenceManager.setComparisonResidentsChecked(residents.isChecked());
+                        preferenceManager.setComparisonLocationChecked(location.isChecked());
 
                     }
                 })
@@ -84,8 +82,6 @@ public class CompareSettingsDialog extends DialogFragment {
                     }
                 })
                 .setTitle(R.string.comparison_setting);
-
-
         return builder.create();
     }
 }
