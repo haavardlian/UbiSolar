@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet author="haavard (generated)" id="1400082138012-1">
+        <createTable tableName="device">
+            <column name="id" type="BIGINT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="1" name="category" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="deleted" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-2">
+        <createTable tableName="device_power_usage">
+            <column name="id" type="BIGINT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="device_id" type="BIGINT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="power_usage" type="DOUBLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted" type="BIT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="BIGINT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-3">
+        <createTable tableName="session">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="token" type="VARCHAR(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-4">
+        <createTable tableName="tip">
+            <column autoIncrement="true" name="id" type="INT UNSIGNED">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-5">
+        <createTable tableName="tip_rating">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="tip_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="TINYINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-6">
+        <createTable tableName="wall">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="user_id" type="BIGINT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="INT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="BIGINT UNSIGNED">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-7">
+        <addPrimaryKey columnNames="id, user_id" tableName="device"/>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-8">
+        <addPrimaryKey columnNames="id, device_id" tableName="device_power_usage"/>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-9">
+        <createIndex indexName="token" tableName="session" unique="true">
+            <column name="token"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="haavard (generated)" id="1400082138012-10">
+        <createIndex indexName="tip_id" tableName="tip_rating" unique="true">
+            <column name="tip_id"/>
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

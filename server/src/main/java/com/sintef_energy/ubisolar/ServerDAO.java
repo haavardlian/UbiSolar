@@ -13,7 +13,9 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by haavard on 2/12/14.
+ * Created by Håvard on 2/12/14.
+ *
+ * An interface used by JDBI to to bind methods to SQL queries
  */
 @RegisterMapper(TotalUsageMapper.class)
 @UseStringTemplate3StatementLocator

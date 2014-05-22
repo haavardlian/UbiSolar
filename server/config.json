@@ -1,0 +1,12 @@
+{
+  "database": {
+    "driverClass": "com.mysql.jdbc.Driver",
+    "user": "haavarhl_it2901",
+    "password": "julebrus",
+    "url": "jdbc:mysql://188.226.188.11/haavarhl_it2901"
+  },
+  "http": {
+    "port": 1337,
+    "adminPort": 8081
+  }
+}

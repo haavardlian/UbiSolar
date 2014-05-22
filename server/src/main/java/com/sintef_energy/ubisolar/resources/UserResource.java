@@ -13,6 +13,8 @@ import javax.ws.rs.core.Response;
 
 /**
  * Created by Håvard on 26.03.14.
+ *
+ * Resources related to users
  */
 @Path("user/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,14 +26,25 @@ public class UserResource {
         this.db = db;
     }
 
+    /**
+     * Create a user in the database
+     * @param token The facebook access token
+     * @return On success return the facebook user id else return an error code
+     */
     @PUT
     public Response createUser(@Valid Token token) {
         int userID = db.createUser(token.getToken());
 
-        if(userID != 0) return Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage(""+userID)).build();
+        if(userID != 0) return Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage(""+userID)).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 
+    /**
+     * Gets the facebook access token for a facebook user id
+     * @param id The facebook user id
+     * @return On success return the token else return an error code
+     */
     @Path("{id}/token")
     @GET
     public SimpleToken getAccessToken(@PathParam("id") IntParam id) {

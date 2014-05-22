@@ -14,7 +14,8 @@ public class DeviceUsageMapper implements ResultSetMapper<DeviceUsage>
 {
     public DeviceUsage map(int index, ResultSet r, StatementContext ctx) throws SQLException
     {
-        return new DeviceUsage(r.getLong("id"), r.getLong("device_id"), r.getLong("timestamp"), r.getDouble("power_usage"), r.getBoolean("deleted"), r.getLong("last_updated"));
+        return new DeviceUsage(r.getLong("id"), r.getLong("device_id"), r.getLong("timestamp"),
+                r.getDouble("power_usage"), r.getBoolean("deleted"), r.getLong("last_updated"));
 
     }
 }

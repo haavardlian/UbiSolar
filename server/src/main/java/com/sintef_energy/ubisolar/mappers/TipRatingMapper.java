@@ -1,6 +1,5 @@
 package com.sintef_energy.ubisolar.mappers;
 
-import com.sintef_energy.ubisolar.structs.Tip;
 import com.sintef_energy.ubisolar.structs.TipRating;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
