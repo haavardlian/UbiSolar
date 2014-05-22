@@ -4,6 +4,8 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
 
 /**
  * Created by Håvard on 05.03.14.
+ *
+ * Hold info about a rating for a Tip
  */
 @JsonSnakeCase
 public class TipRating {

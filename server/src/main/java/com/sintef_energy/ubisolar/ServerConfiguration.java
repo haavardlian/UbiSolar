@@ -2,6 +2,10 @@ package com.sintef_energy.ubisolar;
 
 /**
  * Created by thb on 12.02.14.
+ *
+ * Class to hold the server configuration.
+ *
+ * The config file will parse into an instance of this class
  */
 import com.yammer.dropwizard.config.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,26 +1,23 @@
 package com.sintef_energy.ubisolar.structs;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.json.JsonSnakeCase;
-
-import java.util.Date;
 
 /**
  * Created by haavard on 2/19/14.
+ *
+ * Class to hold info about usage for devices
  */
 @JsonSnakeCase
 public class DeviceUsage {
     private long id;
     private long deviceId;
-    private Date datetime;
-    @JsonProperty
     private long timestamp;
-    @JsonProperty
     private double powerUsage;
     private boolean deleted;
     private long lastUpdated;
 
     public DeviceUsage() {}
+
 
     public DeviceUsage(long id, long deviceId, long timestamp, double powerUsage, boolean deleted, long lastUpdated) {
         this.id = id;

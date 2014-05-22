@@ -13,6 +13,8 @@ import java.util.List;
 
 /**
  * Created by Håvard on 05.03.14.
+ *
+ * Resource for power saving tips
  */
 @Path("/tips")
 @Consumes("application/json; charset=utf8")
@@ -23,6 +25,10 @@ public class TipsResource {
         this.db = db;
     }
 
+    /**
+     * Get all tips from the database
+     * @return A list of tips
+     */
     @GET
     public List<Tip> getAllTips() {
         List<Tip> tips = db.getAllTips();
@@ -40,6 +46,11 @@ public class TipsResource {
         else throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
+    /**
+     * Gets a specific tip determined by id
+     * @param id Tip id
+     * @return The tip corresponding to the id if it exists
+     */
     @GET
     @Path("/{id}/rating/")
     public List<TipRating> getRatingsForTip(@PathParam("id") IntParam id) {
@@ -50,20 +61,32 @@ public class TipsResource {
 
     }
 
+    /**
+     * Create a rating for a tip
+     * @param rating The tip rating
+     * @return A success or error message depending on whether the rating was created
+     */
     @PUT
     @Path("/{id}/rating")
     public Response createRating(@Valid TipRating rating) {
         int result = db.createRating(rating);
         System.out.println("Changed: " + result);
-        if(result > 0) return Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Rating created")).build();
+        if(result > 0) return Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage("Rating created")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 
+    /**
+     * Create a tip
+     * @param tip The tip
+     * @return A success or error message depending on whether the tip was created
+     */
     @PUT
     public Response createTip(@Valid Tip tip) {
         int result = db.createTip(tip);
 
-        if(result == 1) return Response.status(Response.Status.CREATED).entity(new SimpleJSONMessage("Tip created")).build();
+        if(result == 1) return Response.status(Response.Status.CREATED).entity(
+                new SimpleJSONMessage("Tip created")).build();
         else throw new WebApplicationException(Response.Status.NOT_MODIFIED);
     }
 }

@@ -13,6 +13,7 @@ import java.sql.SQLException;
 public class DeviceMapper implements ResultSetMapper<Device> {
     @Override
     public Device map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-        return new Device(r.getLong("id"), r.getLong("user_id"), r.getString("name"), r.getString("description"), r.getLong("last_updated"), r.getBoolean("deleted"), r.getInt("category"));
+        return new Device(r.getLong("id"), r.getLong("user_id"), r.getString("name"), r.getString("description"),
+                r.getLong("last_updated"), r.getBoolean("deleted"), r.getInt("category"));
     }
 }

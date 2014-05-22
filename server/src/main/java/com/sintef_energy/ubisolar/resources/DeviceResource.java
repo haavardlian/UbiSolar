@@ -1,7 +1,7 @@
 package com.sintef_energy.ubisolar.resources;
 
-import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.ServerDAO;
+import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.SimpleJSONMessage;
 import com.yammer.dropwizard.jersey.params.IntParam;
 

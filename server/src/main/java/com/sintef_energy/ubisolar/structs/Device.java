@@ -5,6 +5,8 @@ import com.yammer.dropwizard.json.JsonSnakeCase;
 
 /**
  * Created by haavard on 2/19/14.
+ *
+ * Contains info about a device
  */
 @JsonSnakeCase
 public class Device {
@@ -26,7 +28,8 @@ public class Device {
 
     }
 
-    public Device(long id, long userId, String name, String description, long lastUpdated, boolean deleted, int category) {
+    public Device(long id, long userId, String name, String description, long lastUpdated, boolean deleted,
+                  int category) {
         this.id = id;
         this.userId = userId;
         this.name = name;
