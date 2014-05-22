@@ -52,7 +52,7 @@ public class HomeFragment extends DefaultTabFragment {
 
     /**
      * The first call to a created fragment
-     * @param activity
+     * @param activity The context
      */
     @Override
     public void onAttach(Activity activity) {
@@ -63,10 +63,10 @@ public class HomeFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //Load the wall items
+        //Load the news feed items
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        ArrayList<NewsFeedPost> wallFeed = new ArrayList<>();
-        NewsFeedAdapter wallAdapter = new NewsFeedAdapter(getActivity(),R.layout.home_wall_item, wallFeed);
+        ArrayList<NewsFeedPost> newsFeed = new ArrayList<>();
+        NewsFeedAdapter wallAdapter = new NewsFeedAdapter(getActivity(),R.layout.home_wall_item, newsFeed);
         final ListView friendsList = (ListView) view.findViewById(R.id.news_feed_list);
         friendsList.setAdapter(wallAdapter);
 

@@ -95,12 +95,11 @@ public class NavigationDrawerFragment extends Fragment {
     private View mFragmentContainerView;
 
     private ListView mDrawerList;
-    private String[] navMenuTitles;
-    private TypedArray navMenuIcons;
-    private ArrayList<IDrawerItem> navDrawerItems;
-    private NavDrawerListAdapter adapter;
+    private String[] mNavMenuTitles;
+    private ArrayList<IDrawerItem> mNavDrawerItems;
+    private NavDrawerListAdapter mAdapter;
 
-    private DrawerIDrawerItem usageDrawerItem;
+    private DrawerIDrawerItem mUsageDrawerItem;
 
     /** The fault startup tab */
     private int mCurrentSelectedPosition = 0;
@@ -109,7 +108,6 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUserLearnedDrawer;
 
     private PreferencesManager mPreferenceManager;
-
     private DataBroadCastReceiver mDataBroadcastManager;
 
     public NavigationDrawerFragment() {
@@ -150,43 +148,43 @@ public class NavigationDrawerFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
 
         // load slide menu items
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
+        mNavMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
 
         // nav drawer icons from resources
-        navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
+        TypedArray navMenuIcons = getResources().obtainTypedArray(R.array.nav_drawer_icons);
         mDrawerList = (ListView) rootView.findViewById(R.id.navigation_drawer_list);
 
-        navDrawerItems = new ArrayList<>();
+        mNavDrawerItems = new ArrayList<>();
 
         // adding nav drawer items to array
         // Home
-        //navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
-        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[0]));
+        //mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
+        mNavDrawerItems.add(new DrawerIDrawerItem(mNavMenuTitles[0]));
         // View
-        //navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true));
-        navDrawerItems.add(new DrawerHeader(navMenuTitles[1]));
-        usageDrawerItem = new DrawerIDrawerItem(navMenuTitles[2]);
-        navDrawerItems.add(usageDrawerItem);
-        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[3]));
+        //mNavDrawerItems.add(new NavDrawerItem(mNavMenuTitles[1], navMenuIcons.getResourceId(1, -1), true));
+        mNavDrawerItems.add(new DrawerHeader(mNavMenuTitles[1]));
+        mUsageDrawerItem = new DrawerIDrawerItem(mNavMenuTitles[2]);
+        mNavDrawerItems.add(mUsageDrawerItem);
+        mNavDrawerItems.add(new DrawerIDrawerItem(mNavMenuTitles[3]));
         //Manage
-        navDrawerItems.add(new DrawerHeader(navMenuTitles[4]));
-        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[5]));
-        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[6]));
+        mNavDrawerItems.add(new DrawerHeader(mNavMenuTitles[4]));
+        mNavDrawerItems.add(new DrawerIDrawerItem(mNavMenuTitles[5]));
+        mNavDrawerItems.add(new DrawerIDrawerItem(mNavMenuTitles[6]));
         //Socialize
-        navDrawerItems.add(new DrawerHeader(navMenuTitles[7]));
-        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[8]));
+        mNavDrawerItems.add(new DrawerHeader(mNavMenuTitles[7]));
+        mNavDrawerItems.add(new DrawerIDrawerItem(mNavMenuTitles[8]));
         //Settings
-        navDrawerItems.add(new DrawerHeader(navMenuTitles[9]));
-        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[10]));
-        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[11]));
+        mNavDrawerItems.add(new DrawerHeader(mNavMenuTitles[9]));
+        mNavDrawerItems.add(new DrawerIDrawerItem(mNavMenuTitles[10]));
+        mNavDrawerItems.add(new DrawerIDrawerItem(mNavMenuTitles[11]));
         // Recycle the typed array
         navMenuIcons.recycle();
 
-        // setting the nav drawer list adapter
-        adapter = new NavDrawerListAdapter(
+        // setting the nav drawer list mAdapter
+        mAdapter = new NavDrawerListAdapter(
                 getActivity().getApplicationContext(),
-                navDrawerItems);
-        mDrawerList.setAdapter(adapter);
+                mNavDrawerItems);
+        mDrawerList.setAdapter(mAdapter);
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -222,6 +220,10 @@ public class NavigationDrawerFragment extends Fragment {
         LocalBroadcastManager.getInstance(this.getActivity()).unregisterReceiver(mDataBroadcastManager);
     }
 
+    /**
+     * Returns true if the drawer is active
+     * @return
+     */
     public boolean isDrawerOpen() {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
@@ -389,11 +391,11 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     public IDrawerItem getNavDrawerItem(int position){
-        return navDrawerItems.get(position);
+        return mNavDrawerItems.get(position);
     }
 
     public NavDrawerListAdapter getNavDrawerListAdapter(){
-        return adapter;
+        return mAdapter;
     }
 
     /**
@@ -412,11 +414,10 @@ public class NavigationDrawerFragment extends Fragment {
         int value = mPreferenceManager.getNavDrawerUsage();
         value += newValue;
         if(value > 0) {
-            usageDrawerItem.setCount(String.valueOf(value));
+            mUsageDrawerItem.setCount(String.valueOf(value));
         }
         else
-            usageDrawerItem.setCount("");
-        Log.v(TAG, "UpdateUsageDrawItemCount: Nav drawer usage update: " + value);
+            mUsageDrawerItem.setCount("");
     }
 
     //TODO Rewrite to static and use WeakReference
