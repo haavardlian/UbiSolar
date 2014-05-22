@@ -53,7 +53,7 @@ import com.sintef_energy.ubisolar.R;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
-import com.sintef_energy.ubisolar.drawer.DrawerItem;
+import com.sintef_energy.ubisolar.drawer.DrawerIDrawerItem;
 import com.sintef_energy.ubisolar.fragments.AddUsageFragment;
 import com.sintef_energy.ubisolar.fragments.DeviceFragment;
 import com.sintef_energy.ubisolar.fragments.EnergySavingTabFragment;
@@ -415,7 +415,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     private void changeNavdrawerSessionsView(boolean state){
         Global.loggedIn = state;
 
-        DrawerItem item = (DrawerItem)mNavigationDrawerFragment.getNavDrawerItem(11);
+        DrawerIDrawerItem item = (DrawerIDrawerItem)mNavigationDrawerFragment.getNavDrawerItem(11);
 
         if (Global.loggedIn) //TODO: if Session.GetActiveSession().isOpened?
             item.setTitle(getString(R.string.drawer_log_out));

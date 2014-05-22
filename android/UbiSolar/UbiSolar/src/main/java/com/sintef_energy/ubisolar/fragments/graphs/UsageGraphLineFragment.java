@@ -30,7 +30,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.view.ViewGroup.LayoutParams;
@@ -64,15 +63,13 @@ import java.util.LinkedHashMap;
 
 import info.hoang8f.android.segmented.SegmentedGroup;
 
-public class UsageGraphLineFragment extends ProgressFragment implements IUsageView, LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = UsageGraphLineFragment.class.getName();
+public class UsageGraphLineFragment extends ProgressFragment implements IUsageView,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private final int IMAGE_RENDER_WIDTH = 960;
     private final int IMAGE_RENDER_HEIGHT = 540;
 
     private final int DEFAULT_RESOLUTION = Resolution.DAYS;
-
-    private static final String STATE_euModels = "STATE_euModels";
 
     private static final int POINT_DISTANCE = 20;
     private static final int GRAPH_MARGIN = 20;
@@ -188,7 +185,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
         Bundle state = new Bundle();
         ArrayList<Parcelable> usageModelState = new ArrayList<>();
 
-        state.putParcelableArrayList(STATE_euModels, usageModelState);
         state.putSerializable("mDataset", mDataset);
         state.putSerializable("mRenderer", mRenderer);
         state.putString("mTitleLabel", mTitleLabel);

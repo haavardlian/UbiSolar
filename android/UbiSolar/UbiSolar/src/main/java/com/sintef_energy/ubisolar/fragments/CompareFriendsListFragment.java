@@ -19,7 +19,6 @@
 
 package com.sintef_energy.ubisolar.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -43,15 +42,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by baier on 3/21/14.
+ * Fragment with a list of friends
  */
-public class CompareFriendsListFragment extends Fragment/* implements LoaderManager.LoaderCallbacks<Cursor>*/{
+public class CompareFriendsListFragment extends Fragment{
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     public static final String TAG = CompareFriendsListFragment.class.getName();
-
     private static final String ARG_POSITION = "position";
 
     private ArrayList<User> mFriends;
@@ -70,20 +68,6 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
         return fragment;
     }
 
-    /**
-     * The first call to a created fragment
-     * @param activity
-     */
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(mView == null)
@@ -96,7 +80,6 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
             mFriendAdapter = new FriendAdapter(getActivity(), R.layout.fragment_social_friends_row, mFriends);
             final ListView friendsList = (ListView) mView.findViewById(R.id.social_list);
             friendsList.setAdapter(mFriendAdapter);
-            //RequestManager.getInstance().doFriendRequest().getAllUsers(mFriendAdapter, this);
 
             friendsList.setClickable(true);
             friendsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,21 +98,23 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
         return mView;
     }
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         populateFriendList(mFriendAdapter);
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-        }
     }
 
+    /**
+     * Sends a query to facebook and gets the users friends
+     * Loops through the list of friends and populates the list with friends
+     * that has the application installed
+     * @param friendAdapter The adapter to be filled
+     */
     public void populateFriendList(final FriendAdapter friendAdapter) {
         friendAdapter.clear();
 
+        //Callback to get friends from facebook
         Request.Callback callback = new Request.Callback() {
             @Override
             public void onCompleted(Response response) {
@@ -138,6 +123,8 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
                 try {
                     JSONArray friends = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
                     friendAdapter.clear();
+
+                    //Add friends that has the application installed
                     for(int i = 0; i < friends.length(); i++) {
                         JSONObject friend = friends.getJSONObject(i);
                         if(friend.has("installed") && friend.getBoolean("installed"))
@@ -154,10 +141,20 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
         RequestManager.getInstance().doFacebookRequest().getFriends(callback);
     }
 
+    /**
+     * Returns the friend adapter
+     * @return FriendAdapter
+     */
     public FriendAdapter getAdapter() {
         return mFriendAdapter;
     }
 
+    /**
+     * Swaps the active fragment
+     * @param fragment The new fragment
+     * @param addToBackStack Whether or not the fragment should be added to the back stack
+     * @param tag The fragments tag.
+     */
     public void addFragment(Fragment fragment, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
         FragmentTransaction ft = manager.beginTransaction();
@@ -169,51 +166,4 @@ public class CompareFriendsListFragment extends Fragment/* implements LoaderMana
 
         ft.commit();
     }
-
-
-    /*End lifecycle*/
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //outState.putInt("curChoice", mCurCheckPosition);
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-    }
-/*
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(
-                getActivity(),
-                EnergyContract.Users.CONTENT_URI,
-                EnergyContract.Users.PROJECTION_ALL,
-                null,
-                null,
-                UserModel.UserEntry._ID + " ASC"
-        );
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        mFriends.clear();
-
-        cursor.moveToFirst();
-        if (cursor.getCount() != 0)
-            do {
-                UserModel model = new UserModel(cursor);
-                mFriends.add(model);
-            } while (cursor.moveToNext());
-
-        mFriendAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mFriends.clear();
-    }
-*/
-
-
 }

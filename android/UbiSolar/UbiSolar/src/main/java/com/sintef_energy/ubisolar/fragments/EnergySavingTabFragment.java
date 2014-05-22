@@ -36,12 +36,11 @@ import com.sintef_energy.ubisolar.adapter.YourTipAdapter;
 
 /**
  * Created by perok on 21.03.14.
+ *
+ * The parent fragment for the tip fragments
  */
 public class EnergySavingTabFragment extends DefaultTabFragment {
 
-    private static final String TAG = EnergySavingTabFragment.class.getName();
-
-    private View mRoot;
     private TipsPagerAdapter mPagerAdapter;
 
     public static EnergySavingTabFragment newInstance(int sectionNumber) {
@@ -50,12 +49,6 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setHasOptionsMenu(true);
     }
 
     /**
@@ -71,17 +64,17 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRoot = inflater.inflate(R.layout.fragment_energy_saving_tab, container, false);
+        View view = inflater.inflate(R.layout.fragment_energy_saving_tab, container, false);
 
         if(mPagerAdapter == null)
             mPagerAdapter = new TipsPagerAdapter(getFragmentManager());
 
         // Initialize the ViewPager and set an adapter
-        final ViewPager pager = (ViewPager) mRoot.findViewById(R.id.fragment_energy_saving_pager);
+        final ViewPager pager = (ViewPager) view.findViewById(R.id.fragment_energy_saving_pager);
         pager.setAdapter(mPagerAdapter);
 
         // Bind the tabs to the ViewPager
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_energy_saving_tabs);
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) view.findViewById(R.id.fragment_energy_saving_tabs);
         tabs.setViewPager(pager);
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -107,10 +100,7 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
 
             }
         });
-
-
-
-        return mRoot;
+        return view;
     }
 
     @Override
@@ -119,19 +109,21 @@ public class EnergySavingTabFragment extends DefaultTabFragment {
         setRetainInstance(true);
     }
 
-
-
-
+    /**
+     * Returns the page adapter
+     * @return TipsPagerAdapter
+     */
     public TipsPagerAdapter getAdapter() { return mPagerAdapter; }
 
+    /**
+     * The pager adapter for swapping tip fragment between tips and your tips
+     */
     public class TipsPagerAdapter extends FragmentStatePagerAdapter {
-
         private String[] titles;
-        private YourTipAdapter yourAdapter;
         private TipsFragment tipsFragment;
         private YourTipFragment yourFragment;
-        public TipsPagerAdapter(FragmentManager fm) {
-            super(fm);
+        public TipsPagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
 
             titles = getResources().getStringArray(R.array.energy_saving_tabs);
         }

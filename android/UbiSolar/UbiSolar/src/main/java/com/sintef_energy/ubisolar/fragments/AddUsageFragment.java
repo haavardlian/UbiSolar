@@ -53,9 +53,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class AddUsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>, IDateCallback {
+/**
+ * Fragment for adding usage manually
+ */
+public class AddUsageFragment extends DefaultTabFragment implements
+        LoaderManager.LoaderCallbacks<Cursor>, IDateCallback {
 
-    private Calendar date;
+    private Calendar mDate;
     private View mRootView;
     private RelativeLayout mRelativeLayout;
 
@@ -88,9 +92,9 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
         mRootView = inflater.inflate(R.layout.fragment_add_usage, container, false);
 
         //Set the calendar
-        date = Calendar.getInstance();
-        date.set(Calendar.MINUTE, 0);
-        date.set(Calendar.HOUR_OF_DAY, 0);
+        mDate = Calendar.getInstance();
+        mDate.set(Calendar.MINUTE, 0);
+        mDate.set(Calendar.HOUR_OF_DAY, 0);
 
         mSpinnerDevice = (Spinner) mRootView.findViewById(R.id.dialog_add_usage_spinner);
         mRelativeLayout = (RelativeLayout) mRootView.findViewById(R.id.fragment_add_usage_rl_date);
@@ -131,8 +135,8 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
 
                     //If in the past, remove milliseconds resolution
-                    if (!isSameDay(date, Calendar.getInstance()))
-                        date.set(Calendar.MILLISECOND, 0);
+                    if (!isSameDay(mDate, Calendar.getInstance()))
+                        mDate.set(Calendar.MILLISECOND, 0);
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
                     euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
@@ -193,7 +197,7 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
     private void updateDateText(){
         TextView dateView = (TextView) mRootView.findViewById(R.id.fragment_add_usage_text_date);
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
-        dateView.setText(formatter.format(date.getTime()));
+        dateView.setText(formatter.format(mDate.getTime()));
     }
 
     /**
@@ -212,9 +216,9 @@ public class AddUsageFragment extends DefaultTabFragment implements LoaderManage
 
     @Override
     public void setDate(int year, int month, int day) {
-        date.set(Calendar.YEAR, year);
-        date.set(Calendar.MONTH, month);
-        date.set(Calendar.DAY_OF_MONTH, day);
+        mDate.set(Calendar.YEAR, year);
+        mDate.set(Calendar.MONTH, month);
+        mDate.set(Calendar.DAY_OF_MONTH, day);
         updateDateText();
         mRelativeLayout.setEnabled(true);
     }

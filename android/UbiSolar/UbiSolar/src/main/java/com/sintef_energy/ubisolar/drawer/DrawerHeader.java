@@ -24,14 +24,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.sintef_energy.ubisolar.IView.IDrawerItem;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 
 /**
- * Created by Håvard on 02.04.14.
+ * The header item in the navigation drawer
  */
-public class DrawerHeader implements Item {
-    private final String         name;
+public class DrawerHeader implements IDrawerItem {
+    private final String name;
 
     public DrawerHeader(String name) {
         this.name = name;
@@ -47,7 +48,6 @@ public class DrawerHeader implements Item {
         View view;
         if (convertView == null) {
             view = inflater.inflate(R.layout.drawer_list_header, parent, false);
-            // Do some initialization
         } else {
             view = convertView;
         }

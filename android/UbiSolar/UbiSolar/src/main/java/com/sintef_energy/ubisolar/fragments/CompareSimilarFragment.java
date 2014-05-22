@@ -37,18 +37,12 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.dialogs.CompareSettingsDialog;
 
 /**
- * Created by baier on 4/1/14.
+ * Fragment for comparing your usage with persons with similar profiles
  */
 public class CompareSimilarFragment extends Fragment {
 
-    /* The fragment argument representing the section number for this
-     * fragment.
-     */
     private static final String TAG = CompareSimilarFragment.class.getName();
-
-    private View view;
     private static final String ARG_POSITION = "position";
-    private ProfilePictureView profilePicture;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -65,39 +59,19 @@ public class CompareSimilarFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
         setHasOptionsMenu(true);
-    }
-
-    /**
-     * The first call to a created fragment
-     *
-     * @param activity
-     */
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
+        View view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
 
-        profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
-        //profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
+        ProfilePictureView profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
         profilePicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-        }
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -124,16 +98,4 @@ public class CompareSimilarFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    /*End lifecycle*/
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
 }

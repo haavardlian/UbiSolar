@@ -35,17 +35,13 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
 /**
- * Created by perok on 21.03.14.
+ * The parent fragment managing compare friends and compare similar
  */
 public class CompareFragment extends DefaultTabFragment {
 
-    private static final String TAG = CompareFragment.class.getName();
-
     private View mRoot;
-    private ViewPager pager;
-
+    private ViewPager mPager;
     private MyPagerAdapter mAdapter;
-
     private PagerSlidingTabStrip mTabs;
 
     public static CompareFragment newInstance(int sectionNumber) {
@@ -73,18 +69,18 @@ public class CompareFragment extends DefaultTabFragment {
             mRoot = inflater.inflate(R.layout.fragment_social_tab, container, false);
 
         // Initialize the ViewPager and set an adapter
-        if(pager == null)
-            pager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
+        if(mPager == null)
+            mPager = (ViewPager) mRoot.findViewById(R.id.fragment_social_pager);
 
         if(mAdapter == null) {
             mAdapter = new MyPagerAdapter(getFragmentManager());
-            pager.setAdapter(mAdapter);
+            mPager.setAdapter(mAdapter);
         }
 
         // Bind the tabs to the ViewPager
         if(mTabs == null) {
             mTabs = (PagerSlidingTabStrip) mRoot.findViewById(R.id.fragment_social_tabs);
-            mTabs.setViewPager(pager);
+            mTabs.setViewPager(mPager);
         }
         return mRoot;
     }
@@ -102,20 +98,21 @@ public class CompareFragment extends DefaultTabFragment {
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
-        private final String[] TITLES = { "Friends", "Similar profiles"};
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
+        private String[] titles = getResources().getStringArray(R.array.comparison_tabs);
+
+        public MyPagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
         }
 
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return TITLES[position];
+            return titles[position];
         }
 
         @Override
         public int getCount() {
-            return TITLES.length;
+            return titles.length;
         }
 
         @Override

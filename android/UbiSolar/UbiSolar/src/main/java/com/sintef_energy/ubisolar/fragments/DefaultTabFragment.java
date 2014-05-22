@@ -28,15 +28,12 @@ import com.sintef_energy.ubisolar.activities.DrawerActivity;
 
 /**
  * Created by perok on 20.03.14.
+ *
+ * Parent object for fragments
  */
 public abstract class DefaultTabFragment extends Fragment {
 
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
     protected static final String ARG_SECTION_NUMBER = "section_number";
-
 
     @Override
     public void onCreate(Bundle bundle){
