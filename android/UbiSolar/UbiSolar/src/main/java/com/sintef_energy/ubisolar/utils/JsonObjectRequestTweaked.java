@@ -42,15 +42,19 @@ public class JsonObjectRequestTweaked extends JsonObjectRequest {
     @Override
     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
         try {
-            String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            if(response.statusCode >= 200 && response.statusCode < 300)
+                return Response.success(new JSONObject("{\"message\":\"Success\"}"), HttpHeaderParser.parseCacheHeaders(response));
+            else {
+                String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
-            if(jsonString.length() > 0)
-                return Response.success(new JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response));
-            else
-                return Response.error(new ParseError(response));
+                if (jsonString.length() > 0)
+                    return Response.success(new JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response));
+                else
+                    return Response.error(new ParseError(response));
+            }
+
         } catch (UnsupportedEncodingException | JSONException | NullPointerException e) {
             return Response.error(new ParseError(e));
         }
     }
-
 }

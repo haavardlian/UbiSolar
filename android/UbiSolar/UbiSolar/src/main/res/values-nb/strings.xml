@@ -208,5 +208,5 @@
 
     <!--Util-->
     <string name="total_name">Total</string>
-    <string name="total_description">Den totale strømforbruken</string>b
+    <string name="total_description">Det totale strømforbruket</string>b
 </resources>
