@@ -70,7 +70,6 @@ public class CompareFriendsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     /**
@@ -117,7 +116,4 @@ public class CompareFriendsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
-
-
-
 }
