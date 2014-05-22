@@ -674,41 +674,43 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
      *
      * @param session Session to use.
      */
-    private void updatePreferenceWithFacebookData(Session session){
-        if(Utils.isNetworkOn(getApplicationContext()))
-                    Request.newMeRequest(session, new Request.GraphUserCallback() {
-                        @Override
-                        public void onCompleted(GraphUser user, Response response) {
-                            if(response.getConnection() != null || response.getIsFromCache()) {
-                                if(null != user.getFirstName())
-                                    mPrefManager.setFacebookName(user.getFirstName() + " " +user.getLastName());
-                                else
-                                    mPrefManager.setFacebookName("No data");
-                                if(user.getLocation() != null) {
-                                    if (null != user.getLocation().getCity())
-                                        mPrefManager.setFacebookLocation(user.getLocation().getCity());
-                                    else
-                                        mPrefManager.setFacebookLocation("No data");
+    private void updatePreferenceWithFacebookData(Session session) {
+        if (Utils.isNetworkOn(getApplicationContext()))
+            Request.newMeRequest(session, new Request.GraphUserCallback() {
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    if (response.getConnection() == null || !response.getIsFromCache()) {
+                        Log.e(TAG, "No facebook data return on newMeRequest.");
+                        return;
+                    }
 
-                                    if (null != user.getLocation().getCountry())
-                                        mPrefManager.setFacebookCountry(user.getLocation().getCountry());
-                                    else
-                                        mPrefManager.setFacebookCountry("No data");
-                                }
-                                if(null != user.getBirthday())
-                                    mPrefManager.setFacebookAge(user.getBirthday());
-                                else
-                                    mPrefManager.setFacebookAge("No data");
+                    if (null != user.getFirstName())
+                        mPrefManager.setFacebookName(user.getFirstName() + " " + user.getLastName());
+                    else
+                        mPrefManager.setFacebookName("No data");
 
-                                mPrefManager.setKeyFacebookUid(user.getId());
+                    if (user.getLocation() != null) {
+                        if (null != user.getLocation().getCity())
+                            mPrefManager.setFacebookLocation(user.getLocation().getCity());
+                        else
+                            mPrefManager.setFacebookLocation("No data");
 
-                                Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
+                        if (null != user.getLocation().getCountry())
+                            mPrefManager.setFacebookCountry(user.getLocation().getCountry());
+                        else
+                            mPrefManager.setFacebookCountry("No data");
+                    }
 
-                            } else {
-                                Log.e(TAG, "No facebook data return on newMeRequest.");
-                            }
-                        }
-                    }).executeAsync();
+                    if (null != user.getBirthday())
+                        mPrefManager.setFacebookAge(user.getBirthday());
+                    else
+                        mPrefManager.setFacebookAge("No data");
+
+                    mPrefManager.setKeyFacebookUid(user.getId());
+
+                    Log.v(DrawerActivity.TAG, "USER ID: " + user.getId());
+                }
+            }).executeAsync();
     }
 
     private class FacebookSessionStatusCallback implements Session.StatusCallback {
