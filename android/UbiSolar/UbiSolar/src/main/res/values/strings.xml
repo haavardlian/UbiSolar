@@ -243,7 +243,7 @@
 
     <!-- Broadcasts - Mirrored from AndroidManifest -->
     <string name="broadcast_nav_drawer_usage">com.sintef_energy.ubisolar.broadcast_nav_drawer</string>
-    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_login">Wattitude login</string>
     <string name="hello_world">Hello world!</string>
 
     <!--Util-->
