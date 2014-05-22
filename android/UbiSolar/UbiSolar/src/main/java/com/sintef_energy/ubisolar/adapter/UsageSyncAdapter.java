@@ -67,6 +67,9 @@ import java.util.ArrayList;
  *
  * Step 7: Update timestamps
  *
+ * TODO
+ *  - Deleting account from android menu does not remove data. (timestamp, etc)
+ *
  */
 public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
 
@@ -81,8 +84,9 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
 
     @Override
     public void onPerformSync(Account account, Bundle bundle, String s, ContentProviderClient provider, SyncResult syncResult) {
-        Log.d(TAG, "onPerformSync for account[" + account.name + "]");
         StringBuilder builder = new StringBuilder();
+        String start = "onPerformSync for account[" + account.name + "]";
+        builder.append(start);
         try {
             //TODO:Get the auth token for the current account
             //String authToken = mAccountManager.blockingGetAuthToken(account, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS, true);
@@ -91,13 +95,12 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             String timestamp = mAccountManager.getUserData(account, Global.ACC_SYNC_LAST_TIMESTAMP);
 
             if(accUid == null){
-                Log.v(TAG, "No FB UID for sync account. Aborting");
+                builder.append("\nNo FB UID for sync account. Aborting");
+                Log.v(TAG, builder.toString());
                 return;
             }
 
             /* STEP 1: SETUP FILES */
-            Log.v(TAG, "Starting sync operation");
-
             RequestManager requestManager;
             ArrayList<DeviceModel> serverDeviceModels;
             ArrayList<DeviceModel> serverDeviceModelsError;
@@ -105,6 +108,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             ArrayList<EnergyUsageModel> serverUsageModels;
             ArrayList<EnergyUsageModel> serverUsageModelsError;
             ArrayList<EnergyUsageModel> localUsageModels;
+
             builder.append("Synchronization started");
 
             try {
@@ -147,19 +151,19 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             if(localDeviceModels == null)
                 builder.append("\nERROR: Local DeviceModels query error.");
             else if (localDeviceModels.size() > 0) {
-                builder.append("\nSending # DeviceModels to server: "); builder.append(localDeviceModels.size());
+                builder.append("\nSyncing DeviceModels to server. #: "); builder.append(localDeviceModels.size());
                 serverDeviceModelsError = requestManager.doSyncRequest().putFrontendDeviceSync(uid, localDeviceModels);
                 if (serverDeviceModelsError.size() > 0)
-                    builder.append("\nERROR: Frontend sync with devices to server failed with # of models: "); builder.append(serverDeviceModelsError.size());
+                    builder.append("\n\tERROR: Frontend sync with devices to server failed with # of models: "); builder.append(serverDeviceModelsError.size());
             }
 
             if(localUsageModels == null)
                 builder.append("\nERROR: Local usage query error.");
             else if (localUsageModels.size() > 0) {
-                builder.append("\nSending # EnergyUsageModels to server: " + localUsageModels.size());
+                builder.append("\nSyncing EnergyUsageModels to server. #: " + localUsageModels.size());
                 serverUsageModelsError = requestManager.doSyncRequest().putFrontendUsageSync(uid, localUsageModels);
                 if (serverUsageModelsError.size() > 0)
-                    builder.append("\nERROR: Frontend sync with usage to server failed with # of models: "); builder.append(serverUsageModelsError.size());
+                    builder.append("\n\tERROR: Frontend sync with usage to server failed with # of models: "); builder.append(serverUsageModelsError.size());
             }
 
             /* STEP 6: Insert and delete */
@@ -169,7 +173,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             // SIDESTEP Find deleted
             if (serverDeviceModels != null){
                 if (serverDeviceModels.size() > 0) {
-                    Log.v(TAG, "Device id's on the server: " + serverDeviceModels.size());
+                    builder.append("\nTotal updated DeviceModels on the server: "); builder.append(serverDeviceModels.size());
 
                     for (DeviceModel dm : serverDeviceModels) {
                         if (dm.isDeleted()) {
@@ -177,10 +181,11 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                             serverDeviceModels.remove(dm);
                         }
                     }
+                    builder.append("\nDeviceModels on the server to delete: "); builder.append(deleteDeviceModels.size());
                 }
             }
             else
-                Log.e(TAG, "Device server get sync failed");
+                builder.append("\nERROR: Getting DeviceModels from server failed.");
 
             for(DeviceModel dm : localDeviceModels)
                 if(dm.isDeleted())
@@ -188,7 +193,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
 
             if (serverUsageModels != null){
                 if (serverUsageModels.size() > 0) {
-                    Log.v(TAG, "Usage id's on the server: " + serverUsageModels.size());
+                    builder.append("\nTotal updated EnergyUsageModels on the server: "); builder.append(serverUsageModels.size());
 
                     for (EnergyUsageModel dm : serverUsageModels) {
                         if (dm.isDeleted()) {
@@ -196,10 +201,11 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
                             serverUsageModels.remove(dm);
                         }
                     }
+                    builder.append("\nEnergyUsageModels on the server to delete: "); builder.append(deleteUsageModels.size());
                 }
             }
             else
-                Log.e(TAG, "Usage server get sync failed");
+                builder.append("\nERROR. Getting EnergyUsageModels from server failed");
 
             for(EnergyUsageModel dm : localUsageModels)
                 if(dm.isDeleted())
@@ -221,29 +227,25 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             if(deleteSuccess && deleteUsageSuccess) {
                 mAccountManager.setUserData(account, Global.ACC_SYNC_LAST_TIMESTAMP, String.valueOf(newTimestamp));
                 builder.append("\nNew timstamp added to account");
-            } else
-                builder.append("\nNOT UPDATED NEW TIMESTAMP TO ACCOUNT");
+            } else {
+                builder.append("\nERROR: NOT UPDATED NEW TIMESTAMP TO ACCOUNT");
+                builder.append("\nDeviceModels deletion state: ");
+                builder.append(deleteSuccess);
+                builder.append("\nEnergyUsageModels deletion state: ");
+                builder.append(deleteUsageSuccess);
+            }
 
             /* SEND UPDATED */
             //Send the new usage to the navdrawer
             if(serverUsageModels != null && serverUsageModels.size() > 0) {
-                Log.v(TAG, "Broadcasting usage update: " + serverUsageModels.size());
+                builder.append("\nBroadcasting usage update: "); builder.append(serverUsageModels.size());
                 Intent i = new Intent(Global.BROADCAST_NAV_DRAWER);
                 i.putExtra(Global.DATA_B_NAV_DRAWER_USAGE, serverUsageModels.size());
                 LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(i);
             }
 
-            builder.append("\nAdded DevicesModels to local DB: "); builder.append(nDevice);
-            builder.append("\nAdded EnergyUsageModels to local DB: "); builder.append(nUsage);
-
-            if(localDeviceModels != null){
-                builder.append("\nAdded DeviceModels to server: "); builder.append(localDeviceModels.size());
-                //builder.append("\n\tError #: " + serverDeviceModelsError.size());
-            }
-            if(localUsageModels != null){builder.append("\nAdded EnergyUsageModel to server: "); builder.append(localUsageModels.size());}
-
-            builder.append("\nDeviceModels deletion state: "); builder.append(deleteSuccess);
-            builder.append("\nEnergyUsageModels deletion state: "); builder.append(deleteUsageSuccess);
+            builder.append("\nDevicesModels added to local DB: "); builder.append(nDevice);
+            builder.append("\nEnergyUsageModels added to local DB: "); builder.append(nUsage);
 
             Log.v(TAG, builder.toString());
         } catch (Exception e) {
