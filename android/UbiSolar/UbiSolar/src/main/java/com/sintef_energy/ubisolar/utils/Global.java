@@ -43,6 +43,8 @@ public class Global {
     public static final String DATA_AUTH_TOKEN = "DATA_AUTH_TOKEN";
     public static final String DATA_EXPIRATION_DATE = "DATA_EXPIRATION_DATE";
     public static final String DATA_FB_UID = "DATA_DB_UID";
+    /** For the given account, the last time a valid sync was done. */
+    public static final String ACC_SYNC_LAST_TIMESTAMP = "ACC_SYNC_LAST_TIMESTAMP";
 
     /** Read permissions */
     public static List<String> FACEBOOK_READ_PERMISSIONS;
