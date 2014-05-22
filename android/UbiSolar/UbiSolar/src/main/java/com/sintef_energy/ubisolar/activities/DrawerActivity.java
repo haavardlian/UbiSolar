@@ -679,7 +679,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             Request.newMeRequest(session, new Request.GraphUserCallback() {
                 @Override
                 public void onCompleted(GraphUser user, Response response) {
-                    if (response.getConnection() == null || !response.getIsFromCache()) {
+                    if (response.getConnection() == null && !response.getIsFromCache()) {
                         Log.e(TAG, "No facebook data return on newMeRequest.");
                         return;
                     }
