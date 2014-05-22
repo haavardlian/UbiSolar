@@ -51,11 +51,8 @@ import java.util.ArrayList;
 public class DeviceFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = DeviceFragment.class.getName();
-    private View mRootview;
-    private ExpandableListView mDeviceList;
     private DeviceListAdapter mDeviceAdapter;
     private ArrayList<DeviceModel> mDevices;
-
     private DeviceModel mDevice;
 
     public static DeviceFragment newInstance(int sectionNumber) {
@@ -88,16 +85,16 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        mRootview =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
-        mDeviceList = (ExpandableListView) mRootview.findViewById(R.id.devicesListView);
+        View rootView =  inflater.inflate(R.layout.fragment_device_expandablelist, container, false);
+        ExpandableListView deviceList = (ExpandableListView) rootView.findViewById(R.id.devicesListView);
 
         mDevices = new ArrayList<>();
         mDeviceAdapter = new DeviceListAdapter(getActivity(), mDevices);
-        mDeviceList.setAdapter(mDeviceAdapter);
+        deviceList.setAdapter(mDeviceAdapter);
 
-        registerForContextMenu(mDeviceList);
+        registerForContextMenu(deviceList);
 
-        return mRootview;
+        return rootView;
     }
 
     @Override
@@ -106,6 +103,7 @@ public class DeviceFragment extends DefaultTabFragment implements LoaderManager.
         //Loads the devices from the database
         getLoaderManager().initLoader(0, null, this);
     }
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(

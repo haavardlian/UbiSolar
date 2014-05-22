@@ -47,11 +47,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.sintef_energy.ubisolar.IView.IDrawerItem;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 import com.sintef_energy.ubisolar.drawer.DrawerHeader;
-import com.sintef_energy.ubisolar.drawer.DrawerItem;
-import com.sintef_energy.ubisolar.drawer.Item;
+import com.sintef_energy.ubisolar.drawer.DrawerIDrawerItem;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.utils.Global;
 
@@ -97,10 +97,10 @@ public class NavigationDrawerFragment extends Fragment {
     private ListView mDrawerList;
     private String[] navMenuTitles;
     private TypedArray navMenuIcons;
-    private ArrayList<Item> navDrawerItems;
+    private ArrayList<IDrawerItem> navDrawerItems;
     private NavDrawerListAdapter adapter;
 
-    private DrawerItem usageDrawerItem;
+    private DrawerIDrawerItem usageDrawerItem;
 
     /** The fault startup tab */
     private int mCurrentSelectedPosition = 0;
@@ -161,24 +161,24 @@ public class NavigationDrawerFragment extends Fragment {
         // adding nav drawer items to array
         // Home
         //navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1), true));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[0]));
+        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[0]));
         // View
         //navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1), true));
         navDrawerItems.add(new DrawerHeader(navMenuTitles[1]));
-        usageDrawerItem = new DrawerItem(navMenuTitles[2]);
+        usageDrawerItem = new DrawerIDrawerItem(navMenuTitles[2]);
         navDrawerItems.add(usageDrawerItem);
-        navDrawerItems.add(new DrawerItem(navMenuTitles[3]));
+        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[3]));
         //Manage
         navDrawerItems.add(new DrawerHeader(navMenuTitles[4]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[5]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[6]));
+        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[5]));
+        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[6]));
         //Socialize
         navDrawerItems.add(new DrawerHeader(navMenuTitles[7]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[8]));
+        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[8]));
         //Settings
         navDrawerItems.add(new DrawerHeader(navMenuTitles[9]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[10]));
-        navDrawerItems.add(new DrawerItem(navMenuTitles[11]));
+        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[10]));
+        navDrawerItems.add(new DrawerIDrawerItem(navMenuTitles[11]));
         // Recycle the typed array
         navMenuIcons.recycle();
 
@@ -388,7 +388,7 @@ public class NavigationDrawerFragment extends Fragment {
         void onNavigationDrawerItemSelected(int position);
     }
 
-    public Item getNavDrawerItem(int position){
+    public IDrawerItem getNavDrawerItem(int position){
         return navDrawerItems.get(position);
     }
 

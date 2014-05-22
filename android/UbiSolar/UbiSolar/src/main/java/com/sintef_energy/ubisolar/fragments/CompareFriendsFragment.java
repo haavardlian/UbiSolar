@@ -19,11 +19,6 @@
 
 package com.sintef_energy.ubisolar.fragments;
 
-/**
- * Created by baier on 5/1/14.
- */
-
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,24 +30,20 @@ import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.model.User;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 
+/**
+ * Fragment for comparing your usage with a selected mFriend's usage
+ */
 public class CompareFriendsFragment extends Fragment {
 
-    /* The fragment argument representing the section number for this
-     * fragment.
-     */
     public static final String TAG = CompareFriendsFragment.class.getName();
-
-    private View view;
     private static final String ARG_POSITION = "position";
-    private ProfilePictureView profilePicture;
-    private ProfilePictureView friendPicture;
-    private User friend;
+
+    private User mFriend;
 
     private CompareFriendsFragment(User friend) {
         super();
-        this.friend = friend;
+        this.mFriend = friend;
     }
-
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -66,54 +57,19 @@ public class CompareFriendsFragment extends Fragment {
         return fragment;
     }
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    /**
-     * The first call to a created fragment
-     *
-     * @param activity
-     */
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_friends_compare, container, false);
-        profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
+        //Load the users profile picture
+        View view = inflater.inflate(R.layout.fragment_friends_compare, container, false);
+        ProfilePictureView profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
         profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
         profilePicture.setPresetSize(ProfilePictureView.LARGE);
 
-        friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
-        friendPicture.setProfileId(String.valueOf(this.friend.getUserId()));
+        //Load the friends profile picture
+        ProfilePictureView friendPicture = (ProfilePictureView) view.findViewById(R.id.friendProfilePic);
+        friendPicture.setProfileId(String.valueOf(this.mFriend.getUserId()));
         friendPicture.setPresetSize(ProfilePictureView.LARGE);
 
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            // Restore last state for checked position.
-        }
-    }
-
-    /*End lifecycle*/
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //outState.putInt("curChoice", mCurCheckPosition);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }

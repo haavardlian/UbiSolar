@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.sintef_energy.ubisolar.drawer;
+package com.sintef_energy.ubisolar.IView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +25,10 @@ import android.view.ViewGroup;
 
 /**
  * Created by Håvard on 02.04.14.
+ *
+ * Interface for the navigation drawer
  */
-public interface Item {
+public interface IDrawerItem {
     public int getViewType();
     public View getView(LayoutInflater inflater, View convertView, ViewGroup parent);
 }

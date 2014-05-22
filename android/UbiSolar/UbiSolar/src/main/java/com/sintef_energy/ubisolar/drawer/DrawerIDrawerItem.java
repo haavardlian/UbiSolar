@@ -24,25 +24,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.sintef_energy.ubisolar.IView.IDrawerItem;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 
 /**
  * Created by Håvard on 02.04.14.
+ *
+ * IDrawerItem in the navigation bar
  */
-public class DrawerItem implements Item {
-    private String         str1;
-    private String         str2;
+public class DrawerIDrawerItem implements IDrawerItem {
+    private String mTitle;
+    private String mCount;
+    private DrawerHolder mHolder;
 
-    private DrawerHolder holder;
-
-    public DrawerItem(String title, String count) {
-        this.str1 = title;
-        this.str2 = count;
-    }
-
-    public DrawerItem(String title) {
-        this.str1 = title;
+    public DrawerIDrawerItem(String title) {
+        this.mTitle = title;
     }
 
     @Override
@@ -53,45 +50,47 @@ public class DrawerItem implements Item {
     @Override
     public View getView(LayoutInflater inflater, View convertView, ViewGroup parent) {
         View view;
-        holder = new DrawerHolder();
+        mHolder = new DrawerHolder();
 
         if (convertView == null) {
             view = inflater.inflate(R.layout.drawer_list_item, parent, false);
-            // Do some initialization
         } else {
             view = convertView;
         }
 
-        holder.text = (TextView) view.findViewById(R.id.title);
-        holder.count = (TextView) view.findViewById(R.id.device_group_counter);
-        holder.text.setText(str1);
+        mHolder.text = (TextView) view.findViewById(R.id.title);
+        mHolder.count = (TextView) view.findViewById(R.id.device_group_counter);
+        mHolder.text.setText(mTitle);
 
-        setCount(str2);
+        setCount(mCount);
 
         return view;
     }
 
-    public void setTitle(String str1) {
-        this.str1 = str1;
+    public void setTitle(String title) {
+        this.mTitle = title;
     }
 
-    public void setCount(String str){
-        str2 = str;
+    public void setCount(String count){
+        mCount = count;
 
-        if(holder == null)
+        if(mHolder == null)
             return;
 
-        if(holder.count == null)
+        if(mHolder.count == null)
             return;
 
-        if(str != null && str.length() > 0) {
-            holder.count.setVisibility(View.VISIBLE);
-            holder.count.setText(str);
+        if(count != null && count.length() > 0) {
+            mHolder.count.setVisibility(View.VISIBLE);
+            mHolder.count.setText(count);
         }
         else
-            holder.count.setVisibility(View.GONE);
+            mHolder.count.setVisibility(View.GONE);
     }
 
+    /**
+     * Holder for drawer item views
+     */
     static class DrawerHolder{
         TextView text;
         TextView count;

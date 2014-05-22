@@ -25,19 +25,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.sintef_energy.ubisolar.drawer.Item;
+import com.sintef_energy.ubisolar.IView.IDrawerItem;
 
 import java.util.List;
 
 /**
  * Adapter for managing the navigation drawer
  */
-public class NavDrawerListAdapter extends ArrayAdapter<Item> {
+public class NavDrawerListAdapter extends ArrayAdapter<IDrawerItem> {
     private LayoutInflater mInflater;
-    private List<Item> mItems;
+    private List<IDrawerItem> mItems;
     public enum RowType { LIST_ITEM, HEADER_ITEM }
 
-    public NavDrawerListAdapter(Context context, List<Item> items) {
+    public NavDrawerListAdapter(Context context, List<IDrawerItem> items) {
         super(context, 0, items);
         this.mItems = items;
         mInflater = LayoutInflater.from(context);
@@ -59,7 +59,7 @@ public class NavDrawerListAdapter extends ArrayAdapter<Item> {
     }
 
     @Override
-    public Item getItem(int position) {
+    public IDrawerItem getItem(int position) {
         return mItems.get(position);
     }
 

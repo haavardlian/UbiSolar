@@ -158,13 +158,18 @@
     <string name="home_current_usage">Forbruk</string>
     <string name="home_news_feed">Oppdatering</string>
 
-    <!-- Comparison settings-->
+    <!-- Comparison -->
     <string name="comparison_setting">Sammenlikningsinnstillinger</string>
     <string name="location_comparison_setting">Område</string>
     <string name="res_comparison_setting">Antall beboere</string>
     <string name="area_comparison_setting">Areal</string>
     <string name="energy_comparison_setting">Energiklasse</string>
     <string name="compare_filter">Filtrer</string>
+
+    <string-array name="comparison_tabs">
+        <item>Venner</item>
+        <item>Lignende profiler</item>
+    </string-array>
 
 
     <!-- Tips -->
@@ -176,7 +181,7 @@
     <string name="energy_saving_add_title">Opprett tips</string>
     <string name="energy_saving_add_confirm">Opprett</string>
     <string name="energy_saving_add_name">Tittel</string>
-    <string name="energy_saving_add_description">Beksrivelse</string>
+    <string name="energy_saving_add_description">Beskrivelse</string>
 
     <string name="energy_saving_add_confirm_message">Tips opprettet</string>
     <string name="energy_saving_add_empty_name">Tittel feltet må fylles ut</string>

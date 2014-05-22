@@ -198,13 +198,18 @@
     <string name="home_current_usage">Current Usage</string>
     <string name="home_news_feed">News Feed</string>
 
-    <!-- Comparison settings -->
+    <!-- Comparison -->
     <string name="comparison_setting">Comparison settings</string>
     <string name="location_comparison_setting">Location</string>
     <string name="res_comparison_setting">Number of residents</string>
     <string name="area_comparison_setting">Area</string>
     <string name="energy_comparison_setting">Energy class</string>
     <string name="compare_filter">Filter</string>
+
+    <string-array name="comparison_tabs">
+        <item>Friends</item>
+        <item>Similar profiles</item>
+    </string-array>
 
     <!-- tips -->
     <string name="energy_saving_tab_tips">Tips</string>
