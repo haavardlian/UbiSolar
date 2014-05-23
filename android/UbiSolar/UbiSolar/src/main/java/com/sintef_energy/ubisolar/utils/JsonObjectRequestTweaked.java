@@ -42,19 +42,19 @@ public class JsonObjectRequestTweaked extends JsonObjectRequest {
     @Override
     protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
         try {
-            if(response.statusCode >= 200 && response.statusCode < 300)
-                return Response.success(new JSONObject("{\"message\":\"Success\"}"), HttpHeaderParser.parseCacheHeaders(response));
-            else {
-                String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
 
-                if (jsonString.length() > 0)
-                    return Response.success(new JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response));
-                else
-                    return Response.error(new ParseError(response));
-            }
+            if (jsonString.length() > 0)
+                return Response.success(new JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response));
+            else
+                throw new JSONException("String has no length");
 
         } catch (UnsupportedEncodingException | JSONException | NullPointerException e) {
-            return Response.error(new ParseError(e));
+            if (response.statusCode >= 200 && response.statusCode < 300)
+                //Call was still successful we just got no body in the response
+                return Response.success(null, HttpHeaderParser.parseCacheHeaders(response));
+            else
+                return Response.error(new ParseError(e));
         }
     }
 }
