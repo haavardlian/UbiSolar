@@ -18,29 +18,27 @@
   ~ under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:paddingLeft="0dp">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/profiles"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="30dp"
         android:clipChildren="false"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_weight="3">
 
         <com.facebook.widget.ProfilePictureView
             android:id="@+id/userProfilePic"
             android:layout_width="150dp"
             android:layout_height="130dp"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="0dp"
-            android:layout_weight="2" />
+            android:layout_marginLeft="20dp" />
 
 
         <com.facebook.widget.ProfilePictureView
@@ -48,8 +46,13 @@
             android:layout_width="150dp"
             android:layout_height="130dp"
             android:layout_marginLeft="0dp"
-            android:layout_marginRight="20dp"
-            android:layout_weight="2"/>
-
+            android:layout_marginRight="20dp"/>
     </LinearLayout>
-</RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/graph"
+        android:layout_below="@id/profiles"
+        android:layout_weight="2"/>
+</LinearLayout>
