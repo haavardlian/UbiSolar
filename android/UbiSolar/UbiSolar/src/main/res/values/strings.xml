@@ -213,7 +213,7 @@
 
     <!-- tips -->
     <string name="energy_saving_tab_tips">Tips</string>
-    <string name="energy_saving_tab_your">Your tips</string>
+    <string name="energy_saving_tab_your">My tips</string>
 
     <string name="energy_saving_create_tip">Create tip</string>
 
@@ -232,10 +232,10 @@
 
     <string-array name="energy_saving_tabs">
         <item>Tips</item>
-        <item>Your tips</item>
+        <item>My tips</item>
     </string-array>
 
-    <string name="energy_saving_move_tip">Add to your tips</string>
+    <string name="energy_saving_move_tip">Add to my tips</string>
     <string name="energy_saving_close">Close</string>
 
     <string name="energy_saving_rating_changed">Rating changed</string>
@@ -245,6 +245,8 @@
     <string name="no_internet">Internet connection required to log in</string>
     <string name="fb_login">User logged in with facebook</string>
     <string name="fb_logout">User logged out of facebook</string>
+    <string name="facebook_posted">Posted to Facebook</string>
+    <string name="facebook_error">Error posting to Facebook</string>
 
     <!-- Broadcasts - Mirrored from AndroidManifest -->
     <string name="broadcast_nav_drawer_usage">com.sintef_energy.ubisolar.broadcast_nav_drawer</string>

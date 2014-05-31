@@ -59,6 +59,7 @@ public class RequestTipProxy {
 
     private RequestQueue requestQueue;
     private ObjectMapper mapper;
+    private Response.ErrorListener errorListener;
 
     // package access constructor
     RequestTipProxy(RequestQueue requestQueue) {

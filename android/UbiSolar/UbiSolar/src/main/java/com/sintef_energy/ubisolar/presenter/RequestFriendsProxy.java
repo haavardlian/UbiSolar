@@ -125,7 +125,7 @@ public class RequestFriendsProxy {
             return;
         }
 
-        JsonObjectRequest jsonRequest = new JsonObjectRequestTweaked(Request.Method.PUT, url,
+        JsonObjectRequestTweaked jsonRequest = new JsonObjectRequestTweaked(Request.Method.PUT, url,
                 jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override

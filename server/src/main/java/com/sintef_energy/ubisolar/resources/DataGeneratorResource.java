@@ -1,18 +1,33 @@
+/*
+ * Licensed to UbiCollab.org under one or more contributor
+ * license agreements.  See the NOTICE file distributed
+ * with this work for additional information regarding
+ * copyright ownership. UbiCollab.org licenses this file
+ * to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.sintef_energy.ubisolar.resources;
 
 import com.sintef_energy.ubisolar.ServerDAO;
 import com.sintef_energy.ubisolar.structs.Device;
 import com.sintef_energy.ubisolar.structs.DeviceUsage;
 import com.yammer.dropwizard.jersey.params.LongParam;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import java.util.Random;
 
 /**
@@ -30,6 +45,11 @@ public class DataGeneratorResource {
         this.db = db;
     }
 
+    /**
+     * Create some devices
+     * @param user User id
+     * @return A list of devices for a user
+     */
     private ArrayList<Device> generateDevices(long user) {
         long time = System.currentTimeMillis();
         ArrayList<Device> devices = new ArrayList<Device>();
@@ -42,6 +62,11 @@ public class DataGeneratorResource {
         return devices;
     }
 
+    /**
+     * Generate usage for given device
+     * @param d The device
+     * @return A list of usage for a device
+     */
     private ArrayList<DeviceUsage> generateUsage(Device d) {
         ArrayList<DeviceUsage> usage = new ArrayList<DeviceUsage>();
         Random r = new Random();
@@ -63,6 +88,11 @@ public class DataGeneratorResource {
         return usage;
     }
 
+    /**
+     * Generate data for a user
+     * @param user the user id
+     * @return OK status code
+     */
     @GET
     @Path("generate/")
     public Response generateData(@PathParam("user") LongParam user) {
@@ -75,7 +105,6 @@ public class DataGeneratorResource {
 
             db.addUsageForDevices(usage.iterator());
         }
-
 
         return Response.status(Response.Status.OK).build();
     }
