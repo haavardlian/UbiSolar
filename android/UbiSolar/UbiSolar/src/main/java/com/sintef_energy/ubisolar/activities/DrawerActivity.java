@@ -135,7 +135,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
         //Create RequestManager instance
         try {
-            RequestManager.getmInstance();
+            RequestManager.getInstance();
         } catch(IllegalStateException e) {
             RequestManager.getInstance(getApplicationContext());
         }
@@ -299,7 +299,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                         new String[]{"-1"});
 
                 //Publish a post saying you started using Wattitude
-                RequestManager.getmInstance().doFriendRequest().createWallPost(
+                RequestManager.getInstance().doFriendRequest().createWallPost(
                         new NewsFeedPost(0, Long.valueOf(facebookUID), 1, System.currentTimeMillis() / 1000),
                         null);
             }

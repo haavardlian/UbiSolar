@@ -71,7 +71,7 @@ public class HomeFragment extends DefaultTabFragment {
         friendsList.setAdapter(wallAdapter);
 
         if(Session.getActiveSession().isOpened())
-            RequestManager.getmInstance().doFacebookRequest().populateWall(wallAdapter, this);
+            RequestManager.getInstance().doFacebookRequest().populateWall(wallAdapter, this);
 
         return view;
     }

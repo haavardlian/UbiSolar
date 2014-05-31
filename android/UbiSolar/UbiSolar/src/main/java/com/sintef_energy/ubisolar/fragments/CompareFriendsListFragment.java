@@ -138,7 +138,7 @@ public class CompareFriendsListFragment extends Fragment{
             }
         };
 
-        RequestManager.getmInstance().doFacebookRequest().getFriends(callback);
+        RequestManager.getInstance().doFacebookRequest().getFriends(callback);
     }
 
     /**

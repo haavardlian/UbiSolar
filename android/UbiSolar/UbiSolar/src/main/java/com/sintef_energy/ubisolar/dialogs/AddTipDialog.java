@@ -66,7 +66,7 @@ public class AddTipDialog extends DialogFragment {
 
                         Tip tip = new Tip(0, nameField.getText().toString(), descriptionField.getText().toString(), 0, 0);
 
-                        RequestManager.getmInstance().doTipRequest().createTip(tip, getTargetFragment());
+                        RequestManager.getInstance().doTipRequest().createTip(tip, getTargetFragment());
                         ((TipsFragment) getTargetFragment()).getAdapter().add(tip);
                         ((TipsFragment) getTargetFragment()).getAdapter().notifyDataSetChanged();
                     }

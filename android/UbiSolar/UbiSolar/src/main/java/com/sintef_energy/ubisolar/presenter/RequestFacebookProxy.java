@@ -71,7 +71,7 @@ public class RequestFacebookProxy {
                                     fragment.getString(R.string.facebook_posted),
                                     Toast.LENGTH_SHORT).show();
 
-                            RequestManager.getmInstance().doFriendRequest().createWallPost(
+                            RequestManager.getInstance().doFriendRequest().createWallPost(
                                     new NewsFeedPost(0,
                                             Long.valueOf(PreferencesManager
                                                     .getInstance().getKeyFacebookUid()), 2,
@@ -102,7 +102,7 @@ public class RequestFacebookProxy {
             public void onCompleted(final Response response) {
                 if(response.getError() == null) {
                     Log.d("FACEBOOK", "Message posted");
-                    RequestManager.getmInstance().doFriendRequest().createWallPost(
+                    RequestManager.getInstance().doFriendRequest().createWallPost(
                             new NewsFeedPost(0,
                                     Long.valueOf(PreferencesManager
                                             .getInstance().getKeyFacebookUid()), 3,
@@ -180,7 +180,7 @@ public class RequestFacebookProxy {
                         if(friend.has("installed") && friend.getBoolean("installed"))
                             friendIds.add(friend.getString("id"));
                     }
-                    RequestManager.getmInstance().doFriendRequest().getWallUpdates(adapter,
+                    RequestManager.getInstance().doFriendRequest().getWallUpdates(adapter,
                             Long.valueOf(PreferencesManager.getInstance().getKeyFacebookUid()),
                             fragment, TextUtils.join(",", friendIds));
                 } catch(Exception e) {
