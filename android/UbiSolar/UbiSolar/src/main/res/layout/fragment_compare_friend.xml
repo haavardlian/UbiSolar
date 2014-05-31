@@ -48,11 +48,4 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="20dp"/>
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/graph"
-        android:layout_below="@id/profiles"
-        android:layout_weight="2"/>
 </LinearLayout>

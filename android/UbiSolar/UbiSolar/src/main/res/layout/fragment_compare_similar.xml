@@ -126,12 +126,4 @@
         android:layout_toRightOf="@id/userProfilePic"
         android:layout_below="@+id/energy"
         android:text="A+" />
-
-    <ImageView
-        android:id="@+id/compFriendChart"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="20dp"
-        android:src="@drawable/graph"
-        android:layout_alignParentTop="true"/>
 </RelativeLayout>
