@@ -39,11 +39,6 @@ public class DeviceUsageList implements Parcelable
     private int totalUsage;
     private int percentage;
 
-    public DeviceUsageList()
-    {
-        usageList = new ArrayList<>();
-    }
-
     public DeviceUsageList(DeviceModel device) {
         this.device = device;
         usageList = new ArrayList<>();
@@ -62,6 +57,10 @@ public class DeviceUsageList implements Parcelable
         this.usageList = usageList;
     }
 
+    /**
+     * The usageLists size
+     * @return
+     */
     public int size()
     {
         if(usageList == null)
@@ -88,6 +87,12 @@ public class DeviceUsageList implements Parcelable
     }
 
 
+    /**
+     * Calculates the total usage for the given resolution
+     * @param date The date of the usage
+     * @param format The format to check for
+     * @param activeIndex The selected index
+     */
     public void calculateTotalUsage(String date, String format, int activeIndex)
     {
         boolean done = true;
@@ -112,10 +117,6 @@ public class DeviceUsageList implements Parcelable
                 break;
             done = true;
         }
-    }
-
-    public int getPercentage() {
-        return percentage;
     }
 
     public void setPercentage(int percentage) {

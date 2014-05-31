@@ -58,15 +58,7 @@ public class NewsFeedPost {
         return message;
     }
 
-    public void setMessage(int message) {
-        this.message = message;
-    }
-
     public long getTimestamp() {
         return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
     }
 }

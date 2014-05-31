@@ -49,14 +49,6 @@ public class Tip {
         this.averageRating = averageRating;
     }
 
-    public int getNumberOfRatings() {
-        return numberOfRatings;
-    }
-
-    public void setNumberOfRatings(int numberOfRatings) {
-        this.numberOfRatings = numberOfRatings;
-    }
-
     public int getId() {
         return id;
     }
