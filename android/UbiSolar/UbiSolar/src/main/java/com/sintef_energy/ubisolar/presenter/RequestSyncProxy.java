@@ -22,6 +22,7 @@ package com.sintef_energy.ubisolar.presenter;
 import android.net.Uri;
 import android.util.Log;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.RequestFuture;
@@ -73,7 +74,7 @@ public class RequestSyncProxy {
 
         Uri.Builder builder = new Uri.Builder();
 
-        builder.scheme("http").encodedAuthority(Global.URL)
+        builder.scheme("http").encodedAuthority(Global.SERVER_IP)
                 .appendPath("user").appendPath(""+userId)
                 .appendPath("sync").appendPath("device")
                 .appendPath("" + timestamp);
@@ -131,7 +132,7 @@ public class RequestSyncProxy {
 
         Uri.Builder builder = new Uri.Builder();
 
-        builder.scheme("http").encodedAuthority(Global.URL)
+        builder.scheme("http").encodedAuthority(Global.SERVER_IP)
                 .appendPath("user").appendPath("" + userId)
                 .appendPath("sync").appendPath("device");
 
@@ -194,7 +195,7 @@ public class RequestSyncProxy {
 
         Uri.Builder builder = new Uri.Builder();
 
-        builder.scheme("http").encodedAuthority(Global.URL)
+        builder.scheme("http").encodedAuthority(Global.SERVER_IP)
                 .appendPath("user").appendPath(""+userId)
                 .appendPath("sync").appendPath("usage")
                 .appendPath("" + timestamp);
@@ -250,7 +251,7 @@ public class RequestSyncProxy {
 
         Uri.Builder builder = new Uri.Builder();
 
-        builder.scheme("http").encodedAuthority(Global.URL)
+        builder.scheme("http").encodedAuthority(Global.SERVER_IP)
                 .appendPath("user").appendPath("" + userId)
                 .appendPath("sync").appendPath("usage");
 

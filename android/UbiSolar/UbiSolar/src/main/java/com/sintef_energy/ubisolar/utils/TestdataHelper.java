@@ -72,7 +72,7 @@ public class TestdataHelper {
         int nDevices = mDevices.size();
         ContentValues[] values = new ContentValues[n * nDevices];
 
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getmInstance();
         Random random = new Random();
         Date date = new Date();
         int idCount = 1337;

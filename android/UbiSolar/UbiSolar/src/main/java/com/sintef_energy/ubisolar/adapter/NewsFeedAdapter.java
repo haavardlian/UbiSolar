@@ -115,7 +115,7 @@ public class NewsFeedAdapter extends ArrayAdapter<NewsFeedPost> {
                 holder.profilePicLoaded = true;
             }
             if(!holder.nameLoaded) {
-                RequestManager.getInstance().doFacebookRequest().getFacebookName(post.getUserId(),
+                RequestManager.getmInstance().doFacebookRequest().getFacebookName(post.getUserId(),
                         holder.name);
                 holder.nameLoaded = true;
             }

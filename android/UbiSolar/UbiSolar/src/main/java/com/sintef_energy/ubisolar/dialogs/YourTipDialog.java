@@ -78,6 +78,7 @@ public class YourTipDialog extends DialogFragment {
                     new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
+
                 RequestManager.getInstance().doFacebookRequest().postMessage(getTargetFragment(),
                         mTip.getDescription(), mTip.getName());
                 }
@@ -94,9 +95,11 @@ public class YourTipDialog extends DialogFragment {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 ratingBar.setRating(v);
+
                 mTip.setAverageRating((int) v);
                 TipRating rating = new TipRating(0, mTip.getId(), (short)v, 1);
                 RequestManager.getInstance().doTipRequest().createRating(rating, getTargetFragment());
+
             }
         });
         return builder.create();

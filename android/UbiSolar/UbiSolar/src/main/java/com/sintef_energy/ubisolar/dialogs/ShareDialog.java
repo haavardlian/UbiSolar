@@ -63,7 +63,7 @@ public class ShareDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         ByteArrayOutputStream image = new ByteArrayOutputStream();
                         mImage.compress(Bitmap.CompressFormat.PNG, 100, image);
-                        RequestManager.getInstance().doFacebookRequest().postPicture(getTargetFragment(),
+                        RequestManager.getmInstance().doFacebookRequest().postPicture(getTargetFragment(),
                                 caption.getText().toString(), image.toByteArray());
 
                     }

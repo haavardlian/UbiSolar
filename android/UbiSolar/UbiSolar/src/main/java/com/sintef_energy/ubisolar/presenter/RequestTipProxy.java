@@ -57,18 +57,22 @@ import java.util.Set;
  */
 public class RequestTipProxy {
 
-    private RequestQueue requestQueue;
-    private ObjectMapper mapper;
-    private Response.ErrorListener errorListener;
+    private RequestQueue mRequestQueue;
+    private ObjectMapper mMapper;
 
     // package access constructor
     RequestTipProxy(RequestQueue requestQueue) {
-        this.mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-        this.requestQueue = requestQueue;
+        this.mMapper = new ObjectMapper();
+        mMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+        this.mRequestQueue = requestQueue;
     }
 
+    /**
+     * Get all tips from server
+     * @param adapter Adapter to hold data
+     * @param fragment Fragment to run result on UI thread
+     */
     public void getAllTips(final TipAdapter adapter, final Fragment fragment) {
         fragment.getActivity().setProgressBarIndeterminateVisibility(true);
         String url = Global.BASE_URL + "/tips";
@@ -79,7 +83,7 @@ public class RequestTipProxy {
 
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        adapter.add(mapper.readValue(jsonArray.get(i).toString(), Tip.class));
+                        adapter.add(mMapper.readValue(jsonArray.get(i).toString(), Tip.class));
                         //Log.d(tag, adapter.getItem(i).toString());
                     } catch (IOException | JSONException e) {
                         Log.e("REQUEST", "Error in JSON Mapping:");
@@ -118,9 +122,14 @@ public class RequestTipProxy {
             }
         });
 
-        requestQueue.add(jsonRequest);
+        mRequestQueue.add(jsonRequest);
     }
 
+    /**
+     * Get all saved tips
+     * @param adapter The adapter to hold the tips
+     * @param fragment Fragment to run result on UI thread
+     */
     public void getSavedTips(final YourTipAdapter adapter, final ProgressFragment fragment) {
         String url = Global.BASE_URL + "/tips";
         JsonArrayRequest jsonRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
@@ -132,7 +141,7 @@ public class RequestTipProxy {
 
                 for(int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        Tip tip = mapper.readValue(jsonArray.get(i).toString(), Tip.class);
+                        Tip tip = mMapper.readValue(jsonArray.get(i).toString(), Tip.class);
 
                         for(String s : savedTips)
                             if(Integer.valueOf(TextUtils.split(s, ",")[0]) == tip.getId()) adapter.add(tip);
@@ -173,15 +182,20 @@ public class RequestTipProxy {
             }
         });
 
-        requestQueue.add(jsonRequest);
+        mRequestQueue.add(jsonRequest);
     }
 
+    /**
+     * Create a tip on the server
+     * @param tip The top to create
+     * @param fragment Fragment to run result on UI thread
+     */
     public void createTip(Tip tip, final Fragment fragment) {
         String url = Global.BASE_URL + "/tips";
         JSONObject jsonObject;
 
         try {
-            jsonObject = new JSONObject(mapper.writeValueAsString(tip));
+            jsonObject = new JSONObject(mMapper.writeValueAsString(tip));
         } catch (JsonProcessingException | JSONException e) {
             e.printStackTrace();
             return;
@@ -218,15 +232,20 @@ public class RequestTipProxy {
                     }
                 });
 
-        requestQueue.add(jsonRequest);
+        mRequestQueue.add(jsonRequest);
     }
 
+    /**
+     * Create a rating for a tip on the server
+     * @param rating The rating object
+     * @param fragment Fragment to run result on UI thread
+     */
     public void createRating(TipRating rating, final Fragment fragment) {
         String url = Global.BASE_URL + "/tips/" + rating.getTipId() + "/rating/";
         JSONObject jsonObject;
 
         try {
-            jsonObject = new JSONObject(mapper.writeValueAsString(rating));
+            jsonObject = new JSONObject(mMapper.writeValueAsString(rating));
         } catch (JsonProcessingException | JSONException e) {
             e.printStackTrace();
             return;
@@ -261,6 +280,6 @@ public class RequestTipProxy {
                     }
                 });
 
-        requestQueue.add(jsonRequest);
+        mRequestQueue.add(jsonRequest);
     }
 }

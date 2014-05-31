@@ -63,6 +63,13 @@ public class RequestFriendsProxy {
         this.requestQueue = requestQueue;
     }
 
+    /**
+     * Get wall updates
+     * @param adapter Adapter to hold data
+     * @param userId User id for user
+     * @param fragment Fragment to run result on UI thread
+     * @param friendIds List of friend ids to get updates for
+     */
     public void getWallUpdates(final NewsFeedAdapter adapter, long userId, final Fragment fragment,
                                final String friendIds) {
         String url = Global.BASE_URL + "/user/" + userId + "/friends/wall?friends=" + friendIds;
@@ -114,6 +121,11 @@ public class RequestFriendsProxy {
         });
     }
 
+    /**
+     * Create a wall post
+     * @param post The post to create
+     * @param fragment Fragment to run result on UI thread
+     */
     public void createWallPost(NewsFeedPost post, final Fragment fragment) {
         String url = Global.BASE_URL + "/user/" + post.getUserId() + "/friends/wall";
         JSONObject jsonObject;

@@ -42,7 +42,10 @@ public class Resolution {
         setFormat(mode);
     }
 
-
+    /**
+     * Set date format
+     * @param mode Date mode
+     */
     public void setFormat(int mode){
         this.mode = mode;
         switch (mode){
@@ -92,6 +95,10 @@ public class Resolution {
     }
 
 
+    /**
+     * Increase the date in the calendar according to resolution
+     * @param cal The calendar
+     */
     public void getNextPoint(Calendar cal){
         if(mode == HOURS)
             cal.add(Calendar.HOUR_OF_DAY, 1);
@@ -103,6 +110,12 @@ public class Resolution {
             cal.add(Calendar.MONTH, 1);
     }
 
+    /**
+     * Get the differnece in time between to dates according to resolution
+     * @param date1 Date 1
+     * @param date2 Date 2
+     * @return Integer with time span
+     */
     public int getTimeDiff(Date date1, Date date2){
         long diff = date2.getTime() - date1.getTime();
 

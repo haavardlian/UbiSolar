@@ -69,6 +69,7 @@ public class YourTipFragment extends ProgressFragment {
         yourList.setAdapter(mYourAdapter);
 
         RequestManager.getInstance().doTipRequest().getSavedTips(mYourAdapter, this);
+
     }
 
     public YourTipAdapter getAdapter() { return mYourAdapter; }

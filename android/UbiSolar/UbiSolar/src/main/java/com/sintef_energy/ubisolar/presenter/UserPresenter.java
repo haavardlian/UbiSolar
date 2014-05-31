@@ -49,11 +49,17 @@ public class UserPresenter {
         this.userModelListeners.remove(view);
     }
 
+    /**
+     * Add the user to the database
+     * @param user The user to add
+     * @param contentResolver
+     */
     public void addUser(UserModel user, ContentResolver contentResolver){
         EnergyDataSource.insertUser(contentResolver, user);
         Log.d(TAG, "added user" + user.getName());
     }
 
+    //TODO: Delete user
     public void deleteUser(ContentResolver contentResolver, UserModel user) {
 
     }

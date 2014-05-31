@@ -33,7 +33,6 @@ import android.util.Log;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.EnergyUsageModel;
-import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 import com.sintef_energy.ubisolar.utils.Global;
 
@@ -112,7 +111,7 @@ public class UsageSyncAdapter extends AbstractThreadedSyncAdapter{
             builder.append("Synchronization started");
 
             try {
-                requestManager = RequestManager.getInstance();
+                requestManager = RequestManager.getmInstance();
             } catch (IllegalStateException ex) {
                 requestManager = RequestManager.getInstance(getContext().getApplicationContext());
             }
