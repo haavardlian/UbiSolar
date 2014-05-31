@@ -38,8 +38,8 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.IView.IPresenterCallback;
-import com.sintef_energy.ubisolar.IView.IDateCallback;
+import com.sintef_energy.ubisolar.Interfaces.IPresenterCallback;
+import com.sintef_energy.ubisolar.Interfaces.IDateCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
@@ -79,7 +79,7 @@ public class AddUsageFragment extends DefaultTabFragment implements
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mTotalEnergyPresenter = ((IPresenterCallback) activity).getmTotalEnergyPresenter();
+            mTotalEnergyPresenter = ((IPresenterCallback) activity).getTotalEnergyPresenter();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement " + TotalEnergyPresenter.class.getName());
         }

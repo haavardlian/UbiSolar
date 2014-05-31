@@ -25,7 +25,7 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
-import com.sintef_energy.ubisolar.IView.IDateCallback;
+import com.sintef_energy.ubisolar.Interfaces.IDateCallback;
 
 import java.util.Calendar;
 import java.util.Date;

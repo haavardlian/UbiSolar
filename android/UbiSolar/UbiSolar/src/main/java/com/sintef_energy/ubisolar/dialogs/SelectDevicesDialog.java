@@ -31,6 +31,9 @@ import com.sintef_energy.ubisolar.fragments.UsageFragment;
 
 import java.util.ArrayList;
 
+/**
+ * Dialog for device selection
+ */
 public class SelectDevicesDialog extends DialogFragment {
 
     private ArrayList<DeviceModel>  mDevices;

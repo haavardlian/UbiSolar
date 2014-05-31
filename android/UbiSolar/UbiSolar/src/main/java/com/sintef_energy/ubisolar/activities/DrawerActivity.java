@@ -48,7 +48,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.Settings;
 import com.facebook.model.GraphUser;
-import com.sintef_energy.ubisolar.IView.IPresenterCallback;
+import com.sintef_energy.ubisolar.Interfaces.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
@@ -466,7 +466,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     }
 
     @Override
-    public TotalEnergyPresenter getmTotalEnergyPresenter() {
+    public TotalEnergyPresenter getTotalEnergyPresenter() {
         return mTotalEnergyPresenter;
     }
 
@@ -476,8 +476,6 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     @Override
     public ResidencePresenter getResidencePresenter() {return residencePresenter;}
 
-    @Override
-    public UserPresenter getUserPresenter() {return userPresenter;}
     /* Login logic */
 
     /**

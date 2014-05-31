@@ -39,9 +39,12 @@ import com.sintef_energy.ubisolar.presenter.RequestManager;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment displaying tips
+ */
 public class TipsFragment extends Fragment {
     private static final String ARG_POSITION = "position";
-    private TipAdapter tipAdapter;
+    private TipAdapter mTipAdapter;
 
     public static TipsFragment newInstance(int position) {
         TipsFragment fragment = new TipsFragment();
@@ -56,26 +59,26 @@ public class TipsFragment extends Fragment {
         setHasOptionsMenu(true);
 
         View rootView = inflater.inflate(R.layout.fragment_tip_list, container, false);
-        tipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
+        mTipAdapter = new TipAdapter(getActivity(), R.layout.fragment_tip_row, new ArrayList<Tip>());
 
         ListView tipsView = (ListView) rootView.findViewById(R.id.tipList);
-        tipsView.setAdapter(tipAdapter);
+        tipsView.setAdapter(mTipAdapter);
         tipsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TipDialog dialog = new TipDialog(tipAdapter.getItem(i));
+                TipDialog dialog = new TipDialog(mTipAdapter.getItem(i));
                 dialog.setTargetFragment(TipsFragment.this, 0);
                 dialog.show(getFragmentManager(), "tipDialog");
             }
         });
 
         //Get all tips from server asynchronously
-        RequestManager.getInstance().doTipRequest().getAllTips(tipAdapter, this);
+        RequestManager.getInstance().doTipRequest().getAllTips(mTipAdapter, this);
 
         return rootView;
     }
 
-    public TipAdapter getAdapter() { return this.tipAdapter; }
+    public TipAdapter getAdapter() { return this.mTipAdapter; }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

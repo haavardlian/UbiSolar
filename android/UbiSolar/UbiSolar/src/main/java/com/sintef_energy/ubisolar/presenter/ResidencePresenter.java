@@ -21,7 +21,6 @@ package com.sintef_energy.ubisolar.presenter;
 
 import android.content.ContentResolver;
 import android.util.Log;
-import com.sintef_energy.ubisolar.IView.IResidenceView;
 import com.sintef_energy.ubisolar.database.energy.ResidenceModel;
 
 import java.util.ArrayList;
@@ -32,8 +31,6 @@ import java.util.ArrayList;
 public class ResidencePresenter {
 
     private static final String TAG = ResidencePresenter.class.getName();
-
-    private ArrayList<IResidenceView> residenceModelListeners;
 
     public ResidencePresenter(){}
 

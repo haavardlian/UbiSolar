@@ -36,7 +36,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.RadioGroup;
 
 import com.devspark.progressfragment.ProgressFragment;
-import com.sintef_energy.ubisolar.IView.IUsageView;
+import com.sintef_energy.ubisolar.Interfaces.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
@@ -656,11 +656,6 @@ public class UsageGraphLineFragment extends ProgressFragment implements IUsageVi
     @Override
     public void setSelectedDialogItems(boolean[] mSelectedDialogItems) {
         this.mSelectedDialogItems = mSelectedDialogItems;
-    }
-
-    @Override
-    public void setDataLoading(boolean state) {
-        setContentShown(!state);
     }
 
     /**

@@ -34,7 +34,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.devspark.progressfragment.ProgressFragment;
-import com.sintef_energy.ubisolar.IView.IUsageView;
+import com.sintef_energy.ubisolar.Interfaces.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
@@ -403,15 +403,6 @@ public class UsageGraphPieFragment extends ProgressFragment implements IUsageVie
                 return i;
 
         return mDates.size() -1;
-    }
-
-    /**
-     * Hides content while loading
-     * @param state
-     */
-    @Override
-    public void setDataLoading(boolean state) {
-        setContentShown(state);
     }
 
     /**

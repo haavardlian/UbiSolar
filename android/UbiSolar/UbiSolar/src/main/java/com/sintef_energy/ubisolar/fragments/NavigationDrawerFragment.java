@@ -37,7 +37,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,7 +46,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.sintef_energy.ubisolar.IView.IDrawerItem;
+import com.sintef_energy.ubisolar.Interfaces.IDrawerItem;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 import com.sintef_energy.ubisolar.drawer.DrawerHeader;

@@ -42,7 +42,7 @@ import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.facebook.Session;
-import com.sintef_energy.ubisolar.IView.IUsageView;
+import com.sintef_energy.ubisolar.Interfaces.IUsageView;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.database.energy.EnergyContract;
@@ -59,6 +59,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+/**
+ * The partent fragment managing the line and pie graph fragments
+ */
 public class UsageFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final int LOADER_DEVICES = 0;
@@ -69,7 +72,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
     private Bundle mSavedState;
     private LinkedHashMap<Long, DeviceModel> mDevices;
     private ArrayList<DeviceUsageList> mDeviceUsageList;
-    private IUsageView graphView;
+    private IUsageView mGraphView;
     private UsageFragmentStatePageAdapter mUsageFragmentStatePageAdapter;
     private PreferencesManager mPreferenceManager;
     private ScrollViewPager mPager;
@@ -120,18 +123,16 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
 
             @Override
             public void onPageSelected(int position) {
-                graphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
-                graphView.setDevices(mDevices);
-                graphView.pullData();
+                mGraphView = (IUsageView) mUsageFragmentStatePageAdapter.getFragment(position);
+                mGraphView.setDevices(mDevices);
+                mGraphView.pullData();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
 
-        //BUG: onPageChangeListener does not set graphView the first time.
-        //This is an ugly fix
-        graphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(mPager, 0);
+        mGraphView = (IUsageView)mUsageFragmentStatePageAdapter.instantiateItem(mPager, 0);
 
         return mRootView;
     }
@@ -185,12 +186,12 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
             case R.id.fragment_usage_menu_action_devices:
                 SelectDevicesDialog dialog = SelectDevicesDialog.newInstance(
                         new ArrayList<>(mDevices.values()),
-                        graphView.getSelectedDialogItems());
+                        mGraphView.getSelectedDialogItems());
                 dialog.setTargetFragment(this, 0);
                 dialog.show(fragmentManager, "selectDeviceDialog");
                 return true;
             case R.id.share_usage:
-                ShareDialog d = new ShareDialog(graphView.createImage());
+                ShareDialog d = new ShareDialog(mGraphView.createImage());
                 d.setTargetFragment(UsageFragment.this, 0);
                 d.show(fragmentManager, "shareDialog");
                 return true;
@@ -233,7 +234,7 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
         mSavedState = null;
         mDevices = null;
         mDeviceUsageList = null;
-        graphView = null;
+        mGraphView = null;
         mUsageFragmentStatePageAdapter = null;
         mPreferenceManager = null;
         mPager = null;
@@ -244,8 +245,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
      * @param itemsSelected
      */
     public void selectedDevicesCallback(boolean[] itemsSelected){
-        graphView.setSelectedDialogItems(itemsSelected);
-        graphView.pullData();
+        mGraphView.setSelectedDialogItems(itemsSelected);
+        mGraphView.pullData();
     }
 
     @Override
@@ -268,8 +269,8 @@ public class UsageFragment extends DefaultTabFragment implements LoaderManager.L
                 DeviceModel model = new DeviceModel(cursor);
                 mDevices.put(model.getId(), model);
             } while (cursor.moveToNext());
-        graphView.setDevices(mDevices);
-        graphView.pullData();
+        mGraphView.setDevices(mDevices);
+        mGraphView.pullData();
     }
 
     @Override

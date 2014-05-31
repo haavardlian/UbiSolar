@@ -46,7 +46,7 @@ import java.util.ArrayList;
 /**
  * Created by perok on 2/11/14.
  *
- * UI design based on: https://github.com/gabrielemariotti/cardslib
+ * Unfinished fragment for managing the users profile information and residences
  */
 public class ProfileFragment extends DefaultTabFragment  {
 

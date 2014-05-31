@@ -17,13 +17,13 @@
  * under the License.
  */
 
-package com.sintef_energy.ubisolar.IView;
-
-import android.os.Bundle;
+package com.sintef_energy.ubisolar.Interfaces;
 
 /**
- * Created by perok on 07.05.14.
+ * Interface forcing certain fragments to take dates
+ *
+ * Created by perok on 12.03.14.
  */
-public interface ILoginCallback {
-    void loginFinished(Bundle data);
+public interface IDateCallback {
+    public void setDate(int year, int month, int day);
 }

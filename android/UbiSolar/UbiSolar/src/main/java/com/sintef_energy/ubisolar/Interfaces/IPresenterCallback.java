@@ -16,25 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package com.sintef_energy.ubisolar.Interfaces;
 
-package com.sintef_energy.ubisolar.IView;
+import com.sintef_energy.ubisolar.presenter.DevicePresenter;
+import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
+import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
 
-import android.graphics.Bitmap;
+public interface IPresenterCallback {
 
-import com.sintef_energy.ubisolar.database.energy.DeviceModel;
-
-import java.util.LinkedHashMap;
-
-public interface IUsageView {
-    public boolean[] getSelectedDialogItems();
-    public void setSelectedDialogItems(boolean[] selectedDialogItems);
-
-    /** Sets the progress view to load or not. */
-    public void setDataLoading(boolean state);
-
-    public void setDevices(LinkedHashMap<Long, DeviceModel> devices);
-
-    public Bitmap createImage();
-
-    public void pullData();
+    public TotalEnergyPresenter getTotalEnergyPresenter();
+    public DevicePresenter getDevicePresenter();
+    public ResidencePresenter getResidencePresenter();
 }

@@ -24,7 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.IView.IDrawerItem;
+import com.sintef_energy.ubisolar.Interfaces.IDrawerItem;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 

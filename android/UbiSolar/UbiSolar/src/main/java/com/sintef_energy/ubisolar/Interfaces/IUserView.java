@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.sintef_energy.ubisolar.IView;
+package com.sintef_energy.ubisolar.Interfaces;
 
 import com.sintef_energy.ubisolar.database.energy.UserModel;
 

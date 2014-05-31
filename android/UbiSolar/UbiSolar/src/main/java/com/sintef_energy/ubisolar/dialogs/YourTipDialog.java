@@ -41,12 +41,12 @@ import com.sintef_energy.ubisolar.presenter.RequestManager;
  * Dialog displaying the option to remove or share a tip under your tips
  */
 public class YourTipDialog extends DialogFragment {
-    private Tip tip;
-    private YourTipAdapter yourTipAdapter;
+    private Tip mTip;
+    private YourTipAdapter mYourTipAdapter;
 
-    public YourTipDialog(Tip tip, YourTipAdapter yourTipAdapter) {
-        this.tip = tip;
-        this.yourTipAdapter = yourTipAdapter;
+    public YourTipDialog(Tip mTip, YourTipAdapter yourTipAdapter) {
+        this.mTip = mTip;
+        this.mYourTipAdapter = yourTipAdapter;
     }
 
     @Override
@@ -63,14 +63,15 @@ public class YourTipDialog extends DialogFragment {
                 // Add action buttons
                 .setNegativeButton(getString(R.string.energy_saving_your_tip_remove),
                         new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        yourTipAdapter.remove(tip);
-                        yourTipAdapter.notifyDataSetChanged();
-                        PreferencesManager.getInstance().removeSubscribedTip(tip);
-                    }
-                })
-                .setTitle(tip.getName());
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                mYourTipAdapter.remove(mTip);
+                                mYourTipAdapter.notifyDataSetChanged();
+                                PreferencesManager.getInstance().removeSubscribedTip(mTip);
+                            }
+                        }
+                )
+                .setTitle(mTip.getName());
 
         if(Session.getActiveSession().isOpened()) {
             builder.setPositiveButton(getString(R.string.energy_saving_your_tip_share),
@@ -78,7 +79,7 @@ public class YourTipDialog extends DialogFragment {
                 @Override
                 public void onClick(DialogInterface dialog, int id) {
                 RequestManager.getInstance().doFacebookRequest().postMessage(getTargetFragment(),
-                        tip.getDescription(), tip.getName());
+                        mTip.getDescription(), mTip.getName());
                 }
             });
         }
@@ -86,15 +87,15 @@ public class YourTipDialog extends DialogFragment {
         TextView descriptionField = (TextView) view.findViewById(R.id.tipDialogDescription);
         RatingBar ratingField = (RatingBar) view.findViewById(R.id.tipDialogRatingBar);
 
-        descriptionField.setText(tip.getDescription());
-        ratingField.setRating(tip.getAverageRating());
+        descriptionField.setText(mTip.getDescription());
+        ratingField.setRating(mTip.getAverageRating());
         ratingField.setIsIndicator(false);
         ratingField.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 ratingBar.setRating(v);
-                tip.setAverageRating((int)v);
-                TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
+                mTip.setAverageRating((int) v);
+                TipRating rating = new TipRating(0, mTip.getId(), (short)v, 1);
                 RequestManager.getInstance().doTipRequest().createRating(rating, getTargetFragment());
             }
         });

@@ -22,7 +22,7 @@ package com.sintef_energy.ubisolar.presenter;
 import android.content.ContentResolver;
 import android.util.Log;
 
-import com.sintef_energy.ubisolar.IView.IUserView;
+import com.sintef_energy.ubisolar.Interfaces.IUserView;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.UserModel;
 
