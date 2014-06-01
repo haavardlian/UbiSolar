@@ -103,7 +103,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
         }
      }
 
-      /**
+    /**
      * The view has been created.
      * Authentication will be handled here.
      */
