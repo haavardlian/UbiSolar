@@ -17,15 +17,21 @@
  * under the License.
  */
 
-package com.sintef_energy.ubisolar.IView;
+package com.sintef_energy.ubisolar.Interfaces;
+
+import android.graphics.Bitmap;
 
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 
-/**
- * Created by pialindkjolen on 05.03.14.
- */
-public interface IDeviceView {
-    public void addDevice(DeviceModel model);
-    public void deleteDevice(DeviceModel model);
-    public void changeDevice(DeviceModel model, String name, String description);
+import java.util.LinkedHashMap;
+
+public interface IUsageView {
+    public boolean[] getSelectedDialogItems();
+    public void setSelectedDialogItems(boolean[] selectedDialogItems);
+
+    public void setDevices(LinkedHashMap<Long, DeviceModel> devices);
+
+    public Bitmap createImage();
+
+    public void pullData();
 }

@@ -38,15 +38,15 @@ import com.sintef_energy.ubisolar.model.TipRating;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
 import com.sintef_energy.ubisolar.presenter.RequestManager;
 
+/**
+ * Diplays a mTip allows the user to rate it
+ */
 public class TipDialog extends DialogFragment {
 
-    private View view;
-    private Tip tip;
-    private TextView descriptionField;
-    private RatingBar ratingField;
+    private Tip mTip;
 
     public TipDialog(Tip tip) {
-        this.tip = tip;
+        this.mTip = tip;
     }
 
     public void onAttach(Activity activity) {
@@ -61,18 +61,18 @@ public class TipDialog extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
 
-        view = inflater.inflate(R.layout.dialog_tip, null);
+        View view = inflater.inflate(R.layout.dialog_tip, null);
         builder.setView(view)
                 // Add action buttons
                 .setPositiveButton(getString(R.string.energy_saving_move_tip), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        ((EnergySavingTabFragment)getTargetFragment().getTargetFragment())
-                                .getAdapter().getYourFragment().getAdapter().add(tip);
+                        ((EnergySavingTabFragment) getTargetFragment().getTargetFragment())
+                                .getAdapter().getYourFragment().getAdapter().add(mTip);
 
-                        ((EnergySavingTabFragment)getTargetFragment().getTargetFragment())
+                        ((EnergySavingTabFragment) getTargetFragment().getTargetFragment())
                                 .getAdapter().getYourFragment().getAdapter().notifyDataSetChanged();
-                        PreferencesManager.getInstance().addSubscribedTip(tip);
+                        PreferencesManager.getInstance().addSubscribedTip(mTip);
                     }
                 })
                 .setNegativeButton(getString(R.string.energy_saving_close), new DialogInterface.OnClickListener() {
@@ -81,26 +81,26 @@ public class TipDialog extends DialogFragment {
                         getDialog().cancel();
                     }
                 })
-                .setTitle(tip.getName());
+                .setTitle(mTip.getName());
 
-        descriptionField = (TextView) view.findViewById(R.id.tipDialogDescription);
-        ratingField = (RatingBar) view.findViewById(R.id.tipDialogRatingBar);
+        TextView descriptionField = (TextView) view.findViewById(R.id.tipDialogDescription);
+        RatingBar ratingField = (RatingBar) view.findViewById(R.id.tipDialogRatingBar);
 
-        descriptionField.setText(tip.getDescription());
-        ratingField.setRating(tip.getAverageRating());
+        descriptionField.setText(mTip.getDescription());
+        ratingField.setRating(mTip.getAverageRating());
         ratingField.setIsIndicator(false);
         ratingField.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                 ratingBar.setRating(v);
-                tip.setAverageRating((int)v);
-                TipRating rating = new TipRating(0, tip.getId(), (short)v, 1);
+                mTip.setAverageRating((int) v);
+                TipRating rating = new TipRating(0, mTip.getId(), (short)v, 1);
                 RequestManager.getInstance().doTipRequest().createRating(rating, getTargetFragment());
+
                 ((TipsFragment) getTargetFragment()).getAdapter().notifyDataSetChanged();
             }
         });
 
         return builder.create();
-
     }
 }

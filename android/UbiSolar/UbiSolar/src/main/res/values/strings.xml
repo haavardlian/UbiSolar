@@ -39,7 +39,7 @@
     <string-array name="wall_post_messages">
         <item>started using Wattitude</item>
         <item>shared usage data</item>
-        <item>shared a power saving tip</item>
+        <item>shared a power saving mTip</item>
     </string-array>
 
     <!-- Title fragment menu -->
@@ -215,9 +215,9 @@
     <string name="energy_saving_tab_tips">Tips</string>
     <string name="energy_saving_tab_your">My tips</string>
 
-    <string name="energy_saving_create_tip">Create tip</string>
+    <string name="energy_saving_create_tip">Create mTip</string>
 
-    <string name="energy_saving_add_title">Create tip</string>
+    <string name="energy_saving_add_title">Create mTip</string>
     <string name="energy_saving_add_confirm">Create</string>
     <string name="energy_saving_add_name">Title</string>
     <string name="energy_saving_add_description">Description</string>
@@ -228,6 +228,7 @@
 
     <string name="energy_saving_your_tip_remove">Remove</string>
     <string name="energy_saving_your_tip_share">Share</string>
+    <string name="energy_saving_your_tip_empty">You have no saved tips</string>
 
 
     <string-array name="energy_saving_tabs">

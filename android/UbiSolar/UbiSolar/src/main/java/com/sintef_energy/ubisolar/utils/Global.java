@@ -27,10 +27,11 @@ import java.util.List;
  */
 public class Global {
     public static Boolean loggedIn = false;
-
-    public static String URL = "188.226.188.11:1337";
-    public static String BASE_URL = "http://" + URL;
-
+    //IP For the server
+    public static String SERVER_IP = "188.226.188.11:1337";
+    //The server base URL
+    public static String BASE_URL = "http://" + SERVER_IP;
+    //Developer mode
     public static boolean DEVELOPER_MADE = false;
 
     /* Broadcasts and and data. Broadcasts are set from string.xml */

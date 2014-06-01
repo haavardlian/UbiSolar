@@ -32,6 +32,8 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Created by Håvard on 05.05.14.
+ *
+ * Handle JsonObjectRequest with HTTP code in the 200s and no payload as successful
  */
 public class JsonObjectRequestTweaked extends JsonObjectRequest {
 

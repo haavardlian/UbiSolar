@@ -36,7 +36,7 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
-import com.sintef_energy.ubisolar.IView.ILoginCallback;
+import com.sintef_energy.ubisolar.Interfaces.ILoginCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.utils.Global;
 import com.sintef_energy.ubisolar.utils.Utils;

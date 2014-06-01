@@ -50,18 +50,6 @@ public class TipRating {
         return tipId;
     }
 
-    public void setTipId(int tipId) {
-        this.tipId = tipId;
-    }
-
-    public short getRating() {
-        return rating;
-    }
-
-    public void setRating(short rating) {
-        this.rating = rating;
-    }
-
     public int getUserId() {
         return userId;
     }

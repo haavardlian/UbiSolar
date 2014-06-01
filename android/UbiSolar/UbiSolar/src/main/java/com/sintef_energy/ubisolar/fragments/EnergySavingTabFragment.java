@@ -32,7 +32,6 @@ import android.view.ViewGroup;
 import com.astuetz.PagerSlidingTabStrip;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.activities.DrawerActivity;
-import com.sintef_energy.ubisolar.adapter.YourTipAdapter;
 
 /**
  * Created by perok on 21.03.14.

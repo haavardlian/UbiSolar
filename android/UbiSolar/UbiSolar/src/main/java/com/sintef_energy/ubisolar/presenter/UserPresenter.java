@@ -22,7 +22,7 @@ package com.sintef_energy.ubisolar.presenter;
 import android.content.ContentResolver;
 import android.util.Log;
 
-import com.sintef_energy.ubisolar.IView.IUserView;
+import com.sintef_energy.ubisolar.Interfaces.IUserView;
 import com.sintef_energy.ubisolar.database.energy.EnergyDataSource;
 import com.sintef_energy.ubisolar.database.energy.UserModel;
 
@@ -49,11 +49,17 @@ public class UserPresenter {
         this.userModelListeners.remove(view);
     }
 
+    /**
+     * Add the user to the database
+     * @param user The user to add
+     * @param contentResolver
+     */
     public void addUser(UserModel user, ContentResolver contentResolver){
         EnergyDataSource.insertUser(contentResolver, user);
         Log.d(TAG, "added user" + user.getName());
     }
 
+    //TODO: Delete user
     public void deleteUser(ContentResolver contentResolver, UserModel user) {
 
     }

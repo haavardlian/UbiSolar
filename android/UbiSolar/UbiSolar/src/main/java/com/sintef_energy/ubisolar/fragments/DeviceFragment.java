@@ -51,6 +51,7 @@ import java.util.ArrayList;
 public class DeviceFragment extends DefaultTabFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = DeviceFragment.class.getName();
+
     private DeviceListAdapter mDeviceAdapter;
     private ArrayList<DeviceModel> mDevices;
     private DeviceModel mDevice;

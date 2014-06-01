@@ -32,11 +32,14 @@ import com.sintef_energy.ubisolar.presenter.RequestManager;
 import java.util.ArrayList;
 
 /**
+ * The fragment for displaying the users tips
+ *
  * Created by Håvard on 24.03.2014.
  */
 public class YourTipFragment extends ProgressFragment {
     private static final String ARG_POSITION = "position";
-    private YourTipAdapter yourAdapter;
+
+    private YourTipAdapter mYourAdapter;
 
     public static YourTipFragment newInstance(int position) {
         YourTipFragment fragment = new YourTipFragment();
@@ -55,20 +58,19 @@ public class YourTipFragment extends ProgressFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setContentView(R.layout.fragment_your_tip_list);
-        setEmptyText("You have no saved tips"); //TODO insert in xml/strings
+        setEmptyText(getString(R.string.energy_saving_your_tip_empty));
         setContentEmpty(true);
         setContentShown(false);
 
         View rootView =  getContentView();
         ListView yourList = (ListView) rootView.findViewById(R.id.yourList);
-        yourAdapter = new YourTipAdapter(this, R.layout.fragment_your_tip_row,
+        mYourAdapter = new YourTipAdapter(this, R.layout.fragment_your_tip_row,
                 new ArrayList<Tip>(), getFragmentManager());
-        yourList.setAdapter(yourAdapter);
+        yourList.setAdapter(mYourAdapter);
 
-        RequestManager.getInstance().doTipRequest().getSavedTips(yourAdapter, this);
+        RequestManager.getInstance().doTipRequest().getSavedTips(mYourAdapter, this);
+
     }
 
-    //TODO Bug: Ha onResume eller count() der man setter setContentShown om innhold har dukket opp.
-
-    public YourTipAdapter getAdapter() { return yourAdapter; }
+    public YourTipAdapter getAdapter() { return mYourAdapter; }
 }

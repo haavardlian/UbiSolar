@@ -47,6 +47,12 @@ import java.util.ArrayList;
  */
 public class RequestFacebookProxy {
 
+    /**
+     * Post a picture to the uerrs Facebook wall
+     * @param fragment Fragment to run result on UI thread
+     * @param caption Caption for the image
+     * @param image The image to upload
+     */
     public void postPicture(final Fragment fragment, String caption, byte[] image) {
         Bundle param = new Bundle();
         param.putString("message", caption);
@@ -81,6 +87,12 @@ public class RequestFacebookProxy {
     }
 
 
+    /**
+     * Post a message to the users facebook wall
+     * @param fragment Fragment to run result on UI thread
+     * @param message The message
+     * @param name The name for the message
+     */
     public void postMessage(final Fragment fragment, String message, String name) {
         Bundle param = new Bundle();
         param.putString("message", name + " - " + message);
@@ -112,6 +124,11 @@ public class RequestFacebookProxy {
         }).executeAsync();
     }
 
+    /**
+     * Get the name coresponding to a Facebook user id
+     * @param userId The user id
+     * @param textView The view to update with the name
+     */
     public void getFacebookName(long userId, final TextView textView) {
         new Request(Session.getActiveSession(), "/" + userId, null, HttpMethod.GET,
                 new Request.Callback() {
@@ -130,6 +147,10 @@ public class RequestFacebookProxy {
         }).executeAsync();
     }
 
+    /**
+     * Get friends for user
+     * @param callback The callback to run on response
+     */
     public void getFriends(Request.Callback callback) {
         Bundle param = new Bundle();
         param.putString("fields", "name, installed");
@@ -137,6 +158,11 @@ public class RequestFacebookProxy {
                 .executeAsync();
     }
 
+    /**
+     * Populate to front page of the app
+     * @param adapter Adapter to hold data
+     * @param fragment Fragment to run result on UI thread
+     */
     public void populateWall(final NewsFeedAdapter adapter, final Fragment fragment) {
         Request.Callback callback = new Request.Callback() {
             @Override

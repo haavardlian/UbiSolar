@@ -60,7 +60,7 @@ public class CompareFriendsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Load the users profile picture
-        View view = inflater.inflate(R.layout.fragment_friends_compare, container, false);
+        View view = inflater.inflate(R.layout.fragment_compare_friend, container, false);
         ProfilePictureView profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
         profilePicture.setProfileId(PreferencesManager.getInstance().getKeyFacebookUid());
         profilePicture.setPresetSize(ProfilePictureView.LARGE);

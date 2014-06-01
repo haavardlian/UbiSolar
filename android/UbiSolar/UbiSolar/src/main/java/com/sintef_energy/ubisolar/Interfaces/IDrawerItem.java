@@ -16,20 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.sintef_energy.ubisolar.IView;
 
-import com.sintef_energy.ubisolar.presenter.DevicePresenter;
-import com.sintef_energy.ubisolar.presenter.ResidencePresenter;
-import com.sintef_energy.ubisolar.presenter.TotalEnergyPresenter;
-import com.sintef_energy.ubisolar.presenter.UserPresenter;
+package com.sintef_energy.ubisolar.Interfaces;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
- * Created by perok on 12.03.14.
+ * Created by Håvard on 02.04.14.
+ *
+ * Interface for the navigation drawer
  */
-public interface IPresenterCallback {
-
-    public TotalEnergyPresenter getmTotalEnergyPresenter();
-    public DevicePresenter getDevicePresenter();
-    public ResidencePresenter getResidencePresenter();
-    public UserPresenter getUserPresenter();
+public interface IDrawerItem {
+    public int getViewType();
+    public View getView(LayoutInflater inflater, View convertView, ViewGroup parent);
 }

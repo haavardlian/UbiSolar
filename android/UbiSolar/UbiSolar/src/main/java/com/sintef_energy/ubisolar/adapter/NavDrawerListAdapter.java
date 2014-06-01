@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.sintef_energy.ubisolar.IView.IDrawerItem;
+import com.sintef_energy.ubisolar.Interfaces.IDrawerItem;
 
 import java.util.List;
 

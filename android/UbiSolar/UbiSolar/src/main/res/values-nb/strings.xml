@@ -189,6 +189,7 @@
 
     <string name="energy_saving_your_tip_remove">Fjern</string>
     <string name="energy_saving_your_tip_share">Del</string>
+    <string name="energy_saving_your_tip_empty">Du har ingen lagrede tips</string>
 
     <string-array name="energy_saving_tabs">
         <item>Tips</item>

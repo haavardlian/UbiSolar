@@ -17,38 +17,14 @@
  * under the License.
  */
 
-package com.sintef_energy.ubisolar.model;
+package com.sintef_energy.ubisolar.Interfaces;
+
+import com.sintef_energy.ubisolar.database.energy.UserModel;
 
 /**
- * Created by baier on 3/26/14.
+ * Created by Lars Erik on 04.05.2014.
  */
-public class ResidenceAttributes {
-
-    private String residenceAttributeLabel;
-    private int value;
-    boolean selected = false;
-
-    public ResidenceAttributes(String residenceAttributeLabel) {
-        this.residenceAttributeLabel = residenceAttributeLabel;
-    }
-
-    public String getResidenceAttributeLabel() {
-        return residenceAttributeLabel;
-    }
-
-    public void setResidenceAttributeLabel(String residenceAttributeLabel) {
-        this.residenceAttributeLabel = residenceAttributeLabel;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
+public interface IUserView  {
+    public void addUser(UserModel model);
+    public void deleteUser(UserModel model);
 }

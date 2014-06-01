@@ -19,7 +19,6 @@
 
 package com.sintef_energy.ubisolar.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -64,7 +63,7 @@ public class CompareSimilarFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_similar_compare, container, false);
+        View view = inflater.inflate(R.layout.fragment_compare_similar, container, false);
 
         ProfilePictureView profilePicture = (ProfilePictureView) view.findViewById(R.id.userProfilePic);
         profilePicture.setPresetSize(ProfilePictureView.LARGE);

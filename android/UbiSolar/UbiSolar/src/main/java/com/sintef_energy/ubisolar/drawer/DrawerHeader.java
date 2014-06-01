@@ -24,7 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.IView.IDrawerItem;
+import com.sintef_energy.ubisolar.Interfaces.IDrawerItem;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
 
@@ -32,10 +32,10 @@ import com.sintef_energy.ubisolar.adapter.NavDrawerListAdapter;
  * The header item in the navigation drawer
  */
 public class DrawerHeader implements IDrawerItem {
-    private final String name;
+    private final String mName;
 
     public DrawerHeader(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DrawerHeader implements IDrawerItem {
         view.setFocusable(false);
 
         TextView text = (TextView) view.findViewById(R.id.title);
-        text.setText(name);
+        text.setText(mName);
 
         return view;
     }

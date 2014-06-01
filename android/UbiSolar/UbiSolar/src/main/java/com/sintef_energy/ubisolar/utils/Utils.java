@@ -38,18 +38,28 @@ import com.sintef_energy.ubisolar.preferences.PreferencesManager;
  */
 public class Utils {
 
+    /**
+     * Show a short toast message
+     * @param c The context for the toast
+     * @param text Text that will be shown
+     */
     public static void makeShortToast(Context c, String text){
         Toast.makeText(c, text, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Show a long toast message
+     * @param c The context for the toast
+     * @param text Text that will be shown
+     */
     public static void makeLongToast(Context c, String text){
         Toast.makeText(c, text, Toast.LENGTH_LONG).show();
     }
 
     /**
      * Helper class to check if app has internet connection.
-     * @param context
-     * @return
+     * @param context The context
+     * @return Boolean value saying if network is on
      */
     public static boolean isNetworkOn(Context context) {
         ConnectivityManager connMgr =

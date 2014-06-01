@@ -40,29 +40,6 @@
         android:layout_alignTop="@id/btnAddUsage"
         android:background="?android:attr/dividerVertical"/>
 
-    <Button
-        android:id="@+id/vs_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="?android:attr/listPreferredItemHeightSmall"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/fragment_similar_compare_divide_top"
-        android:gravity="center"
-        android:text="Randomize"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        style="?android:attr/borderlessButtonStyle"
-        android:drawableStart="@drawable/ic_action_refresh"/>
-
-    <View
-        android:id="@+id/fragment_similar_compare_divide_bottom"
-        android:layout_below="@id/vs_icon"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_alignTop="@id/btnAddUsage"
-        android:background="?android:attr/dividerVertical"/>
-
     <TextView
         android:id="@+id/location"
         android:layout_width="fill_parent"
@@ -149,12 +126,4 @@
         android:layout_toRightOf="@id/userProfilePic"
         android:layout_below="@+id/energy"
         android:text="A+" />
-
-    <ImageView
-        android:id="@+id/compFriendChart"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/fragment_similar_compare_divide_bottom"
-        android:layout_margin="20dp"
-        android:src="@drawable/graph" />
 </RelativeLayout>

@@ -32,7 +32,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.sintef_energy.ubisolar.IView.IPresenterCallback;
+import com.sintef_energy.ubisolar.Interfaces.IPresenterCallback;
 import com.sintef_energy.ubisolar.R;
 import com.sintef_energy.ubisolar.database.energy.DeviceModel;
 import com.sintef_energy.ubisolar.preferences.PreferencesManager;
