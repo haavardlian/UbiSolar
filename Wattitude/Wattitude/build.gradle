@@ -62,6 +62,6 @@ dependencies {
     compile 'com.github.johnkil.android-progressfragment:progressfragment-native:1.4.+'
     compile 'info.hoang8f:android-segmented:1.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    compile project(':UbiSolar:libs:facebook')
+    compile project(':Wattitude:libs:facebook')
     compile project(':spinnerwheel')
 }

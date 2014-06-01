@@ -1,0 +1,3 @@
+include ':spinnerwheel', 'Wattitude'
+include ':Wattitude:libs:facebook'
+project(':spinnerwheel').projectDir = new File('Wattitude/libs/spinnerwheel')
