@@ -1,5 +1,5 @@
 Wattitude - app
-###############
+===============
 
 Setup
 -----
@@ -11,8 +11,15 @@ where the server is currently hosted.
 
 Libraries
 ---------
-* FacebookSDK
-* etc
+
+* FacebookSDK - Facebook session data
+* Spinnerwheel - Spinning view
+* pagerslidingtabstrip - tabs
+* Volley - http requests
+* Jackson - Marshalling
+* Progressfragment - Fragment with progress state
+* android-segmented - Segmented radiobuttons
+* aChartEngine - Charting library
 
 Contribution
 ------------
