@@ -19,12 +19,18 @@ Contribution
 
 The app has folders for
 * Fragments
+    
+    All the different Fragment views
+
 * Activities
+
+    Activities including the login Activity and DrawerActivity that is the main app activity.
+
 * Adapters
 * Databases
 
     All data is added in a database, and the database is wrapped around a ContentProvider.
-    The EnergyContract.java defines the dataset URI's. DeviceModel and EnergyUsageModel wraps around
+    The EnergyContract.java defines the data URI's. DeviceModel and EnergyUsageModel wraps around
     their respective java bean models (found in model folder). They provide SQL statements for insertion
     and deletion, and other methods that help using the data. 
     
@@ -44,9 +50,10 @@ The app has folders for
 * Services
 * Utils
 * Preferences
-* Dialogs
 
-The main activity is DrawerActivity.java.
+    Wrappers around SharedPreferences.
+
+* Dialogs
 
 
 
