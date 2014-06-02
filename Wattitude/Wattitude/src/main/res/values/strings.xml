@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Licensed to UbiCollab.org under one or more contributor
+  ~ license agreements.  See the NOTICE file distributed
+  ~ with this work for additional information regarding
+  ~ copyright ownership. UbiCollab.org licenses this file
+  ~ to you under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ 	http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<resources>
+
+    <string name="app_name">Wattitude</string>
+    <string name="APP_ID">499884913456996</string>
+
+    <!-- Sync and auth -->
+    <string name="auth_account_type">com.sintef_energy.ubisolar.sync</string>
+    <string name="sync_content_authority">com.sintef_energy.ubisolar.sync.provider</string>
+
+    <!-- The Content Provider -->
+    <string name="provider_authority_energy">com.sintef_energy.ubisolar.provider.energy</string>
+
+
+    <!--Drawer activity-->
+    <string name="drawer_log_in">Log in</string>
+    <string name="drawer_log_out">Log out</string>
+
+    <!-- Wall post messages -->
+    <string-array name="wall_post_messages">
+        <item>started using Wattitude</item>
+        <item>shared usage data</item>
+        <item>shared a power saving mTip</item>
+    </string-array>
+
+    <!-- Title fragment menu -->
+    <string-array name="nav_drawer_items">
+        <item>Home</item>
+        <item>Analyze</item>
+        <item>Your usage</item>
+        <item>Compare to others</item>
+        <item>Manage</item>
+        <item>Manage devices</item>
+        <item>Add usage</item>
+        <item>Socialize</item>
+        <item>Exchange tips</item>
+        <item>Settings</item>
+        <item>Profile</item>
+        <item>Log in</item>
+    </string-array>
+    <string-array name="nav_drawer_icons">
+        <item>@drawable/home</item>
+        <item>@drawable/usage</item>
+        <item>@drawable/power_savers</item>
+        <item>@drawable/devices</item>
+        <item>@drawable/social</item>
+        <item>@drawable/profile</item>
+        <item>@drawable/heat</item>
+    </string-array>
+
+    <!-- Add usage-->
+    <string name="add_usage_date">Date</string>
+    <string name="add_usage_date_description">Date of consumption</string>
+    <string name="add_usage_date_hint">Date of usage</string>
+    <string name="add_usage_device">Device</string>
+    <string name="add_usage_device_description">Register for device</string>
+    <string name="add_usage_device_hint">Select device</string>
+    <string name="add_usage_consumption">Consumption</string>
+    <string name="add_usage_description">Energy used</string>
+    <string name="add_usage_consumption_unit">kWh</string>
+
+    <string name="add_usage_add_button">Add usage</string>
+
+    <string name="add_usage_added">Usage added for device:</string>
+    <string name="add_usage_no_usage">Error: No usage added</string>
+    <string name="add_usage_no_device">Error: No device selected</string>
+
+    <!-- Device -->
+    <string name="device_new">New device</string>
+
+    <string name="device_add_title">Add device</string>
+    <string name="device_add_button">Add</string>
+
+    <string name="device_edit_title">Edit device</string>
+    <string name="device_edit_save">Save</string>
+
+    <string name="device_edit_name">Name</string>
+    <string name="device_edit_description">Description</string>
+
+    <string name="device_toast_deleted">deleted</string>
+    <string name="device_toast_added">added</string>
+    <string name="device_toast_edited">edited</string>
+
+    <string name="device_edit">Edit</string>
+    <string name="device_delete">Delete</string>
+
+    <string name="device_dialog_delete">Delete device?</string>
+    <string name="device_delete_conf1">"Are you sure you want to delete"</string>
+    <string name="device_delete_conf2">"and all its usage data?"</string>
+    <string name="device_ok">OK</string>
+    <string name="device_cancel">Cancel</string>
+
+    <string-array name="device_categories">
+    <item>Appliances</item>
+    <item>Heating</item>
+    <item>Home Entertainment</item>
+    <item>Lighting</item>
+    <item>Other</item>
+    <item>Production</item>
+    </string-array>
+
+    <string-array name="device_icons">
+        <item>@drawable/appliances</item>
+        <item>@drawable/heat</item>
+        <item>@drawable/home_entertainment</item>
+        <item>@drawable/lighting</item>
+        <item>@drawable/default_device</item>
+        <item>@drawable/power_production</item>
+    </string-array>
+
+    <!-- usage -->
+    <string name="usage_select_devices">Select Devices</string>
+    <string name="usage_share">Share</string>
+    <string name="usage_line_graph_title">Power overview</string>
+    <string name="usage_pie_graph_title">Distribution</string>
+    <string name="usage_no_content">No data for currently selected devices</string>
+
+    <string-array name="fragment_usage_tabs">
+        <item>Usage</item>
+        <item>Distribution</item>
+    </string-array>
+
+    <string name="usage_hours">Hours</string>
+    <string name="usage_days">Days</string>
+    <string name="usage_weeks">Weeks</string>
+    <string name="usage_months">Months</string>
+    <string name="usage_years">Years</string>
+
+    <!--Facebook Share-->
+    <string name="share_title">Share your progress</string>
+    <string name="share_cancel">Cancel</string>
+    <string name="share_post">Post to Facebook</string>
+    <string name="share_add_caption">Add a Caption</string>
+
+    <!-- AddResidenceDialog -->
+    <string-array name="energy_classes">
+        <item>A</item>
+        <item>B</item>
+        <item>C</item>
+        <item>D</item>
+        <item>E</item>
+        <item>F</item>
+        <item>G</item>
+    </string-array>
+
+    <string name="add_residence_name">Name</string>
+    <string name="add_residence_name_tip">Name your residence</string>
+    <string name="add_residence_description">Description</string>
+    <string name="add_residence_description_tip">Description of your residence</string>
+    <string name="add_residence_residents">Number of residents</string>
+    <string name="add_residence_area">Size of living area</string>
+    <string name="add_residence_zip_code">Zip code</string>
+    <string name="add_residence_energy_class">Energy class</string>
+    <string name="addResidenceDialog_button">Add</string>
+
+    <!-- Other -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Fragment profile -->
+    <string name="profile_username">Username</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_age">Age</string>
+    <string name="profile_country">Country</string>
+    <string name="profile_location">Location</string>
+    <string name="profile_postcode">Postal code</string>
+    <string name="profile_anon">Anonymous</string>
+    <string name="superscript2"><sup><small>2</small></sup></string>
+    <string name="log_in_to_sync">Log in to view data</string>
+    <string name="get_started">Log in to share your profile</string>
+    <string name="action_forgot_password">Forgot your password?</string>
+
+    <!-- Fragment social -->
+    <string name="social_user_name">User\'s name</string>
+    <string name="friends_header_title">Friends</string>
+
+    <!-- Fragment home -->
+    <string name="home_current_usage">Current Usage</string>
+    <string name="home_news_feed">News Feed</string>
+
+    <!-- Comparison -->
+    <string name="comparison_setting">Comparison settings</string>
+    <string name="location_comparison_setting">Location</string>
+    <string name="res_comparison_setting">Number of residents</string>
+    <string name="area_comparison_setting">Area</string>
+    <string name="energy_comparison_setting">Energy class</string>
+    <string name="compare_filter">Filter</string>
+
+    <string-array name="comparison_tabs">
+        <item>Friends</item>
+        <item>Similar profiles</item>
+    </string-array>
+
+    <!-- tips -->
+    <string name="energy_saving_tab_tips">Tips</string>
+    <string name="energy_saving_tab_your">My tips</string>
+
+    <string name="energy_saving_create_tip">Create mTip</string>
+
+    <string name="energy_saving_add_title">Create mTip</string>
+    <string name="energy_saving_add_confirm">Create</string>
+    <string name="energy_saving_add_name">Title</string>
+    <string name="energy_saving_add_description">Description</string>
+
+    <string name="energy_saving_add_confirm_message">Tip created</string>
+    <string name="energy_saving_add_empty_name">Name cannot be empty</string>
+    <string name="energy_saving_add_empty_description">Description cannot be empty</string>
+
+    <string name="energy_saving_your_tip_remove">Remove</string>
+    <string name="energy_saving_your_tip_share">Share</string>
+    <string name="energy_saving_your_tip_empty">You have no saved tips</string>
+
+
+    <string-array name="energy_saving_tabs">
+        <item>Tips</item>
+        <item>My tips</item>
+    </string-array>
+
+    <string name="energy_saving_move_tip">Add to my tips</string>
+    <string name="energy_saving_close">Close</string>
+
+    <string name="energy_saving_rating_changed">Rating changed</string>
+    <string name="energy_saving_server_error">Unable to connect to the server</string>
+
+    <!-- Toast -->
+    <string name="no_internet">Internet connection required to log in</string>
+    <string name="fb_login">User logged in with facebook</string>
+    <string name="fb_logout">User logged out of facebook</string>
+    <string name="facebook_posted">Posted to Facebook</string>
+    <string name="facebook_error">Error posting to Facebook</string>
+
+    <!-- Broadcasts - Mirrored from AndroidManifest -->
+    <string name="broadcast_nav_drawer_usage">com.sintef_energy.ubisolar.broadcast_nav_drawer</string>
+    <string name="title_activity_login">Wattitude login</string>
+    <string name="hello_world">Hello world!</string>
+
+    <!--Util-->
+    <string name="total_name">Total</string>
+    <string name="total_description">The total power used</string>
+</resources>

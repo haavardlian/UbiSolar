@@ -1,3 +1,0 @@
-include ':UbiSolar', ':spinnerwheel'
-include ':UbiSolar:libs:facebook'
-project(':spinnerwheel').projectDir = new File('UbiSolar/libs/spinnerwheel')
