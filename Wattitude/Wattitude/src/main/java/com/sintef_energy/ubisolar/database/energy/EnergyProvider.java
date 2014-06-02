@@ -7,7 +7,7 @@
  * you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * 	http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * Created by perok on 2/11/14.
  *
  * TODO
- * ContentProvder is not thread safee. SQLiteDatabase is thread safe.
+ * ContentProvider is not thread safe. SQLiteDatabase is thread safe.
  * Should the providers CRUD method be implemented with synchronized? Will give a overhead, but
  * will possibly avoid bugs.
  *
@@ -68,6 +68,9 @@ public class EnergyProvider extends ContentProvider{
 
     private static ContentValues deleteValues;
 
+    /**
+     * The matcher for all the allowed queries for the database.
+     */
     private static final UriMatcher URI_MATCHER;
     // prepare the UriMatcher
     static {
@@ -513,8 +516,19 @@ public class EnergyProvider extends ContentProvider{
    }
 
 
+    /** Devices and data are not deleted, only a bit is set. This String sets a query to avoid
+     * `deleted' data */
     private static final String selectionAvoidDeleteBit = DeviceModel.DeviceEntry.COLUMN_IS_DELETED + "<>1 ";
 
+    /**
+     *
+     * Created raw sql based on a date, and a where clause. Used in conjunction with usage queries
+     * that wants data concatenated on specific date intervals.
+     *
+     * @param date Day/ week/ month/ year
+     * @param where
+     * @return raw sql query
+     */
     private String generateRawDateSql(String date, String where){
 
         //Time to aggregate on
@@ -525,18 +539,20 @@ public class EnergyProvider extends ContentProvider{
         String time2 =  "strftime(\'%s\', datetime(`" +
                 EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch'))";
 
-        String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
-                EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
+        //String betweenTime = "strftime('%Y-%m-%d %H:%M', datetime(`" +
+        //        EnergyUsageModel.EnergyUsageEntry.COLUMN_TIMESTAMP + "`, 'unixepoch', 'localtime'))";
 
 
 //        String statement = "SELECT * FROM (";
 
+        // The query
         String statement = "SELECT " + EnergyUsageModel.EnergyUsageEntry._ID + ", "
                         + EnergyUsageModel.EnergyUsageEntry.COLUMN_DEVICE_ID + ", "
                         + time2 + " As `month`, "
                         + "Sum(" + EnergyUsageModel.EnergyUsageEntry.COLUMN_POWER + ") As `amount` "
                         + "FROM " + EnergyUsageModel.EnergyUsageEntry.TABLE_NAME + " ";
 
+        // Append where clause.
         if(!where.equals(""))
             statement += "WHERE (" + where + ") AND " + selectionAvoidDeleteBit;
         else

@@ -7,7 +7,7 @@
  * you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * 	http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -167,6 +167,12 @@ public class LoginActivity extends AccountAuthenticatorActivity implements ILogi
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Used when the login session is acquired by the status callback.
+     * Will quit the Activity and return to the app.
+     *
+     * @param data
+     */
     @Override
     public void loginFinished(Bundle data) {
         //Something failed if there is no data

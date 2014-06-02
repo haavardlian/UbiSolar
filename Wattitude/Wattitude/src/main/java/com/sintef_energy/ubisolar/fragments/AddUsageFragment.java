@@ -7,7 +7,7 @@
  * you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * 	http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -91,10 +91,8 @@ public class AddUsageFragment extends DefaultTabFragment implements
         // Pass null as the parent view because its going in the dialog layout
         mRootView = inflater.inflate(R.layout.fragment_add_usage, container, false);
 
-        //Set the calendar
+        // Set the calendar
         mDate = Calendar.getInstance();
-        mDate.set(Calendar.MINUTE, 0);
-        mDate.set(Calendar.HOUR_OF_DAY, 0);
 
         mSpinnerDevice = (Spinner) mRootView.findViewById(R.id.dialog_add_usage_spinner);
         mRelativeLayout = (RelativeLayout) mRootView.findViewById(R.id.fragment_add_usage_rl_date);
@@ -126,6 +124,7 @@ public class AddUsageFragment extends DefaultTabFragment implements
                    return;
                 }
 
+                // Get the current selected data from the spinner.
                 Cursor item = mDeviceAdapter.getCursor();
                 item.moveToPosition(position);
                 position = item.getColumnIndex(DeviceModel.DeviceEntry._ID);
@@ -134,9 +133,13 @@ public class AddUsageFragment extends DefaultTabFragment implements
 
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM-yyyy");
 
-                    //If in the past, remove milliseconds resolution
-                    if (!isSameDay(mDate, Calendar.getInstance()))
+                    // If in the past, remove hour, minute, millisecond resolution.
+                    // Only log accurate data if its on the same day (you check current energy, then log it)
+                    if (!isSameDay(mDate, Calendar.getInstance())) {
                         mDate.set(Calendar.MILLISECOND, 0);
+                        mDate.set(Calendar.MINUTE, 0);
+                        mDate.set(Calendar.HOUR_OF_DAY, 0);
+                    }
 
                     EnergyUsageModel euModel = new EnergyUsageModel();
                     euModel.setTimeStampFromDate(formatter.parse(mTextDate.getText().toString()));
@@ -187,7 +190,7 @@ public class AddUsageFragment extends DefaultTabFragment implements
         mSpinnerDevice.setEnabled(false);
         mSpinnerDevice.setAdapter(mDeviceAdapter);
 
-        //Get devices from the database
+        // Get all devices from the database
         getLoaderManager().initLoader(0, null, this);
 
         updateDateText();

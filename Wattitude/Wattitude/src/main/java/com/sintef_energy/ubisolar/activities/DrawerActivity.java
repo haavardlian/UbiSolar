@@ -7,7 +7,7 @@
  * you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * 	http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -121,7 +121,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     // Instance fields
     private Account mAccount;
 
-    /** Number is random */
+    /** Random number that is an ID for onActivityResult callback for the LoginActivity. */
     private static final int LOGIN_CALL_ID = 231;
 
     @Override
@@ -165,13 +165,14 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        /* Update UX on backstack change */
+        /* Update UX on back stack change */
         getFragmentManager().addOnBackStackChangedListener(
                 new FragmentManager.OnBackStackChangedListener() {
                     public void onBackStackChanged() {
                         // Update your UI here.
                         int count = getFragmentManager().getBackStackEntryCount();
 
+                        // Only show nav drawer when there is nothing on the back stack
                         if(count > 0)
                             mNavigationDrawerFragment.setNavDrawerToggle(false);
                         else
@@ -179,7 +180,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
                     }
                });
 
-        /* Session data */
+        /* Session data callback */
         mFacebookSessionStatusCallback = new FacebookSessionStatusCallback();
 
         /* Setup dummy account */
@@ -190,9 +191,7 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         //mAccount = CreateSyncAccount(this);
         startFacebookLogin(savedInstanceState);
 
-        /*
-        * DEVELOPER SETTINGS
-        */
+        /* DEVELOPER SETTINGS */
 
         // Extra logging for debug
         if(Global.DEVELOPER_MADE)
@@ -317,6 +316,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         Session.saveSession(session, outState);
     }
 
+    /**
+     *
+     * Callback from NavigationDrawerFragment. Position defines which Fragment to show.
+     *
+     * @param position Which item that was clicked in the navigation drawer.
+     */
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
@@ -367,10 +372,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
     /**
      * Helper method to add fragments to the view.
      *
-     * @param fragment
-     * @param animate
-     * @param addToBackStack
-     * @param tag
+     * @param fragment Fragment to swap in
+     * @param animate True if swap shall have an animation
+     * @param addToBackStack True if the Fragment shall go to the back stack
+     * @param tag String for the back stack
      */
     public void addFragment(Fragment fragment, boolean animate, boolean addToBackStack, String tag) {
         FragmentManager manager = getFragmentManager();
@@ -393,6 +398,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         ft.commit();
     }
 
+    /**
+     * Sets the mTitle String to the correct title based on which tab is pressed.
+     * @param number
+     */
     public void onSectionAttached(int number) {
         if(number < titleNames.length)
             mTitle = titleNames[number];
@@ -446,7 +455,9 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         switch(item.getItemId()){
             case R.id.action_settings:
                 return true;
+            // Back button/ navigation drawer button in action bar
             case android.R.id.home:
+                // If there is Fragments on the back stack, then pop one.
                 if(getFragmentManager().getBackStackEntryCount() > 0) {
                     getFragmentManager().popBackStack();
                     return true;
@@ -456,6 +467,9 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         }
     }
 
+    /**
+     * Callback for the big back button. Same action as for onOptionsItemSelected home click.
+     */
     @Override
     public void onBackPressed() {
         /* If there is fragments in the back stack, then pop first. Else behave like normal. */
@@ -542,9 +556,10 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
 
     /**
      * This method should handle the migration process from a token with expire date
-     * from the AccountManager to a Facebook session
+     * from the AccountManager to a Facebook session.
      *
      * TODO: Don't know if this is the correct way to do it, or even necessary at all
+     * The sessions should be kept by the Facebook handler at all cost.
      * @param token
      * @param exprDate
      */
@@ -639,6 +654,12 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         getContentResolver().delete(EnergyContract.Energy.CONTENT_URI.buildUpon().appendPath(EnergyContract.DELETE).build(), null, null);
    }
 
+    /**
+     * Gets a list of all Accounts for one the account type.
+     * @param context
+     * @param ACC_TYPE
+     * @return
+     */
     private static Account[] getAccounts(Context context, String ACC_TYPE){
         AccountManager accountManager =
             (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
@@ -646,6 +667,14 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
         return accountManager.getAccountsByType(ACC_TYPE);
     }
 
+    /**
+     * Gets the first Account given by the account type. For our use case, there is only one Account
+     * for the app on one installation.
+     *
+     * @param context
+     * @param ACC_TYPE
+     * @return
+     */
     private static Account getAccount(Context context, String ACC_TYPE){
         AccountManager accountManager =
             (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
@@ -711,6 +740,9 @@ public class DrawerActivity extends FragmentActivity implements NavigationDrawer
             }).executeAsync();
     }
 
+    /**
+     * Facebook session data callback. Handles login/ logout.
+     */
     private class FacebookSessionStatusCallback implements Session.StatusCallback {
         private final String TAG = FacebookSessionStatusCallback.class.getName();
 
